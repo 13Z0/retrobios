@@ -6,7 +6,7 @@
   "platform": "retropie",
   "display_name": "RetroPie",
   "version": "1.0",
-  "generated": "2026-10-23T12:47:02Z",
+  "generated": "2026-10-24T00:06:47Z",
   "base_destination": "BIOS",
   "detect": [
     {
@@ -16,11 +16,11 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 8504,
-  "total_size": 8738583919,
-  "pack_files": 11060,
-  "pack_size": 8771950989,
-  "total_omitted": 321,
+  "total_files": 8713,
+  "total_size": 8828228301,
+  "pack_files": 11269,
+  "pack_size": 8861595371,
+  "total_omitted": 347,
   "omitted_files": [
     {
       "dest": "Azahar/Azahar/nand/private/movable.sed",
@@ -1037,6 +1037,16 @@
       "category": "game_data"
     },
     {
+      "dest": "PSP/flash0/font/zh_gb.pgf",
+      "name": "zh_gb.pgf",
+      "system": "sony-psp",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "ppsspp-1.5.4"
+      ]
+    },
+    {
       "dest": "Panda3DS/Emulator Files/sysdata/aes_keys.txt",
       "root": "save",
       "core_folder": "Panda3DS",
@@ -1259,6 +1269,16 @@
       "category": "game_data"
     },
     {
+      "dest": "a1060-bios-2.07.rom",
+      "name": "a1060-bios-2.07.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
       "dest": "alien1.pig",
       "name": "alien1.pig",
       "system": "descent2",
@@ -1279,6 +1299,26 @@
         "dxx-rebirth"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "apollo-630.rom",
+      "name": "apollo-630.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "archos-overdrive-hd-v3.0.rom",
+      "name": "archos-overdrive-hd-v3.0.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
     },
     {
       "dest": "audiohed.sd2",
@@ -1391,6 +1431,391 @@
       "category": "game_data"
     },
     {
+      "dest": "baseset/GM-TTO.CAT",
+      "name": "GM-TTO.CAT",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM.CAT",
+      "name": "GM.CAT",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT00.GM",
+      "name": "GM_TT00.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT01.GM",
+      "name": "GM_TT01.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT02.GM",
+      "name": "GM_TT02.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT03.GM",
+      "name": "GM_TT03.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT04.GM",
+      "name": "GM_TT04.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT05.GM",
+      "name": "GM_TT05.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT06.GM",
+      "name": "GM_TT06.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT07.GM",
+      "name": "GM_TT07.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT08.GM",
+      "name": "GM_TT08.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT09.GM",
+      "name": "GM_TT09.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT10.GM",
+      "name": "GM_TT10.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT11.GM",
+      "name": "GM_TT11.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT12.GM",
+      "name": "GM_TT12.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT13.GM",
+      "name": "GM_TT13.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT14.GM",
+      "name": "GM_TT14.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT15.GM",
+      "name": "GM_TT15.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT16.GM",
+      "name": "GM_TT16.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT17.GM",
+      "name": "GM_TT17.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT18.GM",
+      "name": "GM_TT18.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT19.GM",
+      "name": "GM_TT19.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT20.GM",
+      "name": "GM_TT20.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/GM_TT21.GM",
+      "name": "GM_TT21.GM",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/SAMPLE.CAT",
+      "name": "SAMPLE.CAT",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/TRG1.GRF",
+      "name": "TRG1.GRF",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/TRG1R.GRF",
+      "name": "TRG1R.GRF",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/TRGC.GRF",
+      "name": "TRGC.GRF",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/TRGCR.GRF",
+      "name": "TRGCR.GRF",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/TRGH.GRF",
+      "name": "TRGH.GRF",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/TRGHR.GRF",
+      "name": "TRGHR.GRF",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/TRGI.GRF",
+      "name": "TRGI.GRF",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/TRGIR.GRF",
+      "name": "TRGIR.GRF",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/TRGT.GRF",
+      "name": "TRGT.GRF",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "baseset/TRGTR.GRF",
+      "name": "TRGTR.GRF",
+      "system": "transport-tycoon-deluxe",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "openttd"
+      ],
+      "category": "game_data"
+    },
+    {
       "dest": "bfgdoom.wad",
       "name": "bfgdoom.wad",
       "system": "doom",
@@ -1411,6 +1836,66 @@
         "dsda-doom"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "blizzard-ppc-68040-v44.69.rom",
+      "name": "blizzard-ppc-68040-v44.69.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "blizzard-ppc-68040-v44.71.rom",
+      "name": "blizzard-ppc-68040-v44.71.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "blizzard-ppc-68060-v44.69.rom",
+      "name": "blizzard-ppc-68060-v44.69.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "blizzard-ppc-68060-v44.71.rom",
+      "name": "blizzard-ppc-68060-v44.71.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "blizzardppc_040.rom",
+      "name": "blizzardppc_040.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "blizzardppc_060.rom",
+      "name": "blizzardppc_060.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
     },
     {
       "dest": "cgrom.tmp",
@@ -1453,6 +1938,76 @@
         "dsda-doom"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "cyberstorm-mk-iii-v44.69.rom",
+      "name": "cyberstorm-mk-iii-v44.69.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cyberstorm-mk-iii-v44.71.rom",
+      "name": "cyberstorm-mk-iii-v44.71.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cyberstorm-ppc-v44.69.rom",
+      "name": "cyberstorm-ppc-v44.69.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cyberstorm-ppc-v44.71.rom",
+      "name": "cyberstorm-ppc-v44.71.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cyberstormmk2.rom",
+      "name": "cyberstormmk2.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cyberstormmk3.rom",
+      "name": "cyberstormmk3.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cyberstormppc.rom",
+      "name": "cyberstormppc.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
     },
     {
       "dest": "data/Super Mario War data",
@@ -1519,6 +2074,16 @@
         "dxx-rebirth"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "dkb-wildfire-v1.0.rom",
+      "name": "dkb-wildfire-v1.0.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
     },
     {
       "dest": "dolphin-emu/User/GBA/gba_bios.bin",
@@ -1719,6 +2284,16 @@
       "category": "game_data"
     },
     {
+      "dest": "ep128emu/roms/ide12.rom",
+      "name": "ide12.rom",
+      "system": "enterprise-128",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "ep128emu_core"
+      ]
+    },
+    {
       "dest": "extras.wad",
       "name": "extras.wad",
       "system": "doom",
@@ -1770,7 +2345,8 @@
       "reason": "no_save_directory",
       "cores": [
         "fsuae"
-      ]
+      ],
+      "held": true
     },
     {
       "dest": "fsuae/Kickstarts/amiga-ext-310-cd32.rom",
@@ -1781,7 +2357,8 @@
       "reason": "no_save_directory",
       "cores": [
         "fsuae"
-      ]
+      ],
+      "held": true
     },
     {
       "dest": "fsuae/Kickstarts/amiga-os-120.rom",
@@ -1869,7 +2446,8 @@
       "reason": "no_save_directory",
       "cores": [
         "fsuae"
-      ]
+      ],
+      "held": true
     },
     {
       "dest": "fsuae/Kickstarts/cd32fmv.rom",
@@ -1880,7 +2458,8 @@
       "reason": "no_save_directory",
       "cores": [
         "fsuae"
-      ]
+      ],
+      "held": true
     },
     {
       "dest": "fsuae/Kickstarts/rom.key",
@@ -2569,6 +3148,26 @@
       "category": "game_data"
     },
     {
+      "dest": "gvp-a1230-turboplus-series-ii-v5.3.rom",
+      "name": "gvp-a1230-turboplus-series-ii-v5.3.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "gvp-t-rex-ii-v1.0.rom",
+      "name": "gvp-t-rex-ii-v1.0.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
       "dest": "ice.pig",
       "name": "ice.pig",
       "system": "descent2",
@@ -2755,6 +3354,36 @@
       "category": "game_data"
     },
     {
+      "dest": "masoboshi-mc-702-v2.197.rom",
+      "name": "masoboshi-mc-702-v2.197.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "masoboshi-mc-702-v2.202.rom",
+      "name": "masoboshi-mc-702-v2.202.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "masoboshi-mc-702-v2.204.rom",
+      "name": "masoboshi-mc-702-v2.204.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
       "dest": "missions/d2x.hog",
       "name": "d2x.hog",
       "system": "descent2",
@@ -2784,391 +3413,6 @@
       "reason": "not_found",
       "cores": [
         "gzdoom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM-TTO.CAT",
-      "name": "GM-TTO.CAT",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM.CAT",
-      "name": "GM.CAT",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT00.GM",
-      "name": "GM_TT00.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT01.GM",
-      "name": "GM_TT01.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT02.GM",
-      "name": "GM_TT02.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT03.GM",
-      "name": "GM_TT03.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT04.GM",
-      "name": "GM_TT04.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT05.GM",
-      "name": "GM_TT05.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT06.GM",
-      "name": "GM_TT06.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT07.GM",
-      "name": "GM_TT07.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT08.GM",
-      "name": "GM_TT08.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT09.GM",
-      "name": "GM_TT09.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT10.GM",
-      "name": "GM_TT10.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT11.GM",
-      "name": "GM_TT11.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT12.GM",
-      "name": "GM_TT12.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT13.GM",
-      "name": "GM_TT13.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT14.GM",
-      "name": "GM_TT14.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT15.GM",
-      "name": "GM_TT15.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT16.GM",
-      "name": "GM_TT16.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT17.GM",
-      "name": "GM_TT17.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT18.GM",
-      "name": "GM_TT18.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT19.GM",
-      "name": "GM_TT19.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT20.GM",
-      "name": "GM_TT20.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/GM_TT21.GM",
-      "name": "GM_TT21.GM",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/SAMPLE.CAT",
-      "name": "SAMPLE.CAT",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/TRG1.GRF",
-      "name": "TRG1.GRF",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/TRG1R.GRF",
-      "name": "TRG1R.GRF",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/TRGC.GRF",
-      "name": "TRGC.GRF",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/TRGCR.GRF",
-      "name": "TRGCR.GRF",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/TRGH.GRF",
-      "name": "TRGH.GRF",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/TRGHR.GRF",
-      "name": "TRGHR.GRF",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/TRGI.GRF",
-      "name": "TRGI.GRF",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/TRGIR.GRF",
-      "name": "TRGIR.GRF",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/TRGT.GRF",
-      "name": "TRGT.GRF",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "openttd/baseset/TRGTR.GRF",
-      "name": "TRGTR.GRF",
-      "system": "transport-tycoon-deluxe",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "openttd"
       ],
       "category": "game_data"
     },
@@ -3216,13 +3460,23 @@
       "category": "game_data"
     },
     {
-      "dest": "ppsspp-1.5.4/assets/flash0/font/zh_gb.pgf",
-      "name": "zh_gb.pgf",
-      "system": "sony-psp",
+      "dest": "quikpak-4060-xp-v2.2.rom",
+      "name": "quikpak-4060-xp-v2.2.rom",
+      "system": "commodore-amiga",
       "required": false,
       "reason": "not_found",
       "cores": [
-        "ppsspp-1.5.4"
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "quikpak-4060.rom",
+      "name": "quikpak-4060.rom",
+      "system": "commodore-amiga",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "amiberry"
       ]
     },
     {
@@ -3363,6 +3617,16 @@
         "gzdoom"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "verite.rom",
+      "name": "verite.rom",
+      "system": "dos",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "rust_dos"
+      ]
     },
     {
       "dest": "vgadict.sd2",
@@ -3613,7 +3877,11 @@
     "amiberry": [
       "AMIBERRY"
     ],
+    "ares": [
+      "ares-sa"
+    ],
     "armsx2": [
+      "armsx2-sa",
       "armsx2_libretro"
     ],
     "azahar": [
@@ -3626,16 +3894,21 @@
       "mednafen_gba"
     ],
     "beetle_lynx": [
+      "beetle-lynx",
       "mednafen_lynx"
     ],
     "beetle_pce": [
-      "mednafen_pce"
+      "beetle-pce",
+      "mednafen_pce",
+      "pce"
     ],
     "beetle_pcfx": [
+      "beetle-pcfx",
       "mednafen_pcfx",
       "pcfx"
     ],
     "beetle_psx": [
+      "beetle-psx",
       "mednafen_psx",
       "mednafen_psx_hw"
     ],
@@ -3667,6 +3940,9 @@
     "cap32": [
       "caprice32"
     ],
+    "cemu": [
+      "cemu-sa"
+    ],
     "cgenius": [
       "CGeniusExe"
     ],
@@ -3677,7 +3953,8 @@
       "desmume_2015"
     ],
     "dolphin": [
-      "dolphin-gui"
+      "dolphin-gui",
+      "dolphin-sa"
     ],
     "dosbox-pure-unleashed": [
       "dosbox-pure",
@@ -3695,6 +3972,9 @@
     "doublecherrygb": [
       "DoubleCherryGB"
     ],
+    "drastic": [
+      "drastic-sa"
+    ],
     "droidarcadia": [
       "com.amigan.droidarcadia"
     ],
@@ -3702,7 +3982,8 @@
       "dsperate-sa"
     ],
     "duckstation": [
-      "Duckstation"
+      "Duckstation",
+      "duckstation-sa"
     ],
     "dxx-rebirth": [
       "d1x-rebirth",
@@ -3711,10 +3992,8 @@
     "ecwolf": [
       "ECWolf"
     ],
-    "ep128emu": [
-      "ep128emu_core"
-    ],
     "ep128emu_core": [
+      "ep128emu",
       "ep128emu-core"
     ],
     "fba2x": [
@@ -3727,7 +4006,9 @@
       "FBNEOSA"
     ],
     "flycast": [
+      "flycast-dev",
       "flycast-next",
+      "flycast-sa",
       "flycast_32b",
       "flycast_dev",
       "flycastsa",
@@ -3761,6 +4042,7 @@
       "GBC.emu"
     ],
     "genesis_plus_gx": [
+      "genesis-plus-gx",
       "genesis_plus_gx_cart_special",
       "genesisplusgx",
       "genesisplusgx_ex",
@@ -3774,10 +4056,12 @@
       "genesisplusgxwide"
     ],
     "gzdoom": [
-      "GZDoom"
+      "GZDoom",
+      "gzdoom-sa"
     ],
     "hatari": [
-      "HATARISA"
+      "HATARISA",
+      "hatarisa"
     ],
     "higan_sfc_balanced": [
       "nside_sfc_balanced"
@@ -3831,7 +4115,8 @@
       "imame4all"
     ],
     "mame2003_plus": [
-      "mame078plus"
+      "mame078plus",
+      "mame2003-plus"
     ],
     "mame2010": [
       "mame0139"
@@ -3856,10 +4141,8 @@
       "MD-EMU",
       "MD.emu"
     ],
-    "mednafen_pce": [
-      "pce"
-    ],
     "mednafen_pce_fast": [
+      "beetle-pce-fast",
       "beetle_pce_fast",
       "pce_fast"
     ],
@@ -3873,7 +4156,11 @@
       "supafaust"
     ],
     "mednafen_supergrafx": [
+      "beetle-supergrafx",
       "beetle_supergrafx"
+    ],
+    "melonds": [
+      "melonds-sa"
     ],
     "melonds_ds": [
       "melondsds"
@@ -3904,6 +4191,7 @@
       "MSX.emu"
     ],
     "mupen64plus": [
+      "mupen64plus-sa",
       "mupen64plussa"
     ],
     "mupen64plus-ae": [
@@ -3965,6 +4253,7 @@
       "ca.parallel_launcher.ParallelLauncher"
     ],
     "parallel_n64": [
+      "parallel-n64",
       "parallel_n64_32b",
       "parallel_n64_debug"
     ],
@@ -4007,7 +4296,8 @@
       "pokket"
     ],
     "ppsspp": [
-      "PPSSPPSDL"
+      "PPSSPPSDL",
+      "ppsspp-sa"
     ],
     "puae": [
       "uae"
@@ -4032,13 +4322,18 @@
       "Saturn.emu",
       "saturnemu"
     ],
-    "scummvm": [
-      "SCUMMVMSA"
+    "scummvm-standalone": [
+      "SCUMMVMSA",
+      "scummvm-sa"
     ],
     "sdl2trs": [
       "sdltrs"
     ],
+    "skyemu": [
+      "skyemu-sa"
+    ],
     "smsplus": [
+      "smsplus-gx",
       "smsplus_gx"
     ],
     "snes9x": [
@@ -4061,6 +4356,9 @@
     "supermariowar": [
       "smw"
     ],
+    "supermodel3": [
+      "supermodel-sa"
+    ],
     "supertux": [
       "supertux2"
     ],
@@ -4080,6 +4378,9 @@
     "uae4arm": [
       "uae4arm_32b"
     ],
+    "vba_next": [
+      "vba-next"
+    ],
     "vbam": [
       "vba-m"
     ],
@@ -4094,6 +4395,9 @@
       "vice_xplus4",
       "vice_xscpu64",
       "vice_xvic"
+    ],
+    "vice-standalone": [
+      "vice-sa"
     ],
     "vice_x128": [
       "x128"
@@ -4119,6 +4423,12 @@
     "x1": [
       "xmil"
     ],
+    "xemu": [
+      "xemu-sa"
+    ],
+    "xenia-edge": [
+      "xenia_edge"
+    ],
     "xm6pro68k": [
       "XM6PRO68K",
       "XM6PRO68K-WINDOWS",
@@ -4130,6 +4440,7 @@
     ],
     "yabasanshiro": [
       "yabasanshiro-2",
+      "yabasanshiro-sa",
       "yabasanshiroSA"
     ]
   },
@@ -4157,7 +4468,6 @@
       "clk",
       "cpcemu",
       "crocods",
-      "ep128emu",
       "ep128emu_core",
       "sugarbox2",
       "zesarux"
@@ -4260,6 +4570,7 @@
     "commodore-c128": [
       "c64-emu",
       "vice",
+      "vice-standalone",
       "vice_x128"
     ],
     "dinothawr": [
@@ -4298,7 +4609,6 @@
     ],
     "enterprise-64-128": [
       "clk",
-      "ep128emu",
       "ep128emu_core",
       "mame",
       "mame0258",
@@ -4363,7 +4673,6 @@
       "jgenesis",
       "magicengine",
       "mednafen",
-      "mednafen_pce",
       "mednafen_pce_fast",
       "mednafen_supergrafx",
       "mesence",
@@ -4464,7 +4773,6 @@
       "jgenesis",
       "linkboy",
       "mednafen",
-      "mednafen_gba",
       "mesence",
       "meteor",
       "mgba",
@@ -4629,7 +4937,8 @@
     ],
     "scummvm": [
       "scummvm",
-      "scummvm-sdl1"
+      "scummvm-sdl1",
+      "scummvm-standalone"
     ],
     "sega-dreamcast": [
       "demul",
@@ -4739,7 +5048,6 @@
       "clk",
       "cspect",
       "eightyone",
-      "ep128emu",
       "ep128emu_core",
       "fbzx",
       "fuse",
@@ -4794,7 +5102,6 @@
       "numero"
     ],
     "videoton-tvc": [
-      "ep128emu",
       "ep128emu_core"
     ],
     "vircon32": [
@@ -5249,11 +5556,6 @@
       "repo_path": "bios/Amstrad/CPC/cpc464.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "amstrad-cpc"
       ],
       "alternatives": [
@@ -5263,7 +5565,6 @@
           "size": 32768,
           "repo_path": "bios/Amstrad/CPC/cpc464.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -5277,11 +5578,6 @@
       "repo_path": "bios/Amstrad/CPC/cpc6128.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "amstrad-cpc"
       ],
       "alternatives": [
@@ -5291,7 +5587,6 @@
           "size": 32768,
           "repo_path": "bios/Amstrad/CPC/cpc6128.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -5305,11 +5600,6 @@
       "repo_path": "bios/Amstrad/CPC/cpc664.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "amstrad-cpc"
       ],
       "alternatives": [
@@ -5319,7 +5609,6 @@
           "size": 32768,
           "repo_path": "bios/Amstrad/CPC/cpc664.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -5333,11 +5622,6 @@
       "repo_path": "bios/Amstrad/CPC/amsdos.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "amstrad-cpc"
       ],
       "alternatives": [
@@ -5347,7 +5631,6 @@
           "size": 16384,
           "repo_path": "bios/Amstrad/CPC/amsdos.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -7059,7 +7342,6 @@
           "repo_path": "bios/Roland/mt32-roms/ctrl_mt32_1_04.rom",
           "cores": [
             "dosbox",
-            "dosbox-pure-unleashed",
             "dosbox_core",
             "dosbox_pure"
           ]
@@ -7084,7 +7366,6 @@
           "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
           "cores": [
             "dosbox",
-            "dosbox-pure-unleashed",
             "dosbox_core",
             "dosbox_pure"
           ]
@@ -7109,7 +7390,6 @@
           "repo_path": "bios/Roland/mt32-roms/ctrl_cm32l_1_00.rom",
           "cores": [
             "dosbox",
-            "dosbox-pure-unleashed",
             "dosbox_core",
             "dosbox_pure"
           ]
@@ -7134,7 +7414,6 @@
           "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
           "cores": [
             "dosbox",
-            "dosbox-pure-unleashed",
             "dosbox_core",
             "dosbox_pure"
           ]
@@ -7482,12 +7761,6 @@
       "repo_path": "bios/Enterprise/64-128/basic20.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "enterprise-64-128",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -7497,7 +7770,6 @@
           "size": 16384,
           "repo_path": "bios/Enterprise/64-128/basic20.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -7511,12 +7783,6 @@
       "repo_path": "bios/Enterprise/64-128/basic21.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "enterprise-64-128",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -7526,7 +7792,6 @@
           "size": 16384,
           "repo_path": "bios/Enterprise/64-128/basic21.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -7540,12 +7805,6 @@
       "repo_path": "bios/Enterprise/64-128/brd.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "enterprise-64-128",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -7555,7 +7814,6 @@
           "size": 16384,
           "repo_path": "bios/Enterprise/64-128/brd.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -7580,12 +7838,6 @@
       "repo_path": "bios/Enterprise/64-128/epfileio.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "enterprise-64-128",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -7595,7 +7847,6 @@
           "size": 16384,
           "repo_path": "bios/Enterprise/64-128/epfileio.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -7609,12 +7860,6 @@
       "repo_path": "bios/Enterprise/64-128/exdos13.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "enterprise-64-128",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -7624,7 +7869,6 @@
           "size": 32768,
           "repo_path": "bios/Enterprise/64-128/exdos13.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -7638,12 +7882,6 @@
       "repo_path": "bios/Enterprise/64-128/exos20.bin",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "enterprise-64-128",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -7653,7 +7891,6 @@
           "size": 32768,
           "repo_path": "bios/Enterprise/64-128/exos20.bin",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -7667,12 +7904,6 @@
       "repo_path": "bios/Enterprise/64-128/exos21.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "enterprise-64-128",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -7682,7 +7913,6 @@
           "size": 32768,
           "repo_path": "bios/Enterprise/64-128/exos21.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -7696,12 +7926,6 @@
       "repo_path": "bios/Enterprise/64-128/exos24uk.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "enterprise-64-128",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -7711,7 +7935,6 @@
           "size": 65536,
           "repo_path": "bios/Enterprise/64-128/exos24uk.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -7725,12 +7948,6 @@
       "repo_path": "bios/Enterprise/64-128/hun.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "enterprise-64-128",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -7740,7 +7957,6 @@
           "size": 16384,
           "repo_path": "bios/Enterprise/64-128/hun.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -7754,12 +7970,6 @@
       "repo_path": "bios/Enterprise/64-128/zt19uk.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "enterprise-64-128",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -7769,7 +7979,6 @@
           "size": 32768,
           "repo_path": "bios/Enterprise/64-128/zt19uk.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -9284,7 +9493,6 @@
           "cores": [
             "beetle_pce",
             "geargrafx",
-            "mednafen_pce",
             "mednafen_pce_fast",
             "mednafen_supergrafx"
           ]
@@ -9310,7 +9518,6 @@
           "cores": [
             "beetle_pce",
             "geargrafx",
-            "mednafen_pce",
             "mednafen_pce_fast",
             "mednafen_supergrafx"
           ]
@@ -9336,7 +9543,6 @@
           "cores": [
             "beetle_pce",
             "geargrafx",
-            "mednafen_pce",
             "mednafen_pce_fast",
             "mednafen_supergrafx"
           ]
@@ -9361,7 +9567,6 @@
           "repo_path": "bios/NEC/PC Engine/syscard2u.pce",
           "cores": [
             "beetle_pce",
-            "mednafen_pce",
             "mednafen_pce_fast"
           ]
         }
@@ -9386,7 +9591,6 @@
           "cores": [
             "beetle_pce",
             "geargrafx",
-            "mednafen_pce",
             "mednafen_pce_fast",
             "mednafen_supergrafx"
           ]
@@ -9411,7 +9615,6 @@
           "repo_path": "bios/NEC/PC Engine/syscard3u.pce",
           "cores": [
             "beetle_pce",
-            "mednafen_pce",
             "mednafen_pce_fast"
           ]
         }
@@ -10263,7 +10466,6 @@
           "cores": [
             "beetle_gba",
             "gpsp",
-            "mednafen_gba",
             "mesence",
             "mgba",
             "mgba_splitscreen",
@@ -12439,8 +12641,7 @@
           "repo_path": "bios/Sega/Dreamcast/dc_bios.bin",
           "cores": [
             "flycast",
-            "flycast2021",
-            "reicast"
+            "flycast2021"
           ]
         }
       ]
@@ -13049,7 +13250,6 @@
             "beetle_saturn",
             "kronos",
             "mednafen_stv",
-            "yabasanshiro",
             "yabause",
             "ymir"
           ]
@@ -13134,7 +13334,6 @@
           "size": 524288,
           "repo_path": "bios/Sega/Saturn/sega_100.bin",
           "cores": [
-            "yabasanshiro",
             "yabause",
             "ymir"
           ]
@@ -13194,7 +13393,6 @@
             "beetle_saturn",
             "kronos",
             "mednafen_stv",
-            "yabasanshiro",
             "yabause",
             "ymir"
           ]
@@ -13869,11 +14067,6 @@
       "repo_path": "bios/Enterprise/64-128/zx128.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "sinclair-zx-spectrum"
       ],
       "alternatives": [
@@ -13883,7 +14076,6 @@
           "size": 32768,
           "repo_path": "bios/Enterprise/64-128/zx128.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -13897,11 +14089,6 @@
       "repo_path": "bios/Arcade/FBNeo/spectrum.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "sinclair-zx-spectrum"
       ],
       "alternatives": [
@@ -13911,7 +14098,6 @@
           "size": 16384,
           "repo_path": "bios/Arcade/FBNeo/spectrum.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -16655,11 +16841,6 @@
       "repo_path": "bios/Enterprise/64-128/tvc22_ext.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "videoton-tvc"
       ],
       "alternatives": [
@@ -16669,7 +16850,6 @@
           "size": 8192,
           "repo_path": "bios/Enterprise/64-128/tvc22_ext.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -16683,11 +16863,6 @@
       "repo_path": "bios/Enterprise/64-128/tvc22_sys.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "videoton-tvc"
       ],
       "alternatives": [
@@ -16697,7 +16872,6 @@
           "size": 16384,
           "repo_path": "bios/Enterprise/64-128/tvc22_sys.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -16711,11 +16885,6 @@
       "repo_path": "bios/Enterprise/64-128/tvc_dos12d.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "videoton-tvc"
       ],
       "alternatives": [
@@ -16725,7 +16894,6 @@
           "size": 16384,
           "repo_path": "bios/Enterprise/64-128/tvc_dos12d.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -16739,11 +16907,6 @@
       "repo_path": "bios/Enterprise/64-128/tvcfileio.rom",
       "cores": null,
       "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
-      ],
-      "declared_in": [
         "videoton-tvc"
       ],
       "alternatives": [
@@ -16753,7 +16916,6 @@
           "size": 8192,
           "repo_path": "bios/Enterprise/64-128/tvcfileio.rom",
           "cores": [
-            "ep128emu",
             "ep128emu_core"
           ]
         }
@@ -16821,6 +16983,2365 @@
       "sha256": "a591a46f69d02875e4ff6e8efe8c7e90b63e3ca41ca7cf5715bf7b3b9a25e241",
       "size": 524288,
       "repo_path": "bios/Commodore/Amiga/amiga-os-310.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "amiga-os-310-cd32.rom",
+      "sha1": "3525be8887f79b5929e017b42380a79edfee542d",
+      "sha256": "3586355514947b5ab48c8755dc004fab94f188b19e7bce491c8f9693499e830b",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-310-cd32.rom",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "amiga-ext-310-cd32.rom",
+      "sha1": "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f",
+      "sha256": "d964826432559994ffe329f643fd4e42dbbff313362d9434945725d7119cae87",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-ext-310-cd32.rom",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cd32-rom-ks-plus-extended.rom",
+      "sha1": "9fa14825c40a2475a2eba5cf325bd483c447e7c1",
+      "sha256": "53c6053fb5ef9068db57d62c6565dfa30365d35349824525f02aa715962c446a",
+      "size": 1048576,
+      "repo_path": "bios/Commodore/Amiga CD32/kick40060.CD32.full",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "amiga-ext-130-cdtv.rom",
+      "sha1": "7ba40ffa17e500ed9fed041f3424bd81d9c907be",
+      "sha256": "6e48bb768539e8dae352553e5fdfa860682edaf9e26b105fadd8e26103171765",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/amiga-ext-130-cdtv.rom",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cdtv-extended-rom-v2.7.rom",
+      "sha1": "5bc114bba29f60a614a311745b3e2464bfa06846",
+      "sha256": "d78ab119983d6960e3ae1accaf42c5d5c3ca4c7e7c7e00479afb3ff5ba0ab03d",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/.variants/kick34005.CDTV.ceae68d2",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cdtv-a570-extended-rom-v2.30.rom",
+      "sha1": "ed7e461d1fff3cda321631ae42b80e3cd4fa5ebb",
+      "sha256": "ec20b624c2625dbd61be245724570ac64b5d106ed0b97998b0355e1b4dc1188d",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/expansion/cdtv-a570-extended-rom-v2.30.rom",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cdtv-extended-rom-v47.1.rom",
+      "sha1": "cfc16f8e930badcb9c3e7f889a57d645571fa86a",
+      "sha256": "86bf2470e679cb4c7d9e0c4b93bd4dfebb6d286e49577e20838eb817a26b2988",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/expansion/cdtv-extended-rom-v47.1.rom",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cdtv-cr-extended-rom-v3.32.rom",
+      "sha1": "d6b8d3f2854eba9b2d5145799529e8b33b85e0b4",
+      "sha256": "fb3ee62c33a1fd9e40ff45b6c855b456fd81fcd88c2e97d1b30578873ee99e75",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/expansion/cdtv-cr-extended-rom-v3.32.rom",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cdtv-cr-extended-rom-v3.44.rom",
+      "sha1": "3b160c5abe79f10ae69243328004bb9e3162b648",
+      "sha256": "e1bdd98007aec394db35177da0c8e639cfd3b637b19659e933b6631a0c71ff14",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/expansion/cdtv-cr-extended-rom-v3.44.rom",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cd32fmv.rom",
+      "sha1": "03ca81c7a7b259cf64bc9582863eca0f6529f435",
+      "sha256": "680e654880c891a3b03e6107ed30b10903efca16c1dac1b4c8e7835f4e37acb6",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/cd32fmv.rom",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "cd32fmv-391777-01.rom",
+      "sha1": "94e469a76030dcb299ebc7520aaeef9db54284cf",
+      "sha256": "a6d80c4b4cd67c244e11f58929453b3e40050b614ba3f4d8f07b1c7b283e9a63",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/expansion/cd32fmv-391777-01.rom",
+      "cores": [
+        "amiberry"
+      ]
+    },
+    {
+      "dest": "action-replay-mk-i-v1.00.rom",
+      "sha1": "1ead9dda2dad29146441f5ef7218375022e01248",
+      "sha256": "90429ea1a9d9ec710639f3546536d7fa3f8513c9320dda60c4d962588052155f",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/action-replay-mk-i-v1.00.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "action-replay-mk-i-v1.50.rom",
+      "sha1": "843b433b2c56640e045d5fdc854dc6b1a4964e7c",
+      "sha256": "7eab96f4ee5f7a0f8ec6c86eda5b42f18ad27032da60d88c2bb0c8a43bb670f2",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/action-replay-mk-i-v1.50.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "action-replay-mk-ii-v2.05.rom",
+      "sha1": "f6601de8888f005072bf562b9f533bbcaf1b0074",
+      "sha256": "f0db57a465c733e1815663824073671463377b629688eeebe7842ea28952882b",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/action-replay-mk-ii-v2.05.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "action-replay-mk-ii-v2.12.rom",
+      "sha1": "3194a07a0a82d8b5f2b6aefa3ca581d68ba8762b",
+      "sha256": "93a27969683af93ab4d61b0720650ec2ed54ef8a241df932bb60276cf25e726b",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/action-replay-mk-ii-v2.12.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "action-replay-mk-ii-v2.14.rom",
+      "sha1": "255d6df63a4eab0a838eb1a16a267b0959dff634",
+      "sha256": "8905a7604d95ff655551d24b750908e9f9506f87d9bf63205bb1090674ce1eb2",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/action-replay-mk-ii-v2.14.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "action-replay-mk-iii-v3.09.rom",
+      "sha1": "0ff3170abbf0ca64c9dd93d6ec0c7a01b5436824",
+      "sha256": "dc9e155c1676c3248c3d2cb0302fc9155bd63e2d1f088021bbdd009e9f591a4f",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/expansion/action-replay-mk-iii-v3.09.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "action-replay-mk-iii-v3.17.rom",
+      "sha1": "5d4987c2e3ffea8b1b02e31430ef190f2db76542",
+      "sha256": "5f00cd5a0139c39fedd49784b694d90d02d8992df9f989139d014890fd800029",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/expansion/action-replay-mk-iii-v3.17.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "action-replay-1200.rom",
+      "sha1": "0f6ab8342810094ac0642f62ba42f78bc0b07e6a",
+      "sha256": "9afdc2ef13959636b69bafde8bdeefb4e14a0b2e622a089dab8c084243945413",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/expansion/action-replay-1200.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "action-cartridge-super-iv-pro-rom-v4.3.rom",
+      "sha1": "633a6e65a93580b8ddb0be9c9a64d4a17d4b4801",
+      "sha256": "7427447b7d699bbfc226217d7cc89d9a3f5f56e814890796b5988e39069f1452",
+      "size": 170368,
+      "repo_path": "bios/Commodore/Amiga/expansion/action-cartridge-super-iv-pro-rom-v4.3.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "x-power-professional-500-v1.2.rom",
+      "sha1": "a2977a1c41a8ca7d4af4a168726da542179d5963",
+      "sha256": "16f782d63b99012a40746b2afb17d30fb4dbd080581ff5b2f4ed1561c75497b1",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/x-power-professional-500-v1.2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "x-power-professional-500-v1.3.rom",
+      "sha1": "84650266465d18597fd71dee00775930b7e450ee",
+      "sha256": "591656344633c4515068ed0537545c97f66b226be4c6194facedffb1af1f23e3",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/x-power-professional-500-v1.3.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "nordic-power-v1.5.rom",
+      "sha1": "c56ced25506a5aab3fa138134fc9e5ae0f9d3709",
+      "sha256": "894cb875e8c51b9f5d5a2b8f118aaf8fc2f7ca1ec226b53e04c9f92b16c92a87",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/nordic-power-v1.5.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "nordic-power-v2.0.rom",
+      "sha1": "0aec68f725470c896b699ff46623dec5c777466e",
+      "sha256": "1bcd54bb5339cdcd360199ea2d08d4abc947dee5b0b3824b9d062a8e77884adf",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/nordic-power-v2.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "nordic-power-v3.0.rom",
+      "sha1": "59c91d1fa8f118f90bdba05a9ae788d77a6cc7c9",
+      "sha256": "46c95c907ef1aafc619f3a4df68b5a327a28335518785b33a3adf99e7711eec8",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/nordic-power-v3.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "nordic-power-v3.2.rom",
+      "sha1": "d8c3f5af5f109c615f6acb3868fe6c06580041b5",
+      "sha256": "f7da8ecf190cd4a3e74cf4a162a797d09c87c6a48f10ecdbd2089831cf3f8454",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/nordic-power-v3.2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "pro-access-v2.17.rom",
+      "sha1": "6a5c0d9969a624dc1b437aec5dbcd4c72ce9064a",
+      "sha256": "dfefded38b65aee30501fd7b2ee11acca3c0a8ed8e5c5b385a9fb06fd8c442bf",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/pro-access-v2.17.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "draco-boot-rom-v1.3.rom",
+      "sha1": "821513240120755460c8a0684793ec183f744d74",
+      "sha256": "d23769d9836c116f9c476ffab07da9a679b1b50cac097260bcb56d3f81586b76",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/draco-boot-rom-v1.3.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "draco-boot-rom-v1.5.rom",
+      "sha1": "4d383adb85c681a3b625dcda7a229a176af4d161",
+      "sha256": "3ae6830094b85e0e2479da24141979385769ac829d99a831432678936d0fc1fb",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/draco-boot-rom-v1.5.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "blizzard-1230-i-ii.rom",
+      "sha1": "d2f0bfe56e84e9f22dc1158330702fd7d59584ee",
+      "sha256": "e67c7004470b2c6c419e4dfd822f9aa03c4d1df6ee858319e102adfe59bb5670",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/blizzard-1230-i-ii.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "blizzard-1230-iii.rom",
+      "sha1": "3a4c55f3daf62084d947e418137db019f13efc7d",
+      "sha256": "e6315cf5d658e5670ce86ee4b0497b488a951d09be7028303b4c5ddc657412b6",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/blizzard-1230-iii.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "blizzard-1230-iv.rom",
+      "sha1": "4d3e7fd0a1a4c3aee17c5de3cbe1af03447aff92",
+      "sha256": "010419474afec6cc502f12a2954b26c154b68fbb90383229d0dc108b74cc1e7c",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/blizzard-1230-iv.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "blizzard-1240-1260.rom",
+      "sha1": "f69aca4bb13e338904676f0c8616f8db074c313d",
+      "sha256": "d583d6c378a58344d133763066c353e44b4dd00b234409a89d6ba2e238a6ef2a",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/blizzard-1240-1260.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "blizzard-2060-v7.25.rom",
+      "sha1": "a39a6d232cb9a81b5f3694d3688737825ad581bc",
+      "sha256": "48328410e0cfff5e2b5d923969a9f3dc801fc48d76ab1d416928b15c3a0a94b8",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/blizzard-2060-v7.25.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "blizzard-2060-v8.2.rom",
+      "sha1": "003577b84e1f2e593add6c9ffd65a7b42abaa933",
+      "sha256": "ea0f30367739a1dd2570998263b1e31f6e4f3f45b138fe725783cd0d28c60cc8",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/blizzard-2060-v8.2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "blizzard-2060-v8.5.rom",
+      "sha1": "e043c1aa3bb06e06d4dabff30a8c6317abfef2bb",
+      "sha256": "7857c68397cc54970ccf42eb1b8679548cc36a26e2209717fd61db9ff792e69e",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/blizzard-2060-v8.5.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "blizzard-scsi-kit-iii.rom",
+      "sha1": "1411c24872f7cb8decbe4744f0b8d12a1aaaad44",
+      "sha256": "d2ff49d902a479ab387f848e3bfb2c27ca277f5ebf1533175a9dfb1a0f249b29",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/blizzard-scsi-kit-iii.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "blizzard-scsi-kit-iv.rom",
+      "sha1": "efe17ca588c44a7f0f8c62be20f23278cfe06727",
+      "sha256": "8db02ac6ad52c9cd5ffde1243af1df051eb0d3ad3ffca6d63c4322881f30b036",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/blizzard-scsi-kit-iv.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "warp-engine.rom",
+      "sha1": "6e6c95ffe8448391d36c5b68c9065cb0702a7d27",
+      "sha256": "c8582ec5706d66e24d842f64bfae2e0adbac9912626501e38b76674ad0d543f8",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/warp-engine.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "tekmagic2060.rom",
+      "sha1": "f65b60d14300c50f2ed17cf44dcfdef916697bc9",
+      "sha256": "cceded70ee50cb4a6f1c891ce0539815691d6a976611899d1755c0d0178976fb",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/tekmagic2060.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "tekmagic2040.rom",
+      "sha1": "ea2089345e2602cfc715b2fc50a392ddd751823a",
+      "sha256": "0f9861469404cdbf5fd025f3041ed917e90da59909f3f1937584404a97467324",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/tekmagic2040.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "zeus-040.rom",
+      "sha1": "9a91cf456816067a943c18f1bd30effe482d4aaf",
+      "sha256": "03757d13f305b184cbb7d19a854e82cf43929e4661eaa10cc43d71b88ff21abc",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/zeus-040.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "csa-magnum-040.rom",
+      "sha1": "4c1859ba7ea2cedbf5251bedfbb76e6c0617300e",
+      "sha256": "b1bc9301f816d8f7eeb5bec0cd88f43536f2de62ccdd0967fb2073cb7cbb49ed",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/csa-magnum-040.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "csa-twelve-gauge.rom",
+      "sha1": "c1f29093491339cddc81f9940f0965dfa3a193f2",
+      "sha256": "778bcb79f0fd0b88f661956595cf5fdaeecfea01b84e22f4fdeee51f6d372083",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/csa-twelve-gauge.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "hardital-tqm.rom",
+      "sha1": "24fa6ab85ca64ae643851a85a473ff0c5a48f272",
+      "sha256": "1cc7b32214ef172b13b7dfdd8f9b875dabe77477e02aa3f81ddf8c5c5fbf7940",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/hardital-tqm.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "macrosystem-falcon-040-no-scsi.rom",
+      "sha1": "2015685faadfbaf68b19b07e5f4e888f738b99d7",
+      "sha256": "85b17e1d45bded2a08e85e72dda079cd544376260cdf93dfdd8cf9c7af0e83b6",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/macrosystem-falcon-040-no-scsi.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "gvp-a1230-turboplus-series-ii-v5.0.rom",
+      "sha1": "b7648daf52d0732d897548f329ebf624101474d5",
+      "sha256": "9ed22532cbd041bb307c7f88ac75cfbd7ff0cfb6c8af03148cdb6ebb533a2112",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/gvp-a1230-turboplus-series-ii-v5.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "gvp-a1230-turboplus.rom",
+      "sha1": "258c6ee75d8dfee57871c5be79a83fa3ca53a1a9",
+      "sha256": "f8a4540a7c4ee0fba9521f02e75d361ba90ec1165f66a29e59c9c28f3e786293",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/gvp-a1230-turboplus.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "harms-3000-professional.rom",
+      "sha1": "0a3ded8820a24238d3e43baf7163226c861e2d88",
+      "sha256": "9b5ad7e6fcbd8e438d0cbdbd6ce940e7d8ae2c151a0ec47cf77427c66d257bf6",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/harms-3000-professional.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2620-a2630-07.rom",
+      "sha1": "41f518cb41c1dc1fcc63638320676af54969010c",
+      "sha256": "07dfcd87ef0880327763a49807de816e7b030b5b23de2363b4a3534510034b14",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2620-a2630-07.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2620-a2630-06.rom",
+      "sha1": "2d6a5c681040f98d7e63ad0890da9e832b5c704d",
+      "sha256": "ed495e8e479de551eec6eb184481a10d2cb361541fbb08c2e57461975cef2e9d",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2620-a2630-06.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2620-a2630-04.rom",
+      "sha1": "93cbd77542843f6d8234c271ab86030406a1ae0a",
+      "sha256": "bb59e3fe70ed21fb1fff17d578e70cc8eaf2f01af6dfb6086477959849e90484",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2620-a2630-04.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2620-a2630-03.rom",
+      "sha1": "a6e2eec1c31a88d8da4828345f8f50fea9151374",
+      "sha256": "f6f7325d756d86c5161609d96f052998c9f971869be47359ac2f789d044616e4",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2620-a2630-03.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2620-a2630-02.rom",
+      "sha1": "c9a8d8249a301da8fadf2b45fc62ecffb7242267",
+      "sha256": "c2aac40c6c61d9e5b8c99ba1bfa1c342de614eba332f0052a287cf1bd81b938b",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2620-a2630-02.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2620-a2630-01.rom",
+      "sha1": "4c82e3ba2d2dd1d382f01098c26681b8ff62f36d",
+      "sha256": "7d5507c9b2c327764c0a53dac531f27f4179b9f7e0bef04d3b4fbd4932963eb4",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2620-a2630-01.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "dkb-1230-1240-cobra.rom",
+      "sha1": "f0431d02ac0f83d345db18c023f0cefb33d17217",
+      "sha256": "c9e75bb4eecad5f917900ed2d37ce3c2192831b21b2c890d7a55c6eb0ce193d4",
+      "size": 1460,
+      "repo_path": "bios/Commodore/Amiga/expansion/dkb-1230-1240-cobra.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "dkb-1230-1240-cobra-plus-ferret-v1.23.rom",
+      "sha1": "b62a68efb9378d740be174521ad07d2ea461a313",
+      "sha256": "a2f119bc6019c0dda5df3edd0ac8058ed98011afc6d57a1439644ff7e6ed3fff",
+      "size": 12060,
+      "repo_path": "bios/Commodore/Amiga/expansion/dkb-1230-1240-cobra-plus-ferret-v1.23.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "fusion-forty.rom",
+      "sha1": "15674dac90b6d8dbdda3a175997184c2a423d733",
+      "sha256": "7d24dc0263c70dffea10aeed7c22f5ae0013f803c71c816b0cd1a3d3a508e92f",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/fusion-forty.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "apollo-1240-1260.rom",
+      "sha1": "1c3b4851c5a221e3a7ca24fcc1df4a5b9f2343ad",
+      "sha256": "aafbe11260a2bdb134a7edb6df8c9d60633946a0b14e8c4b188fff9e4b97ce9f",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/apollo-1240-1260.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "gvp-a3001-series-i.rom",
+      "sha1": "424cf3dacc9da7940ba7444669dd169144ae87ee",
+      "sha256": "d513d5de10e29dcf398541398d5388353aeb1d50ca0ef4f8cc791313960e43cf",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/gvp-a3001-series-i.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "kupke-golem-030.rom",
+      "sha1": "574ec567cc67e06f91dcecb98c2043995fe2a09f",
+      "sha256": "ac0d237536f74d7ca89ff1c01cf8475e5943c4d8228c7404e3ba0b8f63812114",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/kupke-golem-030.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "dkb-wildfire-v1.1.rom",
+      "sha1": "cdfe2d96e44d4f8d3833a5e8b6c832fdc7b341a9",
+      "sha256": "4ba37a4bbb7fcdcd6fff8126c240f7df40fb55c62da399e5a293356a65616565",
+      "size": 18352,
+      "repo_path": "bios/Commodore/Amiga/expansion/dkb-wildfire-v1.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "m-tec-e-matrix-530.rom",
+      "sha1": "5aaf118f61fc30831435b87c8bdab6a459b4ee22",
+      "sha256": "39a11b90d7c762d0a897b79c9780427905bcd16485f4238757f20b05650b221f",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/m-tec-e-matrix-530.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "typhoon-mk2.rom",
+      "sha1": "f62bab24eaa91a1607d838af7b5fef4d05c58edc",
+      "sha256": "63530c3a6db829e39751c199b51caee6e5ab56627cabb2190a06c70ffdbc1171",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/typhoon-mk2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "sx32-pro.rom",
+      "sha1": "84a5088076917549adf33b168a869adb9e5a6fac",
+      "sha256": "7afebc4145f1a2708b21a0e78acf0844596d87d2aba3fd19911afeab94943703",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/sx32-pro.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "ivs-vector-4.14.rom",
+      "sha1": "4414673ca52f78a0ae656824fd08b54fa1de237c",
+      "sha256": "57a4da70085492ebae6b66a7409506ce545fef84dedb0f3df154ecfc38e2384e",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/ivs-vector-4.14.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "quikpak-4060-xp-v2.1.rom",
+      "sha1": "902dd0ba56c2afd0bb425bf5264fbc6290ad2c4e",
+      "sha256": "4f5b4bd32bc497ef880ebe22c8159c612e5690ff5bc1f129a0776b983468cc33",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/quikpak-4060-xp-v2.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "cyberstorm-mk-i-68060-support.rom",
+      "sha1": "8f4bdda010338a4851e4a2fbb4aa6d6e202fe98e",
+      "sha256": "062481b561984e2b552455899117b91e63c5df4f22d79391f241c9bd2bffa686",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/cyberstorm-mk-i-68060-support.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "cyberstorm-mk-i-cyberscsi-module.rom",
+      "sha1": "8e95bc8da06050fcb596b5b4c8cf91021ff4aeb3",
+      "sha256": "42bc4c720ea4847e5e782ca5a6dea4780c4fddc0874bfe1535fb77de0bf608bd",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/cyberstorm-mk-i-cyberscsi-module.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2090a.rom",
+      "sha1": "77ce90914be5a3bf6f26b343062b5bd8c63c3754",
+      "sha256": "6c28431518259500ca61b33c1ccbffee479db360124cc3bacab7a7d2283272cf",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2090a.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2090a-combitec-turbo.rom",
+      "sha1": "b2aac2cfbb0a5e13969cc64b747a7f3c71c33932",
+      "sha256": "76504e68e5cd769f2acaf07257d2b9eccf14b666603b36e93f84a45ae659afd5",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2090a-combitec-turbo.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2090b-combitec.rom",
+      "sha1": "3e99c413665826a6647e9c7a9354a0c2908f4593",
+      "sha256": "9b84333f81f684a2d7dfa66327c3c079697809dead6ebf56641bf159b67945a2",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2090b-combitec.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2090b-combitec-turbo.rom",
+      "sha1": "497da06beacbda16bbb600543ade47b91453e6d4",
+      "sha256": "5d5ef7abe70df596d20a7f3b6c9728f24ff540eff416469b41eb55e456820ccd",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2090b-combitec-turbo.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2090b-macrosystem.rom",
+      "sha1": "0f16f5b0482ab3aaba8679456a9d050d57c42682",
+      "sha256": "2417dad01b814742639920ff38419d2ad6da68e2d5b71cc42b1a68fcdde707a5",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2090b-macrosystem.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a590-a2091-v4.4.rom",
+      "sha1": "0e4190ed156b65cf57aba1e78513355cf5e0b366",
+      "sha256": "205d51c5cfd95c08c3fad79d781a6c88b59667a736321d205f1734e008f4aa19",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a590-a2091-v4.4.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a590-a2091-v4.6.rom",
+      "sha1": "a029a4de56e5539d0ee00588c2634f1329f06269",
+      "sha256": "e95f8222858c3c1347fc20afff59b2dd4193daa5f927e48701e4a344b8216270",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a590-a2091-v4.6.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a590-a2091-v5.92.rom",
+      "sha1": "f8bd7c20f2d0e7a5f344228c94bc8841cbf8e042",
+      "sha256": "0ef6059b6594e4873806ef94e3b8b18b625cc50bc8b53b52b858f348c469d592",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a590-a2091-v5.92.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a590-a2091-v6.0.rom",
+      "sha1": "5e03bc618c862abe7bf79723b4eef4d21859a0f2",
+      "sha256": "6fe8af5334cd1907966b76ee4546c7f92dea52b120a8c8ac0731a187e4eff324",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a590-a2091-v6.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a590-a2091-v6.1.rom",
+      "sha1": "f56061ab3776828194d89729802ee7ae1de9df90",
+      "sha256": "34126cffaf84d9ba154d7f8ce7f5d81236aa291bbcddef9d7c04a90da58d411b",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a590-a2091-v6.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a590-a2091-v6.6.rom",
+      "sha1": "739bb828e874f0649360f59d26b5ed3fbc99bb66",
+      "sha256": "fc8877aa778906d08d5915dc213de1f29be543a98ad25ad30d0d69e410861e70",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a590-a2091-v6.6.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a590-a2091-v7.0.rom",
+      "sha1": "e50f01baf28998928554786372a82c333c91276e",
+      "sha256": "39e88e7acc9e19806ba61817d750a22679dc10ab9beadaded08287247d2ae721",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a590-a2091-v7.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a590-a2091-guru-rom-v6.14.rom",
+      "sha1": "6da21b6f5e8f8837d64507cd8a4d5cdcac4f426b",
+      "sha256": "212b7093ef1f0394c58645b17d950669c7a863426056be9557dafc2e781538c1",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a590-a2091-guru-rom-v6.14.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a4091-v40.4.rom",
+      "sha1": "18985b7ec95239da21a242a4fc42f13496434534",
+      "sha256": "f83c275ff2e47885aadf57898378e8a7bebdbb0f0dfcd4e14f67c58aee03cff7",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a4091-v40.4.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a4091-v40.9.rom",
+      "sha1": "a411d5726801dc443d41428f382ae3d56f44ef27",
+      "sha256": "c3615682c8132bc048fb0c2b1ef7833c0c25073cc3fa5f62cc32e68c325769d8",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a4091-v40.9.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a4091-v40.13.rom",
+      "sha1": "3ce66919f6fd67974923a12d91b730f1ffb4a7ba",
+      "sha256": "e635cc7a737d672e67c03f8b58527e59704a5cfe87be1fbca6aef01ad552fccd",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a4091-v40.13.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "supradrive-amab6.rom",
+      "sha1": "2f220f99f4c61a81915f04cc8464d8d2a15c65bc",
+      "sha256": "2cec5a00ffc2f44b0634dc2d6e002566e9ceb9fa02e617297578394177da2809",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/supradrive-amab6.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "supradrive-amab5.rom",
+      "sha1": "a52290fb56873c55667c608e8fe330eddefa1669",
+      "sha256": "2c7f286d376072723a628d63b09a4094cf3e68f478f3662d6215bf828f44e5bf",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/supradrive-amab5.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "supradrive-amab4.rom",
+      "sha1": "c0acbfc86641a6c1024870cc519f8c4cbdfe8c64",
+      "sha256": "f36cd88fdf3e39d9e507140e40894167f558997e8ac4d2f8ef0d79968a2b10c4",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/supradrive-amab4.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "supradrive-amab3.rom",
+      "sha1": "02fe79eeef423098ec6add8cb92f849fc64bcd41",
+      "sha256": "3feeba7ce007f0086b074efbf91581642cf52ca5708c148200dfdfe952f97854",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/supradrive-amab3.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "supradrive-amab2.rom",
+      "sha1": "8e5e8ea9a203c3ad6dd35e57b1b01f389b31edda",
+      "sha256": "21cd07a8224c3f4410816fc535d80acbc57f85ab10e7c6b4fd9a481ed32248a0",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/supradrive-amab2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "supradrive-2000dma-44-25b.rom",
+      "sha1": "9faa3201d09e57bfb0e95b454fff3b90df219105",
+      "sha256": "ae86d7b23ae41eabe9e4405371a5f266794b7edb10e6763c2d502d10d43fe854",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/supradrive-2000dma-44-25b.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "fastlane.rom",
+      "sha1": "2644e7cbba5cc54e880b4b4249fd1dd12eb4a3bc",
+      "sha256": "224c8e34f50b893a263401eed29248700eb6cf05c61aa1550d111c2b6aeafe38",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/fastlane.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "oktagon-2008.rom",
+      "sha1": "56c441fa37d193393081b2e8ceae823bc7e97e49",
+      "sha256": "0465569d793d73b8efc098a8957c211f87a4a2853109b6d71f1d40ea33fe6a75",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/oktagon-2008.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "dkb-rapidfire-spitfire-v1.31.rom",
+      "sha1": "a66f8ef6901e0e41f8b72bba12165788a452cf01",
+      "sha256": "f319fc21c315b95ed7298b3da824f82ac274671b838fad8d73af11350e843ad7",
+      "size": 11284,
+      "repo_path": "bios/Commodore/Amiga/expansion/dkb-rapidfire-spitfire-v1.31.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "preferred-technologies-nexus.rom",
+      "sha1": "a3bd0202e14aa5b649d3ce88229759506500dbc2",
+      "sha256": "d0b20864bdf169cd0e01754eb676628ad0b509e2c935f5b1fa6733830bb10512",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/preferred-technologies-nexus.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "icd-adscsi-2000-v1.6-icddisk-v1.0.rom",
+      "sha1": "1e05f284d59a1e5d4e4de44e6f075175625cd6c0",
+      "sha256": "ab6318dc30a311100f07ae61ebf0d58ba731f889c43bab61c28badb7fc459df3",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/icd-adscsi-2000-v1.6-icddisk-v1.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "icd-adscsi-2000-v2.01-icddisk-v32.1.rom",
+      "sha1": "f6bd052006d504494efd48dae6a58d7b774c9eef",
+      "sha256": "c36d836745d0609b1a11c4c5431b025cc519a3c81a3b51d153dde686d0f97914",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/icd-adscsi-2000-v2.01-icddisk-v32.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "icd-adscsi-2000-v2.1-icddisk-v33.0.rom",
+      "sha1": "f8ab84b04853404f840085ce5fe992e35dc443da",
+      "sha256": "cccad393659496622943b72a73faac719d29d07e0b9bf251830363cceb8ac48f",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/icd-adscsi-2000-v2.1-icddisk-v33.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "icd-adscsi-2000-v2.2-icddisk-v34.0.rom",
+      "sha1": "482fab24df39446ba8662c7e67f11854895a46d9",
+      "sha256": "44bb3075c1bbd5fe0abd96bd52830d1bb67686fd3685a8f1ce7d6fe672e36556",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/icd-adscsi-2000-v2.2-icddisk-v34.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "archos-add-500.rom",
+      "sha1": "9ed96fc0d6381dc33192b0afdfae4b74576c3a69",
+      "sha256": "35751744a692635f434afb131b46715e2a6e5f5271ecdc6d50bdc8f9d1099d7e",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/archos-add-500.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "protar-a500hd.rom",
+      "sha1": "2b800cde79fd559eebd5e432d711af3d0b8ea7e9",
+      "sha256": "21118886fa395da79cfc767b71d77fc6a27d40784f9b0407f796bea090f565a2",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/protar-a500hd.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "m-tec-at500-v1.33w.rom",
+      "sha1": "8bb1093ad592e7df99c48f83b9f842b2b1a6e618",
+      "sha256": "e6fc54a7146672c11dcad6551b924e9afc08824e033d02e88479dd8ca13880d2",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/m-tec-at500-v1.33w.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "adide-40-44-v33.rom",
+      "sha1": "c91dd3b53f1986bd94fba150e753c2da4dee78e7",
+      "sha256": "8549c8dc117616639f3a23563f1cd48aacb2ef5037617965713b7141704d5dd3",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/adide-40-44-v33.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "adide-40-44-v34.rom",
+      "sha1": "abdbc01daa0b3aaee4401ad7e65525a96bfa2b27",
+      "sha256": "973f37003a65aeeb0f3429e392eaf7f82ad99a5f85331773bb23a4f641e11c82",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/adide-40-44-v34.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "vector-falcon-8000-v7.1.rom",
+      "sha1": "248935abf4d74036efdafdbb7817e232fc13e0fa",
+      "sha256": "e066d1b6ce5f0636a9a712e60a4fa4b34552f6ec0d33fefa1d4258c14f8f35e1",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/vector-falcon-8000-v7.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "vector-falcon-8000-v7.6.rom",
+      "sha1": "8a7e617fed566bb8b33f640905d9b946cee6d4bf",
+      "sha256": "dce4021fdac533c5d821f0b7db5239d2621a61af78fb951b0465978aa8d2fdcb",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/vector-falcon-8000-v7.6.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "kommos-a500-a2000-v1.8.rom",
+      "sha1": "291310f125455f2d8e114bcde104ca4c9db51747",
+      "sha256": "a5003fcefdaf13889e11ebb92130da62638f03407ce3384db496a16b82a008ba",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/kommos-a500-a2000-v1.8.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "kommos-a500-a2000-v1.7.rom",
+      "sha1": "8205ad6e08dbf5a69ba17956b5237ffe768de5a4",
+      "sha256": "f17b2456f485b0c10780e47d2e310ad8acedf935319b57a7281ea444933f498d",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/kommos-a500-a2000-v1.7.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "kupke-golem-v3.9.rom",
+      "sha1": "03b615c92befa474a37303cadc3e830d3c0d9a9f",
+      "sha256": "9905477f26b1e25f6b069a50b65cb9a5fae74e5ec0e80198aea10854e0c63d06",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/kupke-golem-v3.9.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "gvp-series-i-v1.0.rom",
+      "sha1": "b9a3377e2d9b516328693c6319ffb65b40ae3618",
+      "sha256": "3f7a194f2c2c92c97dbf9a0b164a40a82be621e27695a0e12ceb00b836ee7074",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/gvp-series-i-v1.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "gvp-series-i-v3.7.rom",
+      "sha1": "d73964220bd963643101d00f5fe94c6058fe7578",
+      "sha256": "4ef1c059f01ba827ad4ae00e5d970f165c7ebe4a861f61a719f64a7828a3a8ac",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/gvp-series-i-v3.7.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "gvp-series-i-ii-v3.15.rom",
+      "sha1": "77098a9e35acaef211a546f0c564cdacf52836c4",
+      "sha256": "128240013c7af5906cc4b36ab00a0aec5a0dc91e846721e5028e81efbec8fecb",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/gvp-series-i-ii-v3.15.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "gvp-series-i-ii-v3.7.rom",
+      "sha1": "abcc0b52a99dba6fc2eb842863c7c805b7f4d770",
+      "sha256": "d9ca2848f2aa8ec9e58b0c2ffa685423dad51997ea658257a0638eb220f82f17",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/gvp-series-i-ii-v3.7.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "gvp-series-ii-v4.13.rom",
+      "sha1": "85c050ba894ced53359fd7d6730250e74c4b66bf",
+      "sha256": "881e81215c2ee53e156bc0e3a574c2a022920b9ce5a077e8048a85a1328a2c09",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/gvp-series-ii-v4.13.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "gvp-series-ii-v4.15.rom",
+      "sha1": "bf10c12cc72dd040549ea17c24947633e3773297",
+      "sha256": "d8a4e310dcacad1c0554e7108bc20e17b8e469d909ed104b34cd0521486c995e",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/gvp-series-ii-v4.15.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "gvp-series-ii-guru-rom.rom",
+      "sha1": "7f1335eaf5b7ce73c5231173261da5aae7249645",
+      "sha256": "ea9d7a5ec85f38e6141bf428e11c98b9b648b2c2c95cf0662b3239bd4c605dd2",
+      "size": 32624,
+      "repo_path": "bios/Commodore/Amiga/expansion/gvp-series-ii-guru-rom.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "alfapower-v6.10.rom",
+      "sha1": "c7275eda547d66645c4eb7a03b5cef37a498365a",
+      "sha256": "a750ef90a8f16516617cf5bf7e8c67a3e5ccde5933d0873a925722c3ae087bd5",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/alfapower-v6.10.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "alfapower-v8.2.rom",
+      "sha1": "f7d3f6bf83ef13f9438bf0d3790d2f69c26dcabe",
+      "sha256": "eadacb09316404aca9b49c54415366717947b824d5eec8346bf1085ce25673b5",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/alfapower-v8.2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "alfapower-v8.3.rom",
+      "sha1": "defea015596fce3211e8439723046a315a7726dc",
+      "sha256": "1a4d17782378392a34a15ce4836dbced28e8c85961aa03674e0cbe81bb16049c",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/alfapower-v8.3.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "masoboshi-mc-702-v2.201.rom",
+      "sha1": "3897e46a66d5833f849b8e8130acb3cb319a2fa0",
+      "sha256": "91ec93351d2d0d754cd0459c5ffec363a8e3aafa175eba140e98fe91ae4b342c",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/masoboshi-mc-702-v2.201.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "roctec-rochard-rh800c-v1.rom",
+      "sha1": "bcafa14de80576cbe3e0c6381ca90379e078a8bd",
+      "sha256": "9ba81afc48ebf62f7afbf9a5a8ecc02a3a0a0fc82e2ba49313132ac331a42b9d",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/roctec-rochard-rh800c-v1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "roctec-rochard-rh800c-v2.rom",
+      "sha1": "acdb8bc764493f659da4c1e83005ceebced73dbc",
+      "sha256": "de2ed53fc264389ab669fa3ecdf0affb15f573df922e439575020a60160ae4ac",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/roctec-rochard-rh800c-v2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "apollo-500-2000.rom",
+      "sha1": "24b4ee4c129c7a93f83ad57066afd80c4179f39c",
+      "sha256": "489d01e1333ef4611aee2ed3d913423c145a6b053d0cfb069fa01fe0ca8391b9",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/apollo-500-2000.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "multi-evolution-500-2000-v2.2.rom",
+      "sha1": "367ad3a37d1c9d61e92915d3b8121402372b6aa1",
+      "sha256": "e85c5e5564ef1214e4cc787e6f5355b0222a44350e7467d300d9f9f3d0306e71",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/multi-evolution-500-2000-v2.2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "multi-evolution-500-2000-v3.0.rom",
+      "sha1": "f9e38c4bf5c6499d486946ba7b7636b80845265b",
+      "sha256": "a1d3fa4af475a58d762e80659abc07754ef4ecfdd56d57b2804b5b9287e195cb",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/multi-evolution-500-2000-v3.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "multi-evolution-500-2000-v3.4.rom",
+      "sha1": "036bd049b661996b1b4ab62116bfaf73b12a2202",
+      "sha256": "d961376842ae932fa643b952fba294dd6c30a7362958325a2f270a1c61640a99",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/multi-evolution-500-2000-v3.4.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "kupke-golem-v4.2.rom",
+      "sha1": "f83dae5549f9b73552d5c6e041da4c6c995a7f47",
+      "sha256": "60d26deea1ae989108acb1b600ef3496ec4b9b6a9fee4921dfd9d0027b2f699a",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/kupke-golem-v4.2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "phoenix-board-scsi-vj.rom",
+      "sha1": "b20d50b831ec9823fa732fc6522ecc6aae36ec33",
+      "sha256": "251677c1b35db15e9335dbcfb7b96419ac0871502deb7cde918198ec74fc099a",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/phoenix-board-scsi-vj.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "ivs-grandslam-trumpcard-pro-v4.9.rom",
+      "sha1": "29500b47289e84ac575e3c7d82199b45605d8fc9",
+      "sha256": "40aa137c02ed46d91e39b38af227953fca6f00d032666a87b5ecc426bd5fcbfd",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/ivs-grandslam-trumpcard-pro-v4.9.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "ivs-trumpcard-v4.9.rom",
+      "sha1": "9d69a53460529d6613b64723b0c8dfa580274048",
+      "sha256": "0bfbc016555edd2a1cd79360c2b5e90ba9c0ea71e1320ab705a88c926354de19",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/ivs-trumpcard-v4.9.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "ivs-trumpcard-v3.1.rom",
+      "sha1": "03e6c1b1f3300c944cc176eab3082e91e75d5e62",
+      "sha256": "83089f97c727abdc38771e5647ac7854d8bc6fc3cdc46a62dec280139662947a",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/ivs-trumpcard-v3.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "ivs-trumpcard-v1.5.rom",
+      "sha1": "bf510c231c2134d7ed4b4158ba4acf14a34824d2",
+      "sha256": "0898f1725eb40190d62c1e2c64a5ef21de3d4b06c0da631f926758869f7c1098",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/ivs-trumpcard-v1.5.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "expansion-systems-dataflyerplus-v1.5.rom",
+      "sha1": "54b73354b359269159a809090bdb67df8ac22aa9",
+      "sha256": "1552dc0cc0115677cadeb9f5ca8da2c7a8ecdbdb0fbd53c58492d521ed6f305a",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/expansion-systems-dataflyerplus-v1.5.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "expansion-systems-dataflyerplus-v1.7.rom",
+      "sha1": "b817672c1beb86c6840aa4bdf46408351ed103f4",
+      "sha256": "4801dd777971f7118433f6e0ac50b92b5bc34df21a89071fe4ba70fc41b587f8",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/expansion-systems-dataflyerplus-v1.7.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "expansion-systems-dataflyerplus-v2.0.rom",
+      "sha1": "31237f26399a9de40a48871fffa1bd91c881fde7",
+      "sha256": "4ba723b6c64491974d1ff05f844be798e13a71f00fc7cc15a102c3cc84d4dd50",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/expansion-systems-dataflyerplus-v2.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "expansion-systems-dataflyerplus-v2.1.rom",
+      "sha1": "20275716dc7eb00e5dc53680b5c8a90a7c00e390",
+      "sha256": "7397c0bf2ffa858ea430203531821ad09a21f6f345c3965fecf1c0358130d669",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/expansion-systems-dataflyerplus-v2.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "microbotics-hardframe-v1.5.rom",
+      "sha1": "c5a4f4975216c1b1e08760d00bd579efea226354",
+      "sha256": "67394ef1bfa5c515ff6bbf7157e0f19da3007b53c5873720676463fabd99941c",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/microbotics-hardframe-v1.5.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "microbotics-hardframe-v1.8.rom",
+      "sha1": "3e25af59e6bb0d69d925f07b200b1b0e45e57d33",
+      "sha256": "066946b5471b9937026dd3e3b6b21c00cf055c7db58d18e1bf1e4d58ffac7a34",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/microbotics-hardframe-v1.8.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "microbotics-hardframe-v1.9.rom",
+      "sha1": "c34cb0efa0ebdd719d604d38625a160d9e2ca95d",
+      "sha256": "42de0501f2dea93014fdd8ca89c262339ca68e69862ea724e6cf20ec92f97ac4",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/microbotics-hardframe-v1.9.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "mainhattan-data-a-team-v1.8.rom",
+      "sha1": "007e5c614048f5986d14011d23a414355e0a2259",
+      "sha256": "b78f53aa7c0d4375e993221e9aa150bc00f08af0f99a609c87f2c928ab9da025",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/mainhattan-data-a-team-v1.8.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "m-tec-at500-megabody-v1.33.rom",
+      "sha1": "124f9d1019f1b28516f33f4e2bf03ca02f9ad772",
+      "sha256": "c56c5077ebc700df0e7f1c6fc5221d3d2c8b2fd1922c9cafa463e2206c6f66e9",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/m-tec-at500-megabody-v1.33.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "comspec-sa-series-v34.805.rom",
+      "sha1": "048b8232fe54252bb81e0d0683c9e92d880f3cbf",
+      "sha256": "69fef0ecb0318524791c84f6d9099edabda549f788c63b304abe16fa64bbec2d",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/comspec-sa-series-v34.805.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "california-access-malibu-v1.0.rom",
+      "sha1": "a7c4b709494f403442b8ec11090dc1d018098ebc",
+      "sha256": "bcb9ffbcca1393ea9f2565769b8444acb4daa28290a625574034ac60981fe1a6",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/california-access-malibu-v1.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "ashcom-design-addhard-v2.0.rom",
+      "sha1": "9ebabbebc1e5ce9ed8e43870dd810524770ba6b4",
+      "sha256": "78e77f952e3395b595d0991ac11da574fde1f771d9d4bfc1c71538789a54a11d",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/ashcom-design-addhard-v2.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "spirit-technology-inmate.rom",
+      "sha1": "fa7199d2ea343b014b0f6eb6992d2e9540fce61b",
+      "sha256": "bd38715b55bbc54dd683309036bca2a6edc1b0bf71a025f5259118148ec67194",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/spirit-technology-inmate.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "vortex-system-2000.rom",
+      "sha1": "ee87f26cf858b63ad6bff74b802cea0397281fad",
+      "sha256": "7c9b78249d69765055950f3b20807280a5cc063b57ca2f23167ce4b1ff460c50",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/vortex-system-2000.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "kupke-golem-hd3000-v1.4.rom",
+      "sha1": "33ba9d1e27e9c210a27ee6d3855d3feb1649ddc2",
+      "sha256": "6bc53b74054e6aca1b264f3acd64ada0d0f8244a96957269fd78ab2fb2aa05f8",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/kupke-golem-hd3000-v1.4.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "evesham-micros-reference.rom",
+      "sha1": "2b170b402f60d28c344fc4637e99915f92e0e8f1",
+      "sha256": "b719aedb3627b835636b1442519c863930fcb5bbf97c85d26a6b15b12b8dbde1",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/evesham-micros-reference.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "profex-electronics-hd-3300.rom",
+      "sha1": "c6c1e465c05e4794ee76c9e294def44d1c7560a1",
+      "sha256": "5dcd2aba976693eb5722ebd7dbe3da7c7d97f453eb5afdc734045592c251015e",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/profex-electronics-hd-3300.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "elsat-mega-ram-hd.rom",
+      "sha1": "c39d6202ccb65f1763d1835e19d5b63d28f1b6a3",
+      "sha256": "76d2a76a3303d512e7741e5e2fdbc6f8333d64b2740f1ee8a3b556e6e5e9e361",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/elsat-mega-ram-hd.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "xetec-fasttrak.rom",
+      "sha1": "8d682bc172bd2d354ba2db5c9f6745a48937782c",
+      "sha256": "16694693f3653423615760dfd346502b20e6e26c3a3322f483c5549eb87ff241",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/xetec-fasttrak.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "c-ltd-kronos.rom",
+      "sha1": "7113add04c782ed7a56a74ba3378d55c5605eaf6",
+      "sha256": "ab99ebaa493e89a6b2d13706ecfc78505eb0156d05a49056890fab993f90e179",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/c-ltd-kronos.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "accessx-500-v2.1.rom",
+      "sha1": "1a710b94cc1bd217b0c310af4b0f6d0a1125b05a",
+      "sha256": "274cda9b3c508dd40f7540f5c897024ead80988cde87da3e1a492e25dc31a8b8",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/accessx-500-v2.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "accessx-2000-v2.1.rom",
+      "sha1": "09da8da31231025642f761dac2af7f4984db4c31",
+      "sha256": "73914317b7387e0e03f7f8ade713053e0f654040e8cfca46914a7d61aef5be99",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/accessx-2000-v2.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "accessx-500-2000-v2.1-descrambled.rom",
+      "sha1": "15c8c15f3700e867d1dbe2eecbb7c7cd245555fa",
+      "sha256": "f25f52164bc4f73159c358d1b9285e27971d51c10ff9dcff5ccbeb6d150661cd",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/accessx-500-2000-v2.1-descrambled.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "pacific-peripherals-overdrive-v1.5.rom",
+      "sha1": "075b50cb166e00ac4016ef7f02532e86e73b7711",
+      "sha256": "9475f0b1137166025b14c8e6698002feca9b3802a20dc39a365764bb44021eb5",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/pacific-peripherals-overdrive-v1.5.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "pacific-peripherals-overdrive-v2.0.rom",
+      "sha1": "dff761c2429d0d262151d83112746f833b8d36f0",
+      "sha256": "5976f0210d1806e680554e586277745db384e8669c1c40218d4862966ceebeea",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/pacific-peripherals-overdrive-v2.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "archos-overdrive-hd-v5.0.rom",
+      "sha1": "90014e97700333a7931b382fe672b6e44b7b8acc",
+      "sha256": "a479773a77ea706bf1d585f4e874e2896ebec8c8006bfc659f0a7872e439a0bd",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/archos-overdrive-hd-v5.0.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "trumpcard-500at-v1.1.rom",
+      "sha1": "bc1cd85f1601169132a2a8d62ee38666520d5cf1",
+      "sha256": "3da7dd5ec5ac2c055a400dfea4629b5f9ec8781f3d3f0630098e38377b6b58f6",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/trumpcard-500at-v1.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "trumpcard-500at-v1.2.rom",
+      "sha1": "ff41889e641114e55ec1f784d79216cee9a74a40",
+      "sha256": "91c18224491515754a348857b14d16d2a624ac8b4316dcffe050a8aae5fd961e",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/trumpcard-500at-v1.2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "trifecta-v4.31.rom",
+      "sha1": "681b8a673775dd0c8f13b6418852a51ef3a29da3",
+      "sha256": "00385fec4a551876d2b37af07b7f461495778bfaba0d9a313b30acb818eec7aa",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/trifecta-v4.31.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "mastercard-v2.3.rom",
+      "sha1": "eea5e9abb3ffb4eddf09825c7e8de75d0d08c01f",
+      "sha256": "d599bafcfd287b927fc4a32eab295dd3c3fbeba5663159183deab5e81a777b57",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/mastercard-v2.3.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "hardital-dotto.rom",
+      "sha1": "62822cb90b095efa455496ead5b2274077d86375",
+      "sha256": "ecafe1e2e62645e5644d57e1f0be13101b580c1320b07c3506dfedb413c994f4",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/hardital-dotto.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "alf-2.rom",
+      "sha1": "3df4667cd34363677896da659499476913bc6746",
+      "sha256": "dfcf57c024296d5e97b8125eb84ea73ebd5a82fb560dd7c28d6810670fe62293",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/alf-2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "mast-fireball.rom",
+      "sha1": "6360955398b0681223ade9ac6ee313645375fce3",
+      "sha256": "1eab248ff58a11a74178f9f70028a123efb612b10559758e54f7456bb792b483",
+      "size": 8192,
+      "repo_path": "bios/Commodore/Amiga/expansion/mast-fireball.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "hardital-synthesis-v48.5.rom",
+      "sha1": "1e88663444d191eb268ac86a0f9fc99f3e91b9dc",
+      "sha256": "51c7f80f539150ffb82d2acc0607f4a8277a6acf82a29194d36908fce6880d01",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/hardital-synthesis-v48.5.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "hardital-synthesis-v53.1.rom",
+      "sha1": "0eb1cb383133f0707cb57944c516f236bad4d4f6",
+      "sha256": "d5c2d84082eebc84c9827fd7c9ec4d8061202c338f2c65946852f239b5d5167c",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/hardital-synthesis-v53.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "combitec-hd20a-hd40a.rom",
+      "sha1": "7c365adb3496c4795e94a166d834254a6112d91c",
+      "sha256": "222e4b8a3710e0aa37f9a36146710a099e49e58affc7da36c9671e30bc17bfef",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/combitec-hd20a-hd40a.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "buddha-v103.17.rom",
+      "sha1": "ec17a58962c373a2892090ec9b1722d2c326d631",
+      "sha256": "d093f63747fbe64b5ed4e05ecb2cde31a067c5c89f5b8f80288194a25b440209",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/buddha-v103.17.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "picasso_iv_flash.rom",
+      "sha1": "cafafb916f16b9f3ec9b49aa4b40eb4eeceb5b5b",
+      "sha256": "e72e2fe5aa4887269b3605066d1ce74a915ccf6cb07a3d8a5066af87b08261c4",
+      "size": 131072,
+      "repo_path": "bios/Commodore/Amiga/expansion/picasso_iv_flash.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a1060-bios-2.05.rom",
+      "sha1": "a3bab2add955535364d6e5fc5bedac05e35fad0b",
+      "sha256": "d49e12852f7cb9332e74d5c3340720a7aef84157b411a454e075e9dad5e23b17",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a1060-bios-2.05.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a1060-bios-2.06.rom",
+      "sha1": "eba74ad1000a5351a5d99179bf75f831ac2d2402",
+      "sha256": "dbd98d87653b9a4b38a6d59aad24989ca15f7cb16911f8cde404a214bbd47366",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a1060-bios-2.06.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2088-bios-3.4.rom",
+      "sha1": "d1defdee1c0eae4107d81e2674915cd29d352f2e",
+      "sha256": "a2e89ece12c1df7248f3e7ecb3d3d17b857d44d2dd1716c44a3d9645f19d0e2d",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2088-bios-3.4.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2088-bios-3.5.rom",
+      "sha1": "45a2b7db6e86fe805cfef63c65c331a716a6e9e8",
+      "sha256": "5badad452afb33e2ed8937f1377450aefd372bb56035f563fadbb89e65e08032",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2088-bios-3.5.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2088-bios-3.6.1.rom",
+      "sha1": "c1b707a8a62907d75299f10aa60efd1f44514b26",
+      "sha256": "e3c08697d0a15fca9d2be04eb72485c67b421a8eb0a251a44201756d9ab19e52",
+      "size": 16384,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2088-bios-3.6.1.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2088t-bios-4.0-09-11-89.rom",
+      "sha1": "54f7a99e2e5dbc3043f52001a4abb3b68e4832fd",
+      "sha256": "8b7849e4282eebc0c890932dc1714950da730d611f6c292925d5b02bc0f2a4f9",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2088t-bios-4.0-09-11-89.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2088t-bios-4.0-14-11-89.rom",
+      "sha1": "7929a92f25203ceaad302ddd31db55cd49b3020a",
+      "sha256": "3b8b22518d7606e9cdab4cf76af70e6da4f950c3554d2ed2b19be25de02a17d9",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2088t-bios-4.0-14-11-89.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2088t-bios-4.10.rom",
+      "sha1": "08e3fbb728dfc51424083313373ea7a5a2c3e965",
+      "sha256": "abfc918dc5f1e45d605dc30e7c7851be3a1c4750911c431b1dd87088a406b253",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2088t-bios-4.10.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2088t-bios-4.11.rom",
+      "sha1": "2a3f56bce395f20346eb68c4ade7153e3e69f892",
+      "sha256": "5bf1434c260ba77dedb5dc3a1412c2cd913e24143f7837241acc7ae40b77b7db",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2088t-bios-4.11.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2088t-bios-4.12.rom",
+      "sha1": "582fa25473aa2679efcd41a5bdadf1a26a87a75f",
+      "sha256": "4280788d3e02e378d451a0bf06ce1d1311461aaa7e10b44e547e3a1eb240ef5a",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2088t-bios-4.12.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2286-bios-3.6.rom",
+      "sha1": "9f5d6c78656d2fe736608644771b6d3031083264",
+      "sha256": "a7486dcf83448c310d486dc8ef74717795800a769cd05ecedeeb6687ea4ff0de",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2286-bios-3.6.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2286-bios-4.2.rom",
+      "sha1": "74fdf0f8325fbc412b98c72df5095804831c46b5",
+      "sha256": "716f9c72ae1ae32992c042d71ac1aa8333b30be8945e3b735ff5d17bba00c451",
+      "size": 32768,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2286-bios-4.2.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2386sx-bios-1.00.rom",
+      "sha1": "2e127e9c8581d30c2e46404b21608e3ce935fa27",
+      "sha256": "05f7aeaa73eb2d5893e6720f3861f96e123ec34b6a18e9625aea1c6a0d15418a",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2386sx-bios-1.00.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "a2386sx-bios-1.00.03.rom",
+      "sha1": "78659be45755f8bd004a101b658ae75df142ddc9",
+      "sha256": "7ad083b9fe6f0a16befc1b7b80506d0d253673e7a40a83658bb0cf54bc24dd95",
+      "size": 65536,
+      "repo_path": "bios/Commodore/Amiga/expansion/a2386sx-bios-1.00.03.rom",
       "cores": [
         "amiberry"
       ],
@@ -17555,14 +20076,13 @@
       "category": "game_data"
     },
     {
-      "dest": "CM32LN_CONTROL.ROM",
+      "dest": "system/CM32LN_CONTROL.ROM",
       "sha1": "dc1c5b1b90a4646d00f7daf3679733c7badc7077",
       "sha256": "9f32c5a670421961c3d46a9cdcff0a1d333b886a72c0c260c9607645a3abf773",
       "size": 65536,
       "repo_path": "bios/DOS/DOSBox/CM32LN_CONTROL.ROM",
       "cores": [
-        "dosbox-pure-unleashed",
-        "dosbox_pure"
+        "dosbox-pure-unleashed"
       ],
       "systems": [
         "dos"
@@ -18178,6 +20698,19 @@
       "repo_path": "bios/IBM/PC/ibm-vga.bin",
       "cores": [
         "dosbox-staging"
+      ],
+      "systems": [
+        "dos"
+      ]
+    },
+    {
+      "dest": "CM32LN_CONTROL.ROM",
+      "sha1": "dc1c5b1b90a4646d00f7daf3679733c7badc7077",
+      "sha256": "9f32c5a670421961c3d46a9cdcff0a1d333b886a72c0c260c9607645a3abf773",
+      "size": 65536,
+      "repo_path": "bios/DOS/DOSBox/CM32LN_CONTROL.ROM",
+      "cores": [
+        "dosbox_pure"
       ],
       "systems": [
         "dos"
@@ -32669,13 +35202,7 @@
       "size": 32768,
       "repo_path": "bios/Enterprise/64-128/exdos14isdos10uk.rom",
       "cores": [
-        "ep128emu",
         "ep128emu_core"
-      ],
-      "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
       ]
     },
     {
@@ -32685,13 +35212,7 @@
       "size": 32768,
       "repo_path": "bios/Enterprise/64-128/epdos16f.rom",
       "cores": [
-        "ep128emu",
         "ep128emu_core"
-      ],
-      "systems": [
-        "amstrad-cpc",
-        "sinclair-zx-spectrum",
-        "videoton-tvc"
       ]
     },
     {
@@ -53231,6 +55752,20 @@
       "sha256": "1cab240e62d93be9368c9754606de1cdc8076264ab36d1b6d142a7a57342f788",
       "size": 925914,
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/blueshrk.zip",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "systems": [
+        "arcade"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "mame2003-plus/artwork/dotron.zip",
+      "sha1": "c6d6579ffe0f709ff7861747ba17cb2931dce1b5",
+      "sha256": "b2114d0d7b35f55bbcbb4dc7878140a91b1d8b8a92d8cbfe1886671da1e51596",
+      "size": 2010009,
+      "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/dotron.zip",
       "cores": [
         "mame2003_plus"
       ],
@@ -86585,6 +89120,146 @@
       ]
     },
     {
+      "dest": "Xenia-Edge/xefu/dash/fonts/Xbox Book.xtf",
+      "sha1": "4cc817432b81b7bd3b9f782b678bd69e3d4d5715",
+      "sha256": "dea8f97d13668de5bca3ccf8a318d727ce29422c2da898cbc4e9acfd13f05cbe",
+      "size": 14440996,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/dash/fonts/Xbox Book.xtf",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/dash/fonts/xbox.xtf",
+      "sha1": "df0cadf1a4a080992ef0459c413a841bc3906cc7",
+      "sha256": "531f7ad06cac7177ffd679ec797046d68b2af46204e9b9562d381380690ee108",
+      "size": 19124720,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/dash/fonts/xbox.xtf",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefu.xex",
+      "sha1": "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64",
+      "sha256": "9203180a53f79abfc44df2f5f9132d0b9d1c4df3d6c1ebbaf0382191d4eed535",
+      "size": 552960,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefu1_1.xex",
+      "sha1": "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc",
+      "sha256": "149a8e4bf19e089f14bf020b0bad8e6cea70f198e8a21ac6535e5b46d481fa1c",
+      "size": 643072,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu1_1.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefu2.xex",
+      "sha1": "e6b4df2610a0c230addf0ea5e5319ce015ef2c09",
+      "sha256": "51f13581929f2bd75f5e5a89daf40e1a883d027b8a5ce9f2deab93b560d81db9",
+      "size": 647168,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu2.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefu3.xex",
+      "sha1": "932822d302bb96d3459e4ff9a5ee482f80a17e17",
+      "sha256": "0d2c1fe35d98e37f94d24eec4d84296d098e80d762279b8b704669f549897bb0",
+      "size": 651264,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu3.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefu5.xex",
+      "sha1": "cad2569c3cd08edf82991237c628abe54fc7bb95",
+      "sha256": "020c211f47fc41015e566d19050e6a28f9dd91f55f1e1086345fc3dd0cd7d4ad",
+      "size": 638976,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu5.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefu6.xex",
+      "sha1": "7154a87eca9ce2e353048e27aa7adebbbe19ece2",
+      "sha256": "c87b42dfbd0af7d3c8ed76af6a5de870ea7cf211121a2b96b6004442d3b8407e",
+      "size": 651264,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu6.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefu7.xex",
+      "sha1": "d46cb956a02912f7d21cf305f9183fa4fde13d34",
+      "sha256": "a9307b3b4d82c7b1be1c2f56eba1fea265d6e7fdb1864b15bf731f0f334d0867",
+      "size": 663552,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu7.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefu7b.xex",
+      "sha1": "36b47c464df424ad01eb6bf43a7d2bc172ad04f9",
+      "sha256": "38dd42b52b2e55aae1838878754344fd4c92c22f2860fedbae34e7a469aa4e65",
+      "size": 659456,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu7b.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefutitle5.xex",
+      "sha1": "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40",
+      "sha256": "b8c522c0bd831e3b26d71a3bee449d2e4d01802900f13f798f6ddf72351071f2",
+      "size": 8192,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle5.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefutitle6.xex",
+      "sha1": "827e41c0e98ae9d4a9da2680968e2dd19786ccbe",
+      "sha256": "3cdfed905c0e0b56623b070265b9a03d2f7ef9da1b4bf1a66dad47fa8a8b3aef",
+      "size": 12288,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle6.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefutitle7.xex",
+      "sha1": "0249630d6986838ff61e5a47ef25a75eedf7953c",
+      "sha256": "59cbdfcce8369cf8574c9986d9306738653c025806517ec56620693e0ff85848",
+      "size": 12288,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle7.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
+      "dest": "Xenia-Edge/xefu/xefutitle7b.xex",
+      "sha1": "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7",
+      "sha256": "744522723509b4dd1ee14441863f449c5e049cec124b86e8a25a702ccebfa6b0",
+      "size": 12288,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle7b.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
       "dest": "d32.rom",
       "sha1": "f2dab125673e653995a83bf6b793e3390ec7f65a",
       "sha256": "fc0e900bfec6b52f0f80ba1e65a4712808d2a411b5b00496639ef1a2152351f1",
@@ -87317,7 +89992,6 @@
         "advmame-0.94",
         "advmame-1.4",
         "mame2003",
-        "mame2003_plus",
         "mame2009",
         "mame2010",
         "mame2015",
@@ -87336,7 +90010,6 @@
         "advmame-0.94",
         "advmame-1.4",
         "mame2003",
-        "mame2003_plus",
         "mame2009",
         "mame2010",
         "mame2015",
@@ -87355,7 +90028,6 @@
         "advmame-0.94",
         "advmame-1.4",
         "mame2003",
-        "mame2003_plus",
         "mame2009",
         "mame2010",
         "mame2015",
@@ -87378,7 +90050,6 @@
         "advmame-0.94",
         "advmame-1.4",
         "mame2003",
-        "mame2003_plus",
         "mame2009",
         "mame2010",
         "mame2015",
@@ -87464,7 +90135,6 @@
         "advmame-0.94",
         "advmame-1.4",
         "mame2003",
-        "mame2003_plus",
         "mame2009",
         "mame2010",
         "mame2015",
@@ -87474,6 +90144,45 @@
       "systems": [
         "3do",
         "philips-cdi"
+      ]
+    },
+    {
+      "dest": "coh1002v.zip",
+      "sha1": "5162fcac2fa5a92480a081b3397099ce4a3703c5",
+      "sha256": "9e4fb8208d357e7d0269628be6d2916d7031d248904ed9b6fb34a814432ae5f8",
+      "size": 126314,
+      "repo_path": "bios/Arcade/Arcade/coh1002v.zip",
+      "cores": [
+        "advancemame"
+      ],
+      "systems": [
+        "3do",
+        "apple-macintosh-ii",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "epoch-scv",
+        "philips-cdi"
+      ],
+      "alternatives": [
+        {
+          "sha1": "470da2042487c17fce84d8d10fc5af46b4594c9c",
+          "sha256": "c3c79b83ddcfbc3e98e87f4bc0f23876b51548181633bc4cd15bafa06bfa67ea",
+          "size": 126336,
+          "repo_path": "bios/Arcade/MAME/coh1002v.zip",
+          "cores": [
+            "mame"
+          ]
+        },
+        {
+          "sha1": "5162fcac2fa5a92480a081b3397099ce4a3703c5",
+          "sha256": "9e4fb8208d357e7d0269628be6d2916d7031d248904ed9b6fb34a814432ae5f8",
+          "size": 126314,
+          "repo_path": "bios/Arcade/Arcade/coh1002v.zip",
+          "cores": [
+            "mame2003_plus",
+            "mamearcade"
+          ]
+        }
       ]
     },
     {
@@ -88986,14 +91695,13 @@
       ]
     },
     {
-      "dest": "DOSBOX.SF2",
+      "dest": "system/DOSBOX.SF2",
       "sha1": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
       "sha256": "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe",
       "size": 32319396,
       "repo_path": "bios/Other/GeneralUser GS/GeneralUser-GS.sf2",
       "cores": [
-        "dosbox-pure-unleashed",
-        "dosbox_pure"
+        "dosbox-pure-unleashed"
       ],
       "systems": [
         "dos"
@@ -89026,6 +91734,19 @@
       ],
       "storage": "release",
       "release_asset": "easyrpg.soundfont"
+    },
+    {
+      "dest": "DOSBOX.SF2",
+      "sha1": "a00461dbea40093cb9ca1694de9c0ec7ca5650c1",
+      "sha256": "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe",
+      "size": 32319396,
+      "repo_path": "bios/Other/GeneralUser GS/GeneralUser-GS.sf2",
+      "cores": [
+        "dosbox_pure"
+      ],
+      "systems": [
+        "dos"
+      ]
     },
     {
       "dest": "SC-55-v1.00/sc55_rom1.bin",
@@ -89611,8 +92332,7 @@
       "repo_path": "bios/Sega/Dreamcast/dc_nvmem.bin",
       "cores": [
         "flycast",
-        "flycast2021",
-        "reicast"
+        "flycast2021"
       ],
       "systems": [
         "sega-dreamcast"
@@ -90869,6 +93589,17 @@
       "category": "game_data"
     },
     {
+      "dest": "jazz2/Source/Plus.j2d",
+      "sha1": "fcec91aa44cc235fd7df9f004b916f9557312e8d",
+      "sha256": "5f2bb3c87294529a07f0123dd605b81650ed6c30cd184d644a59cd790627bba2",
+      "size": 724127,
+      "repo_path": "bios/Epic MegaGames/Jazz Jackrabbit 2/jazz2/Source/Plus.j2d",
+      "cores": [
+        "jazz2-native"
+      ],
+      "category": "game_data"
+    },
+    {
       "dest": "jazz2/Source/prince.j2e",
       "sha1": "a05f07295b31f8cacb333917a074f1dc317246f1",
       "sha256": "8f014b5f41be83d96ed81a0af707c1a131b690cec7fb7a4e892e2be8a87fe97b",
@@ -91615,6 +94346,7 @@
           "size": 278470,
           "repo_path": "bios/Arcade/Arcade/coh1000c.zip",
           "cores": [
+            "mame2003_plus",
             "mamearcade"
           ]
         }
@@ -91636,6 +94368,7 @@
           "size": 137941,
           "repo_path": "bios/Arcade/Arcade/coh3002c.zip",
           "cores": [
+            "mame2003_plus",
             "mamearcade"
           ]
         }
@@ -91665,6 +94398,7 @@
           "size": 126274,
           "repo_path": "bios/Arcade/Arcade/coh1000t.zip",
           "cores": [
+            "mame2003_plus",
             "mamearcade"
           ]
         }
@@ -91694,6 +94428,7 @@
           "size": 126259,
           "repo_path": "bios/Arcade/Arcade/coh1000a.zip",
           "cores": [
+            "mame2003_plus",
             "mamearcade"
           ]
         }
@@ -91723,6 +94458,7 @@
           "size": 126147,
           "repo_path": "bios/Arcade/Arcade/coh1000w.zip",
           "cores": [
+            "mame2003_plus",
             "mamearcade"
           ]
         }
@@ -91752,35 +94488,7 @@
           "size": 126185,
           "repo_path": "bios/Arcade/Arcade/coh1001l.zip",
           "cores": [
-            "mamearcade"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "coh1002v.zip",
-      "sha1": "470da2042487c17fce84d8d10fc5af46b4594c9c",
-      "sha256": "c3c79b83ddcfbc3e98e87f4bc0f23876b51548181633bc4cd15bafa06bfa67ea",
-      "size": 126336,
-      "repo_path": "bios/Arcade/MAME/coh1002v.zip",
-      "cores": [
-        "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ],
-      "alternatives": [
-        {
-          "sha1": "5162fcac2fa5a92480a081b3397099ce4a3703c5",
-          "sha256": "9e4fb8208d357e7d0269628be6d2916d7031d248904ed9b6fb34a814432ae5f8",
-          "size": 126314,
-          "repo_path": "bios/Arcade/Arcade/coh1002v.zip",
-          "cores": [
+            "mame2003_plus",
             "mamearcade"
           ]
         }
@@ -91810,6 +94518,7 @@
           "size": 128626,
           "repo_path": "bios/Arcade/Arcade/coh1002e.zip",
           "cores": [
+            "mame2003_plus",
             "mamearcade"
           ]
         }
@@ -91839,6 +94548,7 @@
           "size": 138588,
           "repo_path": "bios/Arcade/Arcade/coh1002m.zip",
           "cores": [
+            "mame2003_plus",
             "mamearcade"
           ]
         }
@@ -104771,7 +107481,8 @@
       "size": 4700,
       "repo_path": "bios/Arcade/Arcade/model1io.zip",
       "cores": [
-        "mame"
+        "mame",
+        "mame2003_plus"
       ],
       "systems": [
         "3do",
@@ -104789,7 +107500,8 @@
       "size": 17058,
       "repo_path": "bios/Arcade/Arcade/model1io2.zip",
       "cores": [
-        "mame"
+        "mame",
+        "mame2003_plus"
       ],
       "systems": [
         "3do",
@@ -106261,7 +108973,8 @@
       "size": 9579,
       "repo_path": "bios/Arcade/Arcade/namcoc76.zip",
       "cores": [
-        "mame"
+        "mame",
+        "mame2003_plus"
       ],
       "systems": [
         "3do",
@@ -113438,8 +116151,7 @@
       "size": 8488679,
       "repo_path": "bios/Arcade/Arcade/sncwgltd.zip",
       "cores": [
-        "mame2003",
-        "mame2003_plus"
+        "mame2003"
       ]
     },
     {
@@ -118582,6 +121294,16 @@
       ]
     },
     {
+      "dest": "Xenia-Edge/xefu/xbox.xex",
+      "sha1": "1c577b7495d3d119f5a584b328e837901c537a28",
+      "sha256": "c73c48c7eec019d77ede18fa0b7ca8e012086662c2886f4dcbc98aa0dd57da0c",
+      "size": 135168,
+      "repo_path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xbox.xex",
+      "cores": [
+        "xenia-edge"
+      ]
+    },
+    {
       "dest": "adv071_u24.rom",
       "sha1": "2f3d67efd80c36533d0220324c254fbeea364aaa",
       "sha256": "fedd90bfc17e960a1f69525d3939bde4b5154cdf167061a8b5fb9946e69dd233",
@@ -119636,6 +122358,58 @@
       ]
     },
     {
+      "dest": "system/MT32_CONTROL.ROM",
+      "sha1": "5a5cb5a77d7d55ee69657c2f870416daed52dea7",
+      "sha256": "c0ea149eaadc48049572ec429e45f90ab1bb75f1ed07000c636fc0124b64da23",
+      "size": 65536,
+      "repo_path": "bios/Roland/mt32-roms/ctrl_mt32_1_04.rom",
+      "cores": [
+        "dosbox-pure-unleashed"
+      ],
+      "systems": [
+        "dos"
+      ]
+    },
+    {
+      "dest": "system/CM32L_CONTROL.ROM",
+      "sha1": "73683d585cd6948cc19547942ca0e14a0319456d",
+      "sha256": "c8aea5fb1b28183523601bbc5fd7e2f48397c1cb26f8687d240333c2190e83e2",
+      "size": 65536,
+      "repo_path": "bios/Roland/mt32-roms/ctrl_cm32l_1_00.rom",
+      "cores": [
+        "dosbox-pure-unleashed"
+      ],
+      "systems": [
+        "dos"
+      ]
+    },
+    {
+      "dest": "system/MT32_PCM.ROM",
+      "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
+      "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
+      "size": 524288,
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
+      "cores": [
+        "dosbox-pure-unleashed"
+      ],
+      "systems": [
+        "dos"
+      ]
+    },
+    {
+      "dest": "system/CM32L_PCM.ROM",
+      "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
+      "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
+      "size": 1048576,
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
+      "cores": [
+        "dosbox-pure-unleashed"
+      ],
+      "systems": [
+        "dos"
+      ]
+    },
+    {
       "dest": "fbalpha2012/hiscore.dat",
       "sha1": "7381472bf046126257e51a0124e4553282f020e5",
       "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
@@ -120650,6 +123424,32 @@
       ],
       "systems": [
         "nec-pc-88"
+      ]
+    },
+    {
+      "dest": "data/dc_boot.bin",
+      "sha1": "8951d1bb219ab2ff8583033d2119c899cc81f18c",
+      "sha256": "88d6a666495ad14ab5988d8cb730533cfc94ec2cfd53a7eeda14642ab0d4abf9",
+      "size": 2097152,
+      "repo_path": "bios/Sega/Dreamcast/dc_bios.bin",
+      "cores": [
+        "reicast"
+      ],
+      "systems": [
+        "sega-dreamcast"
+      ]
+    },
+    {
+      "dest": "data/dc_nvmem.bin",
+      "sha1": "72c65f2a11ee7b72b77b9945187b7a332632e14a",
+      "sha256": "15a9bc3aa59fa998c03bfe0b1cf6cb1958c1660e8e72b3d7195b653f44038407",
+      "size": 131072,
+      "repo_path": "bios/Sega/Dreamcast/dc_nvmem.bin",
+      "cores": [
+        "reicast"
+      ],
+      "systems": [
+        "sega-dreamcast"
       ]
     },
     {

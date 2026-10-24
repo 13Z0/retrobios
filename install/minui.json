@@ -6,7 +6,7 @@
   "platform": "minui",
   "display_name": "MinUI",
   "version": "1.0",
-  "generated": "2026-10-23T12:47:02Z",
+  "generated": "2026-10-24T00:06:47Z",
   "base_destination": "",
   "detect": [
     {
@@ -25,6 +25,7 @@
   "omitted_files": [],
   "core_names": {
     "mednafen_pce_fast": [
+      "beetle-pce-fast",
       "beetle_pce_fast",
       "pce_fast"
     ],

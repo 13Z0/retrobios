@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-23T15:57:31Z",
+  "generated_at": "2026-10-24T00:06:47Z",
   "total_files": 19910,
   "total_size": 16891869309,
   "bios_dir": "bios",
@@ -281828,6 +281828,9 @@
       ],
       "outro.lvl": [
         "6e1728edd9b634e04ecf72e59428eb783e1e545b"
+      ],
+      "nl10.bin": [
+        "bc2189547e47f6bfaaa115c31dc8a35c353a384e"
       ],
       "vice/C64/kernal-901227-01.bin": [
         "87cc04d61fc748b82df09856847bb5c2754a2033"

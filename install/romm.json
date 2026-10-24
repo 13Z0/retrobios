@@ -6,7 +6,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-23T12:47:02Z",
+  "generated": "2026-10-24T00:06:47Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -26,7 +26,7 @@
   "total_size": 872654387,
   "pack_files": 467,
   "pack_size": 872654387,
-  "total_omitted": 759,
+  "total_omitted": 772,
   "omitted_files": [
     {
       "dest": "32X_G_BIOS.BIN",
@@ -1956,6 +1956,96 @@
       ]
     },
     {
+      "dest": "coh1000a.zip",
+      "name": "coh1000a.zip",
+      "system": "zn1-acclaim",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "coh1000c.zip",
+      "name": "coh1000c.zip",
+      "system": "zn1-capcom",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "coh1000t.zip",
+      "name": "coh1000t.zip",
+      "system": "zn1-taito",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "coh1000w.zip",
+      "name": "coh1000w.zip",
+      "system": "atari-zn1",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "coh1001l.zip",
+      "name": "coh1001l.zip",
+      "system": "zn1-atlus",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "coh1002e.zip",
+      "name": "coh1002e.zip",
+      "system": "eighting-zn1",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "coh1002m.zip",
+      "name": "coh1002m.zip",
+      "system": "zn1-tecmo",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "coh1002v.zip",
+      "name": "coh1002v.zip",
+      "system": "zn1-video-system",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "coh3002c.zip",
+      "name": "coh3002c.zip",
+      "system": "zn2-capcom",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
       "dest": "cpzn1.zip",
       "name": "cpzn1.zip",
       "system": "zn1-capcom",
@@ -2224,7 +2314,7 @@
     {
       "dest": "ep128emu/roms/epdos16f.rom",
       "name": "epdos16f.rom",
-      "system": "",
+      "system": "enterprise-128",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2234,7 +2324,7 @@
     {
       "dest": "ep128emu/roms/exdos14isdos10uk.rom",
       "name": "exdos14isdos10uk.rom",
-      "system": "",
+      "system": "enterprise-128",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2244,7 +2334,7 @@
     {
       "dest": "ep128emu/roms/zx128.rom",
       "name": "zx128.rom",
-      "system": "",
+      "system": "zx-spectrum",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2254,7 +2344,7 @@
     {
       "dest": "ep128emu/roms/zx48.rom",
       "name": "zx48.rom",
-      "system": "",
+      "system": "zx-spectrum",
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
@@ -2918,6 +3008,17 @@
       "category": "game_data"
     },
     {
+      "dest": "mame2003-plus/artwork/dotron.zip",
+      "name": "dotron.zip",
+      "system": "arcade",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "category": "game_data"
+    },
+    {
       "dest": "mame2003-plus/artwork/frogs.zip",
       "name": "frogs.zip",
       "system": "arcade",
@@ -3092,6 +3193,26 @@
       ]
     },
     {
+      "dest": "model1io.zip",
+      "name": "model1io.zip",
+      "system": "sega-model2",
+      "required": false,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "model1io2.zip",
+      "name": "model1io2.zip",
+      "system": "sega-model2",
+      "required": false,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
       "dest": "msx.zip",
       "name": "msx.zip",
       "system": "msx",
@@ -3129,6 +3250,16 @@
       "reason": "no_platform_slug",
       "cores": [
         "fbneo"
+      ]
+    },
+    {
+      "dest": "namcoc76.zip",
+      "name": "namcoc76.zip",
+      "system": "namco-system11",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
       ]
     },
     {
@@ -8039,7 +8170,11 @@
     "amiberry": [
       "AMIBERRY"
     ],
+    "ares": [
+      "ares-sa"
+    ],
     "armsx2": [
+      "armsx2-sa",
       "armsx2_libretro"
     ],
     "azahar": [
@@ -8052,16 +8187,21 @@
       "mednafen_gba"
     ],
     "beetle_lynx": [
+      "beetle-lynx",
       "mednafen_lynx"
     ],
     "beetle_pce": [
-      "mednafen_pce"
+      "beetle-pce",
+      "mednafen_pce",
+      "pce"
     ],
     "beetle_pcfx": [
+      "beetle-pcfx",
       "mednafen_pcfx",
       "pcfx"
     ],
     "beetle_psx": [
+      "beetle-psx",
       "mednafen_psx",
       "mednafen_psx_hw"
     ],
@@ -8105,13 +8245,17 @@
       "desmume_2015"
     ],
     "dolphin": [
-      "dolphin-gui"
+      "dolphin-gui",
+      "dolphin-sa"
     ],
     "dosbox-x": [
       "dosboxx"
     ],
     "doublecherrygb": [
       "DoubleCherryGB"
+    ],
+    "drastic": [
+      "drastic-sa"
     ],
     "droidarcadia": [
       "com.amigan.droidarcadia"
@@ -8120,15 +8264,14 @@
       "dsperate-sa"
     ],
     "duckstation": [
-      "Duckstation"
+      "Duckstation",
+      "duckstation-sa"
     ],
     "ecwolf": [
       "ECWolf"
     ],
-    "ep128emu": [
-      "ep128emu_core"
-    ],
     "ep128emu_core": [
+      "ep128emu",
       "ep128emu-core"
     ],
     "fba2x": [
@@ -8159,6 +8302,7 @@
       "GBC.emu"
     ],
     "genesis_plus_gx": [
+      "genesis-plus-gx",
       "genesis_plus_gx_cart_special",
       "genesisplusgx",
       "genesisplusgx_ex",
@@ -8172,10 +8316,12 @@
       "genesisplusgxwide"
     ],
     "gzdoom": [
-      "GZDoom"
+      "GZDoom",
+      "gzdoom-sa"
     ],
     "hatari": [
-      "HATARISA"
+      "HATARISA",
+      "hatarisa"
     ],
     "higan_sfc_balanced": [
       "nside_sfc_balanced"
@@ -8221,7 +8367,8 @@
       "imame4all"
     ],
     "mame2003_plus": [
-      "mame078plus"
+      "mame078plus",
+      "mame2003-plus"
     ],
     "mame2010": [
       "mame0139"
@@ -8246,10 +8393,8 @@
       "MD-EMU",
       "MD.emu"
     ],
-    "mednafen_pce": [
-      "pce"
-    ],
     "mednafen_pce_fast": [
+      "beetle-pce-fast",
       "beetle_pce_fast",
       "pce_fast"
     ],
@@ -8263,7 +8408,11 @@
       "supafaust"
     ],
     "mednafen_supergrafx": [
+      "beetle-supergrafx",
       "beetle_supergrafx"
+    ],
+    "melonds": [
+      "melonds-sa"
     ],
     "melonds_ds": [
       "melondsds"
@@ -8285,6 +8434,7 @@
       "MSX.emu"
     ],
     "mupen64plus": [
+      "mupen64plus-sa",
       "mupen64plussa"
     ],
     "mupen64plus-ae": [
@@ -8344,6 +8494,7 @@
       "ca.parallel_launcher.ParallelLauncher"
     ],
     "parallel_n64": [
+      "parallel-n64",
       "parallel_n64_32b",
       "parallel_n64_debug"
     ],
@@ -8383,7 +8534,8 @@
       "play!"
     ],
     "ppsspp": [
-      "PPSSPPSDL"
+      "PPSSPPSDL",
+      "ppsspp-sa"
     ],
     "puae": [
       "uae"
@@ -8405,10 +8557,15 @@
       "Saturn.emu",
       "saturnemu"
     ],
-    "scummvm": [
-      "SCUMMVMSA"
+    "scummvm-standalone": [
+      "SCUMMVMSA",
+      "scummvm-sa"
+    ],
+    "skyemu": [
+      "skyemu-sa"
     ],
     "smsplus": [
+      "smsplus-gx",
       "smsplus_gx"
     ],
     "snes9x": [
@@ -8441,6 +8598,9 @@
     "uae4arm": [
       "uae4arm_32b"
     ],
+    "vba_next": [
+      "vba-next"
+    ],
     "vbam": [
       "vba-m"
     ],
@@ -8459,6 +8619,12 @@
     "x1-box": [
       "x1box"
     ],
+    "xemu": [
+      "xemu-sa"
+    ],
+    "xenia-edge": [
+      "xenia_edge"
+    ],
     "xm6pro68k": [
       "XM6PRO68K",
       "XM6PRO68K-WINDOWS",
@@ -8470,6 +8636,7 @@
     ],
     "yabasanshiro": [
       "yabasanshiro-2",
+      "yabasanshiro-sa",
       "yabasanshiroSA"
     ]
   },
@@ -8497,7 +8664,6 @@
       "clk",
       "cpcemu",
       "crocods",
-      "ep128emu",
       "ep128emu_core",
       "sugarbox2",
       "zesarux"
@@ -8654,7 +8820,8 @@
       "directxbox",
       "hakux",
       "x1-box",
-      "xemu"
+      "xemu",
+      "xenia-edge"
     ],
     "nec-pc-98": [
       "dosbox-x",
@@ -8669,7 +8836,6 @@
       "jgenesis",
       "magicengine",
       "mednafen",
-      "mednafen_pce",
       "mednafen_pce_fast",
       "mednafen_supergrafx",
       "mesence",
@@ -8764,7 +8930,6 @@
       "jgenesis",
       "linkboy",
       "mednafen",
-      "mednafen_gba",
       "mesence",
       "meteor",
       "mgba",
@@ -8912,7 +9077,8 @@
     ],
     "scummvm": [
       "scummvm",
-      "scummvm-sdl1"
+      "scummvm-sdl1",
+      "scummvm-standalone"
     ],
     "sega-game-gear": [
       "ares",
@@ -9012,7 +9178,6 @@
       "clk",
       "cspect",
       "eightyone",
-      "ep128emu",
       "ep128emu_core",
       "fbzx",
       "fuse",
@@ -9113,7 +9278,6 @@
       "ppsspp-1.5.4"
     ],
     "videoton-tvc": [
-      "ep128emu",
       "ep128emu_core"
     ],
     "wolfenstein-3d": [

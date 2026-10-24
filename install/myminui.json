@@ -6,7 +6,7 @@
   "platform": "myminui",
   "display_name": "MyMinUI",
   "version": "1.0",
-  "generated": "2026-10-23T12:47:02Z",
+  "generated": "2026-10-24T00:06:47Z",
   "base_destination": "",
   "detect": [
     {
@@ -17,10 +17,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 465,
-  "total_size": 1488912698,
-  "pack_files": 467,
-  "pack_size": 1488912698,
+  "total_files": 472,
+  "total_size": 1483125994,
+  "pack_files": 474,
+  "pack_size": 1483125994,
   "total_omitted": 4,
   "omitted_files": [
     {
@@ -74,9 +74,11 @@
       "fuse_libretro"
     ],
     "mame2003_plus": [
-      "mame078plus"
+      "mame078plus",
+      "mame2003-plus"
     ],
     "mednafen_pce_fast": [
+      "beetle-pce-fast",
       "beetle_pce_fast",
       "pce_fast"
     ],
@@ -375,10 +377,10 @@
     },
     {
       "dest": "Bios/MAME/mame2003-plus/hiscore.dat",
-      "sha1": "c086306096722da7f02f624e7efb447659aca1d3",
-      "sha256": "ed444310ec543bf42acaf48fcab956f30c4c97268f4145dc36e5ad2980f19823",
-      "size": 131878,
-      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.c0863060",
+      "sha1": "d41b1c32e9f5bee0cfca766a64f208dda081858b",
+      "sha256": "e69906f1807665119a7f3ff930618971b71a42621a062658b65f4bcbe3bca6f5",
+      "size": 131902,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.d41b1c32",
       "cores": [
         "mame2003_plus"
       ],
@@ -390,6 +392,17 @@
       "sha256": "1cab240e62d93be9368c9754606de1cdc8076264ab36d1b6d142a7a57342f788",
       "size": 925914,
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/blueshrk.zip",
+      "cores": [
+        "mame2003_plus"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Bios/MAME/mame2003-plus/artwork/dotron.zip",
+      "sha1": "c6d6579ffe0f709ff7861747ba17cb2931dce1b5",
+      "sha256": "b2114d0d7b35f55bbcbb4dc7878140a91b1d8b8a92d8cbfe1886671da1e51596",
+      "size": 2010009,
+      "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/dotron.zip",
       "cores": [
         "mame2003_plus"
       ],
@@ -1228,61 +1241,121 @@
       ]
     },
     {
-      "dest": "Bios/MAME/cpzn1.zip",
-      "sha1": "6515a4f2f3f5864c32346c2fecdc3595205f1d86",
-      "sha256": "e298fc9274145a5513ec1a6ad1451d28b4d5152859538ac7b5770015e312279b",
-      "size": 125571,
-      "repo_path": "bios/Arcade/Arcade/cpzn1.zip",
+      "dest": "Bios/MAME/coh1000c.zip",
+      "sha1": "9e156eee236b0077a50a2cda1ff0b874390ed8db",
+      "sha256": "8411e2b6e41326d2f4b6687b445155681a82246ad2746568e5026fcd7cf58466",
+      "size": 278470,
+      "repo_path": "bios/Arcade/Arcade/coh1000c.zip",
       "cores": [
         "mame2003_plus"
       ]
     },
     {
-      "dest": "Bios/MAME/cpzn2.zip",
-      "sha1": "b18e23b8908e3e920ce971b8be168fa8baf1b3f7",
-      "sha256": "861292e8c6c6925743cf2c7b6221784f38645d84faf175fa96a5f0ab3c7232f1",
-      "size": 137827,
-      "repo_path": "bios/Arcade/Arcade/cpzn2.zip",
+      "dest": "Bios/MAME/coh3002c.zip",
+      "sha1": "94d49033e2c45a2591331826559bc93b2bb0884f",
+      "sha256": "a85cdfb3d5c2d0ba2ee537776ba94ef9d69dc3a2f9d7217d6404fbb00563f666",
+      "size": 137941,
+      "repo_path": "bios/Arcade/Arcade/coh3002c.zip",
       "cores": [
         "mame2003_plus"
       ]
     },
     {
-      "dest": "Bios/MAME/taitofx1.zip",
-      "sha1": "2975c1ac34a18f6d262c5cc7dcc223f096742075",
-      "sha256": "cebf59c2c19851a29a93bea006333b60d39bc7bafbfc8d5dc5402ca4a3c136a5",
-      "size": 126160,
-      "repo_path": "bios/Arcade/Arcade/taitofx1.zip",
+      "dest": "Bios/MAME/coh1000t.zip",
+      "sha1": "c6d884d7b7ea46338efd116d6ddfa1392c624649",
+      "sha256": "d415464f70fdf2474fda692345729d77d2d35fe682cb8fbfc5999eb8c2765bee",
+      "size": 126274,
+      "repo_path": "bios/Arcade/Arcade/coh1000t.zip",
       "cores": [
         "mame2003_plus"
       ]
     },
     {
-      "dest": "Bios/MAME/tps.zip",
-      "sha1": "f18270ba6e747de86bc7bd4f0f2c9c6f35335871",
-      "sha256": "e123149f9a77d43b39811e15460b54453c18a92481985491f7cf16cf6ef86e0e",
-      "size": 138474,
-      "repo_path": "bios/Arcade/Arcade/tps.zip",
+      "dest": "Bios/MAME/coh1002m.zip",
+      "sha1": "197337577f55ab4c237c3d545d63082e73748c47",
+      "sha256": "ac3c371340786919a9a420a7d0e6355709c3c5af62383e5c9ba3f90231af4723",
+      "size": 138588,
+      "repo_path": "bios/Arcade/Arcade/coh1002m.zip",
       "cores": [
         "mame2003_plus"
       ]
     },
     {
-      "dest": "Bios/MAME/sncwgltd.zip",
-      "sha1": "9d0104d44d0d1cb9bbe801d21f2fddb834efa758",
-      "sha256": "edb76266cd0e13f014e8ede3f3f444152d244c4753cbec1f5df74faf043bb399",
-      "size": 8488679,
-      "repo_path": "bios/Arcade/Arcade/sncwgltd.zip",
+      "dest": "Bios/MAME/coh1002v.zip",
+      "sha1": "5162fcac2fa5a92480a081b3397099ce4a3703c5",
+      "sha256": "9e4fb8208d357e7d0269628be6d2916d7031d248904ed9b6fb34a814432ae5f8",
+      "size": 126314,
+      "repo_path": "bios/Arcade/Arcade/coh1002v.zip",
       "cores": [
         "mame2003_plus"
       ]
     },
     {
-      "dest": "Bios/MAME/acpsx.zip",
-      "sha1": "5426d52e17e0ff9195fabbb42f704342e556d08e",
-      "sha256": "10fc7b39f97943ef2afc8a464c7829dd5d6af698926aab7d4c8e80008ab1b83f",
-      "size": 126167,
-      "repo_path": "bios/Arcade/Arcade/acpsx.zip",
+      "dest": "Bios/MAME/coh1000a.zip",
+      "sha1": "c91f79c7ac73519c8b99c184b2fcbffae42fa324",
+      "sha256": "7f4a45107f6eb3fcfe7078f9f2b2e5bbce1d3eff0b0e1fba84da068a69bdac8f",
+      "size": 126259,
+      "repo_path": "bios/Arcade/Arcade/coh1000a.zip",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "Bios/MAME/coh1001l.zip",
+      "sha1": "ab30bd19261c208e2c44c35de6f68cd415fb80e9",
+      "sha256": "2d49c0d3039fcd1b5ead9a166b4bc07d5b9ad17287547fc1aa4492d6d7cada2d",
+      "size": 126185,
+      "repo_path": "bios/Arcade/Arcade/coh1001l.zip",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "Bios/MAME/coh1000w.zip",
+      "sha1": "13bf28e3528c385b642046c2e0f96f44b33df0f2",
+      "sha256": "5fae53908dcf09d5de4d0d5d6efd8f7315ea6f52cc224caba4cf888448202b73",
+      "size": 126147,
+      "repo_path": "bios/Arcade/Arcade/coh1000w.zip",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "Bios/MAME/coh1002e.zip",
+      "sha1": "1f15b3acc75031633387b372ea71e537f4f96220",
+      "sha256": "31d0823e4ac37f1e7c8a5d9e98e556b74001c8c34e92fcd6315af3b0852f1ff9",
+      "size": 128626,
+      "repo_path": "bios/Arcade/Arcade/coh1002e.zip",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "Bios/MAME/model1io.zip",
+      "sha1": "1587dcdbe3faf79d4dfa8c7248fc88698cac6ae8",
+      "sha256": "4d595b927d9c20de4064638327375d380ced62c42d3d91b658524662afd42185",
+      "size": 4700,
+      "repo_path": "bios/Arcade/Arcade/model1io.zip",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "Bios/MAME/model1io2.zip",
+      "sha1": "18666368c9ff86bf06ec9f7ff8641c0779a59244",
+      "sha256": "1bcb201866ae36a32c73e1413a36b65b5eb25da50ed2996e1381d666a1fb6121",
+      "size": 17058,
+      "repo_path": "bios/Arcade/Arcade/model1io2.zip",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "Bios/MAME/namcoc76.zip",
+      "sha1": "21d5d4b13286e39b6c91c6bf0bcf8fa376800dfb",
+      "sha256": "6791156b4602e06a2649ebe3216b6ede0cedb2e17ba35a3c99105f6e25819320",
+      "size": 9579,
+      "repo_path": "bios/Arcade/Arcade/namcoc76.zip",
       "cores": [
         "mame2003_plus"
       ]
