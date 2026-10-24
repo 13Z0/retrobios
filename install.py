@@ -11056,6 +11056,33 @@ def _browse_rows(folder: Path | None, zips: bool = False) -> tuple[list[TuiRow],
     return rows, ""
 
 
+# The folders of a system root that hold no one's files: A went into
+# /bin from /, the first name in order.
+_POSIX_ROOT_SYSTEM = frozenset((
+    "bin", "boot", "dev", "efi", "etc", "lib", "lib32", "lib64", "libx32", "lost+found",
+    "proc", "root", "run", "sbin", "snap", "srv", "sys", "tmp", "usr", "var",
+))
+# FILE_ATTRIBUTE_HIDDEN and FILE_ATTRIBUTE_SYSTEM: Explorer shows neither.
+_WINDOWS_HIDDEN = 0x2 | 0x4
+
+
+def _system_folder(path: Path, folder: Path) -> bool:
+    """A folder of the system, not one a person keeps files in: the
+    recycle bin and restore points of a Windows drive ($RECYCLE.BIN, System
+    Volume Information, hidden by Explorer), and /bin, /etc, /usr and the
+    like at the root of a Unix system."""
+    name = path.name
+    if name.startswith(("$", ".")) or name.casefold() == "system volume information":
+        return True
+    try:
+        attributes = getattr(os.stat(path, follow_symlinks=False), "st_file_attributes", 0)
+    except OSError:
+        attributes = 0
+    if attributes & _WINDOWS_HIDDEN:
+        return True
+    return folder == Path("/") and name in _POSIX_ROOT_SYSTEM
+
+
 def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = None) -> None:
     state.browse_dir = folder
     state.browse_rows, state.status = _browse_rows(folder, state.browse_for == "from")
@@ -11070,7 +11097,7 @@ def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = No
         focus = next((index for index, row in enumerate(state.browse_rows)
                       if row.action == "dir" and isinstance(row.value, Path)
                       and row.label == f"{row.value.name}/"
-                      and not row.value.name.startswith(".")), 0)
+                      and not _system_folder(row.value, folder)), 0)
         if not focus and not state.status:
             state.status = ("This is your home folder: no setup reads its BIOS files "
                             "here. Go back to type a path." if folder == state.home

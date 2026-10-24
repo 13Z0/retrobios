@@ -3843,5 +3843,52 @@ class TheFolderScreenSaysWhatItOffers(unittest.TestCase):
                 self.assertEqual(rows[state.focus["folder"]].action, "browse")
 
 
+class AFocusesNoSystemFolder(unittest.TestCase):
+    """At / A went into bin/, and at a drive root holding $RECYCLE.BIN into
+    the recycle bin, which Use this folder then took as the BIOS folder."""
+
+    def setUp(self):
+        self.home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.home, True)
+        self.state = install.TuiState(os_type="linux", home=self.home)
+        self.state.platform = "retroarch"
+        self.state.stack = ["folder", "browse"]
+
+    def focused(self) -> install.TuiRow:
+        return self.state.browse_rows[self.state.focus["browse"]]
+
+    def test_the_recycle_bin_and_restore_points_are_passed_over(self):
+        for name in ("$RECYCLE.BIN", "System Volume Information", "Games"):
+            (self.home / name).mkdir()
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            install._browse_to(self.state, self.home)
+        self.assertEqual(self.focused().label, "Games/")
+
+    def test_explorer_hidden_folders_are_passed_over(self):
+        for name in ("Boot", "Games"):
+            (self.home / name).mkdir()
+        real_stat = os.stat
+
+        def stat(path, *args, **kwargs):
+            result = real_stat(path, *args, **kwargs)
+            hidden = 0x2 | 0x4 if Path(path).name == "Boot" else 0
+            return types.SimpleNamespace(st_file_attributes=hidden, st_mode=result.st_mode)
+
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install.os, "stat", stat):
+            install._browse_to(self.state, self.home)
+        self.assertEqual(self.focused().label, "Games/")
+
+    def test_at_the_root_no_system_folder_is_focused(self):
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            install._browse_to(self.state, Path("/"))
+        row = self.focused()
+        if row.action == "dir":
+            self.assertNotIn(row.value.name, install._POSIX_ROOT_SYSTEM)
+        names = {r.value.name for r in self.state.browse_rows if r.action == "dir"}
+        if "bin" in names and names - install._POSIX_ROOT_SYSTEM - {""}:
+            self.assertEqual(row.action, "dir")
+
+
 if __name__ == "__main__":
     unittest.main()
