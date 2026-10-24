@@ -1969,7 +1969,8 @@ def _note_refused(path: Path, exc: OSError) -> None:
     retroarch.cfg was readable, and the run fell back to a folder it does
     not read.
     """
-    if not getattr(_SETUP_SEARCH, "active", False) or not isinstance(exc, PermissionError):
+    if (not getattr(_SETUP_SEARCH, "active", False) or getattr(_SETUP_SEARCH, "quiet", False)
+            or not isinstance(exc, PermissionError)):
         return
     refused = closed_folder(path) or (path, exc.strerror or str(exc))
     if refused in _DETECTION_REFUSED:
@@ -4082,8 +4083,15 @@ def _retroarch_config_for(bios_path: Path) -> tuple[Path, Path] | None:
     if found is not None or _CONFIGS_READ:
         return found
     _CONFIGS_READ.append(True)
-    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-        detect_platforms(_INVOCATION.os_type or detect_os())
+    # Silent, the unsearched event too: this run searched for no setup, and
+    # the event came after detect, the line it stands for never shown.
+    _SETUP_SEARCH.quiet = True
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()):
+            detect_platforms(_INVOCATION.os_type or detect_os())
+    finally:
+        _SETUP_SEARCH.quiet = False
     return _retroarch_config_at(bios_path)
 
 

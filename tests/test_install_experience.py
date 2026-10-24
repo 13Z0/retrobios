@@ -1019,5 +1019,35 @@ class AClosedFolderBehindALink(unittest.TestCase):
         self.assertEqual(why, os.strerror(errno.ELOOP))
 
 
+@unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                 "a folder without search permission is POSIX")
+class TheQuietConfigReadSaysNothing(unittest.TestCase):
+    """With --dest the run searches for no setup, and the configs read for
+    the save directory wrote an unsearched event after detect, for a line
+    the human output never showed."""
+
+    def test_no_event_and_no_line(self):
+        base = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, base, True)
+        closed = base / "home" / ".config" / "EmuDeck"
+        closed.mkdir(parents=True)
+        os.chmod(closed, 0o000)
+        self.addCleanup(os.chmod, closed, 0o755)
+        emitted = []
+        install._DETECTION_REFUSED.clear()
+        self.addCleanup(install._DETECTION_REFUSED.clear)
+        with mock.patch.dict(os.environ, {"HOME": str(base / "home"),
+                                          "XDG_CONFIG_HOME": str(base / "home" / ".config")}), \
+                mock.patch.object(install, "_CONFIGS_READ", []), \
+                mock.patch.object(install, "_RETROARCH_CONFIGS", {}), \
+                mock.patch.object(install.EVENTS, "emit",
+                                  lambda kind, **fields: emitted.append(kind)), \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            install._retroarch_config_for(base / "bios")
+        self.assertNotIn("unsearched", emitted)
+        self.assertEqual(err.getvalue(), "")
+        self.assertEqual(install._DETECTION_REFUSED, [])
+
+
 if __name__ == "__main__":
     unittest.main()
