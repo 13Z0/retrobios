@@ -5,14 +5,14 @@ source: "https://github.com/libretro/crawl-ref"
 upstream: "https://github.com/crawl/crawl"
 profiled_date: "2026-03-25"
 source_commit: "cc2530f377a3a5d686d4b6a360d88b01de0fbc59"
-upstream_commit: "8757df5d4397047058e25e456cac506db9c1442b"
+upstream_commit: "a5ed93406571b9682050cfc318b15b9f637d4e7e"
 core_version: "0.16-a0"
 display_name: "Dungeon Crawl Stone Soup"
 cores: [stonesoup]
 systems: []
 
 notes: |
-  Roguelike dungeon crawler. Fork frozen at DCSS 0.16-a0 (upstream now ~0.32).
+  Roguelike dungeon crawler. Fork frozen at DCSS 0.16-a0.
   Last libretro commit: Oct 2019. Marked experimental.
 
   Accepts .crawlrc config files as content (supported_extensions: crawlrc).
@@ -25,11 +25,11 @@ notes: |
   Data is NOT compiled into the binary.
 
   dat/ tree contents (532 files, 16 MB):
-  - dat/tiles/*.png (floor, wall, feat, player, main, gui, icons) (tiletex.cc:89-97)
-  - dat/DejaVuSans.ttf, dat/DejaVuSansMono.ttf (fontwrapper-ft.cc:79)
-  - dat/descript/*.txt, dat/database/*.txt (database.cc:72-140)
-  - dat/des/*.des (level generation) (maps.cc:1457)
-  - dat/dlua/*.lua, dat/clua/*.lua (maps.cc:1465)
+  - dat/tiles/*.png (floor, wall, feat, player, main, gui, icons) (crawl-ref/source/tiletex.cc:89-97)
+  - dat/DejaVuSans.ttf, dat/DejaVuSansMono.ttf (crawl-ref/source/fontwrapper-ft.cc:79)
+  - dat/descript/*.txt, dat/database/*.txt (crawl-ref/source/database.cc:72-140)
+  - dat/des/*.des (level generation) (crawl-ref/source/maps.cc:1457)
+  - dat/dlua/*.lua, dat/clua/*.lua (crawl-ref/source/maps.cc:1465)
   - dat/defaults/ (settings)
 
   Not on buildbot.libretro.com/assets/system/.
