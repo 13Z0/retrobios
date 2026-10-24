@@ -11974,7 +11974,10 @@ def _scan_lines(state: TuiState) -> list[str]:
                   for drive in scan["other_drives"]]
     if state.unreadable:
         count = len(state.unreadable)
-        lines.append(f"{_plural(count, 'file')} on your old card could not be read.")
+        # Named as it was given: "your old card" was said of a folder.
+        where = ", ".join(_last_name(folder) for folder in
+                          dict.fromkeys(event["folder"] for event in state.unreadable))
+        lines.append(f"{_plural(count, 'file')} in {where} could not be read.")
     return lines
 
 

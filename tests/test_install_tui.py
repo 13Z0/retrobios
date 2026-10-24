@@ -2535,7 +2535,8 @@ class AuditRoundThree(unittest.TestCase):
         text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
         self.assertIn("Read the first 200,000 files of E:\\.", text)
         self.assertIn("E:\\D is another drive: add it to copy from it too.", text)
-        self.assertIn("2 files on your old card could not be read.", text)
+        # The folder by its name: "your old card" was said of any folder.
+        self.assertIn("2 files in E:\\ could not be read.", text)
         rows = install.tui_rows(state)
         state.focus["plan"] = next(i for i, row in enumerate(rows) if row.action == "unreadable")
         press(state, "enter")
