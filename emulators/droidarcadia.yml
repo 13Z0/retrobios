@@ -7,8 +7,8 @@ version_source:
   url: "https://amigan.1emu.net/releases/"
   pattern: 'Download DroidArcadia ([0-9.]+) for Android'
 author: "James Jacobs (Amigan Software)"
-profiled_date: "2026-10-20"
-core_version: "4.74"
+profiled_date: "2026-10-24"
+core_version: "4.75"
 display_name: "Emerson Arcadia 2001 / Interton VC 4000 (DroidArcadia)"
 cores:
   - droidarcadia
@@ -26,8 +26,8 @@ notes: |
   by the manifest under MIME type application/octet-stream or application/zip,
   a zip yielding its first member only, and the read stops at 32768 bytes. This
   reading is taken from the author's own source archive DroidArcadia-src.rar
-  4.74, md5 1407628c01a2fe87e79e027dce2097f1, and confirmed against the
-  published DroidArcadia.apk, md5 ffa7a749c1c776c4b01ed145f2428531, signed
+  4.75, md5 831a22d93781e22b07e0995a0688d0a1, and confirmed against the
+  published DroidArcadia.apk, md5 9f6047977a7b2d0f91e51f886032f236, signed
   by the Amigan Software key with certificate sha256
   B4904B06F8BB0832BB90472F1655E776C4A859CEB72753C51CDDB5DD360086A5.
   ref: app/src/main/cpp/da.h:3-5, app/src/main/AndroidManifest.xml:21-37,
@@ -38,7 +38,7 @@ notes: |
   Elektor TV Games Computer basic and expanded, Emerson Arcadia 2001 types G
   (Emerson), H (Tele-Fever) and I (Palladium), and the coin-ops Astro Wars,
   Galaxia, Laser Battle and Lazarian (Zaccaria) with Malzak 1 and 2 (Kitronix).
-  ref: android.c:245-261, da.h:453-475
+  ref: android.c:245-261, da.h:455-477
 
   Every ROM those machines run is a const array compiled into
   libdroidarcadia.so and copied into memory when the machine is set up:
@@ -48,7 +48,7 @@ notes: |
   astrowars_game, lb_game and lz_game for the Zaccaria coin-ops, m1_bios and
   m2_bios for the Malzak pair. All ten arrays are present byte for byte in the
   arm64 library of the published apk.
-  ref: android.c:874-885, arcadia.h:279 with arcadia.c:426, interton.h:1 with
+  ref: android.c:890-901, arcadia.h:279 with arcadia.c:426, interton.h:1 with
        interton.c:36, elektor.h:1,130 with elektor.c:95-103,
        zaccaria.h:1,644,1599,3653 with zaccaria.c:243,325,423,436,
        malzak.h:1,558 with malzak.c:363,373
@@ -61,8 +61,8 @@ notes: |
   argument left NULL, so the file reader of the bundled rcheevos is never
   reached. A coin-op is stepped to through the machine button rather than
   loaded, and a raw binary aimed at Zaccaria or Malzak hardware is refused.
-  ref: android.c:1161-1178, android.c:2450-2476, android.c:2366-2380,
-       android.c:1294-1297, android.c:5560-5599, elektor.c:95-103,
+  ref: android.c:1177-1194, android.c:2466-2492, android.c:2382-2396,
+       android.c:1310-1313, android.c:5586-5625, elektor.c:95-103,
        OptionsActivity.java:457-467
 
 exclusion_note: >
