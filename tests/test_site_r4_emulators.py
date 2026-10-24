@@ -46,7 +46,9 @@ class AnAppThatReadsAnyBios(unittest.TestCase):
     def test_the_intro_says_what_to_do(self):
         intro = self.page[self.page.index("# AetherSX2"):self.page.index("About this profile")]
         self.assertIn("AetherSX2 needs one Sony PlayStation 2 BIOS file, any region.", intro)
-        self.assertRegex(intro, r"\n1\. .+\n2\. Put it in the `bios` folder inside the app's own data folder\.")
+        # Round 5 (7.1): the folder itself, per system the app runs on.
+        self.assertRegex(intro, r"\n1\. .+\n2\. Put it in this folder:")
+        self.assertIn("`Android/data/xyz.aethersx2.android/files/bios/`", intro)
         self.assertIn("Any file name works. The app reads what the file holds.", intro)
         self.assertNotIn("It reads", intro)
 
@@ -55,8 +57,15 @@ class AnAppThatReadsAnyBios(unittest.TestCase):
                       self.page)
 
     def test_no_command_that_cannot_place_the_file(self):
-        self.assertNotIn("--emulator aethersx2", self.page)
-        self.assertNotIn("--emulator nethersx2", _pages("nethersx2")["nethersx2"])
+        # Round 5 (7.2): only through a setup that launches the app, on its
+        # device, never as if the app on its own were found.
+        install = self.page[self.page.index("Install this emulator's files"):]
+        install = install[:install.index("</details>")]
+        self.assertRegex(install, r"With [^:]+: the installer finds")
+        self.assertEqual(set(re.findall(r'<TabItem label="([^"]+)">', install)), {"On the device"})
+        nether = _pages("nethersx2")["nethersx2"]
+        if "--emulator nethersx2" in nether:
+            self.assertIn("With ", nether)
 
     def test_a_core_keeps_its_command(self):
         # LRPS2 runs in RetroArch, whose BIOS folder the installer finds.
