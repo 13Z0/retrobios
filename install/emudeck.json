@@ -2076,6 +2076,7 @@
           "cores": [
             "ares",
             "beetle_psx",
+            "duckstation",
             "pcsx_rearmed",
             "rustation",
             "swanstation"
@@ -2102,6 +2103,7 @@
           "cores": [
             "ares",
             "beetle_psx",
+            "duckstation",
             "pcsx1",
             "pcsx_rearmed",
             "rustation",
@@ -2139,6 +2141,7 @@
           "cores": [
             "ares",
             "beetle_psx",
+            "duckstation",
             "pcsx_rearmed",
             "rustation",
             "swanstation"
@@ -5062,7 +5065,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5082,7 +5086,10 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1001.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation",
+        "pcsx1",
+        "pcsx_rearmed"
       ],
       "systems": [
         "sony-playstation"
@@ -5124,7 +5131,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1002b.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5145,7 +5153,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1002c.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5166,7 +5175,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/dtlh1100.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5186,7 +5196,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph3000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5206,7 +5217,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1001_v20.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5227,7 +5239,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph3500.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5247,7 +5260,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1001_v21.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5268,7 +5282,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph5000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5288,7 +5303,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5308,7 +5324,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7000w.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5328,7 +5345,10 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7001.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation",
+        "pcsx1",
+        "pcsx_rearmed"
       ],
       "systems": [
         "sony-playstation"
@@ -5349,7 +5369,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7002.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5370,7 +5391,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph100.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -5453,7 +5475,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph102B.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "rustation"
       ],
       "systems": [
         "sony-playstation"
@@ -6420,10 +6443,12 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2_scph50006.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "japan"
@@ -6460,10 +6485,12 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2_scph50008.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "europe",
@@ -69260,7 +69287,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/openbios.bin",
       "cores": [
-        "beetle_psx"
+        "beetle_psx",
+        "duckstation"
       ],
       "systems": [
         "sony-playstation"
@@ -72173,8 +72201,7 @@
       "size": 131072,
       "repo_path": "bios/Sega/Dreamcast/dc_nvmem.bin",
       "cores": [
-        "flycast",
-        "flycast2021"
+        "flycast"
       ],
       "systems": [
         "sega-dreamcast"
@@ -91911,11 +91938,23 @@
       "size": 251658304,
       "repo_path": "bios/Nintendo/Nintendo DSi/dsi_nand.bin",
       "cores": [
-        "melonds_ds",
-        "melonds"
+        "melonds_ds"
       ],
       "storage": "release",
-      "release_asset": "dsi_nand.bin"
+      "release_asset": "dsi_nand.bin",
+      "alternatives": [
+        {
+          "sha1": "2b972cec368e83a2699e6ab38165638b1bc1302c",
+          "sha256": "eb8960711bb99c11d1c92de195c29c8e1bf927e8e1a5d134155fd69a9a11134e",
+          "size": 251658304,
+          "repo_path": "bios/Nintendo/Nintendo DSi/.variants/dsi_nand.bin.8b79a73c",
+          "cores": [
+            "melonds"
+          ],
+          "storage": "release",
+          "release_asset": "dsi_nand.bin.8b79a73c"
+        }
+      ]
     },
     {
       "dest": "StudyBox.bin",
@@ -98364,7 +98403,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.bin",
       "cores": [
-        "armsx2"
+        "armsx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"

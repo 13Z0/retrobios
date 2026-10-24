@@ -10711,9 +10711,6 @@
         "latin-america",
         "north-america"
       ],
-      "region_groups": [
-        "sony-playstation"
-      ],
       "region_system_groups": [
         "sony-playstation"
       ],
@@ -10724,6 +10721,7 @@
           "size": 524288,
           "repo_path": "bios/Sony/PlayStation/scph1001.bin",
           "cores": [
+            "duckstation",
             "duckstation-legacy",
             "pcsx_rearmed"
           ]
@@ -10757,6 +10755,7 @@
           "repo_path": "bios/Sony/PlayStation/scph5500.bin",
           "cores": [
             "beetle_psx",
+            "duckstation",
             "duckstation-legacy",
             "pcsx_rearmed",
             "swanstation"
@@ -10792,6 +10791,7 @@
           "repo_path": "bios/Sony/PlayStation/scph5501.bin",
           "cores": [
             "beetle_psx",
+            "duckstation",
             "duckstation-legacy",
             "pcsx_rearmed",
             "swanstation"
@@ -10827,6 +10827,7 @@
           "repo_path": "bios/Sony/PlayStation/scph5502.bin",
           "cores": [
             "beetle_psx",
+            "duckstation",
             "duckstation-legacy",
             "pcsx_rearmed",
             "swanstation"
@@ -10848,9 +10849,6 @@
         "latin-america",
         "north-america"
       ],
-      "region_groups": [
-        "sony-playstation"
-      ],
       "region_system_groups": [
         "sony-playstation"
       ],
@@ -10861,6 +10859,7 @@
           "size": 524288,
           "repo_path": "bios/Sony/PlayStation/scph7001.bin",
           "cores": [
+            "duckstation",
             "duckstation-legacy",
             "pcsx_rearmed"
           ]
@@ -20957,7 +20956,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -20977,7 +20977,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1002.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -20998,7 +20999,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1002b.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21019,7 +21021,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1002c.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21040,7 +21043,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/dtlh1100.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21060,7 +21064,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph3000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21080,7 +21085,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1001_v20.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21101,7 +21107,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph3500.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21121,7 +21128,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1001_v21.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21142,7 +21150,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph5000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21162,7 +21171,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21182,7 +21192,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7000w.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21202,7 +21213,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7002.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21223,7 +21235,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph100.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21243,7 +21256,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph101_v44.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21264,7 +21278,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph101.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21285,7 +21300,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph102.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21306,7 +21322,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph102B.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21327,7 +21344,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1000r.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21347,7 +21365,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/ps2-50j.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -21367,7 +21386,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/ps2_scph30003.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -22274,7 +22294,8 @@
       "repo_path": "bios/Sony/PlayStation 2/ps2_scph50006.bin",
       "cores": [
         "duckstation",
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation",
@@ -22316,7 +22337,8 @@
       "repo_path": "bios/Sony/PlayStation 2/ps2_scph50008.bin",
       "cores": [
         "duckstation",
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation",
@@ -111529,7 +111551,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/openbios.bin",
       "cores": [
-        "beetle_psx"
+        "beetle_psx",
+        "duckstation"
       ],
       "systems": [
         "sony-playstation"
@@ -168369,7 +168392,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169802,7 +169826,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-300e.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169815,7 +169840,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-300u.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169828,7 +169854,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-302c.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169841,7 +169868,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-302e.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169854,7 +169882,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-302u.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169867,7 +169896,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-310.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169880,7 +169910,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-311.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169893,7 +169924,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-10000.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169906,7 +169938,8 @@
       "size": 4,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-10000.MEC",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169919,7 +169952,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-30004R.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169932,7 +169966,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-39001.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169945,7 +169980,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-50009_BIOS_V10_CHN_190.BIN",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169958,7 +169994,8 @@
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-50009_BIOS_V10_CHN_190.NVM",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169971,7 +170008,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-50009_BIOS_V10_CHN_190.ROM2",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169984,7 +170022,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-50009_BIOS_V10_CHN_190.ROM1",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -169997,7 +170036,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-70004.BIN",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170010,7 +170050,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-70004.ROM1",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170023,7 +170064,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-70008_BIOS_V12_RUS_200.BIN",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170036,7 +170078,8 @@
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-70008_BIOS_V12_RUS_200.NVM",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170049,7 +170092,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0100jd-20000117.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170062,7 +170106,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0101j-20000217.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170075,7 +170120,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0101jd-20000217.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170088,7 +170134,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0101xd-20000224.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170101,7 +170148,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0110a-20000727.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170114,7 +170162,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0110ad-20000727.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170127,7 +170176,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0120a-20000902.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170140,7 +170190,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0120e-20000902.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170153,7 +170204,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0120ed-20000902-20030110.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170166,7 +170218,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0120ed-20000902.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170179,7 +170232,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0120j-20001027-185015.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170192,7 +170246,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0120j-20001027-191435.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170205,7 +170260,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0150a-20001228.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170218,7 +170274,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0150ad-20001228-20030520.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170231,7 +170288,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0150e-20001228.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170244,7 +170302,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0150ed-20001228-20030520.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170257,7 +170316,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0150j-20010118.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170270,7 +170330,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0150jd-20010118.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170283,7 +170344,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160a-20010427.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170296,7 +170358,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160a-20010704.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170309,7 +170372,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160a-20011004.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170322,7 +170386,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160e-20010704.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170335,7 +170400,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160e-20011004.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170348,7 +170414,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160e-20020319.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170361,7 +170428,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160e-20020426.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170374,7 +170442,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160h-20010730.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170387,7 +170456,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160h-20020426.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170400,7 +170470,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160h-20030602.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170413,7 +170484,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160j-20010427.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170426,7 +170498,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160j-20011004.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170439,7 +170512,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0160j-20020426.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170452,7 +170526,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0170a-20030325.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170465,7 +170540,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0170ad-20030325.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170478,7 +170554,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0170e-20030227.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170491,7 +170568,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0170ed-20030227.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170504,7 +170582,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0170j-20030206.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170517,7 +170596,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0170jd-20030206.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170530,7 +170610,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0180cd-20030224.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170543,7 +170624,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0180j-20031028.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170556,7 +170638,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190a-20030623.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170569,7 +170652,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190a-20040329.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170582,7 +170666,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190ad-20030623.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170595,7 +170680,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190c-20030623.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170608,7 +170694,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190cd-20030623.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170621,7 +170708,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190e-20030623.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170634,7 +170722,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190e-20030822.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170647,7 +170736,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190h-20030623.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170660,7 +170750,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190j-20030623.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170673,7 +170764,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190j-20030822.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170686,7 +170778,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190k-20030623.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170699,7 +170792,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0190r-20030623.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170712,7 +170806,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0200a-20040614.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170725,7 +170820,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0200ad-20040614.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170738,7 +170834,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0200ed-20040614.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170751,7 +170848,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0200h-20040614.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170764,7 +170862,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0200j-20040614.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170777,7 +170876,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0210j-20040917.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170790,7 +170890,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220a-20050620.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170803,7 +170904,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220a-20060210.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170816,7 +170918,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220a-20060905.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170829,7 +170932,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220ad-20050620.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170842,7 +170946,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220ad-20060905.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170855,7 +170960,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220e-20050620.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170868,7 +170974,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220e-20060210.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170881,7 +170988,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220e-20060905.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170894,7 +171002,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220h-20050620.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170907,7 +171016,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220h-20060210.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170920,7 +171030,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220h-20060905.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170933,7 +171044,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220j-20050620.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170946,7 +171058,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220j-20060210.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170959,7 +171072,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220j-20060905.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170972,7 +171086,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220jd-20050620.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170985,7 +171100,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0220jd-20060905.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -170998,7 +171114,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0230e-20080220.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171011,7 +171128,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0230h-20080220.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171024,7 +171142,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0230j-20080220.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171037,7 +171156,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0250e-20100415.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171050,7 +171170,8 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0250j-20100415.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171063,7 +171184,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-110u.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171076,7 +171198,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-120e.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171089,7 +171212,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-120u.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171102,7 +171226,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-130e.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171115,7 +171240,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-130u.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171128,7 +171254,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-200j.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171141,7 +171268,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-210e.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171154,7 +171282,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-210j.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171167,7 +171296,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-210u.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171180,7 +171310,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-212g.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171193,7 +171324,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-212u.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171206,7 +171338,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-213e.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171219,7 +171352,8 @@
       "size": 2097152,
       "repo_path": "bios/Sony/PlayStation 2/DVD Firmware/ps2-dvd-215g.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171232,7 +171366,8 @@
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/.variants/SCPH30004R.nvm.5e0200d0",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171245,7 +171380,8 @@
       "size": 247968,
       "repo_path": "bios/Sony/PlayStation 2/EROM.BIN",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171258,7 +171394,8 @@
       "size": 8192,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-70004_BIOS_V12_EUR_200.ROM2",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171271,7 +171408,8 @@
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-70006_BIOS_V12_HK_200.NVM",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171284,7 +171422,8 @@
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-75008_BIOS_V14_RUS_220.NVM",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171297,7 +171436,8 @@
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-77008_BIOS_V15_RUS_220.NVM",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171310,7 +171450,8 @@
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-90006_BIOS_VX_HK _230.NVM",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171323,7 +171464,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation 2/SCPH-90006_BIOS_VX_HK _230.ROM1",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171336,7 +171478,8 @@
       "size": 42525,
       "repo_path": "bios/Sony/PlayStation 2/cheats_ni.zip",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171349,7 +171492,8 @@
       "size": 64,
       "repo_path": "bios/Sony/PlayStation 2/eeprom.dat",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171362,7 +171506,8 @@
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/ps2-0230a-20080220.nvm",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171375,7 +171520,8 @@
       "size": 15696,
       "repo_path": "bios/Sony/PlayStation 2/resources/sounds/achievements/message.wav",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171388,7 +171534,8 @@
       "size": 199680,
       "repo_path": "bios/Sony/PlayStation 2/rom1.bin",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171401,7 +171548,8 @@
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/scph30004fr.nvm",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"
@@ -171414,7 +171562,8 @@
       "size": 1024,
       "repo_path": "bios/Sony/PlayStation 2/scph39001.nvm",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "pcsx2"
       ],
       "systems": [
         "sony-playstation-2"

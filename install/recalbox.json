@@ -6523,6 +6523,7 @@
           "repo_path": "bios/Sony/PlayStation/scph5500.bin",
           "cores": [
             "beetle_psx",
+            "duckstation",
             "pcsx_rearmed",
             "swanstation"
           ]
@@ -6557,6 +6558,7 @@
           "repo_path": "bios/Sony/PlayStation/scph5501.bin",
           "cores": [
             "beetle_psx",
+            "duckstation",
             "pcsx_rearmed",
             "swanstation"
           ]
@@ -6591,6 +6593,7 @@
           "repo_path": "bios/Sony/PlayStation/scph5502.bin",
           "cores": [
             "beetle_psx",
+            "duckstation",
             "pcsx_rearmed",
             "swanstation"
           ]
@@ -6643,9 +6646,6 @@
         "latin-america",
         "north-america"
       ],
-      "region_groups": [
-        "sony-playstation"
-      ],
       "region_system_groups": [
         "sony-playstation"
       ],
@@ -6656,6 +6656,7 @@
           "size": 524288,
           "repo_path": "bios/Sony/PlayStation/scph7001.bin",
           "cores": [
+            "duckstation",
             "pcsx_rearmed"
           ]
         }
@@ -6675,9 +6676,6 @@
         "latin-america",
         "north-america"
       ],
-      "region_groups": [
-        "sony-playstation"
-      ],
       "region_system_groups": [
         "sony-playstation"
       ],
@@ -6688,6 +6686,7 @@
           "size": 524288,
           "repo_path": "bios/Sony/PlayStation/scph1001.bin",
           "cores": [
+            "duckstation",
             "pcsx_rearmed"
           ]
         }
@@ -17786,10 +17785,12 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2_scph50006.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "japan"
@@ -17826,10 +17827,12 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2_scph50008.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "europe",
@@ -38759,7 +38762,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/openbios.bin",
       "cores": [
-        "beetle_psx"
+        "beetle_psx",
+        "duckstation"
       ],
       "systems": [
         "sony-playstation"

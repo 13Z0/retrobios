@@ -9889,6 +9889,7 @@
           "size": 524288,
           "repo_path": "bios/Sony/PlayStation/scph5500.bin",
           "cores": [
+            "duckstation",
             "pcsx_rearmed",
             "swanstation"
           ]
@@ -9923,6 +9924,7 @@
           "size": 524288,
           "repo_path": "bios/Sony/PlayStation/scph5501.bin",
           "cores": [
+            "duckstation",
             "pcsx_rearmed",
             "swanstation"
           ]
@@ -9957,6 +9959,7 @@
           "size": 524288,
           "repo_path": "bios/Sony/PlayStation/scph5502.bin",
           "cores": [
+            "duckstation",
             "pcsx_rearmed",
             "swanstation"
           ]
@@ -13927,7 +13930,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1001.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "pcsx_rearmed"
       ],
       "systems": [
         "sony-playstation"
@@ -14173,7 +14177,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7001.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "pcsx_rearmed"
       ],
       "systems": [
         "sony-playstation"
@@ -48859,13 +48864,11 @@
       "repo_path": "bios/Nintendo/Game Boy/dmg_boot.bin",
       "cores": [
         "gearboy",
-        "sameboy",
-        "mesen-s"
+        "sameboy"
       ],
       "systems": [
         "nintendo-gb",
-        "nintendo-gbc",
-        "nintendo-satellaview"
+        "nintendo-gbc"
       ]
     },
     {
@@ -48876,13 +48879,11 @@
       "repo_path": "bios/Nintendo/Game Boy Color/cgb_boot.bin",
       "cores": [
         "gearboy",
-        "sameboy",
-        "mesen-s"
+        "sameboy"
       ],
       "systems": [
         "nintendo-gb",
-        "nintendo-gbc",
-        "nintendo-satellaview"
+        "nintendo-gbc"
       ]
     },
     {
@@ -70794,13 +70795,7 @@
       "size": 256,
       "repo_path": "bios/Nintendo/Super Game Boy/sgb_boot.bin",
       "cores": [
-        "sameboy",
-        "mesen-s"
-      ],
-      "systems": [
-        "nintendo-gb",
-        "nintendo-gbc",
-        "nintendo-satellaview"
+        "sameboy"
       ]
     },
     {
@@ -70810,13 +70805,7 @@
       "size": 256,
       "repo_path": "bios/Nintendo/Super Game Boy/sgb2_boot.bin",
       "cores": [
-        "sameboy",
-        "mesen-s"
-      ],
-      "systems": [
-        "nintendo-gb",
-        "nintendo-gbc",
-        "nintendo-satellaview"
+        "sameboy"
       ]
     },
     {
@@ -70909,9 +70898,7 @@
       "size": 262144,
       "repo_path": "bios/Commodore/Amiga/amiga-ext-130-cdtv.rom",
       "cores": [
-        "uae4arm",
-        "puae",
-        "puae2021"
+        "uae4arm"
       ],
       "systems": [
         "commodore-amiga"

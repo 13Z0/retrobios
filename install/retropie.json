@@ -122224,8 +122224,7 @@
       "size": 7971360,
       "repo_path": "bios/Arcade/MAME/cheat.dat",
       "cores": [
-        "advmame-0.94",
-        "advmame-1.4"
+        "advmame-0.94"
       ],
       "systems": [
         "arcade"

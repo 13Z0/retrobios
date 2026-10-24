@@ -7377,10 +7377,12 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2_scph50006.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "aethersx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "japan"
@@ -7417,10 +7419,12 @@
       "size": 4194304,
       "repo_path": "bios/Sony/PlayStation 2/ps2_scph50008.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "aethersx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "europe",
@@ -57426,23 +57430,11 @@
         "emux_gb",
         "gearboy",
         "irogb",
-        "sameboy",
-        "mesen-s"
+        "sameboy"
       ],
       "systems": [
         "nintendo-gb",
         "nintendo-gbc"
-      ],
-      "alternatives": [
-        {
-          "sha1": "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
-          "sha256": "cf053eccb4ccafff9e67339d4e78e98dce7d1ed59be819d2a1ba2232c6fce1c7",
-          "size": 256,
-          "repo_path": "bios/Nintendo/Game Boy/GB_dmg.bin",
-          "cores": [
-            "mesence"
-          ]
-        }
       ]
     },
     {
@@ -58049,8 +58041,7 @@
       "size": 131072,
       "repo_path": "bios/Sega/Dreamcast/dc_nvmem.bin",
       "cores": [
-        "flycast",
-        "flycast2021"
+        "flycast"
       ],
       "systems": [
         "sega-dreamcast"
@@ -58503,23 +58494,11 @@
       "cores": [
         "gearboy",
         "irogb",
-        "sameboy",
-        "mesen-s"
+        "sameboy"
       ],
       "systems": [
         "nintendo-gb",
         "nintendo-gbc"
-      ],
-      "alternatives": [
-        {
-          "sha1": "1293d68bf9643bc4f36954c1e80e38f39864528d",
-          "sha256": "b4f2e416a35eef52cba161b159c7c8523a92594facb924b3ede0d722867c50c7",
-          "size": 2304,
-          "repo_path": "bios/Nintendo/Game Boy Color/GBC_cgb.bin",
-          "cores": [
-            "mesence"
-          ]
-        }
       ]
     },
     {
@@ -84150,7 +84129,10 @@
       "size": 64,
       "repo_path": "bios/Sony/PlayStation 2/eeprom.dat",
       "cores": [
-        "aethersx2"
+        "aethersx2",
+        "armsx2",
+        "pcee2",
+        "yaps2"
       ],
       "systems": [
         "sony-playstation-2"
