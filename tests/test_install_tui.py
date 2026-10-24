@@ -447,7 +447,7 @@ class Flow(unittest.TestCase):
         self.assertEqual(press(state, "enter"), [])
         self.assertIn("No system is ticked", state.status)
         focus = next(i for i, row in enumerate(install.tui_rows(state))
-                     if row.value == "nintendo-gba")
+                     if row.value == "epoch-scv")
         state.focus["systems"] = focus
         press(state, "right")
         self.assertEqual(press(state, "enter"), [("run", "confirm")])
@@ -1513,7 +1513,7 @@ class AuditRoundTwo(unittest.TestCase):
         state = self.systems()
         press(state, "n")
         state.focus["systems"] = next(i for i, row in enumerate(install.tui_rows(state))
-                                      if row.value == "nintendo-gba")
+                                      if row.value == "epoch-scv")
         press(state, "right")
         self.assertEqual(state.ticked, {"nintendo-gba"})
         press(state, "/", "p", "l", "a", "y")
@@ -2840,6 +2840,35 @@ class NarrowSystemNames(unittest.TestCase):
         # Wide, the full form stays.
         self.assertIn("3 files, 30.0 MB + 27 shared",
                       "\n".join(install.tui_view(state, 120, 40)))
+
+    def test_one_spelling_of_shared_and_the_focused_size_below(self):
+        """At 40 columns the shared part read "+ 1689 shared", "+ 28 sh.",
+        ", shared" and ", all shared" on one screen, and a long name kept
+        whole lost its size."""
+        state = checked_state()
+        names = {"epoch-scv": "Epoch Super Cassette Vision", "sega-dc": "Sega Dreamcast",
+                 "snk-ng": "SNK Neo Geo"}
+        state.manifest = {**state.manifest, "system_titles": names}
+        state.systems = [
+            {"event": "system", "platform": "retroarch", "system": system, "name": system,
+             "files": count, "present": 0, "missing": count, "wrong_hash": 0,
+             "bytes_needed": count * 1024}
+            for system, count in (("epoch-scv", 30), ("sega-dc", 1690), ("snk-ng", 3))]
+        state.files = [{"event": "file", "platform": "retroarch", "dest": f"s{n}.bin",
+                        "systems": ["sega-dc", "snk-ng"], "size": 1024, "state": "missing"}
+                       for n in range(3)]
+        state.ticked = set(names)
+        state.stack.append("systems")
+        spellings = set()
+        for cols in (40, 46, 52, 80):
+            text = "\n".join(install.tui_view(state, cols, 15))
+            spellings |= set(re.findall(r"\+ \d+ sh\w*\.?|, (?:all )?shared", text))
+        self.assertLessEqual(spellings, {"+ 3 shared", ", all shared"}, spellings)
+        state.focus["systems"] = next(
+            index for index, row in enumerate(install.tui_rows(state))
+            if row.value == "epoch-scv")
+        text = " ".join(" ".join(install.tui_view(state, 40, 15)).split())
+        self.assertIn("Epoch Super Cassette Vision: 30 files, 30.0 KB", text)
 
 
 class Crash(unittest.TestCase):

@@ -10785,12 +10785,13 @@ def _system_rows(state: TuiState) -> list[TuiRow]:
             right = f"{_plural(need, 'file')}, {format_size(row['bytes_needed'])}"
             narrow = (format_size(row["bytes_needed"]),)
         elif not own:
+            # Two spellings of shared, never cut: "+ 28 sh." and ", shared"
+            # sat beside "+ 1689 shared" on one 40-column screen.
             right = f"{_plural(need, 'file')}, {format_size(size)}, all shared"
-            narrow = (f"{format_size(size)}, shared", format_size(size))
+            narrow = (f"{format_size(size)}, all shared", format_size(size))
         else:
             right = f"{_plural(own, 'file')}, {format_size(own_size)} + {count} shared"
-            narrow = (f"{format_size(own_size)} + {count} shared",
-                      f"{format_size(own_size)} + {count} sh.", format_size(own_size))
+            narrow = (f"{format_size(own_size)} + {count} shared", format_size(own_size))
         rows.append(TuiRow("system", f"{box} {label}", right, row["system"],
                            "" if need else "dim", narrow))
     return rows
@@ -11090,7 +11091,7 @@ _POSIX_ROOT_SYSTEM = frozenset((
 _WINDOWS_HIDDEN = 0x2 | 0x4
 
 
-def _system_folder(path: Path, folder: Path) -> bool:
+def _os_folder(path: Path, folder: Path) -> bool:
     """A folder of the system, not one a person keeps files in: the
     recycle bin and restore points of a Windows drive ($RECYCLE.BIN, System
     Volume Information, hidden by Explorer), and /bin, /etc, /usr and the
@@ -11121,7 +11122,7 @@ def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = No
         focus = next((index for index, row in enumerate(state.browse_rows)
                       if row.action == "dir" and isinstance(row.value, Path)
                       and row.label == f"{row.value.name}/"
-                      and not _system_folder(row.value, folder)), 0)
+                      and not _os_folder(row.value, folder)), 0)
         if not focus and not state.status:
             state.status = ("This is your home folder: no setup reads its BIOS files "
                             "here. Go back to type a path." if folder == state.home
@@ -12256,6 +12257,7 @@ def _ticked_files(state: TuiState) -> list[dict]:
 
 def _view_systems(state: TuiState, width: int, height: int) -> tuple:
     rows = tui_rows(state)
+    whole_rows = rows
     if width < 60:
         # The name first: the size alone stays beside it, the count is in
         # the total below.
@@ -12273,6 +12275,14 @@ def _view_systems(state: TuiState, width: int, height: int) -> tuple:
               f"{format_size(sum(e['size'] for e in chosen))}"
               + (" before your options" if _counts_predate_options(state) else "")]
     focused = rows[min(state.focus.get("systems", 0), len(rows) - 1)]
+    drawn = str(_row_line(focused, True, width))
+    if focused.action == "system" and not (
+            f"> {focused.label}" in drawn
+            and any(form and drawn.endswith(form) for form in (focused.right, *focused.narrow))):
+        # A long name kept whole leaves no room for its size, and a name
+        # longer than the screen is cut: both are spelled out below.
+        whole = whole_rows[min(state.focus.get("systems", 0), len(whole_rows) - 1)]
+        footer.insert(0, f"{whole.label[4:]}: {whole.right}")
     if focused.value == OTHER_SYSTEMS:
         footer.insert(0, OTHER_HELP)
     elif "shared" in focused.right:
