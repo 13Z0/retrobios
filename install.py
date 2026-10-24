@@ -4305,7 +4305,17 @@ def closed_folder(path: Path) -> tuple[Path, str] | None:
         except OSError as exc:
             if exc.errno in (errno.ENOENT, errno.ENOTDIR):
                 return None
-            return folder.parent, exc.strerror or str(exc)
+            why = exc.strerror or str(exc)
+            if exc.errno == errno.ELOOP:
+                # The link that loops, not the open folder holding it.
+                return folder, why
+            real = Path(os.path.realpath(folder))
+            if real != folder:
+                # ~/Emulation linked into a closed card: the closed folder
+                # is under the link's target, and naming the link's
+                # parent told the user they cannot open their own HOME.
+                return closed_folder(real) or (real.parent, why)
+            return folder.parent, why
     return probe, failure.strerror or str(failure)
 
 

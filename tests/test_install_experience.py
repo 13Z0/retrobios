@@ -8,6 +8,7 @@ honours Retry-After, and large files that resume where they stopped.
 from __future__ import annotations
 
 import contextlib
+import errno
 import hashlib
 import http.server
 import io
@@ -976,6 +977,46 @@ class WindowsMandatoryLock(unittest.TestCase):
                 mock.patch.object(install, "_read_only_file", return_value=False):
             _dest, ok, reason = install._download_one(dict(ENTRY), Path(tmp))
         self.assertEqual((ok, reason), (False, install.NOT_WRITABLE))
+
+
+@unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                 "a folder without search permission is POSIX")
+class AClosedFolderBehindALink(unittest.TestCase):
+    """~/Emulation linked into a card at 000: the line named the link's
+    parent, telling the user they cannot open their own HOME. A link
+    that loops was named by its open parent."""
+
+    def setUp(self):
+        self.base = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.base, True)
+        self.home = self.base / "home"
+        self.home.mkdir()
+        self.card = self.base / "card"
+        (self.card / "Emulation" / "bios").mkdir(parents=True)
+
+    def closed(self, path: Path):
+        os.chmod(self.card, 0o000)
+        try:
+            return install.closed_folder(path)
+        finally:
+            os.chmod(self.card, 0o755)
+
+    def test_a_link_into_the_closed_folder_names_that_folder(self):
+        (self.home / "Emulation").symlink_to(self.card / "Emulation")
+        self.assertEqual(self.closed(self.home / "Emulation" / "bios"),
+                         (self.card, "Permission denied"))
+
+    def test_a_link_to_the_closed_folder_itself_names_it(self):
+        (self.home / "Emulation").symlink_to(self.card)
+        self.assertEqual(self.closed(self.home / "Emulation" / "Emulation" / "bios"),
+                         (self.card, "Permission denied"))
+
+    def test_a_loop_names_the_link(self):
+        loop = self.base / "loop"
+        loop.symlink_to("loop")
+        folder, why = install.closed_folder(loop / "system")
+        self.assertEqual(folder, loop)
+        self.assertEqual(why, os.strerror(errno.ELOOP))
 
 
 if __name__ == "__main__":
