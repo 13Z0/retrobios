@@ -133,7 +133,8 @@ much space is free, before anything is written.
 The other choices sit one press away. **Choose systems** ticks the consoles you
 play, with the total to download under the list. **Options** sets the
 preferred regions, game data, the installed cores only, the cores, the parallel
-downloads and the folder. Each row names the option it sets, and **Show the
+downloads, the folder and, for a list with files read from the frontend's save
+directory, that directory. Each row names the option it sets, and **Show the
 command line** gives the same choice as one command for a script. **Preview the
 file list** shows what would be downloaded and writes nothing. **Copy the BIOS
 files from your old card or a folder** opens the folder browser, mounted cards

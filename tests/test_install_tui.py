@@ -2719,13 +2719,47 @@ class AuditRoundFour(unittest.TestCase):
                 "free": 50 * 1024 ** 3, "writable": True, "cores": []}):
             install.tui_receive(state, ("ended", state.run_id, 1, []))
         line = ("2 files read from RetroArch's save directory left out: its place is "
-                "not known. Name it with --save-dir.")
+                "not known. ")
         plan = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
-        self.assertIn(line, plan)
+        # The plan names the row that sets it, the result the option a
+        # command carries.
+        self.assertIn(line + "Choose it in Options, Save folder.", plan)
         state.stack.append("result")
         state.code = 0
         state.summary = {**summary, "mode": "install", "installed": 5}
-        self.assertIn(line, install.tui_outcome(state)[1])
+        self.assertIn(line + "Name it with --save-dir.", install.tui_outcome(state)[1])
+
+
+class TheSaveFolderHasARow(unittest.TestCase):
+    """A card on a PC left the save-directory files out and named
+    --save-dir, which Options had no row for: the interface user had to
+    leave it and type a command."""
+
+    def state(self) -> install.TuiState:
+        state = checked_state()
+        state.manifest = {**MANIFEST, "save_directory": {"folder": "saves", "by_core": True}}
+        return state
+
+    def test_options_list_it_and_the_browser_sets_it(self):
+        state = self.state()
+        rows = install._option_rows(state)
+        [row] = [row for row in rows if row.action == "savedir"]
+        self.assertEqual((row.label, row.right), ("Save folder: not known", "--save-dir"))
+        saves = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, saves, True)
+        state.stack = ["setup", "plan", "options"]
+        install._option(state, "savedir", 0)
+        self.assertEqual(state.screen, "browse")
+        self.assertIn("save directory", " ".join(" ".join(install.tui_view(state, 120, 40))
+                                                 .split()))
+        install._browse_to(state, saves)
+        effects = install._activate(state, install.TuiRow("use", "Use this folder"))
+        self.assertIn(("--save-dir", str(saves)), install.tui_flags(state))
+        self.assertTrue(any(effect[0] == "run" for effect in effects), effects)
+        self.assertEqual(install._save_folder_words(state), str(saves))
+
+    def test_a_list_without_a_save_directory_has_no_row(self):
+        self.assertNotIn("savedir", [row.action for row in install._option_rows(checked_state())])
 
 
 class OfflineInTheInterface(unittest.TestCase):

@@ -10843,6 +10843,10 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
         chosen = f"{len(state.cores)} chosen" if state.cores else "all"
         rows.append(TuiRow("cores", f"Cores: {chosen}", "--core"))
     copied = ", ".join(str(folder) for folder in state.from_folders) or "none"
+    if manifest.get("save_directory"):
+        # The interface said "Name it with --save-dir" and had no row for it.
+        rows.append(TuiRow("savedir", f"Save folder: {_save_folder_words(state)}",
+                           "--save-dir", style="path"))
     rows += [
         TuiRow("jobs", f"Parallel downloads: {state.jobs}", "--jobs"),
         TuiRow("folder", f"BIOS folder: {_short_path(state.dest, state.home)}", "--dest",
@@ -10852,6 +10856,21 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
         TuiRow("command", "Show the command line"),
     ]
     return rows
+
+
+def _save_dir_given(state: TuiState) -> Path | None:
+    return next((Path(value) for flag, value in state.passthrough
+                 if flag == "--save-dir" and value), None)
+
+
+def _save_folder_words(state: TuiState) -> str:
+    """The frontend's save directory as the Options row shows it."""
+    given = _save_dir_given(state)
+    if given is not None:
+        return _short_path(given, state.home)
+    if state.saves and state.saves.get("folder"):
+        return _short_path(Path(state.saves["folder"]), state.home)
+    return "not known"
 
 
 def _push(state: TuiState, screen: str, focus: int = 0) -> list[tuple]:
@@ -11178,6 +11197,12 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         state.path_selected = bool(state.path_text)
         return _push(state, "path")
     if screen == "browse":
+        if action == "use" and state.browse_for == "save":
+            state.passthrough = [flag for flag in state.passthrough
+                                 if flag[0] != "--save-dir"]
+            state.passthrough.append(("--save-dir", str(state.browse_dir)))
+            state.browse_for = "dest"
+            return _start_check(state)
         if action in ("use", "zip") and state.browse_for == "from":
             chosen = state.browse_dir if action == "use" else row.value
             if chosen not in state.from_folders:
@@ -11293,6 +11318,10 @@ def _option(state: TuiState, action: str, step: int) -> list[tuple]:
             state.status = f"No longer copying from {_last_name(str(removed))}."
     elif action == "from":
         return _open_from_browser(state)
+    elif action == "savedir":
+        state.browse_for = "save"
+        _push(state, "browse")
+        _browse_to(state, _nearest_folder(_save_dir_given(state) or state.home))
     elif action == "preview":
         _push(state, "preview")
         return _start_run(state, "preview")
@@ -12036,7 +12065,8 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     if check.get("not_installable"):
         lines += _unavailable_lines(state)
     if check is state.check:
-        lines += _unplaced_lines(state.check_summary, state)
+        lines += _unplaced_lines(state.check_summary, state,
+                                 "Choose it in Options, Save folder.")
     return lines[:2] + offline_lines + lines[2:]
 
 
@@ -12053,7 +12083,8 @@ def _saves_lines(state: TuiState, saves: dict | None) -> list[str]:
             f"{_short_path(Path(saves['folder']), state.home)}"]
 
 
-def _unplaced_lines(summary: dict | None, state: TuiState) -> list[str]:
+def _unplaced_lines(summary: dict | None, state: TuiState,
+                    remedy: str = "Name it with --save-dir.") -> list[str]:
     """The files read from the frontend's save directory that the run left
     out, that directory being unknown: said, never silent."""
     count = sum(group.get("files", 0) for group in (summary or {}).get("skipped") or []
@@ -12062,7 +12093,7 @@ def _unplaced_lines(summary: dict | None, state: TuiState) -> list[str]:
         return []
     name = display_name(state.platform) if state.platform else "the frontend"
     return [f"{_plural(count, 'file')} read from {name}'s save directory left out: "
-            "its place is not known. Name it with --save-dir."]
+            f"its place is not known. {remedy}"]
 
 
 def _view_setup(state: TuiState, width: int, height: int) -> tuple:
@@ -12123,7 +12154,11 @@ def _view_browse(state: TuiState, width: int, height: int) -> tuple:
     if state.browse_for == "from":
         after.insert(0, "Choose the old card, a backup folder or a ZIP: its BIOS files "
                      "are copied, each one checked, nothing on it is changed.")
-    return ("Copy from" if state.browse_for == "from" else "Browse for a folder",
+    elif state.browse_for == "save":
+        after.insert(0, f"Choose {display_name(state.platform)}'s save directory: some "
+                     "cores read files there.")
+    return ("Copy from" if state.browse_for == "from"
+            else "Save folder" if state.browse_for == "save" else "Browse for a folder",
             _compose(state, width, height, [where], tui_rows(state), after),
             ("A/Enter Open", "B/Esc Back", "? Help"))
 
