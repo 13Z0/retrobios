@@ -6011,6 +6011,11 @@ def _install_standalone_folders(
     False when this machine has none, the run then going on to the platform
     question or hint.
     """
+    if offline_requested():
+        # Their folders are named by file lists this run cannot fetch: the
+        # first refusal ended an --offline run that asked nothing of EmuDeck
+        # on "No file list for emudeck".
+        return False
     manifests = []
     for plat in STANDALONE_SOURCES:
         manifests.append(fetch_manifest(plat))

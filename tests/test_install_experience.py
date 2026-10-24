@@ -1166,6 +1166,28 @@ class ADetectedClosedFolderSaysWhereItCameFrom(unittest.TestCase):
                       _source_of(install._install))
 
 
+class OfflineWithNothingFound(unittest.TestCase):
+    """An --offline run on a machine with nothing installed ended on "No
+    file list for emudeck", a platform nobody asked about: the standalone
+    folders are named by file lists that run cannot fetch."""
+
+    def test_the_hint_is_given_and_no_other_platform_named(self):
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            home.mkdir()
+            env = {**repo.env(), "HOME": str(home), "XDG_CONFIG_HOME": str(home / ".config"),
+                   "RETROBIOS_OS": "linux"}
+            proc = subprocess.run(
+                [sys.executable, str(REPO_ROOT / "install.py"), "--offline", "--check",
+                 "--no-input"],
+                env=env, capture_output=True, text=True, timeout=60,
+                stdin=subprocess.DEVNULL)
+        said = proc.stdout + proc.stderr
+        self.assertEqual(proc.returncode, 1, said)
+        self.assertNotIn("emudeck", said.lower())
+        self.assertIn("Use --platform and --dest", said)
+
+
 def _source_of(function) -> str:
     import inspect
 
