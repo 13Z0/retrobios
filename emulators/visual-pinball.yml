@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/vpinball/vpinball"
 upstream: "https://github.com/vpinball/vpinball"
 profiled_date: "2026-10-23"
-source_commit: "f912c04bcf727a341524f251b600c6bba8f883d8"
+source_commit: "639ec097a4b4e2b96455efe80da753606acd245c"
 core_version: "10.8.1"
 display_name: "Visual Pinball X"
 cores:
@@ -83,7 +83,7 @@ notes: |
   loaded with no fallback (src/renderer/Renderer.cpp:178-190),
   the bumper and kicker textures (src/parts/bumper.cpp:150,162,171,186,
   src/parts/kicker.cpp:200-241), the segment display textures
-  (src/renderer/Renderer.cpp:1640-1658), TableSizes.csv, the table size
+  (src/renderer/Renderer.cpp:1661-1679), TableSizes.csv, the table size
   database (src/core/TableDB.cpp:16), vpinball.png for the window icon
   (src/renderer/Window.cpp:280), LiberationSans-Regular.ttf, the font textboxes
   and decals fall back to when neither the table folder, as
@@ -463,7 +463,7 @@ analysis:
       - what: "scripts/, the .vbs library tables include"
         source_ref: "src/core/FileLocator.cpp:400-433, src/core/ScriptGlobalTable.cpp:354-383, src/ui/win/codeview.cpp:2053-2061"
       - what: "assets/, textures, segment display maps, TableSizes.csv, the window icon, the fallback font, the editor icons"
-        source_ref: "src/renderer/Renderer.cpp:178-190, src/renderer/Renderer.cpp:1640-1658, src/parts/bumper.cpp:150, 162, src/parts/bumper.cpp:171, src/parts/bumper.cpp:186, src/parts/kicker.cpp:200-241, src/core/TableDB.cpp:16, src/renderer/Window.cpp:280, src/renderer/TextRenderer.cpp:186-187, plugins/pup/PUPManager.cpp:483-485, src/ui/live/editor/EditorChrome.cpp:200"
+        source_ref: "src/renderer/Renderer.cpp:178-190, src/renderer/Renderer.cpp:1661-1679, src/parts/bumper.cpp:150, 162, src/parts/bumper.cpp:171, src/parts/bumper.cpp:186, src/parts/kicker.cpp:200-241, src/core/TableDB.cpp:16, src/renderer/Window.cpp:280, src/renderer/TextRenderer.cpp:186-187, plugins/pup/PUPManager.cpp:483-485, src/ui/live/editor/EditorChrome.cpp:200"
       - what: "assets/blankTable.vpx, exampleTable.vpx, lightSeqTable.vpx, strippedTable.vpx"
         source_ref: "src/core/AppCommands.cpp:287-293, src/ui/live/EditorUI.cpp:340-359"
         note: "The live editor's default table and its four New Table templates."

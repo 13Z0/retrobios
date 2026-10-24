@@ -2,7 +2,7 @@ emulator: WinUAE
 type: standalone
 core_classification: other
 source: "https://github.com/tonioni/WinUAE"
-source_commit: "17a26fa8e65e40cf4fbe33ffbdfa420a355a813d"
+source_commit: "b5944088b805e518e7978ba821dca299cd1bae83"
 profiled_date: "2026-10-20"
 core_version: "6.1.0 beta 19"
 display_name: "Commodore - Amiga (WinUAE)"
