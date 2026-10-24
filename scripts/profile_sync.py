@@ -4012,6 +4012,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="read only what the cache holds, no network access",
     )
     parser.add_argument(
+        "--fresh", action="store_true",
+        help="ask the forges again for branch tips, tags and releases instead "
+        "of the answers cached in the last six hours",
+    )
+    parser.add_argument(
         "--cache-dir", default=DEFAULT_CACHE,
         help="download cache directory (default: %(default)s)",
     )
@@ -4233,9 +4238,14 @@ def _apply_writes(
             applied = rebase_refs(target, report, args.accept_changed)
         moved = bump_commit(target, report, args.accept_changed)
         if args.rebase_refs and applied and not moved:
+            keyed = any(isinstance(profile.get(f), dict) for f in ("source_commit", "upstream_commit"))
+            reason = (
+                "its pins are keyed by build mode and are set by hand"
+                if keyed else "the prose or an annotated ref has to move first"
+            )
             print(
                 f"{name}: refs recaled but the pin will not follow, so nothing "
-                "was written: the prose or an annotated ref has to move first",
+                f"was written: {reason}",
                 file=sys.stderr,
             )
             return
@@ -4539,6 +4549,9 @@ def _print_triage(
 
 def _refuse_flag_combinations(args: argparse.Namespace) -> None:
     """Exit on a flag the chosen mode would not apply, before any request."""
+    if args.fresh and args.offline:
+        print("--fresh asks the forges again, which --offline forbids.", file=sys.stderr)
+        raise SystemExit(1)
     if args.accept_changed and not args.emulator:
         print(
             "--accept-changed applies to one profile at a time: its diff has "
@@ -4626,6 +4639,10 @@ def main() -> None:
     """Build one report per selected profile, then apply writes and output."""
     args = build_parser().parse_args()
     _refuse_flag_combinations(args)
+    if args.fresh:
+        # Tips cached before an upstream commit hid it for six hours: EKA2L1,
+        # trzy/Supermodel and VICE read as behind their real HEAD.
+        upstream.MOVING_TTL = 0
     profiles = load_emulator_profiles(args.emulators_dir, skip_aliases=False)
     selected = select_profiles(profiles, args)
     _check_quota(len(selected), args.offline)
