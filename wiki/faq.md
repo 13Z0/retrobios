@@ -34,12 +34,12 @@ option.
 
 ## Zip or unzip? { #zip-or-unzip }
 
-Unzip it into the folder your setup's page names. Leave
-the ZIPs inside zipped, like `neogeo.zip`.
+Unzip it into the folder your setup's page names. Keep
+inner ZIPs zipped, like `neogeo.zip`.
 
 ## Does a BIOS work on every setup?
 
-Usually. The command installs each setup's own, like its `neogeo.zip`.
+Usually. The command installs each setup's own, like `neogeo.zip`.
 
 ## My arcade game fails (which MAME version?) { #my-arcade-game-does-not-start }
 
@@ -77,8 +77,8 @@ setup's files and checks each one. `--dry-run` shows the list first.
 
 ## Fill an SD card from a computer?
 
-The interface finds a muOS, Onion, spruceOS, MinUI, KNULLI or ROCKNIX card by
-itself. Name your setup and the card's BIOS folder. For RetroArch on a Switch,
+The interface finds a muOS, Onion, spruceOS, MinUI, KNULLI or ROCKNIX card.
+Name your setup and the card's BIOS folder. For RetroArch on a Switch,
 with the card in drive `E:`, run:
 
 <!-- os-tabs windows: --platform retroarch --dest E:\retroarch\cores\system -->
@@ -89,11 +89,11 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
 
 ## No internet on the device?
 
-Fill it from a computer, as above, or point `--from-pack` at your ZIP: [Without a network](installer.md#without-a-network-offline-install).
+Fill it from a computer or point `--from-pack` at your ZIP: [Without a network](installer.md#without-a-network-offline-install).
 
 ## Lost or wiped card?
 
-`--from` copies BIOS files from an old card or a backup:
+`--from` copies BIOS files from an old card or backup:
 [Copy from an old card](installer.md#copy-from-an-old-card).
 
 ## My setup is not in the list
