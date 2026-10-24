@@ -381,7 +381,7 @@
 
  RetroArch: ~/.config/retroarch/system
 
- File list: 5 files.
+ File list received.
  Reading the files already in the
    folder... 0:04
 
@@ -394,7 +394,7 @@
 
  RetroArch: ~/.config/retroarch/system
 
- File list: 5 files.
+ File list received.
  Reading the files already in the
    folder... 0:04
 
@@ -410,7 +410,7 @@
 
  RetroArch: ~/.config/retroarch/system
 
- File list: 5 files.
+ File list received.
  Reading the files already in the folder... 0:04
 
 

@@ -12201,8 +12201,9 @@ def _view_checking(state: TuiState, width: int, height: int) -> tuple:
     if state.manifest is None:
         lines.append(f"Getting the file list... {elapsed}")
     else:
-        files = len(state.manifest.get("files", []))
-        lines += [f"File list: {_plural(files, 'file')}.", _reading_line(state, elapsed)]
+        # Not its count: the check counts the files it checks, which the
+        # plan then gives (8179 after "File list: 8169 files").
+        lines += ["File list received.", _reading_line(state, elapsed)]
     return ("Checking", _compose(state, width, height, lines, []),
             ("Ctrl-C Quit", "B/Esc Back"))
 
