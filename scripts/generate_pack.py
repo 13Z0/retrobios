@@ -3091,6 +3091,9 @@ _MISSING_DATA_DIRS: set[str] = set()
 
 
 def main() -> None:
+    # One run's account: tests call main() repeatedly in one process, and a
+    # notice left by an earlier run failed a later one that missed nothing.
+    _MISSING_DATA_DIRS.clear()
     with contextlib.ExitStack() as held:
         try:
             _main(held)
