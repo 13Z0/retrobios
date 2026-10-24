@@ -13253,12 +13253,14 @@ def tui_farewell(state: TuiState) -> list[str]:
 
 def tui_idle_code(state: TuiState) -> int:
     """The exit code of an idle close: an error's or a result's on those
-    screens, so a launcher tells them from a close with nothing to say."""
+    screens, so a launcher tells them from a close with nothing to say.
+    Elsewhere nothing was installed, and 0 said it all was: 130, as a quit
+    before the install."""
     if state.screen == "error":
         return state.error_code
     if state.screen == "result" and state.code is not None:
         return state.code
-    return 0
+    return 130
 
 
 def _farewell_lines(state: TuiState) -> list[str]:

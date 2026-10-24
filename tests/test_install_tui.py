@@ -2642,10 +2642,11 @@ class IdleExit(unittest.TestCase):
         self.assertEqual(farewell[:2], ["RetroBIOS: No button pressed, closing.",
                                         "RetroBIOS: Finished with errors"])
 
-    def test_any_other_screen_closes_with_0(self):
+    def test_any_other_screen_closes_as_a_quit(self):
+        """0 read as "everything asked for is installed" with nothing done."""
         state = fresh_state()
         state.stack = ["setup"]
-        self.assertEqual(self.idle_close(state), 0)
+        self.assertEqual(self.idle_close(state), 130)
 
     def idle_close(self, state: install.TuiState) -> int:
         """run_tui on state, no key ever pressed, closed by the idle timer."""

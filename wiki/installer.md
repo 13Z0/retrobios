@@ -1066,9 +1066,15 @@ moves with the D-pad.
 
 Each launcher also sets `RETROBIOS_IDLE_EXIT` to 300: with no button pressed
 for 5 minutes since it opened, and no check or install running, the interface
-closes by itself. A pad the
-system has no mapping for sends nothing, and would otherwise leave the
-console stuck on the interface with no way out.
+closes by itself. A pad the system has no mapping for sends nothing, and would
+otherwise leave the console stuck on the interface with no way out. It closes
+with `RetroBIOS: No button pressed, closing.` and exit status 130, as a quit
+before the install. Closed on an error or a result screen, it prints that
+screen's words after the line and exits with its code (1 for `No internet:
+offline mode`), so the launcher can tell an error from a close with nothing to
+report. The time counts from the end of the last check, so a launcher that
+names the platform, whose interface moves on to the plan by itself, closes the
+same way. Any launcher can set it to another number of seconds.
 
 Each launcher tells the interface which buttons reach it, in
 `RETROBIOS_PAD`, so the hints can name them:
@@ -1082,19 +1088,10 @@ Each launcher tells the interface which buttons reach it, in
 | `miyoo` | buttons that are already keys: A as Space, Start as Enter, L1 and R1 as E and T, L2 as Tab, R2 as Backspace | no launcher yet |
 
 A launcher with no mapper at all (a keyboard) leaves it unset.
-A launcher can also set `RETROBIOS_IDLE_EXIT` to a number of seconds: when
-no button has reached the interface since it opened, and nothing has run for
-that long, it closes with `RetroBIOS: No button pressed, closing.` and exit status 0.
-Closed on an error or a result screen, it prints that screen's words after
-the line and exits with its code (1 for `No internet: offline mode`), so
-the launcher can tell an error from a close with nothing to report.
-The time counts from the end of the last check, so a launcher that names the
-platform, whose interface moves on to the plan by itself, closes the same way.
-A mapper that never opened the pad would otherwise hold the device on that
-screen. On a Miyoo, B,
-X, Y and Select are Left Ctrl, Shift, Alt and Right Ctrl: pressed alone, a
-modifier sends nothing to a terminal, so the interface goes back with R2
-instead, and the bottom line says so.
+
+On a Miyoo, B, X, Y and Select are Left Ctrl, Shift, Alt and Right Ctrl:
+pressed alone, a modifier sends nothing to a terminal, so the interface goes
+back with R2 instead, and the bottom line says so.
 
 **Without Wi-Fi.** On a computer, download the BIOS pack that serves your
 system (every part, for a pack in parts): RetroArch's on muOS, ArkOS,
@@ -1250,7 +1247,7 @@ fields, the installer refuses to narrow rather than install everything.
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, or `--restore` could not put a file back |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
-| `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
+| `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question, or the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`) before an install. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
 The full screen ended by SIGTERM (Start+Select on a handheld) before any
@@ -1343,7 +1340,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
 | `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `gptokeyb_muxterm`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
-| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 0, or with the code of the error or result screen it closed on |
+| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 130, or with the code of the error or result screen it closed on |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong
