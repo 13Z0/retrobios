@@ -521,7 +521,8 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # stage: manifest (reason: network, not_found, invalid, clock for a
     # refused certificate under a clock set in the past, or no_ca for no
     # trusted certificates on the machine) or detect (reason: conflict, two
-    # systems found on one machine) or from (a folder named with --from,
+    # systems found on one machine, or not_found, the platform named with
+    # --platform found nowhere and no folder to assume) or from (a folder named with --from,
     # reason: not_found, not_a_folder, unreadable, or system for the root
     # of the system and /proc, /sys, /dev).
     "error": ("stage", "reason", "platform", "message"),
@@ -6255,6 +6256,8 @@ def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
     while not raw:
         raw = _ask(
             f"BIOS directory [{default_dest}]: " if default_dest
+            else "BIOS directory (no default, a folder above could not be opened): "
+            if _default_set_aside(os_type, plat)
             else "BIOS directory (no default on this system): "
         )
         if default_dest is not None:
@@ -6296,19 +6299,30 @@ def _default_dest(os_type: str, platform_name: str) -> Path | None:
     path on Windows resolved to the root of the current drive: 8.7 GB under
     C:\\userdata\\bios, reported done.
     """
-    if os_type == "android" and platform_name == "retroarch":
-        default = _android_storage_root() / "RetroArch" / "system"
-    elif platform_name in PORTABLE_ONLY or (os_type == "windows" and platform_name
-                                            not in _os_default_dests(os_type)):
-        return None
-    else:
-        default = (_os_default_dests(os_type).get(platform_name)
-                   or (None if platform_name == "retrobat" else DEFAULT_DESTS.get(platform_name)))
+    default = _built_in_dest(os_type, platform_name)
     if default is not None and _refused_near(default):
         # The Flatpak's own folder at 000 hid the retroarch.cfg naming
         # ~/Games/bios, and 6.6 GB were offered to a folder it does not read.
         return None
     return default
+
+
+def _built_in_dest(os_type: str, platform_name: str) -> Path | None:
+    """The platform's usual folder on this OS, whatever detection met."""
+    if os_type == "android" and platform_name == "retroarch":
+        return _android_storage_root() / "RetroArch" / "system"
+    if platform_name in PORTABLE_ONLY or (os_type == "windows" and platform_name
+                                          not in _os_default_dests(os_type)):
+        return None
+    return (_os_default_dests(os_type).get(platform_name)
+            or (None if platform_name == "retrobat" else DEFAULT_DESTS.get(platform_name)))
+
+
+def _default_set_aside(os_type: str, platform_name: str) -> bool:
+    """Whether the platform's usual folder was set aside because detection
+    met a closed folder, as against having none on this OS."""
+    return (_default_dest(os_type, platform_name) is None
+            and _built_in_dest(os_type, platform_name) is not None)
 
 
 def _refused_near(default: Path) -> bool:
@@ -9236,6 +9250,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         elif args.platform in CARD_PLATFORMS:
             # Its files go on its SD card, which is never this machine's
             # own folder: the card's mount point is the user's to name.
+            EVENTS.emit("error", stage="detect", reason="not_found", platform=args.platform,
+                        message=f"{display_name(args.platform)} keeps its BIOS files on "
+                        "its SD card, and no card was named with --dest")
             print(
                 f"  {display_name(args.platform)} keeps its BIOS files on its SD card. "
                 f"Mount the card and name its root with --dest, for example: "
@@ -9247,6 +9264,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         elif args.platform in PORTABLE_ONLY:
             # A portable emulator reads the folder beside its executable:
             # any default would be a folder it never opens.
+            EVENTS.emit("error", stage="detect", reason="not_found", platform=args.platform,
+                        message=f"Platform '{args.platform}' not found. "
+                        f"{PORTABLE_ONLY[args.platform]}")
             print(
                 f"  Platform '{args.platform}' not found. {PORTABLE_ONLY[args.platform]} "
                 f"Name it with --dest, for example: --platform {args.platform} "
@@ -9258,11 +9278,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             default_dest = _default_dest(os_type, args.platform)
             if default_dest is None:
                 where = ("where this user can look, and its default folder may not be "
-                         "the one it reads" if _DETECTION_REFUSED
+                         "the one it reads" if _default_set_aside(os_type, args.platform)
                          else "and no folder on this system is one it reads")
+                message = f"Platform '{args.platform}' not found {where}"
+                EVENTS.emit("error", stage="detect", reason="not_found",
+                            platform=args.platform, message=message)
                 print(
-                    f"  Platform '{args.platform}' not found {where}. Name it with "
-                    f"--dest, for example: --platform {args.platform} --dest <its BIOS folder>",
+                    f"  {message}. Name it with --dest, for example: "
+                    f"--platform {args.platform} --dest <its BIOS folder>",
                     file=sys.stderr,
                 )
                 sys.exit(1)

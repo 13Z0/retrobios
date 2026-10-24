@@ -1049,5 +1049,75 @@ class TheQuietConfigReadSaysNothing(unittest.TestCase):
         self.assertEqual(install._DETECTION_REFUSED, [])
 
 
+@unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                 "a folder without search permission is POSIX")
+class NotFoundWithAClosedFolder(unittest.TestCase):
+    """The not-found line spoke of a default set aside for RetroBat on
+    Linux, which has none, as soon as any folder was closed, and the exit
+    wrote no error event."""
+
+    def run_named(self, platform: str, closed_home: bool) -> tuple:
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            closed = home / ".config" / "EmuDeck"
+            closed.mkdir(parents=True)
+            env = {**repo.env(), "HOME": str(home), "RETROBIOS_OS": "linux"}
+            if closed_home:
+                os.chmod(closed, 0o000)
+            try:
+                proc = subprocess.run(
+                    [sys.executable, str(REPO_ROOT / "install.py"), "--platform", platform,
+                     "--dry-run", "--no-input", "--events"],
+                    env=env, capture_output=True, text=True, timeout=60,
+                    stdin=subprocess.DEVNULL)
+            finally:
+                os.chmod(closed, 0o755)
+        events = [json.loads(line) for line in proc.stdout.splitlines()]
+        return proc, events
+
+    def test_a_platform_with_no_folder_here_says_so(self):
+        for closed_home in (False, True):
+            with self.subTest(closed=closed_home):
+                proc, events = self.run_named("retrobat", closed_home)
+                self.assertEqual(proc.returncode, 1, proc.stderr)
+                said = " ".join(proc.stderr.split())
+                self.assertIn("no folder on this system is one it reads", said)
+                self.assertNotIn("its default folder may not be", said)
+                [error] = [e for e in events if e["event"] == "error"]
+                self.assertEqual((error["stage"], error["reason"], error["platform"]),
+                                 ("detect", "not_found", "retrobat"))
+
+    def test_a_default_set_aside_says_so(self):
+        proc, events = self.run_named("retroarch", True)
+        self.assertEqual(proc.returncode, 1, proc.stderr)
+        self.assertIn("its default folder may not be the one it reads",
+                      " ".join(proc.stderr.split()))
+        self.assertEqual([e["reason"] for e in events if e["event"] == "error"],
+                         ["not_found"])
+
+    def test_a_card_system_and_a_portable_one_write_the_event(self):
+        for platform in ("minui", "bizhawk"):
+            with self.subTest(platform=platform):
+                proc, events = self.run_named(platform, False)
+                self.assertEqual(proc.returncode, 1, proc.stderr)
+                self.assertEqual([(e["stage"], e["reason"]) for e in events
+                                  if e["event"] == "error"], [("detect", "not_found")])
+
+    def test_the_manual_prompt_says_why_there_is_no_default(self):
+        home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, home, True)
+        asked = []
+        install._DETECTION_REFUSED[:] = [(home / ".config" / "EmuDeck", "Permission denied")]
+        self.addCleanup(install._DETECTION_REFUSED.clear)
+        with mock.patch.dict(os.environ, {"HOME": str(home)}), \
+                mock.patch.object(install, "_choose_platform", return_value="retroarch"), \
+                mock.patch.object(install, "_ask",
+                                  lambda prompt: asked.append(prompt) or str(home / "b")):
+            install._prompt_manual_platform("linux")
+        self.assertEqual(len(asked), 1)
+        self.assertNotIn("no default on this system", asked[0])
+        self.assertIn("could not be opened", asked[0])
+
+
 if __name__ == "__main__":
     unittest.main()
