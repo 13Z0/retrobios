@@ -8905,8 +8905,9 @@ def _open_from_folders(folders: list[Path]) -> None:
                     other_drives=[str(drive) for drive in index.other_drives])
 
 
-def _refuse_closed(dest: Path, named: str) -> None:
-    """End the run, with its name, on a folder above dest this user cannot open."""
+def _refuse_closed(dest: Path, named: str, then: str = "") -> None:
+    """End the run, with its name, on a folder above dest this user cannot
+    open. then is a line said after the error, which it continues."""
     closed = closed_folder(dest)
     if closed is None:
         return
@@ -8915,6 +8916,8 @@ def _refuse_closed(dest: Path, named: str) -> None:
     print(f"Error: {screen_text(message)}. Give this user access to it, run as "
           f"its owner, or choose another folder than the one {named}.",
           file=sys.stderr)
+    if then:
+        print(f"  {then}", file=sys.stderr)
     sys.exit(1)
 
 
@@ -9366,13 +9369,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # A system_directory under /root read from retroarch.cfg, run without
         # sudo: the case probe raised PermissionError before any line.
         for name, path in platforms:
-            if closed_folder(path) is not None and len(platforms) > 1:
-                print("  Nothing was installed. Name one platform with --platform "
-                      "to install it alone.", file=sys.stderr)
-            _refuse_closed(path, (
-                f"taken as {display_name(name)}'s default, {display_name(name)} "
-                "not being found here" if path in assumed_dests
-                else "detected here") + " (name another with --dest)")
+            found_in = _retroarch_config_at(path)
+            named = (f"used by default, since {display_name(name)} was not found"
+                     if path in assumed_dests
+                     else f"{found_in[0]} names" if found_in else "detected here")
+            _refuse_closed(path, f"{named} (name another with --dest)",
+                           "Nothing was installed. Name one platform with --platform "
+                           "to install it alone." if len(platforms) > 1 else "")
 
     total_downloaded = 0
     total_up_to_date = 0

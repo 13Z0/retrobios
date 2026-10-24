@@ -1119,5 +1119,58 @@ class NotFoundWithAClosedFolder(unittest.TestCase):
         self.assertIn("could not be opened", asked[0])
 
 
+@unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                 "a folder without search permission is POSIX")
+class ADetectedClosedFolderSaysWhereItCameFrom(unittest.TestCase):
+    """The refusal said "the one detected here" for a folder retroarch.cfg
+    names, and with two setups found the line saying nothing was installed
+    came above the error it continues."""
+
+    def run_detected(self, emudeck: bool) -> subprocess.CompletedProcess:
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            lock = repo.root / "lock"
+            cfg = home / ".config" / "retroarch" / "retroarch.cfg"
+            cfg.parent.mkdir(parents=True)
+            (lock / "system").mkdir(parents=True)
+            cfg.write_text(f'system_directory = "{lock / "system"}"\n')
+            if emudeck:
+                (home / "Emulation" / "bios").mkdir(parents=True)
+            env = {**repo.env(), "HOME": str(home), "XDG_CONFIG_HOME": str(home / ".config"),
+                   "RETROBIOS_OS": "linux"}
+            os.chmod(lock, 0o000)
+            try:
+                proc = subprocess.run(
+                    [sys.executable, str(REPO_ROOT / "install.py"), "--check", "--no-input"],
+                    env=env, capture_output=True, text=True, timeout=60,
+                    stdin=subprocess.DEVNULL)
+            finally:
+                os.chmod(lock, 0o755)
+        self.cfg = cfg
+        return proc
+
+    def test_the_config_is_named(self):
+        proc = self.run_detected(False)
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        said = " ".join(proc.stderr.split())
+        self.assertIn(f"than the one {self.cfg} names (name another with --dest)", said)
+
+    def test_nothing_installed_comes_after_the_error(self):
+        proc = self.run_detected(True)
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        error = proc.stderr.index("Error: ")
+        self.assertGreater(proc.stderr.index("Nothing was installed."), error, proc.stderr)
+
+    def test_an_assumed_default_reads_plainly(self):
+        self.assertIn("used by default, since {display_name(name)} was not found",
+                      _source_of(install._run_text))
+
+
+def _source_of(function) -> str:
+    import inspect
+
+    return " ".join(inspect.getsource(function).split())
+
+
 if __name__ == "__main__":
     unittest.main()
