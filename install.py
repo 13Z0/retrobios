@@ -511,6 +511,11 @@ EVENT_SCHEMA = 1
 EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # mode: install, check, dry-run or list.
     "start": ("schema", "installer", "mode"),
+    # A folder detection could not look in, once each, before detect: the
+    # probes under it counted as absent and the others went on. reason is
+    # why in words (Permission denied). A kind of its own, since schema 1
+    # never adds a key to detect, and not an error: the run goes on.
+    "unsearched": ("folder", "reason", "message"),
     # platforms: [{"platform", "name", "bios_dir"}], empty when none is found.
     "detect": ("os", "os_name", "platforms"),
     # stage: manifest (reason: network, not_found, invalid, clock for a
@@ -844,7 +849,7 @@ def detect_os() -> str:
         if _is_android():
             return "android"
         proc_version = Path("/proc/version")
-        if proc_version.exists():
+        if _exists(proc_version):
             try:
                 content = proc_version.read_text(encoding="utf-8", errors="replace")
                 if "microsoft" in content.lower():
@@ -863,7 +868,7 @@ def _parse_os_release() -> dict[str, str]:
     """Parse /etc/os-release KEY=value format."""
     result: dict[str, str] = {}
     path = _on_device("/etc/os-release")
-    if not path.exists():
+    if not _exists(path):
         return result
     try:
         for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
@@ -964,7 +969,7 @@ def _steam_libraries() -> list[Path]:
     roots: list[Path] = []
     for var in ("ProgramFiles(x86)", "ProgramFiles"):
         base = os.environ.get(var, "")
-        if base and (Path(base) / "Steam").is_dir():
+        if base and _is_dir(Path(base) / "Steam"):
             roots.append(Path(base) / "Steam")
     libraries = list(roots)
     for root in roots:
@@ -1015,7 +1020,7 @@ def _windows_retroarch_dirs() -> list[Path]:
     candidates += [
         Path(root) / "apps" / "retroarch" / "current" for root in scoop_roots if root
     ]
-    return [folder for folder in candidates if (folder / "retroarch.exe").is_file()]
+    return [folder for folder in candidates if _is_file(folder / "retroarch.exe")]
 
 
 def _macos_retroarch_base() -> Path:
@@ -1025,13 +1030,13 @@ def _macos_retroarch_base() -> Path:
     HAVE_STEAM portable = YES`), with no portable.txt to say so: its
     bundle under Steam's library, and no other RetroArch.app, mark it."""
     support = Path.home() / "Library" / "Application Support" / "RetroArch"
-    if (support / "portable.txt").is_file():
+    if _is_file(support / "portable.txt"):
         return support
     steam = (
         Path.home() / "Library" / "Application Support" / "Steam" / "steamapps"
         / "common" / "RetroArch" / "RetroArch.app"
     )
-    if steam.is_dir() and not Path("/Applications/RetroArch.app").is_dir():
+    if _is_dir(steam) and not _is_dir(Path("/Applications/RetroArch.app")):
         return support
     return Path.home() / "Documents" / "RetroArch"
 
@@ -1051,7 +1056,7 @@ def _parse_retroarch_system_dir(
     install keeps both. home is what '~' means to that RetroArch, the user's
     home when not given.
     """
-    if not cfg_path.exists():
+    if not _exists(cfg_path):
         return None
     app_dir = app_dir or cfg_path.parent
     system_dir = _retroarch_cfg_dir(cfg_path, "system_directory", app_dir, "system", home)
@@ -1100,7 +1105,7 @@ def _shell_unquote(value: str) -> str:
 
 def _parse_bash_var(path: Path, key: str) -> str | None:
     """Extract the effective value of key= from a bash/shell file."""
-    if not path.exists():
+    if not _exists(path):
         return None
     try:
         for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
@@ -1166,7 +1171,7 @@ def detect_board(platform: str) -> str | None:
 
 def _parse_json_path(path: Path, *keys: str) -> str | None:
     """Extract a nested string value from a JSON file."""
-    if not path.exists():
+    if not _exists(path):
         return None
     try:
         data = json.loads(path.read_text(encoding="utf-8", errors="replace"))
@@ -1179,7 +1184,7 @@ def _parse_json_path(path: Path, *keys: str) -> str | None:
 
 def _parse_ps1_var(path: Path, key: str) -> str | None:
     """Extract value of $key= or key= from a PowerShell file."""
-    if not path.exists():
+    if not _exists(path):
         return None
     normalized = key.lstrip("$")
     try:
@@ -1459,7 +1464,7 @@ def _config_files(pattern: str) -> list[tuple[Path, Path]]:
         return [(_on_device(device), Path(folder))]
     try:
         return [(path, Path(folder)) for path in sorted(_on_device(folder).glob(name))
-                if path.is_file()]
+                if _is_file(path)]
     except OSError:
         return []
 
@@ -1594,6 +1599,25 @@ def _android_cfg_value(cfg: Path, key: str) -> str | None:
     return None
 
 
+# Set while detection runs on this thread: a probe this user may not make
+# is then said once, and the probes of other threads (the files being
+# hashed) stay silent.
+_SETUP_SEARCH = threading.local()
+
+
+@contextlib.contextmanager
+def _refusals_expected() -> Iterator[None]:
+    """Probes whose refusal is the answer, not a folder to report: another
+    app's private data on Android, which any app may test for existence and
+    none may enter, has a line of its own (android_unreachable_folders)."""
+    outer = getattr(_SETUP_SEARCH, "active", False)
+    _SETUP_SEARCH.active = False
+    try:
+        yield
+    finally:
+        _SETUP_SEARCH.active = outer
+
+
 def _android_play_build(package: str, storage: Path, cfgs: tuple[Path, ...]) -> bool | None:
     """True for the Google Play build of this package, False for the
     retroarch.com one, None when nothing it wrote tells them apart.
@@ -1609,9 +1633,9 @@ def _android_play_build(package: str, storage: Path, cfgs: tuple[Path, ...]) -> 
         code = _android_cfg_value(cfg, "bundle_assets_extract_version_current")
         if code and code.isdigit() and int(code) > 0:
             return int(code) < _ANDROID_PLAY_VERSION_CEILING
-    if (storage / "Android" / "data" / package / "files" / "RetroArch").is_dir():
+    if _is_dir(storage / "Android" / "data" / package / "files" / "RetroArch"):
         return True
-    if (storage / "RetroArch").is_dir():
+    if _is_dir(storage / "RetroArch"):
         return False
     return None
 
@@ -1621,8 +1645,8 @@ def _android_writable(folder: Path) -> bool:
     writable. Android 11 and later keep Android/data/<package> of other apps
     from Termux."""
     for parent in (folder, *folder.parents):
-        if parent.exists():
-            return parent.is_dir() and os.access(parent, os.W_OK)
+        if _exists(parent):
+            return _is_dir(parent) and os.access(parent, os.W_OK)
     return False
 
 
@@ -1632,6 +1656,7 @@ def _android_out_of_reach(name: str, folder: Path, what: str) -> str:
             f"{folder} without root: {what} are not copied there.")
 
 
+@_refusals_expected()
 def _android_retroarch_builds() -> list[tuple[Path | None, str]]:
     """Each installed RetroArch build: its system folder when this shell can
     write it, else None and the line that says why.
@@ -1650,7 +1675,7 @@ def _android_retroarch_builds() -> list[tuple[Path | None, str]]:
     builds: list[tuple[Path | None, str]] = []
     for package in ANDROID_RETROARCH_PACKAGES:
         external = storage / "Android" / "data" / package / "files"
-        if not (ANDROID_APP_DATA / package).exists() and not external.exists():
+        if not _exists(ANDROID_APP_DATA / package) and not _exists(external):
             continue
         cfgs = (external / "retroarch.cfg",
                 ANDROID_APP_DATA / package / "files" / "retroarch.cfg")
@@ -1693,7 +1718,7 @@ def _detect_android() -> list[tuple[str, Path]]:
         if folder is not None and ("retroarch", folder) not in found:
             found.append(("retroarch", folder))
     default_root = _android_storage_root() / "RetroArch"
-    if not builds and default_root.exists():
+    if not builds and _exists(default_root):
         found.append(("retroarch", default_root / "system"))
     return found
 
@@ -1715,6 +1740,7 @@ _ANDROID_APP_FOLDERS = (
 )
 
 
+@_refusals_expected()
 def android_unreachable_folders() -> list[str]:
     """A line for each Android emulator installed here whose BIOS folder
     this shell cannot write, said instead of skipping it in silence. A
@@ -1730,9 +1756,9 @@ def android_unreachable_folders() -> list[str]:
         target = Path(folder.replace("$STORAGE", storage, 1))
         if folder.startswith("/data/data/"):
             target = ANDROID_APP_DATA / Path(folder).relative_to("/data/data")
-        if not (ANDROID_APP_DATA / package).exists() and not target.exists():
+        if not _exists(ANDROID_APP_DATA / package) and not _exists(target):
             continue
-        if target.is_dir() and os.access(target, os.W_OK):
+        if _is_dir(target) and os.access(target, os.W_OK):
             continue
         lines.append(_android_out_of_reach(name, target, ", ".join(files)))
     return lines
@@ -1780,7 +1806,7 @@ def launchbox_root(os_type: str) -> Path | None:
             / "LaunchBox"
             / "LaunchBox.lnk"
         )
-        if lnk.exists():
+        if _exists(lnk):
             target = _lnk_target(lnk, "LaunchBox.exe")
             if target:
                 # The shortcut points at Core/LaunchBox.exe
@@ -1790,7 +1816,7 @@ def launchbox_root(os_type: str) -> Path | None:
     if userprofile:
         candidates.append(Path(userprofile) / "LaunchBox")
     for root in candidates:
-        if (root / "Data" / "Emulators.xml").exists():
+        if _exists(root / "Data" / "Emulators.xml"):
             return root
     return None
 
@@ -1803,7 +1829,7 @@ def launchbox_emulators(emulators_xml: Path) -> dict[str, Path]:
     the lowercase executable names.
     """
     found: dict[str, Path] = {}
-    if not emulators_xml.exists():
+    if not _exists(emulators_xml):
         return found
     try:
         if emulators_xml.stat().st_size > 10 * 1024 * 1024:
@@ -1823,7 +1849,7 @@ def launchbox_emulators(emulators_xml: Path) -> dict[str, Path]:
         exe = Path(app_path)
         if not exe.is_absolute():
             exe = lb_root / exe
-        if exe.parent.is_dir():
+        if _is_dir(exe.parent):
             found.setdefault(exe.name.lower(), exe.parent)
     return found
 
@@ -1852,7 +1878,7 @@ def _pcsx2_bios_dir(emu_dir: Path) -> Path:
     """
     documents = Path(os.environ.get("USERPROFILE", str(Path.home()))) / "Documents"
     portable_txt = emu_dir / "portable.txt"
-    portable = (emu_dir / "portable.ini").exists() or portable_txt.exists()
+    portable = _exists(emu_dir / "portable.ini") or _exists(portable_txt)
     if portable:
         subpath = ""
         try:
@@ -1885,14 +1911,14 @@ def _xemu_bios_dir(emu_dir: Path) -> Path:
     """
     appdata = os.environ.get("APPDATA", "")
     toml = emu_dir / "xemu.toml"
-    if not toml.exists() and appdata:
+    if not _exists(toml) and appdata:
         toml = Path(appdata) / "xemu" / "xemu" / "xemu.toml"
-    if toml.exists():
+    if _exists(toml):
         try:
             for line in toml.read_text(encoding="utf-8", errors="replace").splitlines():
                 if line.startswith(("bootrom_path", "flashrom_path")):
                     parts = line.split("'")
-                    if len(parts) > 1 and Path(parts[1]).exists():
+                    if len(parts) > 1 and _exists(Path(parts[1])):
                         return Path(parts[1]).parent
         except OSError:
             pass
@@ -1914,7 +1940,7 @@ def launchbox_bios_dirs(root: Path) -> dict[str, Path]:
     if emu_dir:
         dirs["xemu"] = _xemu_bios_dir(emu_dir)
     emu_dir = emulators.get("dolphin.exe")
-    if emu_dir and (emu_dir / "portable.txt").exists():
+    if emu_dir and _exists(emu_dir / "portable.txt"):
         # portable.txt beside the executable moves the user directory to
         # User (SetUserDirectory in Source/Core/UICommon/UICommon.cpp,
         # PORTABLE_USER_DIR in Source/Core/Common/CommonPaths.h)
@@ -1922,32 +1948,59 @@ def launchbox_bios_dirs(root: Path) -> dict[str, Path]:
     return dirs
 
 
-_DETECTION_REFUSED: list[str] = []
+# (folder, why in words) for each folder detection could not look in.
+_DETECTION_REFUSED: list[tuple[Path, str]] = []
+
+
+def refused_words(folder: Path, why: str, shown: str = "") -> str:
+    """The line said for a folder detection could not look in. shown is
+    the folder as the screen writes it (~/.config/EmuDeck), the full path
+    by default."""
+    return (f"Could not look for setups: this user cannot open {shown or folder} ({why}). "
+            "Run as its owner (su - or sudo -H), or name the BIOS folder "
+            "with --dest.")
+
+
+def _note_refused(path: Path, exc: OSError) -> None:
+    """Say once that a folder detection looks in is closed to this user.
+
+    A probe refused there counts as absent and the others go on: a config
+    folder a sudo run left at 0700 (~/.config/EmuDeck) hid a RetroArch whose
+    retroarch.cfg was readable, and the run fell back to a folder it does
+    not read.
+    """
+    if not getattr(_SETUP_SEARCH, "active", False) or not isinstance(exc, PermissionError):
+        return
+    refused = closed_folder(path) or (path, exc.strerror or str(exc))
+    if refused in _DETECTION_REFUSED:
+        return
+    _DETECTION_REFUSED.append(refused)
+    words = refused_words(*refused)
+    EVENTS.emit("unsearched", folder=str(refused[0]), reason=refused[1], message=words)
+    print(f"  {screen_text(words)}", file=sys.stderr)
 
 
 def _detection_guarded(detect: Callable[..., list]) -> Callable[..., list]:
-    """Detection that finds nothing, and says why once, where this user
-    cannot look.
+    """Detection whose probes treat a folder this user cannot open as
+    absent, and say so once.
 
-    HOME kept across `su` without `-`: every probe of a config under it
-    raised PermissionError, and the run ended on a traceback before its
-    first line. A named --dest still installs.
+    Each probe goes through _exists, _is_dir or _is_file, which records the
+    refusal. A probe that still raises PermissionError (a glob on a Python
+    whose pathlib lets it through) is the last net: the call finds nothing
+    and says why, where HOME kept across `su` without `-` once ended the
+    run on a traceback.
     """
+    @functools.wraps(detect)
     def guarded(*args: object, **kwargs: object) -> list:
+        outer = getattr(_SETUP_SEARCH, "active", False)
+        _SETUP_SEARCH.active = True
         try:
             return detect(*args, **kwargs)
         except PermissionError as exc:
-            closed = closed_folder(Path(exc.filename)) if exc.filename else None
-            folder, why = closed or (Path(str(exc.filename or "")), exc.strerror or str(exc))
-            words = (f"Could not look for setups: this user cannot open {folder} ({why}). "
-                     "Run as its owner (su - or sudo -H), or name the BIOS folder "
-                     "with --dest.")
-            if words not in _DETECTION_REFUSED:
-                _DETECTION_REFUSED.append(words)
-                print(f"  {screen_text(words)}", file=sys.stderr)
+            _note_refused(Path(str(exc.filename or "")), exc)
             return []
-    guarded.__doc__ = detect.__doc__
-    guarded.__name__ = detect.__name__
+        finally:
+            _SETUP_SEARCH.active = outer
     return guarded
 
 
@@ -1961,7 +2014,7 @@ def detect_frontends(os_type: str, home: Path | None = None) -> list[str]:
     home = home or Path.home()
     frontends: list[str] = []
     esde_env = os.environ.get("ESDE_APPDATA_DIR", "")
-    if (esde_env and Path(esde_env).is_dir()) or (home / "ES-DE").is_dir():
+    if (esde_env and _is_dir(Path(esde_env))) or _is_dir(home / "ES-DE"):
         frontends.append("esde")
     if launchbox_root(os_type) is not None:
         frontends.append("launchbox")
@@ -2026,7 +2079,7 @@ def _detect_by_executable(os_type: str, found: list[tuple[str, Path]]) -> None:
             base, _, rest = pattern.partition("/" if "/" in pattern else "\\")
             glob = "/".join(part for part in re.split(r"[\\/]", rest) if part)
             try:
-                hits.extend(path for path in _rule_path(base).glob(glob) if path.is_file())
+                hits.extend(path for path in _rule_path(base).glob(glob) if _is_file(path))
             except OSError:
                 continue
         if hits:
@@ -2088,7 +2141,7 @@ def _detect_by_registry(os_type: str, found: list[tuple[str, Path]]) -> None:
         if not folder:
             continue
         base = _host_path(folder.rstrip("\\/") or folder)
-        if base.is_dir():
+        if _is_dir(base):
             found.append((platform_name, base / subdir))
 
 
@@ -2098,7 +2151,7 @@ def _detect_by_path(os_type: str, found: list[tuple[str, Path]]) -> None:
     for rule_os, platform_name, path, bios in _PATH_RULES:
         if rule_os not in systems or any(name == platform_name for name, _ in found):
             continue
-        if _rule_path(path).exists():
+        if _exists(_rule_path(path)):
             found.append((platform_name, _rule_path(bios or path)))
 
 
@@ -2120,7 +2173,7 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
         # dddb3022) reads $emudeckFolder/settings.sh on both, and vars.sh:2
         # sets emudeckFolder to $HOME/.config/EmuDeck.
         emudeck_settings = Path.home() / ".config" / "EmuDeck" / "settings.sh"
-        if emudeck_settings.exists():
+        if _exists(emudeck_settings):
             emu_path = _parse_bash_var(emudeck_settings, "emulationPath")
             if emu_path:
                 found.append(("emudeck", Path(emu_path) / "bios"))
@@ -2132,7 +2185,7 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
         retrodeck_conf_dir = home / ".var" / "app" / "net.retrodeck.retrodeck" / "config" / "retrodeck"
         retrodeck_json = retrodeck_conf_dir / "retrodeck.json"
         retrodeck_cfg = retrodeck_conf_dir / "retrodeck.cfg"
-        if retrodeck_json.exists():
+        if _exists(retrodeck_json):
             rd_home = _parse_json_path(retrodeck_json, "paths", "rd_home_path")
             if not rd_home:
                 # A home moved to an SD card lives only in this file: the
@@ -2145,7 +2198,7 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
             rd_root = Path(rd_home) if rd_home else home / "retrodeck"
             _record_moved_folders(rd_root, retrodeck_json)
             found.append(("retrodeck", rd_root))
-        elif retrodeck_cfg.exists():
+        elif _exists(retrodeck_cfg):
             rd_home = _parse_bash_var(retrodeck_cfg, "rdhome")
             found.append(("retrodeck", Path(rd_home) if rd_home else home / "retrodeck"))
 
@@ -2261,7 +2314,7 @@ def _emudeck_windows_bios() -> Path | None:
     """
     candidates = [Path(os.environ[var]) / "EmuDeck" / "settings.ps1"
                   for var in ("APPDATA", "USERPROFILE") if os.environ.get(var)]
-    settings = next((path for path in candidates if path.is_file()), None)
+    settings = next((path for path in candidates if _is_file(path)), None)
     if settings is None:
         return None
     emu_path = _parse_ps1_var(settings, "$emulationPath")
@@ -2312,10 +2365,11 @@ def _bizhawk_unix_firmware() -> Path | None:
     $XDG_DATA_HOME/emuhawk-monort-<version> (Dist/launch-scripts.nix).
     """
     data_home = os.environ.get("BIZHAWK_DATA_HOME", "").strip()
-    if data_home and Path(data_home).is_dir():
+    if data_home and _is_dir(Path(data_home)):
         return Path(data_home) / "Firmware"
     xdg = os.environ.get("XDG_DATA_HOME", "").strip() or str(Path.home() / ".local" / "share")
-    homes = sorted(Path(xdg).glob("emuhawk-monort-*"), key=lambda p: p.stat().st_mtime)
+    homes = sorted((home for home in Path(xdg).glob("emuhawk-monort-*") if _is_dir(home)),
+                   key=lambda home: home.stat().st_mtime)
     return homes[-1] / "Firmware" if homes else None
 
 
@@ -2344,7 +2398,7 @@ def core_dirs(plat: str, bios_path: Path) -> list[Path]:
     RetroArch's own directory.
     """
     found = _retroarch_config_for(bios_path)
-    if found is None and (bios_path.parent / "retroarch.cfg").is_file():
+    if found is None and _is_file(bios_path.parent / "retroarch.cfg"):
         found = (bios_path.parent / "retroarch.cfg", bios_path.parent)
     dirs: list[Path] = []
     if found is not None:
@@ -4196,28 +4250,29 @@ def _held(path: Path) -> bool:
         return True
 
 
+def _probed(probe: Callable[[], bool], path: Path) -> bool:
+    """probe() for path, False where the place cannot be looked at. A
+    refusal met while looking for setups is said once (_note_refused)."""
+    try:
+        return probe()
+    except OSError as exc:
+        _note_refused(path, exc)
+        return False
+
+
 def _exists(path: Path) -> bool:
     """Path.exists(), False where the place cannot be looked at."""
-    try:
-        return path.exists()
-    except OSError:
-        return False
+    return _probed(path.exists, path)
 
 
 def _is_dir(path: Path) -> bool:
     """Path.is_dir(), False where the place cannot be looked at."""
-    try:
-        return path.is_dir()
-    except OSError:
-        return False
+    return _probed(path.is_dir, path)
 
 
 def _is_file(path: Path) -> bool:
     """Path.is_file(), False where the place cannot be looked at."""
-    try:
-        return path.is_file()
-    except OSError:
-        return False
+    return _probed(path.is_file, path)
 
 
 def closed_folder(path: Path) -> tuple[Path, str] | None:
@@ -9247,11 +9302,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     elif not listing:
         # A system_directory under /root read from retroarch.cfg, run without
         # sudo: the case probe raised PermissionError before any line.
-        for _name, path in platforms:
+        for name, path in platforms:
             if closed_folder(path) is not None and len(platforms) > 1:
                 print("  Nothing was installed. Name one platform with --platform "
                       "to install it alone.", file=sys.stderr)
-            _refuse_closed(path, "detected here (name another with --dest)")
+            _refuse_closed(path, (
+                f"taken as {display_name(name)}'s default, {display_name(name)} "
+                "not being found here" if path in assumed_dests
+                else "detected here") + " (name another with --dest)")
 
     total_downloaded = 0
     total_up_to_date = 0
@@ -10173,6 +10231,8 @@ class TuiState:
         # (platform, folder, label) for each setup found here.
         self.setups: list = []
         self.notes: list = []
+        # The folders detection could not look in, one line each.
+        self.refused: list = []
         self.platform: str = ""
         self.dest: Path | None = None
         # A --dest given without --platform: the list asks whose files go there.
@@ -10927,9 +10987,19 @@ def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = No
     if (folder is not None and state.browse_for != "from"
             and folder in (state.home, Path(folder.anchor))):
         # No frontend reads its BIOS files from HOME or a drive's root: A
-        # pressed through the screens installed into ~. A goes deeper there.
+        # pressed through the screens installed into ~. A goes into a
+        # visible subfolder there, never a card or drive listed first (A
+        # then took /mnt/d, the Windows D: drive, for the BIOS folder) nor
+        # .cache. With none, Use this folder keeps the focus and says where.
         focus = next((index for index, row in enumerate(state.browse_rows)
-                      if row.action == "dir" and row.value != folder.parent), 0)
+                      if row.action == "dir" and isinstance(row.value, Path)
+                      and row.label == f"{row.value.name}/"
+                      and not row.value.name.startswith(".")), 0)
+        if not focus and not state.status:
+            state.status = ("This is your home folder: no setup reads its BIOS files "
+                            "here. Go back to type a path." if folder == state.home
+                            else "This is the root of a drive: no setup reads its BIOS "
+                            "files here. Go back to type a path.")
     for index, row in enumerate(state.browse_rows):
         if came_from is not None and row.action == "dir" and row.value == came_from:
             focus = index
@@ -11663,14 +11733,25 @@ def _scrolled(lines: list[TuiLine], first: int, height: int, lead: int = 0) -> l
     return lines[first:end] + [_styled(where, "dim")]
 
 
+# The rows a screen keeps for its list under pinned lines.
+TUI_PINNED_ROWS = 4
+
+
 def _compose(
     state: TuiState, width: int, height: int, before: list, rows: list[TuiRow],
-    after: list = (), footer: list = (),
+    after: list = (), footer: list = (), pinned: list = (),
 ) -> list[TuiLine]:
     """Text, then the rows, then more text, in height lines. The rows are
-    always shown, scrolled around the focus when they do not fit."""
+    always shown, scrolled around the focus when they do not fit. pinned
+    comes first and stays when the rows fill the screen, leaving them
+    TUI_PINNED_ROWS lines at least."""
     footer_lines = _text_lines(list(footer), width)
     room = max(1, height - len(footer_lines))
+    top_lines = _text_lines(list(pinned), width)[:max(0, room - TUI_PINNED_ROWS)]
+    if top_lines:
+        top_lines.append(_styled(""))
+        room -= len(top_lines)
+        return top_lines + _compose(state, width, room, before, rows, after) + footer_lines
     focus = max(0, min(state.focus.get(state.screen, 0), len(rows) - 1)) if rows else 0
     row_lines = [_row_line(row, index == focus, width) for index, row in enumerate(rows)]
     if len(row_lines) >= room:
@@ -11877,7 +11958,8 @@ def _view_setup(state: TuiState, width: int, height: int) -> tuple:
     before = ["Found on this machine:" if state.setups else "Nothing was found here."]
     status = [state.status] if state.status else []
     return ("Where do you play?",
-            _compose(state, width, height, before, rows, after + status + state.notes),
+            _compose(state, width, height, before, rows, after + status + state.notes,
+                     pinned=state.refused),
             ("A/Enter Continue", "B/Esc Quit", "? Help"))
 
 
@@ -11892,7 +11974,7 @@ def _view_platforms(state: TuiState, width: int, height: int) -> tuple:
     needle = state.filters.get("platforms", "")
     after = [f"No setup matches '{needle}'."] if len(rows) == 1 and needle else []
     after += [state.status] if state.status else []
-    return (title, _compose(state, width, height, before, rows, after),
+    return (title, _compose(state, width, height, before, rows, after, pinned=state.refused),
             ("A/Enter Choose", "B/Esc Back", "/ Filter", "? Help"))
 
 
@@ -11909,7 +11991,8 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
         title = "Which folder?"
         before = [f"No usual {name} folder here: browse for it or type it."]
     after = [state.status] if state.status else []
-    return (title, _compose(state, width, height, before, tui_rows(state), after),
+    return (title, _compose(state, width, height, before, tui_rows(state), after,
+                            pinned=state.refused),
             ("A/Enter Choose", "B/Esc Back", "? Help"))
 
 
@@ -12615,9 +12698,11 @@ def tui_start(
             found = detect_platforms(os_type)
             frontends = detect_frontends(os_type)
             cards = [(card_system(mount), mount) for mount in _mounted_cards()]
-        if _DETECTION_REFUSED:
-            # Said on the normal screen before this one covered it.
-            state.status = _DETECTION_REFUSED[0]
+        # Said on the normal screen before this one covered it, and kept
+        # above the list: a status line under 18 setups was never drawn.
+        state.refused = [refused_words(folder, why, _short_path(folder, state.home))
+                         for folder, why in _DETECTION_REFUSED]
+        unsaid = {refused_words(*refused) for refused in _DETECTION_REFUSED}
         state.setups = [(name, path, _setup_label(name, path)) for name, path in found]
         # On the device itself its own card is the system found, by its
         # own path (muOS reads /run/muos/storage/bios, a bind of MUOS/bios).
@@ -12632,7 +12717,7 @@ def tui_start(
             state.notes.append("ES-DE found: its BIOS files go to each emulator, "
                                "not to ES-DE itself.")
         state.notes += [line.strip() for line in captured.getvalue().splitlines()
-                        if line.strip()]
+                        if line.strip() and line.strip() not in unsaid]
     if plat and args.dest is not None:
         state.stack = []
         return state, _choose(state, plat, Path(args.dest))

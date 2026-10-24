@@ -665,6 +665,84 @@ class AHomeThisUserCannotOpen(unittest.TestCase):
         self.assertIn(f"Could not look for setups: this user cannot open {home}",
                       runs["detected"].stderr)
 
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_an_assumed_folder_is_not_called_detected(self):
+        """The refusal ended "than the one detected here" for the built-in
+        default taken because RetroArch was not detected."""
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            home.mkdir()
+            env = {**repo.env(), "HOME": str(home), "RETROBIOS_OS": "linux"}
+            os.chmod(home, 0o000)
+            try:
+                proc = subprocess.run(
+                    [sys.executable, str(REPO_ROOT / "install.py"), "--check",
+                     "--no-input", "--platform", "retroarch"],
+                    env=env, capture_output=True, text=True, timeout=60,
+                    stdin=subprocess.DEVNULL)
+            finally:
+                os.chmod(home, 0o755)
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        said = " ".join(proc.stderr.split())
+        self.assertNotIn("the one detected here", said)
+        self.assertIn("than the one taken as RetroArch's default, RetroArch not being "
+                      "found here (name another with --dest).", said)
+
+
+class APartlyClosedHome(unittest.TestCase):
+    """~/.config/EmuDeck at 000 (a sudo run leaves it owned by root) made
+    detection return nothing: the readable retroarch.cfg beside it was
+    never read, and the run fell back to ~/.config/retroarch/system, a
+    folder that RetroArch does not read."""
+
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_retroarch_is_found_past_the_closed_folder(self):
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            closed = home / ".config" / "EmuDeck"
+            closed.mkdir(parents=True)
+            cfg = home / ".config" / "retroarch" / "retroarch.cfg"
+            cfg.parent.mkdir()
+            system = repo.root / "elsewhere" / "system"
+            system.mkdir(parents=True)
+            cfg.write_text(f'system_directory = "{system}"\n')
+            env = {**repo.env(), "HOME": str(home), "RETROBIOS_OS": "linux"}
+            runs = {}
+            os.chmod(closed, 0o000)
+            try:
+                for name, extra in (("detected", []),
+                                    ("named", ["--platform", "retroarch"]),
+                                    ("events", ["--events"])):
+                    runs[name] = subprocess.run(
+                        [sys.executable, str(REPO_ROOT / "install.py"), "--check",
+                         "--no-input", *extra],
+                        env=env, capture_output=True, text=True, timeout=60,
+                        stdin=subprocess.DEVNULL)
+            finally:
+                os.chmod(closed, 0o755)
+        refusal = (f"Could not look for setups: this user cannot open {closed} "
+                   "(Permission denied)")
+        for name, proc in runs.items():
+            with self.subTest(run=name):
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertEqual(" ".join(proc.stderr.split()).count(refusal), 1,
+                                 proc.stderr)
+                self.assertNotIn(str(home / ".config" / "retroarch" / "system"),
+                                 proc.stdout + proc.stderr)
+        self.assertIn(f"Found RetroArch at {system}", runs["detected"].stdout)
+        self.assertIn("0/5 present", runs["named"].stdout)
+        self.assertNotIn("not detected", runs["named"].stdout)
+        events = [json.loads(line) for line in runs["events"].stdout.splitlines()]
+        kinds = [event["event"] for event in events]
+        self.assertLess(kinds.index("unsearched"), kinds.index("detect"))
+        unsearched = events[kinds.index("unsearched")]
+        self.assertEqual((unsearched["folder"], unsearched["reason"]),
+                         (str(closed), "Permission denied"))
+        detect = events[kinds.index("detect")]
+        self.assertEqual([entry["bios_dir"] for entry in detect["platforms"]], [str(system)])
+
 
 class OutputToAFileAsksNothing(unittest.TestCase):
     """`install.py > log.txt` at a terminal: the menu went into the file

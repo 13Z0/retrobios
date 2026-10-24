@@ -11,6 +11,7 @@
     "event": {
       "enum": [
         "start",
+        "unsearched",
         "detect",
         "error",
         "scanned",
@@ -34,6 +35,9 @@
   "oneOf": [
     {
       "$ref": "#/$defs/start"
+    },
+    {
+      "$ref": "#/$defs/unsearched"
     },
     {
       "$ref": "#/$defs/detect"
@@ -114,6 +118,30 @@
             "dry-run",
             "list"
           ]
+        }
+      }
+    },
+    "unsearched": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "folder",
+        "reason",
+        "message"
+      ],
+      "properties": {
+        "event": {
+          "const": "unsearched"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
         }
       }
     },

@@ -2967,6 +2967,112 @@ class AFolderThisUserCannotOpen(unittest.TestCase):
     def test_the_nearest_folder_stops_above_it(self):
         self.assertEqual(install._nearest_folder(self.dest / "deeper"), self.lock)
 
+    def test_a_closed_folder_under_home_hides_nothing_else(self):
+        """~/.config/EmuDeck at 000 made detection return nothing, and the
+        folder screen offered ~/.config/retroarch/system, which this
+        RetroArch does not read: its retroarch.cfg names another."""
+        home = self.lock.parent / "home"
+        closed = home / ".config" / "EmuDeck"
+        closed.mkdir(parents=True)
+        cfg = home / ".config" / "retroarch" / "retroarch.cfg"
+        cfg.parent.mkdir()
+        system = self.lock.parent / "elsewhere" / "system"
+        system.mkdir(parents=True)
+        cfg.write_text(f'system_directory = "{system}"\n')
+        os.chmod(closed, 0o000)
+        self.addCleanup(os.chmod, closed, 0o755)
+        install._DETECTION_REFUSED.clear()
+        self.addCleanup(install._DETECTION_REFUSED.clear)
+        with mock.patch.dict(os.environ, {"HOME": str(home)}), \
+                mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "_RETROARCH_CONFIGS", {}):
+            state, _effects = install.tui_start(_args(), "linux")
+        self.assertEqual([setup[:2] for setup in state.setups], [("retroarch", system)])
+        screen = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+        self.assertEqual(screen.count("Could not look for setups: this user cannot open "
+                                      "~/.config/EmuDeck (Permission denied)"), 1, screen)
+
+    def test_the_refusal_is_drawn_above_a_full_list(self):
+        """With a closed HOME the first screen is the 18 setups: the line,
+        drawn under them, was dropped at 80x24 and at 40x15."""
+        home = self.lock.parent / "home"
+        home.mkdir()
+        os.chmod(home, 0o000)
+        self.addCleanup(os.chmod, home, 0o755)
+        install._DETECTION_REFUSED.clear()
+        self.addCleanup(install._DETECTION_REFUSED.clear)
+        with mock.patch.dict(os.environ, {"HOME": str(home)}), \
+                mock.patch.object(install, "_mounted_cards", return_value=[]):
+            state, _effects = install.tui_start(_args(), "linux")
+        self.assertEqual(state.screen, "platforms")
+        for cols, rows in ((80, 24), (40, 15)):
+            with self.subTest(size=f"{cols}x{rows}"):
+                lines = install.tui_view(state, cols, rows)
+                self.assertEqual(len(lines), rows)
+                screen = " ".join(" ".join(lines).split())
+                self.assertIn("Could not look for setups", screen)
+                self.assertIn("name the BIOS folder with --dest.", screen)
+                # The list keeps its focused row in view.
+                self.assertIn("RetroArch", screen)
+
+
+class AGoesIntoASubfolder(unittest.TestCase):
+    """At HOME or a drive root A went into the first "dir" row: a mounted
+    card or drive listed first (/mnt/d, the Windows D: drive, then took
+    the BIOS files at its root) or .cache."""
+
+    def setUp(self):
+        self.home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.home, True)
+        self.card = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.card, True)
+        self.state = install.TuiState(os_type="linux", home=self.home)
+        self.state.platform = "retroarch"
+        self.state.stack = ["folder", "browse"]
+
+    def focused(self) -> install.TuiRow:
+        return self.state.browse_rows[self.state.focus["browse"]]
+
+    def test_a_card_and_cache_are_passed_over(self):
+        (self.home / ".cache").mkdir()
+        (self.home / "Games").mkdir()
+        with mock.patch.object(install, "_mounted_cards", return_value=[self.card]):
+            install._browse_to(self.state, self.home)
+        self.assertEqual(self.state.browse_rows[2].value, self.card)
+        self.assertEqual(self.focused().label, "Games/")
+        self.assertEqual(self.state.status, "")
+
+    def test_with_no_visible_subfolder_use_stays_and_says_where(self):
+        (self.home / ".cache").mkdir()
+        (self.home / ".config").mkdir()
+        with mock.patch.object(install, "_mounted_cards", return_value=[self.card]):
+            install._browse_to(self.state, self.home)
+        self.assertEqual(self.focused().action, "use")
+        self.assertIn("This is your home folder", self.state.status)
+        screen = " ".join(" ".join(install.tui_view(self.state, 80, 24)).split())
+        self.assertIn("This is your home folder: no setup reads its BIOS files here.",
+                      screen)
+
+    def test_on_windows_the_other_drives_are_passed_over(self):
+        """The card rows are drive roots there (E:\\): at D:\\ the first
+        was E:\\, and at E:\\ it was D:\\."""
+        (self.home / "Games").mkdir()
+        drives = [Path("D:\\"), Path("E:\\")]
+        windows = WindowsOs()
+        windows.path = types.SimpleNamespace(
+            **{name: getattr(os.path, name) for name in dir(os.path)
+               if not name.startswith("_")})
+        windows.path.exists = lambda path: str(path) in ("C:\\", "D:\\", "E:\\")
+        with mock.patch.object(install, "os", windows), \
+                mock.patch.object(install, "_mounted_cards", return_value=drives):
+            install._browse_to(self.state, self.home)
+            self.assertEqual(self.focused().label, "Games/")
+            # The drives list keeps its first drive focused.
+            install._browse_to(self.state, None)
+            self.assertEqual([row.label for row in self.state.browse_rows],
+                             ["C:\\", "D:\\", "E:\\"])
+            self.assertEqual(self.state.focus["browse"], 0)
+
 
 # POSIX modules a Windows Python does not have: importing one raises there.
 POSIX_ONLY = ("termios", "tty", "pty", "fcntl", "select", "resource", "pwd", "grp")
