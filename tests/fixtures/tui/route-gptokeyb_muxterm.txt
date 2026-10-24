@@ -109,26 +109,26 @@
 === folder 40x12
  RetroBIOS: Which folder?
 
- RetroArch reads its BIOS files from:
+ RetroArch usually reads its BIOS files
+   from:
  /home/user/.config/retroarch/system
 
  > Use this folder
    Browse for a folder
    Type a path
-
 
 
  A Use this folder  B Back
 === folder 40x15
  RetroBIOS: Which folder?
 
- RetroArch reads its BIOS files from:
+ RetroArch usually reads its BIOS files
+   from:
  /home/user/.config/retroarch/system
 
  > Use this folder
    Browse for a folder
    Type a path
-
 
 
 
@@ -138,7 +138,7 @@
 === folder 80x24
  RetroBIOS: Which folder?
 
- RetroArch reads its BIOS files from:
+ RetroArch usually reads its BIOS files from:
  /home/user/.config/retroarch/system
 
  > Use this folder

@@ -13,6 +13,7 @@ import http.server
 import io
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -686,8 +687,67 @@ class AHomeThisUserCannotOpen(unittest.TestCase):
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
         said = " ".join(proc.stderr.split())
         self.assertNotIn("the one detected here", said)
-        self.assertIn("than the one taken as RetroArch's default, RetroArch not being "
-                      "found here (name another with --dest).", said)
+        # HOME closed, the default is not assumed at all: --dest is asked for.
+        self.assertIn("Platform 'retroarch' not found where this user can look", said)
+        self.assertNotIn("using default path", proc.stdout + proc.stderr)
+
+
+class TheFrontendsOwnFolderClosed(unittest.TestCase):
+    """The Flatpak RetroArch's folder at 000: its retroarch.cfg names
+    ~/Games/bios, and the run took ~/.config/retroarch/system, a folder it
+    does not read, and offered 6.6 GB there. A folder detection could not
+    look in leaves no default to assume."""
+
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_no_default_is_assumed(self):
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            flatpak = home / ".var" / "app" / "org.libretro.RetroArch"
+            cfg = flatpak / "config" / "retroarch" / "retroarch.cfg"
+            cfg.parent.mkdir(parents=True)
+            cfg.write_text(f'system_directory = "{home / "Games" / "bios"}"\n')
+            env = {**repo.env(), "HOME": str(home), "RETROBIOS_OS": "linux"}
+            os.chmod(flatpak, 0o000)
+            try:
+                proc = subprocess.run(
+                    [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "retroarch",
+                     "--dry-run", "--no-input"],
+                    env=env, capture_output=True, text=True, timeout=60,
+                    stdin=subprocess.DEVNULL)
+            finally:
+                os.chmod(flatpak, 0o755)
+        self.assertNotIn("Traceback", proc.stderr)
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertNotIn("using default path", proc.stdout + proc.stderr)
+        self.assertIn(f"this user cannot open {flatpak}", proc.stderr)
+        self.assertIn("--dest", proc.stderr)
+
+
+class ARefusalTheProbeDoesNotRaise(unittest.TestCase):
+    """Python 3.14's Path.exists() answers False on a folder this user
+    cannot enter instead of raising: every closed-folder line went silent
+    and the run took the default again."""
+
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_a_quiet_false_is_still_told_from_absence(self):
+        base = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, base, True)
+        closed = base / "closed"
+        closed.mkdir()
+        os.chmod(closed, 0o000)
+        self.addCleanup(os.chmod, closed, 0o755)
+        target = closed / "retroarch.cfg"
+        install._DETECTION_REFUSED.clear()
+        self.addCleanup(install._DETECTION_REFUSED.clear)
+        quiet = mock.patch.object(install.Path, "exists", lambda self: False)
+        with quiet, mock.patch.object(install._SETUP_SEARCH, "active", True, create=True), \
+                contextlib.redirect_stderr(io.StringIO()):
+            self.assertFalse(install._exists(target))
+            self.assertFalse(install._exists(base / "absent"))
+            self.assertEqual(install.closed_folder(target), (closed, "Permission denied"))
+        self.assertEqual([folder for folder, _why in install._DETECTION_REFUSED], [closed])
 
 
 class APartlyClosedHome(unittest.TestCase):

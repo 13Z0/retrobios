@@ -4254,10 +4254,20 @@ def _probed(probe: Callable[[], bool], path: Path) -> bool:
     """probe() for path, False where the place cannot be looked at. A
     refusal met while looking for setups is said once (_note_refused)."""
     try:
-        return probe()
+        found = probe()
     except OSError as exc:
         _note_refused(path, exc)
         return False
+    if not found:
+        # Python 3.14's Path.exists() answers False where earlier ones
+        # raised: a refusal is told from absence by the stat it hides.
+        try:
+            os.stat(path)
+        except PermissionError as exc:
+            _note_refused(path, exc)
+        except OSError:
+            pass
+    return found
 
 
 def _exists(path: Path) -> bool:
@@ -4284,7 +4294,7 @@ def closed_folder(path: Path) -> tuple[Path, str] | None:
     first line said where.
     """
     try:
-        path.exists()
+        os.stat(path)
         return None
     except OSError as exc:
         failure = exc
@@ -6269,17 +6279,27 @@ def _default_dest(os_type: str, platform_name: str) -> Path | None:
     C:\\userdata\\bios, reported done.
     """
     if os_type == "android" and platform_name == "retroarch":
-        return _android_storage_root() / "RetroArch" / "system"
-    if platform_name in PORTABLE_ONLY:
+        default = _android_storage_root() / "RetroArch" / "system"
+    elif platform_name in PORTABLE_ONLY or (os_type == "windows" and platform_name
+                                            not in _os_default_dests(os_type)):
         return None
-    own = _os_default_dests(os_type).get(platform_name)
-    if own is not None:
-        return own
-    if os_type == "windows":
+    else:
+        default = (_os_default_dests(os_type).get(platform_name)
+                   or (None if platform_name == "retrobat" else DEFAULT_DESTS.get(platform_name)))
+    if default is not None and _refused_near(default):
+        # The Flatpak's own folder at 000 hid the retroarch.cfg naming
+        # ~/Games/bios, and 6.6 GB were offered to a folder it does not read.
         return None
-    if platform_name == "retrobat":
-        return None
-    return DEFAULT_DESTS.get(platform_name)
+    return default
+
+
+def _refused_near(default: Path) -> bool:
+    """Whether detection met a closed folder under HOME, where configs that
+    could name another folder live, or above the default itself."""
+    home = Path.home()
+    place = default.absolute()
+    return any(home in (folder, *folder.parents) or folder in (place, *place.parents)
+               for folder, _why in _DETECTION_REFUSED)
 
 
 def _manual_usage_hint(os_type: str, listing: str = "") -> list[str]:
@@ -9219,10 +9239,12 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         else:
             default_dest = _default_dest(os_type, args.platform)
             if default_dest is None:
+                where = ("where this user can look, and its default folder may not be "
+                         "the one it reads" if _DETECTION_REFUSED
+                         else "and no folder on this system is one it reads")
                 print(
-                    f"  Platform '{args.platform}' not found, and no folder on this "
-                    f"system is one it reads. Name it with --dest, for example: "
-                    f"--platform {args.platform} --dest <its BIOS folder>",
+                    f"  Platform '{args.platform}' not found {where}. Name it with "
+                    f"--dest, for example: --platform {args.platform} --dest <its BIOS folder>",
                     file=sys.stderr,
                 )
                 sys.exit(1)
@@ -11986,7 +12008,7 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
                   "root folder, the one holding .system."]
     elif state.folder_default is not None:
         title = "Which folder?"
-        before = [f"{name} reads its BIOS files from:", str(state.folder_default)]
+        before = [f"{name} usually reads its BIOS files from:", str(state.folder_default)]
     else:
         title = "Which folder?"
         before = [f"No usual {name} folder here: browse for it or type it."]
