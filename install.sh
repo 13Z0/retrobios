@@ -18,7 +18,7 @@ esac
 TEMP_INSTALLER=""
 TEMP_DIRECTORY=""
 DEFAULT_INSTALL_URL="https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"
-DEFAULT_INSTALL_SHA256="23f334efb9e37ba1c2542b8599db7af6e67dfd5e0061d39cb507765f2594bd45"
+DEFAULT_INSTALL_SHA256="bb0a0a88e16a6fb7aa93ec0a2b4cb5f1d667faacd50830aae9ce763e60d5d112"
 MAX_INSTALLER_BYTES=2097152
 
 cleanup() {
