@@ -41,6 +41,7 @@
   "Src/Graphics/Shader.cpp",
   "Src/OSD/OSX/FileSystemPath.cpp",
   "Src/OSD/SDL/Crosshair.cpp",
+  "Src/OSD/SDL/Gui.cpp",
   "Src/OSD/SDL/Main.cpp",
   "Src/OSD/Unix/FileSystemPath.cpp",
   "Src/OSD/Windows/FileSystemPath.cpp",
@@ -148,6 +149,12 @@
  ],
  "github.com/7800-devtools/a7800@7a2afdc1ea08fc331b16b750d8c1f02d4ef62fc8": [
   "hash/a7800.xml",
+  "src/devices/bus/a7800/hiscore.cpp",
+  "src/devices/bus/a7800/xm.cpp",
+  "src/emu/crsshair.cpp",
+  "src/emu/fileio.cpp",
+  "src/emu/rendfont.cpp",
+  "src/emu/romload.cpp",
   "src/mame/drivers/a7800.cpp"
  ],
  "github.com/8bitpsp/race@065db2eb614d4414ed49a1a9e241022450bb844d": [
@@ -584,7 +591,7 @@
   "src/game/timetrav.cpp",
   "src/io/input.cpp"
  ],
- "github.com/DirtBagXon/model3emu-code-sinden@44c83af50cb156773fdb0f4af1d8e311b10bf154": [
+ "github.com/DirtBagXon/model3emu-code-sinden@04551891e9ca657347d050bfafc19fa2c0bd5efb": [
   "Config/Games.xml",
   "Src/GameLoader.cpp",
   "Src/OSD/SDL/Crosshair.cpp",
@@ -660,7 +667,7 @@
   "src/patch/vibractrl/group/vibractrl.dll.map",
   "src/scripts/aq_crash_fix.lua"
  ],
- "github.com/EKA2L1/EKA2L1@89ea682451ae13f53372c994ae56659bc9534503": [
+ "github.com/EKA2L1/EKA2L1@cd7041f58192899d7f2c3c29444487b0d6fefe0b": [
   ".gitmodules",
   "CMakeLists.txt",
   "README.md",
@@ -1199,27 +1206,36 @@
   "C64.emu/src/main/options.cc",
   "C64.emu/src/main/sysfile.cc",
   "C64.emu/src/vice/c128/c128-resources.c",
+  "C64.emu/src/vice/c128/c128.c",
   "C64.emu/src/vice/c128/c128drive.c",
   "C64.emu/src/vice/c128/c128rom.c",
   "C64.emu/src/vice/c128/c128rom.h",
   "C64.emu/src/vice/c64/c64-resources.c",
+  "C64.emu/src/vice/c64/c64.c",
   "C64.emu/src/vice/c64/c64drive.c",
   "C64.emu/src/vice/c64/c64model.c",
   "C64.emu/src/vice/c64/c64rom.c",
   "C64.emu/src/vice/c64/c64rom.h",
   "C64.emu/src/vice/c64dtv/c64dtv-resources.c",
+  "C64.emu/src/vice/c64dtv/c64dtv.c",
   "C64.emu/src/vice/c64dtv/c64dtvflash.c",
+  "C64.emu/src/vice/cbm2/cbm2.c",
+  "C64.emu/src/vice/cbm2/cbm2drive.c",
   "C64.emu/src/vice/cbm2/cbm2model.c",
   "C64.emu/src/vice/cbm2/cbm2rom.c",
   "C64.emu/src/vice/cbm2/cbm2rom.h",
+  "C64.emu/src/vice/cbm2/cbm5x0.c",
   "C64.emu/src/vice/cbm2/cbm5x0rom.c",
   "C64.emu/src/vice/crtc/crtc-resources.c",
+  "C64.emu/src/vice/drive/driverom.c",
   "C64.emu/src/vice/drive/driverom.h",
   "C64.emu/src/vice/drive/iec/iecrom.c",
   "C64.emu/src/vice/drive/iec128dcr/iec128dcrrom.c",
   "C64.emu/src/vice/drive/ieee/ieeerom.c",
   "C64.emu/src/vice/drive/tcbm/tcbmrom.c",
+  "C64.emu/src/vice/joyport/joystick.c",
   "C64.emu/src/vice/keymap.c",
+  "C64.emu/src/vice/palette.c",
   "C64.emu/src/vice/pet/pet-resources.c",
   "C64.emu/src/vice/pet/pet.c",
   "C64.emu/src/vice/pet/petdrive.c",
@@ -1227,19 +1243,23 @@
   "C64.emu/src/vice/pet/petrom.c",
   "C64.emu/src/vice/pet/petrom.h",
   "C64.emu/src/vice/plus4/plus4-resources.c",
+  "C64.emu/src/vice/plus4/plus4.c",
   "C64.emu/src/vice/plus4/plus4drive.c",
   "C64.emu/src/vice/plus4/plus4memrom.c",
   "C64.emu/src/vice/plus4/plus4model.c",
   "C64.emu/src/vice/plus4/plus4rom.c",
   "C64.emu/src/vice/plus4/plus4rom.h",
   "C64.emu/src/vice/plus4/ted-resources.c",
+  "C64.emu/src/vice/printerdrv/interface-serial.c",
   "C64.emu/src/vice/scpu64/scpu64-resources.c",
+  "C64.emu/src/vice/scpu64/scpu64.c",
   "C64.emu/src/vice/scpu64/scpu64mem.h",
   "C64.emu/src/vice/scpu64/scpu64model.c",
   "C64.emu/src/vice/scpu64/scpu64rom.c",
   "C64.emu/src/vice/vdc/vdc-resources.c",
   "C64.emu/src/vice/vic20/vic-resources.c",
   "C64.emu/src/vice/vic20/vic20-resources.c",
+  "C64.emu/src/vice/vic20/vic20.c",
   "C64.emu/src/vice/vic20/vic20drive.c",
   "C64.emu/src/vice/vic20/vic20model.c",
   "C64.emu/src/vice/vic20/vic20rom.c",
@@ -2709,8 +2729,12 @@
   "prboom2/src/m_misc.c",
   "prboom2/src/w_wad.c"
  ],
- "github.com/crawl/crawl@8757df5d4397047058e25e456cac506db9c1442b": [
-  "crawl-ref/source/files.cc"
+ "github.com/crawl/crawl@a5ed93406571b9682050cfc318b15b9f637d4e7e": [
+  "crawl-ref/source/database.cc",
+  "crawl-ref/source/files.cc",
+  "crawl-ref/source/fontwrapper-ft.cc",
+  "crawl-ref/source/maps.cc",
+  "crawl-ref/source/tiletex.cc"
  ],
  "github.com/cxong/cdogs-sdl@57782a74ae245d868487094d201d0e56e94a9390": [
   "CMakeLists.txt",
@@ -3318,7 +3342,7 @@
   "src/xenia/ui/wx_locale.cc",
   "third_party/CMakeLists.txt"
  ],
- "github.com/has207/xenia-edge@e569a1aa15632e957fc2adc3bfc875de51f79eab": [
+ "github.com/has207/xenia-edge@5045c19eefebb5807a699bc8dabac2460889242d": [
   ".github/workflows/build.yml",
   "src/xenia/app/emulator_window.cc",
   "src/xenia/app/game_compat_db.cc",
@@ -4110,7 +4134,11 @@
  ],
  "github.com/libretro/crawl-ref@cc2530f377a3a5d686d4b6a360d88b01de0fbc59": [
   "crawl-ref/libretro/libretro.cc",
-  "crawl-ref/source/files.cc"
+  "crawl-ref/source/database.cc",
+  "crawl-ref/source/files.cc",
+  "crawl-ref/source/fontwrapper-ft.cc",
+  "crawl-ref/source/maps.cc",
+  "crawl-ref/source/tiletex.cc"
  ],
  "github.com/libretro/daphne@6f1695dd1f376060666eec0a416ff56bb6c9cccc": [
   "daphne/daphne-1.0-src/game/game.cpp",
@@ -4554,7 +4582,7 @@
   "src/drivers/zn.c",
   "src/hiscore.c"
  ],
- "github.com/libretro/mame2003-plus-libretro@ffc68e38d9e6eca1b64dc8f50175b63447d37e49": [
+ "github.com/libretro/mame2003-plus-libretro@03fc843ad835d6569bf322a4f915545ab5ae9b8e": [
   "src/artwork.c",
   "src/cheat.c",
   "src/cpuexec.c",
@@ -6392,9 +6420,6 @@
   "src/mame/sony/zn.cpp",
   "src/mame/taito/taitotz.cpp"
  ],
- "github.com/mamedev/mame@61a222977fd29f22ce11fbea3f7c290fd7ced091": [
-  "hash/a7800.xml"
- ],
  "github.com/mamedev/mame@68785dccfee3208163c8169abc5c6d01becf36d4": [
   "src/emu/romload.cpp",
   "src/mame/drivers/3do.cpp",
@@ -6502,6 +6527,14 @@
   "src/mame/drivers/twinkle.c",
   "src/mame/drivers/viper.c",
   "src/mame/drivers/zn.c"
+ ],
+ "github.com/mamedev/mame@9d8a6727a206fc822b8b69d67a51e6fd7dbf4d4b": [
+  "hash/a7800.xml",
+  "src/devices/bus/a7800/hiscore.cpp",
+  "src/emu/crsshair.cpp",
+  "src/emu/fileio.cpp",
+  "src/emu/rendfont.cpp",
+  "src/emu/romload.cpp"
  ],
  "github.com/mamedev/mame@c285eb9bcd3505c14a338e29f251ba00776cc75c": [
   "src/emu/romload.c",
@@ -9018,21 +9051,19 @@
   "Src/Util/ConfigBuilders.cpp",
   "Src/Version.h"
  ],
- "github.com/trzy/Supermodel@32c29b036fc18310e2e6b63370d89c7ee6d790d1": [
+ "github.com/trzy/Supermodel@58d4b87470455fd942edea06f3268fe18815619b": [
   "Assets/DIR.txt",
   "Config/Games.xml",
   "Src/GameLoader.cpp",
   "Src/Graphics/Shader.cpp",
   "Src/OSD/OSX/FileSystemPath.cpp",
   "Src/OSD/SDL/Crosshair.cpp",
+  "Src/OSD/SDL/Gui.cpp",
   "Src/OSD/SDL/Main.cpp",
   "Src/OSD/Unix/FileSystemPath.cpp",
   "Src/OSD/Windows/FileSystemPath.cpp",
   "Src/OSD/Windows/wnaspi32/wnaspi32.cpp",
-  "Src/Pro1000/Pro1000.cpp",
-  "Src/Pro1000/SyntheticSCSIROM.cpp",
-  "Src/Sound/MPEG/MpegAudio.cpp",
-  "Src/Version.h"
+  "Src/Sound/MPEG/MpegAudio.cpp"
  ],
  "github.com/trzy/Supermodel@98fcbff223e23b1530c8f899aca2fc4fd5663ab4": [
   ".github/workflows/release.yml",
@@ -9047,6 +9078,17 @@
   "Src/OSD/SDL/Main.cpp",
   "Src/OSD/Unix/FileSystemPath.cpp",
   "Src/OSD/Windows/FileSystemPath.cpp",
+  "Src/Pro1000/Pro1000.cpp",
+  "Src/Pro1000/SyntheticSCSIROM.cpp",
+  "Src/Sound/MPEG/MpegAudio.cpp",
+  "Src/Version.h"
+ ],
+ "github.com/trzy/Supermodel@e048c095839126f552b9c10dac34757a0164a284": [
+  "Config/Games.xml",
+  "Src/GameLoader.cpp",
+  "Src/OSD/SDL/Crosshair.cpp",
+  "Src/OSD/SDL/Main.cpp",
+  "Src/OSD/Unix/FileSystemPath.cpp",
   "Src/Pro1000/Pro1000.cpp",
   "Src/Pro1000/SyntheticSCSIROM.cpp",
   "Src/Sound/MPEG/MpegAudio.cpp",
@@ -9534,7 +9576,7 @@
   "icarus/heuristics/super-famicom.cpp",
   "icarus/icarus.cpp"
  ],
- "gitlab.com/jengun/sdltrs@57c90cc6393da6c2e5d565ddfbb0c80449fc6ed2": [
+ "gitlab.com/jengun/sdltrs@675d169d350e77b31d494e1efd0354abacc3c8e3": [
   "CMakeLists.txt",
   "README.md",
   "src/trs_cassette.c",
