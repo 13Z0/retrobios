@@ -109,6 +109,10 @@ def archive_members(name: str, root: Path = REPO_ROOT) -> list[tuple[str, Path |
         members = [
             ("RetroBIOS/mux_launch.sh", source / "mux_launch.sh"),
             ("RetroBIOS/README.md", source / "README.md"),
+            # muOS draws an application's list glyph from glyph/<ICON>.png
+            # in its own folder (apply_app_glyph, frontend common/ui/glyph.c):
+            # `# ICON: retrobios` resolved to nothing without it.
+            ("RetroBIOS/glyph/retrobios.png", source / "glyph" / "retrobios.png"),
             *_engine("RetroBIOS", root),
         ]
     elif name == TOOLS_ZIP:

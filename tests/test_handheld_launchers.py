@@ -309,6 +309,28 @@ class TheArchives(unittest.TestCase):
                     self.assertEqual(top, [])
                     self.assertIn("RetroBIOS/retrobios.gptk", names)
 
+    def test_the_muos_icon_is_the_glyph_its_header_names(self):
+        """muOS reads glyph/<ICON>.png in the application's folder, and the
+        muxapp named an icon it did not carry."""
+        header = (REPO_ROOT / "ports" / "muos" / "mux_launch.sh").read_text()
+        icon = re.search(r"^# ICON: (\S+)$", header, re.MULTILINE).group(1)
+        name = build_port.MUOS_APP
+        with zipfile.ZipFile(build_port.build_archive(name, self.out / name)) as zf:
+            data = zf.read(f"RetroBIOS/glyph/{icon}.png")
+        self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
+
+    def test_no_tools_support_file_is_a_menu_entry(self):
+        """EmulationStation lists a folder only when it holds a file of the
+        system's extension (.sh for Tools and Ports): batocera-emulationstation
+        and EmulationStation-fcamod SystemData.cpp drop a folder with none.
+        The support folders must keep none, or each shows up in the menu."""
+        for name in (build_port.TOOLS_ZIP, build_port.PORT_ZIP, build_port.BATOCERA_ZIP):
+            with self.subTest(archive=name):
+                with zipfile.ZipFile(build_port.build_archive(name, self.out / name)) as zf:
+                    inside = [n for n in zf.namelist()
+                              if "/" in n and n.lower().endswith(".sh")]
+                self.assertEqual(inside, [])
+
     def test_each_carries_the_pinned_installer(self):
         pinned = build_port.pinned_installer_sha256()
         for name, (_script, folder) in self.LAYOUT.items():
