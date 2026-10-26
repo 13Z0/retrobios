@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://github.com/libretro/Genesis-Plus-GX"
 upstream: "https://github.com/ekeeke/Genesis-Plus-GX"
 profiled_date: "2026-03-23"
-source_commit: "aa74d79634cd230f65cce4180e92688e53883d2f"
+source_commit: "60bee4c724859710ce05672239e5b601ad01382e"
 upstream_commit: "49c584764893b0505ac7f768a754f97330fa4392"
 core_version: "v1.7.4"
 display_name: "Sega - MS/GG/MD/CD (Genesis Plus GX)"

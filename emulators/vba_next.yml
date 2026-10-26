@@ -3,7 +3,7 @@ type: libretro
 core_classification: frozen_snapshot
 source: "https://github.com/libretro/vba-next"
 upstream: "https://github.com/visualboyadvance-m/visualboyadvance-m"
-upstream_commit: "8124d84a655e5261bee5eeb9f43c18630ec58a61"
+upstream_commit: "b0f418b0e9305315c941f93765aa58ed1928a45c"
 profiled_date: "2026-03-25"
 source_commit: "788192f215ad0a1413f1625b40ebba3423fa0ade"
 core_version: "SVN"

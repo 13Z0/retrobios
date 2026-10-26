@@ -6,7 +6,7 @@ source:
   libretro: "https://git.libretro.com/libretro/xenia-libretro"
 upstream: "https://github.com/has207/xenia-edge"
 source_commit:
-  standalone: "e569a1aa15632e957fc2adc3bfc875de51f79eab"
+  standalone: "5045c19eefebb5807a699bc8dabac2460889242d"
   libretro: "f23c14c717ef274516f29c9b5e97d6a9db28643d"
 profiled_date: "2026-10-23"
 core_version:
@@ -87,7 +87,7 @@ notes: |
   under the storage root, or the folder the xefu_path cvar names
   (src/xenia/emulator.cc:151-165, 861-863). When xbox.xex is missing the
   launch fails, the folder is created and the window names the missing file
-  (src/xenia/emulator.cc:882-895, src/xenia/app/emulator_window.cc:1975-1985).
+  (src/xenia/emulator.cc:882-895, src/xenia/app/emulator_window.cc:1995-2005).
 
   The fork's data ships inside the executable. assets/font/Inter-VariableFont
   and assets/icon are linked in by xe_embed_binary_assets and the 33

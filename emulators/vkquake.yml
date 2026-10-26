@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/Novum/vkQuake"
 upstream: "https://sourceforge.net/projects/quakespasm/"
 profiled_date: "2026-10-23"
-source_commit: "80ec4293066505fefc1714408abd887369185c74"
+source_commit: "a6cfba6904e0743dae4235f9dad9711bb5bd27f1"
 core_version: "1.37.1"
 display_name: "Quake (vkQuake)"
 cores: ["vkquake"]

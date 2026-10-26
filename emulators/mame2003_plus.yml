@@ -5,7 +5,7 @@ source: "https://github.com/libretro/mame2003-plus-libretro"
 upstream: "https://www.mamedev.org"
 logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/MAMElogo.svg"
 profiled_date: "2026-03-24"
-source_commit: "ffc68e38d9e6eca1b64dc8f50175b63447d37e49"
+source_commit: "03fc843ad835d6569bf322a4f915545ab5ae9b8e"
 core_version: "2003-Plus"
 display_name: "Arcade (MAME 2003-Plus)"
 mame_version: "0.78 (plus backports)"
@@ -36,6 +36,7 @@ systems:
   - zn1-atlus
   - atari-zn1
   - eighting-zn1
+  - taito-gnet
   - sega-model2
   - namco-system11
   - century-cvs
@@ -75,9 +76,9 @@ files:
     required: false
     category: game_data
     system: arcade
-    sha1: "d41b1c32e9f5bee0cfca766a64f208dda081858b"
-    md5: "8be16faf51b064050359c10aa3850c27"
-    size: 131902
+    sha1: "b48347a133ab8f28b9875ab300fea2ffa2f37ebc"
+    md5: "f870afb431df16526e28cd9029b9d949"
+    size: 131926
     source_ref: "src/hiscore.c:15,102-116,248, src/cpuexec.c:345-347"
     note: >-
       high score definitions, compiled into binary and spawned on first run.
@@ -505,7 +506,7 @@ files:
     category: bios_zip
     system: zn1-capcom
     note: "Capcom ZN-1 BIOS"
-    source_ref: "src/drivers/zn.c:3473-3478, 3487-3500, 5993"
+    source_ref: "src/drivers/zn.c:4354-4359, 4368-4381, 7240"
     contents:
       - name: "m534002c-13.ic353"
         description: BIOS
@@ -523,7 +524,7 @@ files:
     category: bios_zip
     system: zn2-capcom
     note: "Capcom ZN-2 BIOS"
-    source_ref: "src/drivers/zn.c:3480-3485, 3921-3934, 6014"
+    source_ref: "src/drivers/zn.c:4361-4366, 4802-4815, 7261"
     contents:
       - name: "m534002c-59.ic353"
         description: BIOS
@@ -541,7 +542,7 @@ files:
     category: bios_zip
     system: zn1-taito
     note: "Taito FX-1 BIOS"
-    source_ref: "src/drivers/zn.c:5127-5132, 5134-5136, 6101"
+    source_ref: "src/drivers/zn.c:6008-6013, 6015-6017, 7348"
     contents:
       - name: "m534002c-14.ic353"
         description: BIOS
@@ -559,7 +560,7 @@ files:
     category: bios_zip
     system: zn1-tecmo
     note: "Tecmo TPS BIOS"
-    source_ref: "src/drivers/zn.c:4662-4667, 4672-4674, 6066"
+    source_ref: "src/drivers/zn.c:5543-5548, 5553-5555, 7313"
     contents:
       - name: "m534002c-61.ic353"
         description: BIOS
@@ -577,7 +578,7 @@ files:
     category: bios_zip
     system: zn1-video-system
     note: "Video System ZN-1 BIOS"
-    source_ref: "src/drivers/zn.c:5026-5031, 5044-5046, 6089"
+    source_ref: "src/drivers/zn.c:5907-5912, 5925-5927, 7336"
     contents:
       - name: "coh-1002v.ic353"
         description: BIOS
@@ -595,7 +596,7 @@ files:
     category: bios_zip
     system: zn1-acclaim
     note: "Acclaim ZN-1 BIOS"
-    source_ref: "src/drivers/zn.c:5888-5893, 5895-5897, 6057"
+    source_ref: "src/drivers/zn.c:6769-6774, 6776-6778, 7304"
     contents:
       - name: "m534002c-15.ic353"
         description: BIOS
@@ -613,7 +614,7 @@ files:
     category: bios_zip
     system: zn1-atlus
     note: "Atlus ZN-1 BIOS"
-    source_ref: "src/drivers/zn.c:5090-5095, 5097-5099, 6096"
+    source_ref: "src/drivers/zn.c:5971-5976, 5978-5980, 7343"
     contents:
       - name: "m534002c-17.ic353"
         description: BIOS
@@ -631,7 +632,7 @@ files:
     category: bios_zip
     system: atari-zn1
     note: "Time Warner ZN-1 BIOS"
-    source_ref: "src/drivers/zn.c:5858-5863, 5865-5867, 6046"
+    source_ref: "src/drivers/zn.c:6739-6744, 6746-6748, 7293"
     contents:
       - name: "msm27c402zb.ic353"
         description: BIOS
@@ -649,7 +650,7 @@ files:
     category: bios_zip
     system: eighting-zn1
     note: "Eighting / Raizing ZN-1 BIOS"
-    source_ref: "src/drivers/zn.c:5566-5571, 5573-5575, 6130"
+    source_ref: "src/drivers/zn.c:6447-6452, 6454-6456, 7377"
     contents:
       - name: "m27c402cz-54.ic353"
         description: BIOS
@@ -661,6 +662,86 @@ files:
         size: 8
         crc32: "a7dd922e"
         sha1: "1069c1d9015028a51a1b314cfacb014ea90aa425"
+
+  - name: coh3002t.zip
+    required: true
+    category: bios_zip
+    system: taito-gnet
+    note: >-
+      Taito G-NET (COH-3002T) BIOS. The games are PC card CHDs and take the
+      board ROMs and one BIOS EPROM revision from this set: v1 for most, v2
+      for the Compact Flash games, the MB2011 mod BIOS for the bootlegs. No
+      game loads the MB2009 mod BIOS, only this set does.
+    source_ref: "src/drivers/zn.c:6877-6899, 6913-6919, 7392"
+    contents:
+      - name: "m534002c-60.ic353"
+        description: BIOS
+        size: 524288
+        crc32: "03967fa7"
+        sha1: "0e17fec2286e4e25deb23d40e41ce0986f373d49"
+      - name: "tt10.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "235510b1"
+        sha1: "2cc02113207a8f0b078152d31ce6503411750e70"
+      - name: "tt16.u17"
+        description: CAT702 key, G-NET board
+        size: 8
+        crc32: "6bb167b3"
+        sha1: "9dcba08f10775a9adf2b1f382c947460edd3d239"
+      - name: "flash.u30"
+        description: U30 flash, sub BIOS
+        size: 2097152
+        crc32: "c48c8236"
+        sha1: "c6dad60266ce2ff635696bc0d91903c543273559"
+      - name: "f35-01_m27c800_v1.bin"
+        description: BIOS EPROM v1
+        size: 1048576
+        crc32: "cd15cc30"
+        sha1: "78361f46fa7186d5058937c86c66247a86b1257f"
+      - name: "f35-01_m27c800.bin"
+        description: BIOS EPROM v2
+        size: 1048576
+        crc32: "6225ec11"
+        sha1: "047852d456b6ff85f8e640887caa03cf3e63ffad"
+      - name: "f35-01_m27c800_modbios_mb-2009_dump_by_aje_fr.bin"
+        description: BIOS EPROM, MB2009 mod BIOS
+        size: 1048576
+        crc32: "6367aedf"
+        sha1: "8400775e0c974c8b017e26ef9339144cad457c63"
+      - name: "f35-01_m27c800_modbios_mb-2011.bin"
+        description: BIOS EPROM, MB2011 mod BIOS
+        size: 1048576
+        crc32: "f98ae118"
+        sha1: "c6918dfbb6fcf686dde4b731e84f740177ab31f0"
+
+  - name: coh1002t.zip
+    required: true
+    category: bios_zip
+    system: taito-gnet
+    note: "Taito G-NET (COH-1002T) BIOS, parent of Mawasunda"
+    source_ref: "src/drivers/zn.c:6900-6911, 6922-6924, 7393"
+    contents:
+      - name: "m534002c-14.ic353"
+        description: BIOS
+        size: 524288
+        crc32: "e3f23b6e"
+        sha1: "e18907cf8c6ba54d96edba0a9a00487a90219e0d"
+      - name: "tt01.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "daac13e7"
+        sha1: "96d94f2b06fb7ecd91454969f4959a583ffb9d5a"
+      - name: "tt99.u17"
+        description: CAT702 key, G-NET board
+        size: 8
+        crc32: "2989b6eb"
+        sha1: "89981ec68d30729c27d31f820cbfd0c23ed14a03"
+      - name: "flash.u30"
+        description: U30 flash, sub BIOS
+        size: 2097152
+        crc32: "9100dbf2"
+        sha1: "9ce888bd2a7e575c8ca71d978cb85de22afb5660"
 
   # ---------------------------------------------------------
   # Sega Model 2 I/O boards. The games load the I/O board ROM with

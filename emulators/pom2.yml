@@ -4,7 +4,7 @@ core_classification: other
 source: "https://github.com/habib256/pom2"
 upstream: "https://github.com/habib256/pom2"
 profiled_date: "2026-10-23"
-source_commit: "b7c14c5b5d8ed78402c0c1efc196bb1bc7f93e37"
+source_commit: "37dbb9d885ec8771f9383959cb1a2ded9950ec31"
 core_version: "0.9.8"
 display_name: "Apple - Apple II (POM2)"
 cores:
@@ -141,7 +141,7 @@ notes: |
 
   Media named by the code are not firmware and are not listed here: the
   browser demo boots bundled_disks/DIX-fix.po on the //c PAL preset
-  (wasm/shell.html:102-105, src/main.cpp:313-319), and the headless CLI
+  (wasm/shell.html:114-117, src/main.cpp:313-319), and the headless CLI
   mounts disks_5.4/dos33_master.dsk by default
   (src/pom2_headless.cpp:265-267). Disk, tape and hard-disk images are
   browsed from disks_5.4/, disks_3.5/, hdv/, floppyemu/, bundled_disks/,
@@ -512,7 +512,7 @@ files:
     sha256: "7f8e50c0e8a409991264201f9300f109b872b68e09c43f3e6c26af35fd8b89af"
     sha1: "3a9d881a8a8d30f55b9719aceebbcf717f829d6f"
     validation: [size, sha256]
-    source_ref: "src/SlotCardFactory.cpp:64-96, src/SlotCardFactory.cpp:399-414, src/MouseCard.cpp:119-153, src/MouseCardAppleWin.cpp:90-103, src/RomFetch.cpp:243-248"
+    source_ref: "src/SlotCardFactory.cpp:64-96, src/SlotCardFactory.cpp:399-414, src/MouseCard.cpp:120-154, src/MouseCardAppleWin.cpp:90-103, src/RomFetch.cpp:243-248"
     note: "Needed by both mouse cards: the MC68705 card also needs the MCU ROM, the AppleWin HLE card needs this one only. The fetcher extracts it from the MAME a2mouse set as 341-0270-c.4b."
   - name: "mouse_341-0269.bin"
     path: "roms/mouse_341-0269.bin"
@@ -523,7 +523,7 @@ files:
     sha256: "66480812edad5f6bd70349949cf8bd8fbafee2dc8bf396541d4e78bac2629ec0"
     sha1: "3a2baa6648efe4456d3ec3721216e57c64f7acfc"
     validation: [size, sha256]
-    source_ref: "src/SlotCardFactory.cpp:64-96, src/MouseCard.cpp:150-153, src/M68705P3.cpp:85-104, src/RomFetch.cpp:239-242"
+    source_ref: "src/SlotCardFactory.cpp:64-96, src/MouseCard.cpp:151-154, src/M68705P3.cpp:85-104, src/RomFetch.cpp:239-242"
     note: "The MC68705 mouse card leaves its slot empty without it."
   - name: "grappler_plus.bin"
     path: "roms/grappler_plus.bin"
@@ -560,7 +560,7 @@ files:
     sha256: "4fa1323ba31f4bd562486838397b7744257c126806766e360876720daca6e2aa"
     sha1: "6dab633470c6bc4cb3e81d09fda46597caf8ee57"
     validation: [size, crc32, sha256]
-    source_ref: "src/SlotCardFactory.cpp:441-459, src/SuperSerialCard.cpp:765-771, src/RomCatalog.h:147-154, src/RomFetch.cpp:281-284"
+    source_ref: "src/SlotCardFactory.cpp:441-459, src/SuperSerialCard.cpp:773-779, src/RomCatalog.h:147-154, src/RomFetch.cpp:281-284"
     note: "Three names are probed in order and a file that is not 2048 bytes is refused. Without it the card runs a hand-written slot ROM: PR#n, IN#n and the Pascal 1.1 entries work, the firmware commands and printer mode are absent. Not loaded on the //c and //c Plus. The fetcher extracts it from the MAME a2ssc set as 341-0065-a.bin."
   - name: "grappler_eps-1.bin"
     path: "roms/grappler_eps-1.bin"
@@ -640,7 +640,7 @@ files:
     sha256: "ecca793179427fdd193373080bf23e49a95743bd7b5e0b218c747663938b6c03"
     sha1: "60f434f5325899d7ea257a6e56e6f53eae65146a"
     validation: [size, sha256]
-    source_ref: "src/ClockCard.cpp:582-643, src/RomCatalog.h:216-226, src/RomFetch.cpp:227-230"
+    source_ref: "src/ClockCard.cpp:592-653, src/RomCatalog.h:216-226, src/RomFetch.cpp:227-230"
     note: "The card loads a 256-byte slot ROM or the 2 KB chip, which supplies the $C800 expansion ROM as well. The fetch gate names the 2 KB dump and replaces a 256-byte file. The first four even bytes must read $08, $28, $58, $70, the ProDOS clock signature, or the synthetic ROM stays in place."
   - name: "liron.rom"
     path: "roms/liron.rom"
@@ -978,7 +978,7 @@ files:
     bundled: true
     size: 759720
     sha1: "3061cf7af25793a655a1ff5a509385f3620f3eb3"
-    source_ref: "src/main.cpp:560-573"
+    source_ref: "src/main.cpp:581-594"
     note: "Falls back to the system DejaVu, Arial Unicode or Segoe UI, then to the ImGui bitmap font."
   - name: "fa-solid-900.ttf"
     path: "fonts/fa-solid-900.ttf"
@@ -988,7 +988,7 @@ files:
     bundled: true
     size: 426112
     sha1: "0c8c9706abc0116f08b66d11a69da6aa9ef7e6bf"
-    source_ref: "src/main.cpp:620-638"
+    source_ref: "src/main.cpp:641-659"
     note: "Without it every icon renders as an empty box."
   - name: "Apple_II_plus.jpg"
     path: "pic/Apple_II_plus.jpg"

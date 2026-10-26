@@ -4,7 +4,8 @@ core_classification: official_port
 source: "https://github.com/BlitterStudio/amiberry"
 upstream: "https://github.com/tonioni/WinUAE"
 profiled_date: "2026-10-23"
-source_commit: "376b22c99e99bf03d861ed054c7e184b60e2f206"
+source_commit: "7f9a47e1c501f5f22d2b25eb61fe0f3b0fe9bc30"
+upstream_commit: "b5944088b805e518e7978ba821dca299cd1bae83"
 core_version: "v8.4.2"
 display_name: "Commodore - Amiga (Amiberry)"
 cores: [amiberry, "AMIBERRY"]
@@ -16,22 +17,22 @@ systems:
 data_root:
   windows:
     path: "%USERPROFILE%/Amiberry"
-    source_ref: "src/osdep/amiberry.cpp:9067-9076, 9124-9147, 12553-12590, 4792-4795, 12635"
+    source_ref: "src/osdep/amiberry.cpp:9176-9185, src/osdep/amiberry.cpp:9233-9256, src/osdep/amiberry.cpp:12662-12699, src/osdep/amiberry.cpp:4857-4860, src/osdep/amiberry.cpp:12744"
     note: "AMIBERRY_HOME_DIR overrides it. An amiberry.portable file beside the executable makes its folder the root. rom_path and base_content_path in amiberry.conf move ROMs"
   macos:
     path: "~/Documents/Amiberry"
-    source_ref: "src/osdep/amiberry.cpp:9056-9065, 9148-9165, 12553-12590, 4792-4795, 12635"
+    source_ref: "src/osdep/amiberry.cpp:9165-9174, src/osdep/amiberry.cpp:9257-9274, src/osdep/amiberry.cpp:12662-12699, src/osdep/amiberry.cpp:4857-4860, src/osdep/amiberry.cpp:12744"
     note: "AMIBERRY_HOME_DIR overrides it. rom_path and base_content_path in amiberry.conf move ROMs"
   linux:
     path: "~/Amiberry"
-    source_ref: "src/osdep/amiberry.cpp:9078-9085, 9166-9194, 12553-12626, 4792-4795, 12635"
+    source_ref: "src/osdep/amiberry.cpp:9187-9194, src/osdep/amiberry.cpp:9275-9303, src/osdep/amiberry.cpp:12662-12735, src/osdep/amiberry.cpp:4857-4860, src/osdep/amiberry.cpp:12744"
     note: "AMIBERRY_HOME_DIR overrides it, and an amiberry.portable file beside the executable makes its folder the root. Outside portable mode WHDBoot sits in $XDG_DATA_HOME/amiberry, else ~/.local/share/amiberry. rom_path and base_content_path in amiberry.conf move ROMs"
   android:
     path: "Android/data/com.blitterstudio.amiberry/files"
-    source_ref: "src/osdep/amiberry.cpp:9116-9123, 12553-12590, 4792-4795, 12635, android/app/build.gradle:118"
+    source_ref: "src/osdep/amiberry.cpp:9225-9232, src/osdep/amiberry.cpp:12662-12699, src/osdep/amiberry.cpp:4857-4860, src/osdep/amiberry.cpp:12744, android/app/build.gradle:118"
   ios:
     path: "Documents/Amiberry"
-    source_ref: "src/osdep/amiberry.cpp:9107-9115, 12553-12590, 4792-4795, 12635"
+    source_ref: "src/osdep/amiberry.cpp:9216-9224, src/osdep/amiberry.cpp:12662-12699, src/osdep/amiberry.cpp:4857-4860, src/osdep/amiberry.cpp:12744"
 
 notes: |
   Amiberry is an Amiga emulator based on WinUAE, available as both standalone
@@ -56,7 +57,7 @@ notes: |
   no hash check. When the main ROM is not found there, the fallback order
   is {home_dir}/roms/kick.rom, {home_dir}/kick.rom, ../shared/rom/kick.rom,
   ../System/rom/kick.rom, then ROM database guess.
-  ref: src/cfgfile.cpp:6645-6646, src/memory.cpp:1833-1856,
+  ref: src/cfgfile.cpp:6655-6656, src/memory.cpp:1833-1856,
        src/memory.cpp:2106-2148
 
   ROM identification uses SHA1 against the WinUAE ROM database but does
@@ -67,8 +68,8 @@ notes: |
   and CPU boards read their ROMs from the same database. A CPU board whose
   ROM is missing does not start, and the quickstart configs that select one
   (A1200 configs 2-5, A4000 config 2) count as not installed without it.
-  ref: src/osdep/sysconfig.h:191-192, src/cpuboard.cpp:2887-2944,
-  src/cfgfile.cpp:9993-10003, src/cfgfile.cpp:10240-10327,
+  ref: src/osdep/sysconfig.h:191-192, src/cpuboard.cpp:2897-2954,
+  src/cfgfile.cpp:10015-10025, src/cfgfile.cpp:10262-10349,
   src/osdep/settings/settings_presets.cpp:398-415
 
   Munt MT-32/CM-32L emulation compiled in (WITH_MIDIEMU). ROMs loaded from
@@ -204,7 +205,7 @@ files:
     note: >
       Identified as KS ROM v3.1 (A4000)(Cloanto), ROM id 31, whatever the file
       is called. The A4000 model takes id 16 first and id 31 after it.
-    source_ref: "source src/rommgr.cpp:204-205, source src/cfgfile.cpp:9960-9968, source src/cfgfile.cpp:10021-10022"
+    source_ref: "source src/rommgr.cpp:204-205, source src/cfgfile.cpp:9982-9990, source src/cfgfile.cpp:10043-10044"
 
   # --- CD32 and CDTV ROMs found by the standalone ROM scan ---
   # configure_rom() writes a CD32 Kickstart to the Kickstart setting and a
@@ -223,7 +224,7 @@ files:
     note: >
       CD32 KS ROM v3.1, ROM id 18. Loaded as the Kickstart. The CD32 quickstart
       takes ROM id 64, else ROM ids 18 and 19.
-    source_ref: "source src/rommgr.cpp:334-335, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10202-10211"
+    source_ref: "source src/rommgr.cpp:334-335, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10224-10233"
 
   - name: "amiga-ext-310-cd32.rom"
     mode: standalone
@@ -237,7 +238,7 @@ files:
     note: >
       CD32 extended ROM, ROM id 19. Loaded as the extended ROM. The CD32
       quickstart takes ROM id 64, else ROM ids 18 and 19.
-    source_ref: "source src/rommgr.cpp:336-339, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10202-10211"
+    source_ref: "source src/rommgr.cpp:336-339, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10224-10233"
 
   - name: "cd32-rom-ks-plus-extended.rom"
     mode: standalone
@@ -253,7 +254,7 @@ files:
       image, loaded as the Kickstart. The CD32 quickstart takes ROM id 64, else
       ROM ids 18 and 19. A second dump of the same image, listed after it in the
       table, is also accepted.
-    source_ref: "source src/rommgr.cpp:340-343, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10202-10211"
+    source_ref: "source src/rommgr.cpp:340-343, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10224-10233"
 
   - name: "amiga-ext-130-cdtv.rom"
     mode: standalone
@@ -268,7 +269,7 @@ files:
       CDTV extended ROM v1.0, ROM id 20. Loaded as the extended ROM. The CDTV
       quickstart asks for ROM id 20, then 21, then 22. The two chip halves the
       table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:350-353, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10177-10182"
+    source_ref: "source src/rommgr.cpp:350-353, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10199-10204"
 
   - name: "cdtv-extended-rom-v2.7.rom"
     mode: standalone
@@ -283,7 +284,7 @@ files:
       CDTV extended ROM v2.7, ROM id 22. Loaded as the extended ROM. The CDTV
       quickstart asks for ROM id 20, then 21, then 22. The two chip halves the
       table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:354-357, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10177-10182"
+    source_ref: "source src/rommgr.cpp:354-357, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10199-10204"
 
   - name: "cdtv-a570-extended-rom-v2.30.rom"
     mode: standalone
@@ -298,7 +299,7 @@ files:
       CDTV/A570 extended ROM v2.30, ROM id 21. Loaded as the extended ROM. The
       CDTV quickstart asks for ROM id 20, then 21, then 22. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:358-361, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10177-10182"
+    source_ref: "source src/rommgr.cpp:358-361, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10199-10204"
 
   - name: "cdtv-extended-rom-v47.1.rom"
     mode: standalone
@@ -326,7 +327,7 @@ files:
     note: >
       CDTV-CR extended ROM v3.32, ROM id 107. Loaded as the extended ROM. The
       CDTV-CR quickstart asks for ROM id 108, then 107.
-    source_ref: "source src/rommgr.cpp:367-368, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10138-10142"
+    source_ref: "source src/rommgr.cpp:367-368, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10160-10164"
 
   - name: "cdtv-cr-extended-rom-v3.44.rom"
     mode: standalone
@@ -340,7 +341,7 @@ files:
     note: >
       CDTV-CR extended ROM v3.44, ROM id 108. Loaded as the extended ROM. The
       CDTV-CR quickstart asks for ROM id 108, then 107.
-    source_ref: "source src/rommgr.cpp:369-370, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10138-10142"
+    source_ref: "source src/rommgr.cpp:369-370, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10160-10164"
 
   # --- Expansion ROMs found by the ROM scan ---
   # A board, freezer cartridge or accelerator takes the file its configuration
@@ -369,7 +370,7 @@ files:
       CD32 Full Motion Video Cartridge ROM, ROM id 23. Mapped when the CD32 FMV
       board is enabled. The CD32 quickstart config 1 (FMV) asks for ROM id 74,
       then 23.
-    source_ref: "source src/rommgr.cpp:345-346, source src/expansion.cpp:5416-5421, source src/cd32_fmv.cpp:1566, source src/cfgfile.cpp:10217-10224"
+    source_ref: "source src/rommgr.cpp:345-346, source src/expansion.cpp:5435-5440, source src/cd32_fmv.cpp:1566, source src/cfgfile.cpp:10239-10246"
 
   - name: "cd32fmv-391777-01.rom"
     path: "roms/cd32fmv-391777-01.rom"
@@ -385,7 +386,7 @@ files:
       CD32 Full Motion Video Cartridge ROM, ROM id 74. Mapped when the CD32 FMV
       board is enabled. The CD32 quickstart config 1 (FMV) asks for ROM id 74,
       then 23.
-    source_ref: "source src/rommgr.cpp:347-348, source src/expansion.cpp:5416-5421, source src/cd32_fmv.cpp:1566, source src/cfgfile.cpp:10217-10224"
+    source_ref: "source src/rommgr.cpp:347-348, source src/expansion.cpp:5435-5440, source src/cd32_fmv.cpp:1566, source src/cfgfile.cpp:10239-10246"
 
   # Freezer cartridges
 
@@ -656,7 +657,7 @@ files:
       ROM setting. Built only with PCem (USE_PCEM), which the CMake build enables
       and the libretro Makefile leaves off. The DraCo quickstart asks for ROM id
       234, then 311.
-    source_ref: "source src/rommgr.cpp:329-330, source src/expansion.cpp:6903-6905, source src/draco.cpp:1521-1527, source src/cfgfile.cpp:10635-10640"
+    source_ref: "source src/rommgr.cpp:329-330, source src/expansion.cpp:6922-6924, source src/draco.cpp:1521-1527, source src/cfgfile.cpp:10657-10662"
 
   - name: "draco-boot-rom-v1.5.rom"
     mode: standalone
@@ -672,7 +673,7 @@ files:
       ROM setting. Built only with PCem (USE_PCEM), which the CMake build enables
       and the libretro Makefile leaves off. The DraCo quickstart asks for ROM id
       234, then 311.
-    source_ref: "source src/rommgr.cpp:331-332, source src/expansion.cpp:6903-6905, source src/draco.cpp:1521-1527, source src/cfgfile.cpp:10635-10640"
+    source_ref: "source src/rommgr.cpp:331-332, source src/expansion.cpp:6922-6924, source src/draco.cpp:1521-1527, source src/cfgfile.cpp:10657-10662"
 
   - name: "blizzard-1230-i-ii.rom"
     path: "roms/blizzard-1230-i-ii.rom"
@@ -687,7 +688,7 @@ files:
     note: >
       Blizzard 1230-I/II, ROM id 163. Board ROM of the Blizzard 1230 I/II
       accelerator. Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:519-520, source src/expansion.cpp:6739-6741, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:519-520, source src/expansion.cpp:6758-6760, source src/cpuboard.cpp:2897-2953"
 
   - name: "blizzard-1230-iii.rom"
     path: "roms/blizzard-1230-iii.rom"
@@ -702,7 +703,7 @@ files:
     note: >
       Blizzard 1230-III, ROM id 162. Board ROM of the Blizzard 1230 III
       accelerator. Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:521-522, source src/expansion.cpp:6751-6753, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:521-522, source src/expansion.cpp:6770-6772, source src/cpuboard.cpp:2897-2953"
 
   - name: "blizzard-1230-iv.rom"
     path: "roms/blizzard-1230-iv.rom"
@@ -718,7 +719,7 @@ files:
       Blizzard 1230-IV, ROM id 89. Board ROM of the Blizzard 1230 IV accelerator.
       Without it the board does not start. The A1200 quickstart config 2 selects
       this board and this ROM.
-    source_ref: "source src/rommgr.cpp:523-524, source src/expansion.cpp:6762-6764, source src/cpuboard.cpp:2887-2943, source src/cfgfile.cpp:10273-10280"
+    source_ref: "source src/rommgr.cpp:523-524, source src/expansion.cpp:6781-6783, source src/cpuboard.cpp:2897-2953, source src/cfgfile.cpp:10295-10302"
 
   - name: "blizzard-1240-1260.rom"
     path: "roms/blizzard-1240-1260.rom"
@@ -734,7 +735,7 @@ files:
       Blizzard 1240/1260, ROM id 90. Board ROM of the Blizzard 1260 accelerator.
       Without it the board does not start. The A1200 quickstart configs 3 and 4
       select this board and this ROM.
-    source_ref: "source src/rommgr.cpp:525-526, source src/expansion.cpp:6773-6775, source src/cpuboard.cpp:2887-2943, source src/cfgfile.cpp:10281-10298"
+    source_ref: "source src/rommgr.cpp:525-526, source src/expansion.cpp:6792-6794, source src/cpuboard.cpp:2897-2953, source src/cfgfile.cpp:10303-10320"
 
   - name: "blizzard-2060-v7.25.rom"
     path: "roms/blizzard-2060-v7.25.rom"
@@ -750,7 +751,7 @@ files:
       Blizzard 2060 v7.25, ROM id 237. Board ROM of the Blizzard 2060
       accelerator. Without it the board does not start. The two chip halves the
       table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:528-531, source src/expansion.cpp:6785-6787, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:528-531, source src/expansion.cpp:6804-6806, source src/cpuboard.cpp:2897-2953"
 
   - name: "blizzard-2060-v8.2.rom"
     path: "roms/blizzard-2060-v8.2.rom"
@@ -766,7 +767,7 @@ files:
       Blizzard 2060 v8.2, ROM id 168. Board ROM of the Blizzard 2060 accelerator.
       Without it the board does not start. The two chip halves the table lists
       are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:532-535, source src/expansion.cpp:6785-6787, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:532-535, source src/expansion.cpp:6804-6806, source src/cpuboard.cpp:2897-2953"
 
   - name: "blizzard-2060-v8.5.rom"
     path: "roms/blizzard-2060-v8.5.rom"
@@ -782,7 +783,7 @@ files:
       Blizzard 2060 v8.5, ROM id 92. Board ROM of the Blizzard 2060 accelerator.
       Without it the board does not start. The two chip halves the table lists
       are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:536-539, source src/expansion.cpp:6785-6787, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:536-539, source src/expansion.cpp:6804-6806, source src/cpuboard.cpp:2897-2953"
 
   - name: "blizzard-scsi-kit-iii.rom"
     path: "roms/blizzard-scsi-kit-iii.rom"
@@ -797,7 +798,7 @@ files:
     note: >
       Blizzard SCSI Kit III, ROM id 167. SCSI module ROM of the Blizzard 1230-III
       board, read when the module is enabled.
-    source_ref: "source src/rommgr.cpp:541-542, source src/expansion.cpp:5563-5568, source src/cpuboard.cpp:2838, source src/cpuboard.cpp:2605-2620"
+    source_ref: "source src/rommgr.cpp:541-542, source src/expansion.cpp:5582-5587, source src/cpuboard.cpp:2848, source src/cpuboard.cpp:2615-2630"
 
   - name: "blizzard-scsi-kit-iv.rom"
     path: "roms/blizzard-scsi-kit-iv.rom"
@@ -812,7 +813,7 @@ files:
     note: >
       Blizzard SCSI Kit IV, ROM id 94. SCSI module ROM of the Blizzard 1230-IV
       and 1260 board, read when the module is enabled.
-    source_ref: "source src/rommgr.cpp:543-544, source src/expansion.cpp:5569-5574, source src/cpuboard.cpp:2842, source src/cpuboard.cpp:2605-2620"
+    source_ref: "source src/rommgr.cpp:543-544, source src/expansion.cpp:5588-5593, source src/cpuboard.cpp:2852, source src/cpuboard.cpp:2615-2630"
 
   - name: "warp-engine.rom"
     path: "roms/warp-engine.rom"
@@ -827,7 +828,7 @@ files:
     note: >
       Warp Engine, ROM id 93. Boot ROM of the Warp Engine A4000 accelerator SCSI
       or IDE port. Without it the port has no boot ROM.
-    source_ref: "source src/rommgr.cpp:549-550, source src/expansion.cpp:6882-6884, source src/ncr_scsi.cpp:922-933"
+    source_ref: "source src/rommgr.cpp:549-550, source src/expansion.cpp:6901-6903, source src/ncr_scsi.cpp:922-933"
 
   - name: "tekmagic2060.rom"
     path: "roms/tekmagic2060.rom"
@@ -844,7 +845,7 @@ files:
       accelerator. Without it the board does not start. The two chip halves the
       table lists are also accepted and merged. The code also opens it by the
       name tekmagic2060.rom.
-    source_ref: "source src/rommgr.cpp:552-555, source src/expansion.cpp:6678-6680, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:552-555, source src/expansion.cpp:6697-6699, source src/cpuboard.cpp:2897-2953"
 
   - name: "tekmagic2040.rom"
     path: "roms/tekmagic2040.rom"
@@ -861,7 +862,7 @@ files:
       accelerator. Without it the board does not start. The two chip halves the
       table lists are also accepted and merged. The code also opens it by the
       name tekmagic2040.rom.
-    source_ref: "source src/rommgr.cpp:556-559, source src/expansion.cpp:6678-6680, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:556-559, source src/expansion.cpp:6697-6699, source src/cpuboard.cpp:2897-2953"
 
   - name: "gvp-t-rex-ii-v1.0.rom"
     path: "roms/gvp-t-rex-ii-v1.0.rom"
@@ -876,7 +877,7 @@ files:
     note: >
       GVP T-Rex II v1.0, ROM id 317. Board ROM of the GVP T-Rex II accelerator,
       read from the CPU board ROM setting. Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:560-561, source src/expansion.cpp:6724-6726, source src/cpuboard.cpp:2905-2943, source src/cpuboard.cpp:3056-3063"
+    source_ref: "source src/rommgr.cpp:560-561, source src/expansion.cpp:6743-6745, source src/cpuboard.cpp:2915-2953, source src/cpuboard.cpp:3066-3073"
 
   - name: "zeus-040.rom"
     path: "roms/zeus-040.rom"
@@ -892,7 +893,7 @@ files:
       Zeus 040, ROM id 225. Boot ROM of the Zeus 040 accelerator SCSI or IDE
       port. Without it the port has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:563-566, source src/expansion.cpp:7125-7127, source src/ncr_scsi.cpp:1032"
+    source_ref: "source src/rommgr.cpp:563-566, source src/expansion.cpp:7144-7146, source src/ncr_scsi.cpp:1032"
 
   - name: "csa-magnum-040.rom"
     path: "roms/csa-magnum-040.rom"
@@ -907,7 +908,7 @@ files:
     note: >
       CSA Magnum 040, ROM id 226. Boot ROM of the Magnum 40/4 accelerator SCSI or
       IDE port. Without it the port has no boot ROM.
-    source_ref: "source src/rommgr.cpp:567-568, source src/expansion.cpp:7145-7147, source src/ncr_scsi.cpp:1044-1065"
+    source_ref: "source src/rommgr.cpp:567-568, source src/expansion.cpp:7164-7166, source src/ncr_scsi.cpp:1044-1065"
 
   - name: "csa-twelve-gauge.rom"
     path: "roms/csa-twelve-gauge.rom"
@@ -922,7 +923,7 @@ files:
     note: >
       CSA Twelve Gauge, ROM id 241. Boot ROM of the Twelve Gauge accelerator SCSI
       or IDE port. Without it the port has no boot ROM.
-    source_ref: "source src/rommgr.cpp:569-570, source src/expansion.cpp:7157-7159, source src/scsi.cpp:5294-5305"
+    source_ref: "source src/rommgr.cpp:569-570, source src/expansion.cpp:7176-7178, source src/scsi.cpp:5294-5305"
 
   - name: "hardital-tqm.rom"
     path: "roms/hardital-tqm.rom"
@@ -937,7 +938,7 @@ files:
     note: >
       Hardital TQM, ROM id 228. Board ROM of the TQM accelerator. Without it the
       board does not start.
-    source_ref: "source src/rommgr.cpp:571-572, source src/expansion.cpp:7061-7063, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:571-572, source src/expansion.cpp:7080-7082, source src/cpuboard.cpp:2897-2953"
 
   - name: "macrosystem-falcon-040-no-scsi.rom"
     path: "roms/macrosystem-falcon-040-no-scsi.rom"
@@ -952,7 +953,7 @@ files:
     note: >
       MacroSystem Falcon 040 (No SCSI), ROM id 229. Board ROM of the Falcon 040
       accelerator. Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:573-574, source src/expansion.cpp:6894-6896, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:573-574, source src/expansion.cpp:6913-6915, source src/cpuboard.cpp:2897-2953"
 
   - name: "gvp-a1230-turboplus-series-ii-v5.0.rom"
     path: "roms/gvp-a1230-turboplus-series-ii-v5.0.rom"
@@ -967,7 +968,7 @@ files:
     note: >
       GVP A1230 Turbo+ Series II v5.0, ROM id 230. Boot ROM of the GVP A1230
       Turbo+ Series II accelerator SCSI port.
-    source_ref: "source src/rommgr.cpp:575-576, source src/expansion.cpp:6695-6697, source src/a2091.cpp:4433-4440, source src/a2091.cpp:4489"
+    source_ref: "source src/rommgr.cpp:575-576, source src/expansion.cpp:6714-6716, source src/a2091.cpp:4433-4440, source src/a2091.cpp:4489"
 
   - name: "gvp-a1230-turboplus-series-ii-v5.3.rom"
     path: "roms/gvp-a1230-turboplus-series-ii-v5.3.rom"
@@ -982,7 +983,7 @@ files:
     note: >
       GVP A1230 Turbo+ Series II v5.3, ROM id 312. Boot ROM of the GVP A1230
       Turbo+ Series II accelerator SCSI port.
-    source_ref: "source src/rommgr.cpp:577-578, source src/expansion.cpp:6695-6697, source src/a2091.cpp:4433-4440, source src/a2091.cpp:4489"
+    source_ref: "source src/rommgr.cpp:577-578, source src/expansion.cpp:6714-6716, source src/a2091.cpp:4433-4440, source src/a2091.cpp:4489"
 
   - name: "gvp-a1230-turboplus.rom"
     path: "roms/gvp-a1230-turboplus.rom"
@@ -997,7 +998,7 @@ files:
     note: >
       GVP A1230 Turbo+, ROM id 260. Board ROM of the A1230 Turbo+ accelerator.
       Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:579-580, source src/expansion.cpp:6687-6689, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:579-580, source src/expansion.cpp:6706-6708, source src/cpuboard.cpp:2897-2953"
 
   - name: "harms-3000-professional.rom"
     path: "roms/harms-3000-professional.rom"
@@ -1013,7 +1014,7 @@ files:
       Harms 3000 Professional, ROM id 248. Board ROM of the Professional 3000
       accelerator. Without it the board does not start. The two chip halves the
       table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:581-584, source src/expansion.cpp:7263-7265, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:581-584, source src/expansion.cpp:7282-7284, source src/cpuboard.cpp:2897-2953"
 
   - name: "a2620-a2630-07.rom"
     path: "roms/a2620-a2630-07.rom"
@@ -1029,7 +1030,7 @@ files:
       A2620/A2630 -07, ROM id 105. Board ROM of the A2620/A2630 accelerator.
       Without it the board does not start. The two chip halves the table lists
       are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:586-589, source src/expansion.cpp:7004-7006, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:586-589, source src/expansion.cpp:7023-7025, source src/cpuboard.cpp:2897-2953"
 
   - name: "a2620-a2630-06.rom"
     path: "roms/a2620-a2630-06.rom"
@@ -1045,7 +1046,7 @@ files:
       A2620/A2630 -06, ROM id 106. Board ROM of the A2620/A2630 accelerator.
       Without it the board does not start. The two chip halves the table lists
       are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:590-593, source src/expansion.cpp:7004-7006, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:590-593, source src/expansion.cpp:7023-7025, source src/cpuboard.cpp:2897-2953"
 
   - name: "a2620-a2630-04.rom"
     path: "roms/a2620-a2630-04.rom"
@@ -1061,7 +1062,7 @@ files:
       A2620/A2630 -04, ROM id 165. Board ROM of the A2620/A2630 accelerator.
       Without it the board does not start. The two chip halves the table lists
       are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:594-597, source src/expansion.cpp:7004-7006, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:594-597, source src/expansion.cpp:7023-7025, source src/cpuboard.cpp:2897-2953"
 
   - name: "a2620-a2630-03.rom"
     path: "roms/a2620-a2630-03.rom"
@@ -1077,7 +1078,7 @@ files:
       A2620/A2630 -03, ROM id 216. Board ROM of the A2620/A2630 accelerator.
       Without it the board does not start. The two chip halves the table lists
       are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:598-601, source src/expansion.cpp:7004-7006, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:598-601, source src/expansion.cpp:7023-7025, source src/cpuboard.cpp:2897-2953"
 
   - name: "a2620-a2630-02.rom"
     path: "roms/a2620-a2630-02.rom"
@@ -1093,7 +1094,7 @@ files:
       A2620/A2630 -02, ROM id 210. Board ROM of the A2620/A2630 accelerator.
       Without it the board does not start. The two chip halves the table lists
       are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:602-605, source src/expansion.cpp:7004-7006, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:602-605, source src/expansion.cpp:7023-7025, source src/cpuboard.cpp:2897-2953"
 
   - name: "a2620-a2630-01.rom"
     path: "roms/a2620-a2630-01.rom"
@@ -1109,7 +1110,7 @@ files:
       A2620/A2630 -01, ROM id 164. Board ROM of the A2620/A2630 accelerator.
       Without it the board does not start. The two chip halves the table lists
       are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:606-609, source src/expansion.cpp:7004-7006, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:606-609, source src/expansion.cpp:7023-7025, source src/cpuboard.cpp:2897-2953"
 
   - name: "dkb-1230-1240-cobra.rom"
     path: "roms/dkb-1230-1240-cobra.rom"
@@ -1124,7 +1125,7 @@ files:
     note: >
       DKB 1230/1240/Cobra, ROM id 112. Boot ROM of the 1230/1240/Cobra
       accelerator SCSI or IDE port. Without it the port has no boot ROM.
-    source_ref: "source src/rommgr.cpp:610-611, source src/expansion.cpp:7032-7034, source src/ncr9x_scsi.cpp:2227"
+    source_ref: "source src/rommgr.cpp:610-611, source src/expansion.cpp:7051-7053, source src/ncr9x_scsi.cpp:2227"
 
   - name: "dkb-1230-1240-cobra-plus-ferret-v1.23.rom"
     path: "roms/dkb-1230-1240-cobra-plus-ferret-v1.23.rom"
@@ -1140,7 +1141,7 @@ files:
       DKB 1230/1240/Cobra + Ferret v1.23, ROM id 208. Boot ROM of the
       1230/1240/Cobra accelerator SCSI or IDE port. Without it the port has no
       boot ROM.
-    source_ref: "source src/rommgr.cpp:612-613, source src/expansion.cpp:7032-7034, source src/ncr9x_scsi.cpp:2227"
+    source_ref: "source src/rommgr.cpp:612-613, source src/expansion.cpp:7051-7053, source src/ncr9x_scsi.cpp:2227"
 
   - name: "fusion-forty.rom"
     path: "roms/fusion-forty.rom"
@@ -1156,7 +1157,7 @@ files:
       Fusion Forty, ROM id 113. Board ROM of the Fusion Forty accelerator.
       Without it the board does not start. The four chip dumps the table lists
       are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:616-621, source src/expansion.cpp:7075-7077, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:616-621, source src/expansion.cpp:7094-7096, source src/cpuboard.cpp:2897-2953"
 
   - name: "apollo-1240-1260.rom"
     path: "roms/apollo-1240-1260.rom"
@@ -1171,7 +1172,7 @@ files:
     note: >
       Apollo 1240/1260, ROM id 119. Board ROM of the Apollo 1240/1260
       accelerator. Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:622-623, source src/expansion.cpp:7197-7199, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:622-623, source src/expansion.cpp:7216-7218, source src/cpuboard.cpp:2897-2953"
 
   - name: "apollo-630.rom"
     path: "roms/apollo-630.rom"
@@ -1186,7 +1187,7 @@ files:
     note: >
       Apollo 630, ROM id 313. Board ROM of the Apollo 630 accelerator. Without it
       the board does not start.
-    source_ref: "source src/rommgr.cpp:624-625, source src/expansion.cpp:7208-7210, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:624-625, source src/expansion.cpp:7227-7229, source src/cpuboard.cpp:2897-2953"
 
   - name: "gvp-a3001-series-i.rom"
     path: "roms/gvp-a3001-series-i.rom"
@@ -1201,7 +1202,7 @@ files:
     note: >
       GVP A3001 Series I, ROM id 114. Boot ROM of the A3001 Series I accelerator
       SCSI or IDE port. Without it the port has no boot ROM.
-    source_ref: "source src/rommgr.cpp:626-627, source src/expansion.cpp:6625-6627, source src/idecontrollers.cpp:2410"
+    source_ref: "source src/rommgr.cpp:626-627, source src/expansion.cpp:6644-6646, source src/idecontrollers.cpp:2410"
 
   - name: "kupke-golem-030.rom"
     path: "roms/kupke-golem-030.rom"
@@ -1216,7 +1217,7 @@ files:
     note: >
       Kupke Golem 030, ROM id 126. Board ROM of the Golem 030 accelerator.
       Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:628-629, source src/expansion.cpp:7224-7226, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:628-629, source src/expansion.cpp:7243-7245, source src/cpuboard.cpp:2897-2953"
 
   - name: "dkb-wildfire-v1.0.rom"
     path: "roms/dkb-wildfire-v1.0.rom"
@@ -1231,7 +1232,7 @@ files:
     note: >
       DKB WildFire v1.0, ROM id 318. Board ROM of the Wildfire accelerator.
       Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:630-631, source src/expansion.cpp:7044-7046, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:630-631, source src/expansion.cpp:7063-7065, source src/cpuboard.cpp:2897-2953"
 
   - name: "dkb-wildfire-v1.1.rom"
     path: "roms/dkb-wildfire-v1.1.rom"
@@ -1246,7 +1247,7 @@ files:
     note: >
       DKB WildFire v1.1, ROM id 143. Board ROM of the Wildfire accelerator.
       Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:632-633, source src/expansion.cpp:7044-7046, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:632-633, source src/expansion.cpp:7063-7065, source src/cpuboard.cpp:2897-2953"
 
   - name: "m-tec-e-matrix-530.rom"
     path: "roms/m-tec-e-matrix-530.rom"
@@ -1261,7 +1262,7 @@ files:
     note: >
       M-Tec E-Matrix 530, ROM id 144. Board ROM of the E-Matrix 530 accelerator.
       Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:634-635, source src/expansion.cpp:6940-6942, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:634-635, source src/expansion.cpp:6959-6961, source src/cpuboard.cpp:2897-2953"
 
   - name: "typhoon-mk2.rom"
     path: "roms/typhoon-mk2.rom"
@@ -1276,7 +1277,7 @@ files:
     note: >
       Typhoon MK2, ROM id 236. Board ROM of the Typhoon MK2 accelerator. Without
       it the board does not start.
-    source_ref: "source src/rommgr.cpp:636-637, source src/expansion.cpp:7246-7248, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:636-637, source src/expansion.cpp:7265-7267, source src/cpuboard.cpp:2897-2953"
 
   - name: "sx32-pro.rom"
     path: "roms/sx32-pro.rom"
@@ -1291,7 +1292,7 @@ files:
     note: >
       SX32 Pro, ROM id 160. Board ROM of the SX32 Pro accelerator. Without it the
       board does not start.
-    source_ref: "source src/rommgr.cpp:638-639, source src/expansion.cpp:7237-7239, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:638-639, source src/expansion.cpp:7256-7258, source src/cpuboard.cpp:2897-2953"
 
   - name: "ivs-vector-4.14.rom"
     path: "roms/ivs-vector-4.14.rom"
@@ -1307,7 +1308,7 @@ files:
       IVS Vector 4.14, ROM id 166. Boot ROM of the Vector accelerator SCSI or IDE
       port. Without it the port has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:640-643, source src/expansion.cpp:7088-7090, source src/scsi.cpp:5323-5333"
+    source_ref: "source src/rommgr.cpp:640-643, source src/expansion.cpp:7107-7109, source src/scsi.cpp:5323-5333"
 
   - name: "quikpak-4060-xp-v2.1.rom"
     path: "roms/quikpak-4060-xp-v2.1.rom"
@@ -1322,7 +1323,7 @@ files:
     note: >
       QuikPak 4060 XP v2.1, ROM id 239. Board ROM of the QuikPak XP accelerator.
       Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:644-645, source src/expansion.cpp:6716-6718, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:644-645, source src/expansion.cpp:6735-6737, source src/cpuboard.cpp:2897-2953"
 
   - name: "quikpak-4060-xp-v2.2.rom"
     path: "roms/quikpak-4060-xp-v2.2.rom"
@@ -1337,7 +1338,7 @@ files:
     note: >
       QuikPak 4060 XP v2.2, ROM id 319. Board ROM of the QuikPak XP accelerator.
       Without it the board does not start.
-    source_ref: "source src/rommgr.cpp:646-647, source src/expansion.cpp:6716-6718, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:646-647, source src/expansion.cpp:6735-6737, source src/cpuboard.cpp:2897-2953"
 
   - name: "quikpak-4060.rom"
     path: "roms/quikpak-4060.rom"
@@ -1352,7 +1353,7 @@ files:
     note: >
       QuikPak 4060, ROM id 320. Board ROM of the QuikPak accelerator. Without it
       the board does not start.
-    source_ref: "source src/rommgr.cpp:648-649, source src/expansion.cpp:6707-6709, source src/cpuboard.cpp:2887-2943"
+    source_ref: "source src/rommgr.cpp:648-649, source src/expansion.cpp:6726-6728, source src/cpuboard.cpp:2897-2953"
 
   - name: "cyberstorm-mk-i-68060-support.rom"
     path: "roms/cyberstorm-mk-i-68060-support.rom"
@@ -1367,7 +1368,7 @@ files:
     note: >
       CyberStorm MK I 68060 Support, ROM id 95. 68060 support ROM of the
       CyberStorm MK I board. The board starts without it.
-    source_ref: "source src/rommgr.cpp:843-844, source src/expansion.cpp:6810-6812, source src/cpuboard.cpp:2810-2813, source src/cpuboard.cpp:2932-2944"
+    source_ref: "source src/rommgr.cpp:843-844, source src/expansion.cpp:6829-6831, source src/cpuboard.cpp:2820-2823, source src/cpuboard.cpp:2942-2954"
 
   - name: "cyberstorm-mk-i-cyberscsi-module.rom"
     path: "roms/cyberstorm-mk-i-cyberscsi-module.rom"
@@ -1382,7 +1383,7 @@ files:
     note: >
       CyberStorm MK I CyberSCSI Module, ROM id 101. SCSI module ROM of the
       CyberStorm MK I board, read when the module is enabled.
-    source_ref: "source src/rommgr.cpp:845-846, source src/expansion.cpp:5575-5580, source src/cpuboard.cpp:2812, source src/cpuboard.cpp:2605-2620"
+    source_ref: "source src/rommgr.cpp:845-846, source src/expansion.cpp:5594-5599, source src/cpuboard.cpp:2822, source src/cpuboard.cpp:2615-2630"
 
   - name: "cyberstormmk2.rom"
     path: "roms/cyberstormmk2.rom"
@@ -1395,7 +1396,7 @@ files:
       CyberStorm MK II, ROM id 96. Flash ROM of the CyberStorm MK II board,
       copied to the NVRAM directory on first use. Without it the board does not
       start. The code also opens it by the name cyberstormmk2.rom.
-    source_ref: "source src/rommgr.cpp:847-848, source src/expansion.cpp:6822-6824, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184"
+    source_ref: "source src/rommgr.cpp:847-848, source src/expansion.cpp:6841-6843, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184"
 
   - name: "cyberstormmk3.rom"
     path: "roms/cyberstormmk3.rom"
@@ -1410,7 +1411,7 @@ files:
       does not start. The scan hashes the first 0x1c000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file. The code
       also opens it by the name cyberstormmk3.rom.
-    source_ref: "source src/rommgr.cpp:850-851, source src/expansion.cpp:6830-6832, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:850-851, source src/expansion.cpp:6849-6851, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
 
   - name: "cyberstorm-mk-iii-v44.69.rom"
     path: "roms/cyberstorm-mk-iii-v44.69.rom"
@@ -1424,7 +1425,7 @@ files:
       board, copied to the NVRAM directory on first use. Without it the board
       does not start. The scan hashes the first 0x1c000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:852-853, source src/expansion.cpp:6830-6832, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:852-853, source src/expansion.cpp:6849-6851, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
 
   - name: "cyberstorm-mk-iii-v44.71.rom"
     path: "roms/cyberstorm-mk-iii-v44.71.rom"
@@ -1438,7 +1439,7 @@ files:
       board, copied to the NVRAM directory on first use. Without it the board
       does not start. The scan hashes the first 0x1c000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:854-855, source src/expansion.cpp:6830-6832, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:854-855, source src/expansion.cpp:6849-6851, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
 
   - name: "cyberstormppc.rom"
     path: "roms/cyberstormppc.rom"
@@ -1454,7 +1455,7 @@ files:
       327. The scan hashes the first 0x1c000 bytes with bytes 0x10-0x2f cleared,
       so the table SHA-1 is not the hash of the file. The code also opens it by
       the name cyberstormppc.rom.
-    source_ref: "source src/rommgr.cpp:856-857, source src/expansion.cpp:6838-6840, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:9993-10003, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:856-857, source src/expansion.cpp:6857-6859, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10015-10025, source src/rommgr.cpp:1797-1810"
 
   - name: "cyberstorm-ppc-v44.69.rom"
     path: "roms/cyberstorm-ppc-v44.69.rom"
@@ -1469,7 +1470,7 @@ files:
       start. The A4000 quickstart config 2 asks for ROM id 98, then 326, then
       327. The scan hashes the first 0x1c000 bytes with bytes 0x10-0x2f cleared,
       so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:858-859, source src/expansion.cpp:6838-6840, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:9993-10003, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:858-859, source src/expansion.cpp:6857-6859, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10015-10025, source src/rommgr.cpp:1797-1810"
 
   - name: "cyberstorm-ppc-v44.71.rom"
     path: "roms/cyberstorm-ppc-v44.71.rom"
@@ -1484,7 +1485,7 @@ files:
       start. The A4000 quickstart config 2 asks for ROM id 98, then 326, then
       327. The scan hashes the first 0x1c000 bytes with bytes 0x10-0x2f cleared,
       so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:860-861, source src/expansion.cpp:6838-6840, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:9993-10003, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:860-861, source src/expansion.cpp:6857-6859, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10015-10025, source src/rommgr.cpp:1797-1810"
 
   - name: "blizzardppc_040.rom"
     path: "roms/blizzardppc_040.rom"
@@ -1499,7 +1500,7 @@ files:
       start. The scan hashes the first 0x1c000 or 0x50000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file. The code
       also opens it by the name blizzardppc_040.rom.
-    source_ref: "source src/rommgr.cpp:862-863, source src/expansion.cpp:6796-6798, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:862-863, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
 
   - name: "blizzardppc_060.rom"
     path: "roms/blizzardppc_060.rom"
@@ -1515,7 +1516,7 @@ files:
       330. The scan hashes the first 0x1c000 or 0x50000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file. The code
       also opens it by the name blizzardppc_060.rom.
-    source_ref: "source src/rommgr.cpp:864-865, source src/expansion.cpp:6796-6798, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10300-10314, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:864-865, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10322-10336, source src/rommgr.cpp:1797-1810"
 
   - name: "blizzard-ppc-68040-v44.69.rom"
     path: "roms/blizzard-ppc-68040-v44.69.rom"
@@ -1529,7 +1530,7 @@ files:
       copied to the NVRAM directory on first use. Without it the board does not
       start. The scan hashes the first 0x1c000 or 0x50000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:866-867, source src/expansion.cpp:6796-6798, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:866-867, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
 
   - name: "blizzard-ppc-68060-v44.69.rom"
     path: "roms/blizzard-ppc-68060-v44.69.rom"
@@ -1544,7 +1545,7 @@ files:
       start. The A1200 quickstart config 5 asks for ROM id 100, then 329, then
       330. The scan hashes the first 0x1c000 or 0x50000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:868-869, source src/expansion.cpp:6796-6798, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10300-10314, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:868-869, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10322-10336, source src/rommgr.cpp:1797-1810"
 
   - name: "blizzard-ppc-68040-v44.71.rom"
     path: "roms/blizzard-ppc-68040-v44.71.rom"
@@ -1559,7 +1560,7 @@ files:
       start. The A1200 quickstart config 5 asks for ROM id 100, then 329, then
       330. The scan hashes the first 0x1c000 or 0x50000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:870-871, source src/expansion.cpp:6796-6798, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10300-10314, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:870-871, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10322-10336, source src/rommgr.cpp:1797-1810"
 
   - name: "blizzard-ppc-68060-v44.71.rom"
     path: "roms/blizzard-ppc-68060-v44.71.rom"
@@ -1573,7 +1574,7 @@ files:
       copied to the NVRAM directory on first use. Without it the board does not
       start. The scan hashes the first 0x1c000 or 0x50000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:872-873, source src/expansion.cpp:6796-6798, source src/cpuboard.cpp:2887-2943, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:872-873, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/rommgr.cpp:1797-1810"
 
   # SCSI and IDE controllers
 
@@ -1591,7 +1592,7 @@ files:
       A2090A, ROM id 122. Boot ROM of the A2090a controller. Without it the
       controller has no boot ROM. The two chip halves the table lists are also
       accepted and merged.
-    source_ref: "source src/rommgr.cpp:446-449, source src/expansion.cpp:5639-5646, source src/a2091.cpp:4319"
+    source_ref: "source src/rommgr.cpp:446-449, source src/expansion.cpp:5658-5665, source src/a2091.cpp:4319"
 
   - name: "a2090a-combitec-turbo.rom"
     path: "roms/a2090a-combitec-turbo.rom"
@@ -1607,7 +1608,7 @@ files:
       A2090A Combitec Turbo, ROM id 212. Boot ROM of the A2090a controller.
       Without it the controller has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:450-453, source src/expansion.cpp:5639-5646, source src/a2091.cpp:4319"
+    source_ref: "source src/rommgr.cpp:450-453, source src/expansion.cpp:5658-5665, source src/a2091.cpp:4319"
 
   - name: "a2090b-combitec.rom"
     path: "roms/a2090b-combitec.rom"
@@ -1623,7 +1624,7 @@ files:
       A2090B Combitec, ROM id 213. Boot ROM of the A2090 Combitec controller.
       Without it the controller has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:454-457, source src/expansion.cpp:5647-5654, source src/a2091.cpp:4358"
+    source_ref: "source src/rommgr.cpp:454-457, source src/expansion.cpp:5666-5673, source src/a2091.cpp:4358"
 
   - name: "a2090b-combitec-turbo.rom"
     path: "roms/a2090b-combitec-turbo.rom"
@@ -1639,7 +1640,7 @@ files:
       A2090B Combitec Turbo, ROM id 214. Boot ROM of the A2090 Combitec
       controller. Without it the controller has no boot ROM. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:458-461, source src/expansion.cpp:5647-5654, source src/a2091.cpp:4358"
+    source_ref: "source src/rommgr.cpp:458-461, source src/expansion.cpp:5666-5673, source src/a2091.cpp:4358"
 
   - name: "a2090b-macrosystem.rom"
     path: "roms/a2090b-macrosystem.rom"
@@ -1655,7 +1656,7 @@ files:
       A2090B MacroSystem, ROM id 217. Boot ROM of the A2090 Combitec controller.
       Without it the controller has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:462-465, source src/expansion.cpp:5647-5654, source src/a2091.cpp:4358"
+    source_ref: "source src/rommgr.cpp:462-465, source src/expansion.cpp:5666-5673, source src/a2091.cpp:4358"
 
   - name: "a590-a2091-v4.4.rom"
     path: "roms/a590-a2091-v4.4.rom"
@@ -1671,7 +1672,7 @@ files:
       A590/A2091 v4.4, ROM id 268. Boot ROM of the A590/A2091 controller. Without
       it the controller has no boot ROM. The two chip halves the table lists are
       also accepted and merged.
-    source_ref: "source src/rommgr.cpp:467-470, source src/expansion.cpp:5655-5661, source src/a2091.cpp:4232"
+    source_ref: "source src/rommgr.cpp:467-470, source src/expansion.cpp:5674-5680, source src/a2091.cpp:4232"
 
   - name: "a590-a2091-v4.6.rom"
     path: "roms/a590-a2091-v4.6.rom"
@@ -1687,7 +1688,7 @@ files:
       A590/A2091 v4.6, ROM id 202. Boot ROM of the A590/A2091 controller. Without
       it the controller has no boot ROM. The two chip halves the table lists are
       also accepted and merged.
-    source_ref: "source src/rommgr.cpp:471-474, source src/expansion.cpp:5655-5661, source src/a2091.cpp:4232"
+    source_ref: "source src/rommgr.cpp:471-474, source src/expansion.cpp:5674-5680, source src/a2091.cpp:4232"
 
   - name: "a590-a2091-v5.92.rom"
     path: "roms/a590-a2091-v5.92.rom"
@@ -1703,7 +1704,7 @@ files:
       A590/A2091 v5.92, ROM id 215. Boot ROM of the A590/A2091 controller.
       Without it the controller has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:475-478, source src/expansion.cpp:5655-5661, source src/a2091.cpp:4232"
+    source_ref: "source src/rommgr.cpp:475-478, source src/expansion.cpp:5674-5680, source src/a2091.cpp:4232"
 
   - name: "a590-a2091-v6.0.rom"
     path: "roms/a590-a2091-v6.0.rom"
@@ -1719,7 +1720,7 @@ files:
       A590/A2091 v6.0, ROM id 53. Boot ROM of the A590/A2091 controller. Without
       it the controller has no boot ROM. The two chip halves the table lists are
       also accepted and merged.
-    source_ref: "source src/rommgr.cpp:479-482, source src/expansion.cpp:5655-5661, source src/a2091.cpp:4232"
+    source_ref: "source src/rommgr.cpp:479-482, source src/expansion.cpp:5674-5680, source src/a2091.cpp:4232"
 
   - name: "a590-a2091-v6.1.rom"
     path: "roms/a590-a2091-v6.1.rom"
@@ -1735,7 +1736,7 @@ files:
       A590/A2091 v6.1, ROM id 206. Boot ROM of the A590/A2091 controller. Without
       it the controller has no boot ROM. The two chip halves the table lists are
       also accepted and merged.
-    source_ref: "source src/rommgr.cpp:483-486, source src/expansion.cpp:5655-5661, source src/a2091.cpp:4232"
+    source_ref: "source src/rommgr.cpp:483-486, source src/expansion.cpp:5674-5680, source src/a2091.cpp:4232"
 
   - name: "a590-a2091-v6.6.rom"
     path: "roms/a590-a2091-v6.6.rom"
@@ -1751,7 +1752,7 @@ files:
       A590/A2091 v6.6, ROM id 54. Boot ROM of the A590/A2091 controller. Without
       it the controller has no boot ROM. The two chip halves the table lists are
       also accepted and merged.
-    source_ref: "source src/rommgr.cpp:487-490, source src/expansion.cpp:5655-5661, source src/a2091.cpp:4232"
+    source_ref: "source src/rommgr.cpp:487-490, source src/expansion.cpp:5674-5680, source src/a2091.cpp:4232"
 
   - name: "a590-a2091-v7.0.rom"
     path: "roms/a590-a2091-v7.0.rom"
@@ -1767,7 +1768,7 @@ files:
       A590/A2091 v7.0, ROM id 55. Boot ROM of the A590/A2091 controller. Without
       it the controller has no boot ROM. The two chip halves the table lists are
       also accepted and merged.
-    source_ref: "source src/rommgr.cpp:491-494, source src/expansion.cpp:5655-5661, source src/a2091.cpp:4232"
+    source_ref: "source src/rommgr.cpp:491-494, source src/expansion.cpp:5674-5680, source src/a2091.cpp:4232"
 
   - name: "a590-a2091-guru-rom-v6.14.rom"
     path: "roms/a590-a2091-guru-rom-v6.14.rom"
@@ -1782,7 +1783,7 @@ files:
     note: >
       A590/A2091 Guru ROM v6.14, ROM id 56. Boot ROM of the A590/A2091
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:496-497, source src/expansion.cpp:5655-5661, source src/a2091.cpp:4232"
+    source_ref: "source src/rommgr.cpp:496-497, source src/expansion.cpp:5674-5680, source src/a2091.cpp:4232"
 
   - name: "a4091-v40.4.rom"
     path: "roms/a4091-v40.4.rom"
@@ -1797,7 +1798,7 @@ files:
     note: >
       A4091 v40.4, ROM id 240. Boot ROM of the A4091 controller. Without it the
       controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:499-500, source src/expansion.cpp:5663-5670, source src/ncr_scsi.cpp:944"
+    source_ref: "source src/rommgr.cpp:499-500, source src/expansion.cpp:5682-5689, source src/ncr_scsi.cpp:944"
 
   - name: "a4091-v40.9.rom"
     path: "roms/a4091-v40.9.rom"
@@ -1812,7 +1813,7 @@ files:
     note: >
       A4091 v40.9, ROM id 57. Boot ROM of the A4091 controller. Without it the
       controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:501-502, source src/expansion.cpp:5663-5670, source src/ncr_scsi.cpp:944"
+    source_ref: "source src/rommgr.cpp:501-502, source src/expansion.cpp:5682-5689, source src/ncr_scsi.cpp:944"
 
   - name: "a4091-v40.13.rom"
     path: "roms/a4091-v40.13.rom"
@@ -1827,7 +1828,7 @@ files:
     note: >
       A4091 v40.13, ROM id 58. Boot ROM of the A4091 controller. Without it the
       controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:503-504, source src/expansion.cpp:5663-5670, source src/ncr_scsi.cpp:944"
+    source_ref: "source src/rommgr.cpp:503-504, source src/expansion.cpp:5682-5689, source src/ncr_scsi.cpp:944"
 
   - name: "supradrive-amab6.rom"
     path: "roms/supradrive-amab6.rom"
@@ -1842,7 +1843,7 @@ files:
     note: >
       SupraDrive AMAB6, ROM id 121. Boot ROM of the SupraDrive controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:506-507, source src/expansion.cpp:6027-6032, source src/scsi.cpp:4385"
+    source_ref: "source src/rommgr.cpp:506-507, source src/expansion.cpp:6046-6051, source src/scsi.cpp:4385"
 
   - name: "supradrive-amab5.rom"
     path: "roms/supradrive-amab5.rom"
@@ -1857,7 +1858,7 @@ files:
     note: >
       SupraDrive AMAB5, ROM id 134. Boot ROM of the SupraDrive controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:508-509, source src/expansion.cpp:6027-6032, source src/scsi.cpp:4385"
+    source_ref: "source src/rommgr.cpp:508-509, source src/expansion.cpp:6046-6051, source src/scsi.cpp:4385"
 
   - name: "supradrive-amab4.rom"
     path: "roms/supradrive-amab4.rom"
@@ -1872,7 +1873,7 @@ files:
     note: >
       SupraDrive AMAB4, ROM id 135. Boot ROM of the SupraDrive controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:510-511, source src/expansion.cpp:6027-6032, source src/scsi.cpp:4385"
+    source_ref: "source src/rommgr.cpp:510-511, source src/expansion.cpp:6046-6051, source src/scsi.cpp:4385"
 
   - name: "supradrive-amab3.rom"
     path: "roms/supradrive-amab3.rom"
@@ -1887,7 +1888,7 @@ files:
     note: >
       SupraDrive AMAB3, ROM id 136. Boot ROM of the SupraDrive controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:512-513, source src/expansion.cpp:6027-6032, source src/scsi.cpp:4385"
+    source_ref: "source src/rommgr.cpp:512-513, source src/expansion.cpp:6046-6051, source src/scsi.cpp:4385"
 
   - name: "supradrive-amab2.rom"
     path: "roms/supradrive-amab2.rom"
@@ -1902,7 +1903,7 @@ files:
     note: >
       SupraDrive AMAB2, ROM id 299. Boot ROM of the SupraDrive controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:514-515, source src/expansion.cpp:6027-6032, source src/scsi.cpp:4385"
+    source_ref: "source src/rommgr.cpp:514-515, source src/expansion.cpp:6046-6051, source src/scsi.cpp:4385"
 
   - name: "supradrive-2000dma-44-25b.rom"
     path: "roms/supradrive-2000dma-44-25b.rom"
@@ -1917,7 +1918,7 @@ files:
     note: >
       SupraDrive 2000DMA (44-25B), ROM id 298. Boot ROM of the SupraDrive
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:516-517, source src/expansion.cpp:6027-6032, source src/scsi.cpp:4385"
+    source_ref: "source src/rommgr.cpp:516-517, source src/expansion.cpp:6046-6051, source src/scsi.cpp:4385"
 
   - name: "fastlane.rom"
     path: "roms/fastlane.rom"
@@ -1932,7 +1933,7 @@ files:
     note: >
       Fastlane, ROM id 102. Boot ROM of the Fastlane controller. Without it the
       controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:545-546, source src/expansion.cpp:5975-5981, source src/ncr9x_scsi.cpp:2003"
+    source_ref: "source src/rommgr.cpp:545-546, source src/expansion.cpp:5994-6000, source src/ncr9x_scsi.cpp:2003"
 
   - name: "oktagon-2008.rom"
     path: "roms/oktagon-2008.rom"
@@ -1947,7 +1948,7 @@ files:
     note: >
       Oktagon 2008, ROM id 103. Boot ROM of the Oktagon 2008 controller. Without
       it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:547-548, source src/expansion.cpp:5591-5596, source src/ncr9x_scsi.cpp:2093"
+    source_ref: "source src/rommgr.cpp:547-548, source src/expansion.cpp:5610-5615, source src/ncr9x_scsi.cpp:2093"
 
   - name: "dkb-rapidfire-spitfire-v1.31.rom"
     path: "roms/dkb-rapidfire-spitfire-v1.31.rom"
@@ -1962,7 +1963,7 @@ files:
     note: >
       DKB Rapidfire/Spitfire v1.31, ROM id 207. Boot ROM of the
       RapidFire/SpitFire controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:614-615, source src/expansion.cpp:5681-5689, source src/ncr9x_scsi.cpp:2436"
+    source_ref: "source src/rommgr.cpp:614-615, source src/expansion.cpp:5700-5708, source src/ncr9x_scsi.cpp:2436"
 
   - name: "preferred-technologies-nexus.rom"
     path: "roms/preferred-technologies-nexus.rom"
@@ -1977,7 +1978,7 @@ files:
     note: >
       Preferred Technologies Nexus, ROM id 139. Boot ROM of the Nexus controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:651-652, source src/expansion.cpp:5989-5997, source src/scsi.cpp:4815"
+    source_ref: "source src/rommgr.cpp:651-652, source src/expansion.cpp:6008-6016, source src/scsi.cpp:4815"
 
   - name: "icd-adscsi-2000-v1.6-icddisk-v1.0.rom"
     path: "roms/icd-adscsi-2000-v1.6-icddisk-v1.0.rom"
@@ -1992,7 +1993,7 @@ files:
     note: >
       ICD AdSCSI 2000 v1.6 (icddisk v1.0), ROM id 133. Boot ROM of the AdSCSI
       Advantage 2000/2080 controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:653-654, source src/expansion.cpp:5788-5795, source src/scsi.cpp:4604, source src/scsi.cpp:4612"
+    source_ref: "source src/rommgr.cpp:653-654, source src/expansion.cpp:5807-5814, source src/scsi.cpp:4604, source src/scsi.cpp:4612"
 
   - name: "icd-adscsi-2000-v2.01-icddisk-v32.1.rom"
     path: "roms/icd-adscsi-2000-v2.01-icddisk-v32.1.rom"
@@ -2007,7 +2008,7 @@ files:
     note: >
       ICD AdSCSI 2000 v2.01 (icddisk v32.1), ROM id 309. Boot ROM of the AdSCSI
       Advantage 2000/2080 controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:655-656, source src/expansion.cpp:5788-5795, source src/scsi.cpp:4604, source src/scsi.cpp:4612"
+    source_ref: "source src/rommgr.cpp:655-656, source src/expansion.cpp:5807-5814, source src/scsi.cpp:4604, source src/scsi.cpp:4612"
 
   - name: "icd-adscsi-2000-v2.1-icddisk-v33.0.rom"
     path: "roms/icd-adscsi-2000-v2.1-icddisk-v33.0.rom"
@@ -2022,7 +2023,7 @@ files:
     note: >
       ICD AdSCSI 2000 v2.1 (icddisk v33.0), ROM id 232. Boot ROM of the AdSCSI
       Advantage 2000/2080 controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:657-658, source src/expansion.cpp:5788-5795, source src/scsi.cpp:4604, source src/scsi.cpp:4612"
+    source_ref: "source src/rommgr.cpp:657-658, source src/expansion.cpp:5807-5814, source src/scsi.cpp:4604, source src/scsi.cpp:4612"
 
   - name: "icd-adscsi-2000-v2.2-icddisk-v34.0.rom"
     path: "roms/icd-adscsi-2000-v2.2-icddisk-v34.0.rom"
@@ -2037,7 +2038,7 @@ files:
     note: >
       ICD AdSCSI 2000 v2.2 (icddisk v34.0), ROM id 233. Boot ROM of the AdSCSI
       Advantage 2000/2080 controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:659-660, source src/expansion.cpp:5788-5795, source src/scsi.cpp:4604, source src/scsi.cpp:4612"
+    source_ref: "source src/rommgr.cpp:659-660, source src/expansion.cpp:5807-5814, source src/scsi.cpp:4604, source src/scsi.cpp:4612"
 
   - name: "archos-add-500.rom"
     path: "roms/archos-add-500.rom"
@@ -2052,7 +2053,7 @@ files:
     note: >
       Archos ADD-500, ROM id 132. Boot ROM of the ADD-500 controller. Without it
       the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:661-662, source src/expansion.cpp:5540-5546, source src/scsi.cpp:4535, source src/scsi.cpp:4543"
+    source_ref: "source src/rommgr.cpp:661-662, source src/expansion.cpp:5559-5565, source src/scsi.cpp:4535, source src/scsi.cpp:4543"
 
   - name: "protar-a500hd.rom"
     path: "roms/protar-a500hd.rom"
@@ -2067,7 +2068,7 @@ files:
     note: >
       Protar A500HD, ROM id 131. Boot ROM of the A500 HD controller. Without it
       the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:663-664, source src/expansion.cpp:6004-6010, source src/scsi.cpp:4512, source src/scsi.cpp:4520"
+    source_ref: "source src/rommgr.cpp:663-664, source src/expansion.cpp:6023-6029, source src/scsi.cpp:4512, source src/scsi.cpp:4520"
 
   - name: "m-tec-at500-v1.33w.rom"
     path: "roms/m-tec-at500-v1.33w.rom"
@@ -2082,7 +2083,7 @@ files:
     note: >
       M-Tec AT500 v1.33w, ROM id 130. Boot ROM of the AT 500 controller. Without
       it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:665-666, source src/expansion.cpp:5918-5923, source src/idecontrollers.cpp:2779"
+    source_ref: "source src/rommgr.cpp:665-666, source src/expansion.cpp:5937-5942, source src/idecontrollers.cpp:2779"
 
   - name: "adide-40-44-v33.rom"
     path: "roms/adide-40-44-v33.rom"
@@ -2097,7 +2098,7 @@ files:
     note: >
       AdIDE 40/44 v33, ROM id 141. Boot ROM of the AdIDE controller. Without it
       the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:667-668, source src/expansion.cpp:5782-5787, source src/idecontrollers.cpp:2757"
+    source_ref: "source src/rommgr.cpp:667-668, source src/expansion.cpp:5801-5806, source src/idecontrollers.cpp:2757"
 
   - name: "adide-40-44-v34.rom"
     path: "roms/adide-40-44-v34.rom"
@@ -2112,7 +2113,7 @@ files:
     note: >
       AdIDE 40/44 v34, ROM id 129. Boot ROM of the AdIDE controller. Without it
       the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:669-670, source src/expansion.cpp:5782-5787, source src/idecontrollers.cpp:2757"
+    source_ref: "source src/rommgr.cpp:669-670, source src/expansion.cpp:5801-5806, source src/idecontrollers.cpp:2757"
 
   - name: "vector-falcon-8000-v7.1.rom"
     path: "roms/vector-falcon-8000-v7.1.rom"
@@ -2128,7 +2129,7 @@ files:
       Vector Falcon 8000 v7.1, ROM id 128. Boot ROM of the Vector Falcon 8000
       controller. Without it the controller has no boot ROM. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:671-674, source src/expansion.cpp:5770-5775, source src/scsi.cpp:4479, source src/scsi.cpp:4495"
+    source_ref: "source src/rommgr.cpp:671-674, source src/expansion.cpp:5789-5794, source src/scsi.cpp:4479, source src/scsi.cpp:4495"
 
   - name: "vector-falcon-8000-v7.6.rom"
     path: "roms/vector-falcon-8000-v7.6.rom"
@@ -2144,7 +2145,7 @@ files:
       Vector Falcon 8000 v7.6, ROM id 172. Boot ROM of the Vector Falcon 8000
       controller. Without it the controller has no boot ROM. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:675-678, source src/expansion.cpp:5770-5775, source src/scsi.cpp:4479, source src/scsi.cpp:4495"
+    source_ref: "source src/rommgr.cpp:675-678, source src/expansion.cpp:5789-5794, source src/scsi.cpp:4479, source src/scsi.cpp:4495"
 
   - name: "kommos-a500-a2000-v1.8.rom"
     path: "roms/kommos-a500-a2000-v1.8.rom"
@@ -2160,7 +2161,7 @@ files:
       Kommos A500/A2000 v1.8, ROM id 127. Boot ROM of the Kommos A500/A2000 SCSI
       controller. Without it the controller has no boot ROM. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:679-682, source src/expansion.cpp:5841-5846, source src/scsi.cpp:4460"
+    source_ref: "source src/rommgr.cpp:679-682, source src/expansion.cpp:5860-5865, source src/scsi.cpp:4460"
 
   - name: "kommos-a500-a2000-v1.7.rom"
     path: "roms/kommos-a500-a2000-v1.7.rom"
@@ -2176,7 +2177,7 @@ files:
       Kommos A500/A2000 v1.7, ROM id 140. Boot ROM of the Kommos A500/A2000 SCSI
       controller. Without it the controller has no boot ROM. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:683-686, source src/expansion.cpp:5841-5846, source src/scsi.cpp:4460"
+    source_ref: "source src/rommgr.cpp:683-686, source src/expansion.cpp:5860-5865, source src/scsi.cpp:4460"
 
   - name: "kupke-golem-v3.9.rom"
     path: "roms/kupke-golem-v3.9.rom"
@@ -2192,7 +2193,7 @@ files:
       Kupke Golem v3.9, ROM id 124. Boot ROM of the Golem SCSI II controller.
       Without it the controller has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:687-690, source src/expansion.cpp:5853-5859, source src/scsi.cpp:4400, source src/scsi.cpp:4410"
+    source_ref: "source src/rommgr.cpp:687-690, source src/expansion.cpp:5872-5878, source src/scsi.cpp:4400, source src/scsi.cpp:4410"
 
   - name: "gvp-series-i-v1.0.rom"
     path: "roms/gvp-series-i-v1.0.rom"
@@ -2208,7 +2209,7 @@ files:
       GVP Series I v1.0, ROM id 123. Boot ROM of the GVP Series I controller.
       Without it the controller has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:691-694, source src/expansion.cpp:5737-5742, source src/a2091.cpp:4489"
+    source_ref: "source src/rommgr.cpp:691-694, source src/expansion.cpp:5756-5761, source src/a2091.cpp:4489"
 
   - name: "gvp-series-i-v3.7.rom"
     path: "roms/gvp-series-i-v3.7.rom"
@@ -2224,7 +2225,7 @@ files:
       GVP Series I v3.7, ROM id 222. Boot ROM of the GVP Series I controller.
       Without it the controller has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:695-698, source src/expansion.cpp:5737-5742, source src/a2091.cpp:4489"
+    source_ref: "source src/rommgr.cpp:695-698, source src/expansion.cpp:5756-5761, source src/a2091.cpp:4489"
 
   - name: "gvp-series-i-ii-v3.15.rom"
     path: "roms/gvp-series-i-ii-v3.15.rom"
@@ -2240,7 +2241,7 @@ files:
       GVP Series I/II v3.15, ROM id 111. Boot ROM that both the GVP Series I and
       the GVP Series II controllers accept. Without it the controller has no boot
       ROM.
-    source_ref: "source src/rommgr.cpp:700-701, source src/expansion.cpp:5737-5749, source src/a2091.cpp:4489"
+    source_ref: "source src/rommgr.cpp:700-701, source src/expansion.cpp:5756-5768, source src/a2091.cpp:4489"
 
   - name: "gvp-series-i-ii-v3.7.rom"
     path: "roms/gvp-series-i-ii-v3.7.rom"
@@ -2256,7 +2257,7 @@ files:
       GVP Series I/II v3.7, ROM id 238. Boot ROM that both the GVP Series I and
       the GVP Series II controllers accept. Without it the controller has no boot
       ROM.
-    source_ref: "source src/rommgr.cpp:702-703, source src/expansion.cpp:5737-5749, source src/a2091.cpp:4489"
+    source_ref: "source src/rommgr.cpp:702-703, source src/expansion.cpp:5756-5768, source src/a2091.cpp:4489"
 
   - name: "gvp-series-ii-v4.13.rom"
     path: "roms/gvp-series-ii-v4.13.rom"
@@ -2271,7 +2272,7 @@ files:
     note: >
       GVP Series II v4.13, ROM id 263. Boot ROM of the GVP Series II controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:704-705, source src/expansion.cpp:5743-5749, source src/a2091.cpp:4489"
+    source_ref: "source src/rommgr.cpp:704-705, source src/expansion.cpp:5762-5768, source src/a2091.cpp:4489"
 
   - name: "gvp-series-ii-v4.15.rom"
     path: "roms/gvp-series-ii-v4.15.rom"
@@ -2286,7 +2287,7 @@ files:
     note: >
       GVP Series II v4.15, ROM id 109. Boot ROM of the GVP Series II controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:706-707, source src/expansion.cpp:5743-5749, source src/a2091.cpp:4489"
+    source_ref: "source src/rommgr.cpp:706-707, source src/expansion.cpp:5762-5768, source src/a2091.cpp:4489"
 
   - name: "gvp-series-ii-guru-rom.rom"
     path: "roms/gvp-series-ii-guru-rom.rom"
@@ -2303,7 +2304,7 @@ files:
       controller. Without it the controller has no boot ROM. The table
       gives 32768 bytes, the dump its SHA-1 identifies is 32624, and the
       scan matches by checksum.
-    source_ref: "source src/rommgr.cpp:708-709, source src/expansion.cpp:5743-5749, source src/a2091.cpp:4489"
+    source_ref: "source src/rommgr.cpp:708-709, source src/expansion.cpp:5762-5768, source src/a2091.cpp:4489"
 
   - name: "alfapower-v6.10.rom"
     path: "roms/alfapower-v6.10.rom"
@@ -2318,7 +2319,7 @@ files:
     note: >
       AlfaPower v6.10, ROM id 117. Boot ROM of the AlfaPower/AT-Bus 2008
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:710-711, source src/expansion.cpp:5598-5604, source src/idecontrollers.cpp:2487"
+    source_ref: "source src/rommgr.cpp:710-711, source src/expansion.cpp:5617-5623, source src/idecontrollers.cpp:2487"
 
   - name: "alfapower-v8.2.rom"
     path: "roms/alfapower-v8.2.rom"
@@ -2333,7 +2334,7 @@ files:
     note: >
       AlfaPower v8.2, ROM id 310. Boot ROM of the AlfaPower Plus controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:712-713, source src/expansion.cpp:5605-5611, source src/idecontrollers.cpp:2487"
+    source_ref: "source src/rommgr.cpp:712-713, source src/expansion.cpp:5624-5630, source src/idecontrollers.cpp:2487"
 
   - name: "alfapower-v8.3.rom"
     path: "roms/alfapower-v8.3.rom"
@@ -2348,7 +2349,7 @@ files:
     note: >
       AlfaPower v8.3, ROM id 118. Boot ROM of the AlfaPower Plus controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:714-715, source src/expansion.cpp:5605-5611, source src/idecontrollers.cpp:2487"
+    source_ref: "source src/rommgr.cpp:714-715, source src/expansion.cpp:5624-5630, source src/idecontrollers.cpp:2487"
 
   - name: "masoboshi-mc-702-v2.204.rom"
     path: "roms/masoboshi-mc-702-v2.204.rom"
@@ -2363,7 +2364,7 @@ files:
     note: >
       Masoboshi MC-702 v2.204, ROM id 338. Boot ROM of the MasterCard controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:716-717, source src/expansion.cpp:5932-5937, source src/idecontrollers.cpp:2616"
+    source_ref: "source src/rommgr.cpp:716-717, source src/expansion.cpp:5951-5956, source src/idecontrollers.cpp:2616"
 
   - name: "masoboshi-mc-702-v2.202.rom"
     path: "roms/masoboshi-mc-702-v2.202.rom"
@@ -2378,7 +2379,7 @@ files:
     note: >
       Masoboshi MC-702 v2.202, ROM id 339. Boot ROM of the MasterCard controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:718-719, source src/expansion.cpp:5932-5937, source src/idecontrollers.cpp:2616"
+    source_ref: "source src/rommgr.cpp:718-719, source src/expansion.cpp:5951-5956, source src/idecontrollers.cpp:2616"
 
   - name: "masoboshi-mc-702-v2.201.rom"
     path: "roms/masoboshi-mc-702-v2.201.rom"
@@ -2393,7 +2394,7 @@ files:
     note: >
       Masoboshi MC-702 v2.201, ROM id 120. Boot ROM of the MasterCard controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:720-721, source src/expansion.cpp:5932-5937, source src/idecontrollers.cpp:2616"
+    source_ref: "source src/rommgr.cpp:720-721, source src/expansion.cpp:5951-5956, source src/idecontrollers.cpp:2616"
 
   - name: "masoboshi-mc-702-v2.197.rom"
     path: "roms/masoboshi-mc-702-v2.197.rom"
@@ -2408,7 +2409,7 @@ files:
     note: >
       Masoboshi MC-702 v2.197, ROM id 316. Boot ROM of the MasterCard controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:722-723, source src/expansion.cpp:5932-5937, source src/idecontrollers.cpp:2616"
+    source_ref: "source src/rommgr.cpp:722-723, source src/expansion.cpp:5951-5956, source src/idecontrollers.cpp:2616"
 
   - name: "roctec-rochard-rh800c-v1.rom"
     path: "roms/roctec-rochard-rh800c-v1.rom"
@@ -2424,7 +2425,7 @@ files:
       Roctec RocHard RH800C v1, ROM id 138. Boot ROM of the RocHard RH800C
       controller. Without it the controller has no boot ROM. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:724-727, source src/expansion.cpp:6011-6018, source src/idecontrollers.cpp:2812, source src/idecontrollers.cpp:2826"
+    source_ref: "source src/rommgr.cpp:724-727, source src/expansion.cpp:6030-6037, source src/idecontrollers.cpp:2812, source src/idecontrollers.cpp:2826"
 
   - name: "roctec-rochard-rh800c-v2.rom"
     path: "roms/roctec-rochard-rh800c-v2.rom"
@@ -2440,7 +2441,7 @@ files:
       Roctec RocHard RH800C v2, ROM id 146. Boot ROM of the RocHard RH800C
       controller. Without it the controller has no boot ROM. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:728-731, source src/expansion.cpp:6011-6018, source src/idecontrollers.cpp:2812, source src/idecontrollers.cpp:2826"
+    source_ref: "source src/rommgr.cpp:728-731, source src/expansion.cpp:6030-6037, source src/idecontrollers.cpp:2812, source src/idecontrollers.cpp:2826"
 
   - name: "apollo-500-2000.rom"
     path: "roms/apollo-500-2000.rom"
@@ -2455,7 +2456,7 @@ files:
     note: >
       Apollo 500/2000, ROM id 145. Boot ROM of the Apollo 500/2000 controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:732-733, source src/expansion.cpp:5533-5539, source src/idecontrollers.cpp:2590"
+    source_ref: "source src/rommgr.cpp:732-733, source src/expansion.cpp:5552-5558, source src/idecontrollers.cpp:2590"
 
   - name: "multi-evolution-500-2000-v2.2.rom"
     path: "roms/multi-evolution-500-2000-v2.2.rom"
@@ -2471,7 +2472,7 @@ files:
       Multi Evolution 500/2000 v2.2, ROM id 245. Boot ROM of the Multi Evolution
       500/2000 controller. Without it the controller has no boot ROM. The two
       chip halves the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:734-737, source src/expansion.cpp:5869-5875, source src/ncr9x_scsi.cpp:1993"
+    source_ref: "source src/rommgr.cpp:734-737, source src/expansion.cpp:5888-5894, source src/ncr9x_scsi.cpp:1993"
 
   - name: "multi-evolution-500-2000-v3.0.rom"
     path: "roms/multi-evolution-500-2000-v3.0.rom"
@@ -2487,7 +2488,7 @@ files:
       Multi Evolution 500/2000 v3.0, ROM id 156. Boot ROM of the Multi Evolution
       500/2000 controller. Without it the controller has no boot ROM. The two
       chip halves the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:738-741, source src/expansion.cpp:5869-5875, source src/ncr9x_scsi.cpp:1993"
+    source_ref: "source src/rommgr.cpp:738-741, source src/expansion.cpp:5888-5894, source src/ncr9x_scsi.cpp:1993"
 
   - name: "multi-evolution-500-2000-v3.4.rom"
     path: "roms/multi-evolution-500-2000-v3.4.rom"
@@ -2503,7 +2504,7 @@ files:
       Multi Evolution 500/2000 v3.4, ROM id 244. Boot ROM of the Multi Evolution
       500/2000 controller. Without it the controller has no boot ROM. The two
       chip halves the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:742-745, source src/expansion.cpp:5869-5875, source src/ncr9x_scsi.cpp:1993"
+    source_ref: "source src/rommgr.cpp:742-745, source src/expansion.cpp:5888-5894, source src/ncr9x_scsi.cpp:1993"
 
   - name: "kupke-golem-v4.2.rom"
     path: "roms/kupke-golem-v4.2.rom"
@@ -2519,7 +2520,7 @@ files:
       Kupke Golem v4.2, ROM id 157. Boot ROM of the Golem Fast SCSI/IDE
       controller. Without it the controller has no boot ROM. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:746-749, source src/expansion.cpp:5860-5867, source src/idecontrollers.cpp:2905"
+    source_ref: "source src/rommgr.cpp:746-749, source src/expansion.cpp:5879-5886, source src/idecontrollers.cpp:2905"
 
   - name: "phoenix-board-scsi-vj.rom"
     path: "roms/phoenix-board-scsi-vj.rom"
@@ -2534,7 +2535,7 @@ files:
     note: >
       Phoenix Board SCSI v.J, ROM id 159. Boot ROM of the Phoenix Board SCSI
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:750-751, source src/expansion.cpp:5983-5988, source src/scsi.cpp:5262, source src/scsi.cpp:5271, source src/scsi.cpp:5272"
+    source_ref: "source src/rommgr.cpp:750-751, source src/expansion.cpp:6002-6007, source src/scsi.cpp:5262, source src/scsi.cpp:5271, source src/scsi.cpp:5272"
 
   - name: "ivs-grandslam-trumpcard-pro-v4.9.rom"
     path: "roms/ivs-grandslam-trumpcard-pro-v4.9.rom"
@@ -2549,7 +2550,7 @@ files:
     note: >
       IVS GrandSlam/Trumpcard Pro v4.9, ROM id 161. Boot ROM of the Grand Slam
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:752-753, source src/expansion.cpp:5823-5831, source src/scsi.cpp:4692"
+    source_ref: "source src/rommgr.cpp:752-753, source src/expansion.cpp:5842-5850, source src/scsi.cpp:4692"
 
   - name: "ivs-trumpcard-v4.9.rom"
     path: "roms/ivs-trumpcard-v4.9.rom"
@@ -2564,7 +2565,7 @@ files:
     note: >
       IVS Trumpcard v4.9, ROM id 249. Boot ROM of the Trumpcard controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:754-755, source src/expansion.cpp:5814-5822, source src/scsi.cpp:4719"
+    source_ref: "source src/rommgr.cpp:754-755, source src/expansion.cpp:5833-5841, source src/scsi.cpp:4719"
 
   - name: "ivs-trumpcard-v3.1.rom"
     path: "roms/ivs-trumpcard-v3.1.rom"
@@ -2579,7 +2580,7 @@ files:
     note: >
       IVS Trumpcard v3.1, ROM id 261. Boot ROM of the Trumpcard controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:756-757, source src/expansion.cpp:5814-5822, source src/scsi.cpp:4719"
+    source_ref: "source src/rommgr.cpp:756-757, source src/expansion.cpp:5833-5841, source src/scsi.cpp:4719"
 
   - name: "ivs-trumpcard-v1.5.rom"
     path: "roms/ivs-trumpcard-v1.5.rom"
@@ -2594,7 +2595,7 @@ files:
     note: >
       IVS Trumpcard v1.5, ROM id 262. Boot ROM of the Trumpcard controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:758-759, source src/expansion.cpp:5814-5822, source src/scsi.cpp:4719"
+    source_ref: "source src/rommgr.cpp:758-759, source src/expansion.cpp:5833-5841, source src/scsi.cpp:4719"
 
   - name: "expansion-systems-dataflyerplus-v1.5.rom"
     path: "roms/expansion-systems-dataflyerplus-v1.5.rom"
@@ -2609,7 +2610,7 @@ files:
     note: >
       Expansion Systems Dataflyer+ v1.5, ROM id 170. Boot ROM of the DataFlyer
       Plus controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:760-761, source src/expansion.cpp:5720-5727, source src/idecontrollers.cpp:2957"
+    source_ref: "source src/rommgr.cpp:760-761, source src/expansion.cpp:5739-5746, source src/idecontrollers.cpp:2957"
 
   - name: "expansion-systems-dataflyerplus-v1.7.rom"
     path: "roms/expansion-systems-dataflyerplus-v1.7.rom"
@@ -2624,7 +2625,7 @@ files:
     note: >
       Expansion Systems Dataflyer+ v1.7, ROM id 171. Boot ROM of the DataFlyer
       Plus controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:762-763, source src/expansion.cpp:5720-5727, source src/idecontrollers.cpp:2957"
+    source_ref: "source src/rommgr.cpp:762-763, source src/expansion.cpp:5739-5746, source src/idecontrollers.cpp:2957"
 
   - name: "expansion-systems-dataflyerplus-v2.0.rom"
     path: "roms/expansion-systems-dataflyerplus-v2.0.rom"
@@ -2639,7 +2640,7 @@ files:
     note: >
       Expansion Systems Dataflyer+ v2.0, ROM id 211. Boot ROM of the DataFlyer
       Plus controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:764-765, source src/expansion.cpp:5720-5727, source src/idecontrollers.cpp:2957"
+    source_ref: "source src/rommgr.cpp:764-765, source src/expansion.cpp:5739-5746, source src/idecontrollers.cpp:2957"
 
   - name: "expansion-systems-dataflyerplus-v2.1.rom"
     path: "roms/expansion-systems-dataflyerplus-v2.1.rom"
@@ -2654,7 +2655,7 @@ files:
     note: >
       Expansion Systems Dataflyer+ v2.1, ROM id 169. Boot ROM of the DataFlyer
       Plus controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:766-767, source src/expansion.cpp:5720-5727, source src/idecontrollers.cpp:2957"
+    source_ref: "source src/rommgr.cpp:766-767, source src/expansion.cpp:5739-5746, source src/idecontrollers.cpp:2957"
 
   - name: "microbotics-hardframe-v1.5.rom"
     path: "roms/microbotics-hardframe-v1.5.rom"
@@ -2669,7 +2670,7 @@ files:
     note: >
       Microbotics HardFrame v1.5, ROM id 173. Boot ROM of the HardFrame
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:768-769, source src/expansion.cpp:5938-5945, source src/scsi.cpp:5427, source src/scsi.cpp:5435"
+    source_ref: "source src/rommgr.cpp:768-769, source src/expansion.cpp:5957-5964, source src/scsi.cpp:5427, source src/scsi.cpp:5435"
 
   - name: "microbotics-hardframe-v1.8.rom"
     path: "roms/microbotics-hardframe-v1.8.rom"
@@ -2684,7 +2685,7 @@ files:
     note: >
       Microbotics HardFrame v1.8, ROM id 258. Boot ROM of the HardFrame
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:770-771, source src/expansion.cpp:5938-5945, source src/scsi.cpp:5427, source src/scsi.cpp:5435"
+    source_ref: "source src/rommgr.cpp:770-771, source src/expansion.cpp:5957-5964, source src/scsi.cpp:5427, source src/scsi.cpp:5435"
 
   - name: "microbotics-hardframe-v1.9.rom"
     path: "roms/microbotics-hardframe-v1.9.rom"
@@ -2699,7 +2700,7 @@ files:
     note: >
       Microbotics HardFrame v1.9, ROM id 256. Boot ROM of the HardFrame
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:772-773, source src/expansion.cpp:5938-5945, source src/scsi.cpp:5427, source src/scsi.cpp:5435"
+    source_ref: "source src/rommgr.cpp:772-773, source src/expansion.cpp:5957-5964, source src/scsi.cpp:5427, source src/scsi.cpp:5435"
 
   - name: "mainhattan-data-a-team-v1.8.rom"
     path: "roms/mainhattan-data-a-team-v1.8.rom"
@@ -2714,7 +2715,7 @@ files:
     note: >
       Mainhattan Data A-Team v1.8, ROM id 174. Boot ROM of the A-Team controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:774-775, source src/expansion.cpp:5912-5917, source src/idecontrollers.cpp:3009"
+    source_ref: "source src/rommgr.cpp:774-775, source src/expansion.cpp:5931-5936, source src/idecontrollers.cpp:3009"
 
   - name: "m-tec-at500-megabody-v1.33.rom"
     path: "roms/m-tec-at500-megabody-v1.33.rom"
@@ -2729,7 +2730,7 @@ files:
     note: >
       M-Tec AT500 Megabody v1.33, ROM id 199. Boot ROM of the AT 500 controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:776-777, source src/expansion.cpp:5918-5923, source src/idecontrollers.cpp:2779"
+    source_ref: "source src/rommgr.cpp:776-777, source src/expansion.cpp:5937-5942, source src/idecontrollers.cpp:2779"
 
   - name: "comspec-sa-series-v34.805.rom"
     path: "roms/comspec-sa-series-v34.805.rom"
@@ -2745,7 +2746,7 @@ files:
       Comspec SA series v34.805, ROM id 200. Boot ROM of the SA series
       controller. Without it the controller has no boot ROM. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:778-781, source src/expansion.cpp:5672-5679, source src/a2091.cpp:4651"
+    source_ref: "source src/rommgr.cpp:778-781, source src/expansion.cpp:5691-5698, source src/a2091.cpp:4651"
 
   - name: "california-access-malibu-v1.0.rom"
     path: "roms/california-access-malibu-v1.0.rom"
@@ -2760,7 +2761,7 @@ files:
     note: >
       California Access Malibu v1.0, ROM id 201. Boot ROM of the Malibu
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:782-783, source src/expansion.cpp:5621-5629, source src/scsi.cpp:5484"
+    source_ref: "source src/rommgr.cpp:782-783, source src/expansion.cpp:5640-5648, source src/scsi.cpp:5484"
 
   - name: "ashcom-design-addhard-v2.0.rom"
     path: "roms/ashcom-design-addhard-v2.0.rom"
@@ -2775,7 +2776,7 @@ files:
     note: >
       Ashcom Design AddHard v2.0, ROM id 209. Boot ROM of the AddHard controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:784-785, source src/expansion.cpp:5553-5561, source src/scsi.cpp:5513"
+    source_ref: "source src/rommgr.cpp:784-785, source src/expansion.cpp:5572-5580, source src/scsi.cpp:5513"
 
   - name: "spirit-technology-inmate.rom"
     path: "roms/spirit-technology-inmate.rom"
@@ -2790,7 +2791,7 @@ files:
     note: >
       Spirit Technology InMate, ROM id 218. Boot ROM of the InMate controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:786-787, source src/expansion.cpp:6019-6026, source src/scsi.cpp:5452, source src/scsi.cpp:5460"
+    source_ref: "source src/rommgr.cpp:786-787, source src/expansion.cpp:6038-6045, source src/scsi.cpp:5452, source src/scsi.cpp:5460"
 
   - name: "vortex-system-2000.rom"
     path: "roms/vortex-system-2000.rom"
@@ -2805,7 +2806,7 @@ files:
     note: >
       Vortex System 2000, ROM id 219. Boot ROM of the System 2000 controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:788-789, source src/expansion.cpp:6104-6109, source src/scsi.cpp:5187"
+    source_ref: "source src/rommgr.cpp:788-789, source src/expansion.cpp:6123-6128, source src/scsi.cpp:5187"
 
   - name: "kupke-golem-hd3000-v1.4.rom"
     path: "roms/kupke-golem-hd3000-v1.4.rom"
@@ -2821,7 +2822,7 @@ files:
       Kupke Golem HD3000 v1.4, ROM id 220. Boot ROM of the HD3000 controller.
       Without it the controller has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:790-793, source src/expansion.cpp:5847-5852, source src/scsi.cpp:5561, source src/scsi.cpp:5569"
+    source_ref: "source src/rommgr.cpp:790-793, source src/expansion.cpp:5866-5871, source src/scsi.cpp:5561, source src/scsi.cpp:5569"
 
   - name: "evesham-micros-reference.rom"
     path: "roms/evesham-micros-reference.rom"
@@ -2836,7 +2837,7 @@ files:
     note: >
       Evesham Micros Reference, ROM id 221. Boot ROM of the Reference 40/100
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:794-795, source src/expansion.cpp:5707-5713, source src/scsi.cpp:5584, source src/scsi.cpp:5592"
+    source_ref: "source src/rommgr.cpp:794-795, source src/expansion.cpp:5726-5732, source src/scsi.cpp:5584, source src/scsi.cpp:5592"
 
   - name: "profex-electronics-hd-3300.rom"
     path: "roms/profex-electronics-hd-3300.rom"
@@ -2851,7 +2852,7 @@ files:
     note: >
       Profex Electronics HD 3300, ROM id 223. Boot ROM of the HD 3300 controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:796-797, source src/expansion.cpp:5998-6003, source src/scsi.cpp:5609, source src/scsi.cpp:5619"
+    source_ref: "source src/rommgr.cpp:796-797, source src/expansion.cpp:6017-6022, source src/scsi.cpp:5609, source src/scsi.cpp:5619"
 
   - name: "elsat-mega-ram-hd.rom"
     path: "roms/elsat-mega-ram-hd.rom"
@@ -2867,7 +2868,7 @@ files:
       Elsat Mega Ram HD, ROM id 224. Boot ROM of the Mega Ram HD controller.
       Without it the controller has no boot ROM. The two chip halves the table
       lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:798-801, source src/expansion.cpp:5700-5706, source src/idecontrollers.cpp:3131"
+    source_ref: "source src/rommgr.cpp:798-801, source src/expansion.cpp:5719-5725, source src/idecontrollers.cpp:3131"
 
   - name: "xetec-fasttrak.rom"
     path: "roms/xetec-fasttrak.rom"
@@ -2882,7 +2883,7 @@ files:
     note: >
       Xetec FastTrak, ROM id 227. Boot ROM of the FastTrak controller. Without it
       the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:802-803, source src/expansion.cpp:6134-6140, source src/scsi.cpp:5641, source src/scsi.cpp:5649"
+    source_ref: "source src/rommgr.cpp:802-803, source src/expansion.cpp:6153-6159, source src/scsi.cpp:5641, source src/scsi.cpp:5649"
 
   - name: "c-ltd-kronos.rom"
     path: "roms/c-ltd-kronos.rom"
@@ -2897,7 +2898,7 @@ files:
     note: >
       C-Ltd Kronos, ROM id 235. Boot ROM of the Kronos controller. Without it the
       controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:804-805, source src/expansion.cpp:6116-6124, source src/scsi.cpp:4590"
+    source_ref: "source src/rommgr.cpp:804-805, source src/expansion.cpp:6135-6143, source src/scsi.cpp:4590"
 
   - name: "accessx-500-v2.1.rom"
     path: "roms/accessx-500-v2.1.rom"
@@ -2912,7 +2913,7 @@ files:
     note: >
       AccessX 500 v2.1, ROM id 242. Boot ROM of the AccessX controller. Without
       it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:806-807, source src/expansion.cpp:5582-5589, source src/idecontrollers.cpp:3170"
+    source_ref: "source src/rommgr.cpp:806-807, source src/expansion.cpp:5601-5608, source src/idecontrollers.cpp:3170"
 
   - name: "accessx-2000-v2.1.rom"
     path: "roms/accessx-2000-v2.1.rom"
@@ -2927,7 +2928,7 @@ files:
     note: >
       AccessX 2000 v2.1, ROM id 255. Boot ROM of the AccessX controller. Without
       it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:808-809, source src/expansion.cpp:5582-5589, source src/idecontrollers.cpp:3170"
+    source_ref: "source src/rommgr.cpp:808-809, source src/expansion.cpp:5601-5608, source src/idecontrollers.cpp:3170"
 
   - name: "accessx-500-2000-v2.1-descrambled.rom"
     path: "roms/accessx-500-2000-v2.1-descrambled.rom"
@@ -2942,7 +2943,7 @@ files:
     note: >
       AccessX 500/2000 v2.1 (descrambled), ROM id 243. Boot ROM of the AccessX
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:810-811, source src/expansion.cpp:5582-5589, source src/idecontrollers.cpp:3170"
+    source_ref: "source src/rommgr.cpp:810-811, source src/expansion.cpp:5601-5608, source src/idecontrollers.cpp:3170"
 
   - name: "pacific-peripherals-overdrive-v1.5.rom"
     path: "roms/pacific-peripherals-overdrive-v1.5.rom"
@@ -2957,7 +2958,7 @@ files:
     note: >
       Pacific Peripherals Overdrive v1.5, ROM id 246. Boot ROM of the Overdrive
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:812-813, source src/expansion.cpp:5965-5973, source src/scsi.cpp:5673"
+    source_ref: "source src/rommgr.cpp:812-813, source src/expansion.cpp:5984-5992, source src/scsi.cpp:5673"
 
   - name: "pacific-peripherals-overdrive-v2.0.rom"
     path: "roms/pacific-peripherals-overdrive-v2.0.rom"
@@ -2972,7 +2973,7 @@ files:
     note: >
       Pacific Peripherals Overdrive v2.0, ROM id 247. Boot ROM of the Overdrive
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:814-815, source src/expansion.cpp:5965-5973, source src/scsi.cpp:5673"
+    source_ref: "source src/rommgr.cpp:814-815, source src/expansion.cpp:5984-5992, source src/scsi.cpp:5673"
 
   - name: "archos-overdrive-hd-v5.0.rom"
     path: "roms/archos-overdrive-hd-v5.0.rom"
@@ -2987,7 +2988,7 @@ files:
     note: >
       Archos Overdrive HD v5.0, ROM id 250. Boot ROM of the Overdrive HD
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:816-817, source src/expansion.cpp:5547-5552, source src/gayle.cpp:1619"
+    source_ref: "source src/rommgr.cpp:816-817, source src/expansion.cpp:5566-5571, source src/gayle.cpp:1619"
 
   - name: "archos-overdrive-hd-v3.0.rom"
     path: "roms/archos-overdrive-hd-v3.0.rom"
@@ -3002,7 +3003,7 @@ files:
     note: >
       Archos Overdrive HD v3.0, ROM id 332. Boot ROM of the Overdrive HD
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:818-819, source src/expansion.cpp:5547-5552, source src/gayle.cpp:1619"
+    source_ref: "source src/rommgr.cpp:818-819, source src/expansion.cpp:5566-5571, source src/gayle.cpp:1619"
 
   - name: "trumpcard-500at-v1.1.rom"
     path: "roms/trumpcard-500at-v1.1.rom"
@@ -3017,7 +3018,7 @@ files:
     note: >
       Trumpcard 500AT v1.1, ROM id 251. Boot ROM of the Trumpcard 500AT
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:820-821, source src/expansion.cpp:5832-5840, source src/idecontrollers.cpp:3294"
+    source_ref: "source src/rommgr.cpp:820-821, source src/expansion.cpp:5851-5859, source src/idecontrollers.cpp:3294"
 
   - name: "trumpcard-500at-v1.2.rom"
     path: "roms/trumpcard-500at-v1.2.rom"
@@ -3032,7 +3033,7 @@ files:
     note: >
       Trumpcard 500AT v1.2, ROM id 252. Boot ROM of the Trumpcard 500AT
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:822-823, source src/expansion.cpp:5832-5840, source src/idecontrollers.cpp:3294"
+    source_ref: "source src/rommgr.cpp:822-823, source src/expansion.cpp:5851-5859, source src/idecontrollers.cpp:3294"
 
   - name: "trifecta-v4.31.rom"
     path: "roms/trifecta-v4.31.rom"
@@ -3047,7 +3048,7 @@ files:
     note: >
       Trifecta v4.31, ROM id 253. Boot ROM of the Trifecta controller. Without it
       the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:824-825, source src/expansion.cpp:5796-5804, source src/idecontrollers.cpp:2700"
+    source_ref: "source src/rommgr.cpp:824-825, source src/expansion.cpp:5815-5823, source src/idecontrollers.cpp:2700"
 
   - name: "mastercard-v2.3.rom"
     path: "roms/mastercard-v2.3.rom"
@@ -3062,7 +3063,7 @@ files:
     note: >
       Mastercard v2.3, ROM id 254. Boot ROM of the Mastercard controller. Without
       it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:826-827, source src/expansion.cpp:5925-5930, source src/ncr9x_scsi.cpp:2375"
+    source_ref: "source src/rommgr.cpp:826-827, source src/expansion.cpp:5944-5949, source src/ncr9x_scsi.cpp:2375"
 
   - name: "hardital-dotto.rom"
     path: "roms/hardital-dotto.rom"
@@ -3077,7 +3078,7 @@ files:
     note: >
       Hardital Dotto, ROM id 257. Boot ROM of the Dotto controller. Without it
       the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:828-829, source src/expansion.cpp:5757-5762, source src/idecontrollers.cpp:3347"
+    source_ref: "source src/rommgr.cpp:828-829, source src/expansion.cpp:5776-5781, source src/idecontrollers.cpp:3347"
 
   - name: "alf-2.rom"
     path: "roms/alf-2.rom"
@@ -3092,7 +3093,7 @@ files:
     note: >
       A.L.F. 2, ROM id 264. Boot ROM of the A.L.F.2 controller. Without it the
       controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:830-831, source src/expansion.cpp:6069-6074, source src/scsi.cpp:5084"
+    source_ref: "source src/rommgr.cpp:830-831, source src/expansion.cpp:6088-6093, source src/scsi.cpp:5084"
 
   - name: "mast-fireball.rom"
     path: "roms/mast-fireball.rom"
@@ -3107,7 +3108,7 @@ files:
     note: >
       M.A.S.T. Fireball, ROM id 265. Boot ROM of the Fireball controller. Without
       it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:832-833, source src/expansion.cpp:5877-5885, source src/scsi.cpp:4662"
+    source_ref: "source src/rommgr.cpp:832-833, source src/expansion.cpp:5896-5904, source src/scsi.cpp:4662"
 
   - name: "hardital-synthesis-v48.5.rom"
     path: "roms/hardital-synthesis-v48.5.rom"
@@ -3122,7 +3123,7 @@ files:
     note: >
       Hardital Synthesis v48.5, ROM id 300. Boot ROM of the Synthesis controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:834-835, source src/expansion.cpp:5763-5769, source src/scsi.cpp:4627, source src/scsi.cpp:4635"
+    source_ref: "source src/rommgr.cpp:834-835, source src/expansion.cpp:5782-5788, source src/scsi.cpp:4627, source src/scsi.cpp:4635"
 
   - name: "hardital-synthesis-v53.1.rom"
     path: "roms/hardital-synthesis-v53.1.rom"
@@ -3137,7 +3138,7 @@ files:
     note: >
       Hardital Synthesis v53.1, ROM id 266. Boot ROM of the Synthesis controller.
       Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:836-837, source src/expansion.cpp:5763-5769, source src/scsi.cpp:4627, source src/scsi.cpp:4635"
+    source_ref: "source src/rommgr.cpp:836-837, source src/expansion.cpp:5782-5788, source src/scsi.cpp:4627, source src/scsi.cpp:4635"
 
   - name: "combitec-hd20a-hd40a.rom"
     path: "roms/combitec-hd20a-hd40a.rom"
@@ -3152,7 +3153,7 @@ files:
     note: >
       Combitec HD20A/HD40A, ROM id 267. Boot ROM of the HD 20 A/HD 40 A
       controller. Without it the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:838-839, source src/expansion.cpp:6057-6062, source src/scsi.cpp:5115"
+    source_ref: "source src/rommgr.cpp:838-839, source src/expansion.cpp:6076-6081, source src/scsi.cpp:5115"
 
   - name: "buddha-v103.17.rom"
     path: "roms/buddha-v103.17.rom"
@@ -3167,7 +3168,7 @@ files:
     note: >
       Buddha v103.17, ROM id 340. Boot ROM of the Buddha controller. Without it
       the controller has no boot ROM.
-    source_ref: "source src/rommgr.cpp:840-841, source src/expansion.cpp:5805-5813, source src/idecontrollers.cpp:2845, source src/idecontrollers.cpp:2861"
+    source_ref: "source src/rommgr.cpp:840-841, source src/expansion.cpp:5824-5832, source src/idecontrollers.cpp:2845, source src/idecontrollers.cpp:2861"
 
   # Graphics card
 
@@ -3185,7 +3186,7 @@ files:
       Picasso IV, ROM id 91. Picasso IV flash ROM. Taken from the ROM list, else
       the configured Picasso IV ROM file, else picasso_iv_flash.rom in the ROM
       path. Without it the card has no flash ROM.
-    source_ref: "source src/rommgr.cpp:878-879, source src/expansion.cpp:6256-6261, source src/gfxboard.cpp:5103-5121"
+    source_ref: "source src/rommgr.cpp:878-879, source src/expansion.cpp:6275-6280, source src/gfxboard.cpp:5132-5150"
 
   # x86 bridgeboards
 
@@ -3202,7 +3203,7 @@ files:
       A1060 BIOS 2.05, ROM id 259. BIOS of the A1060 Sidecar bridgeboard. Without
       it the bridgeboard does not start. Built only with PCem (USE_PCEM), which
       the CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:881-882, source src/expansion.cpp:6202-6209, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:881-882, source src/expansion.cpp:6221-6228, source src/x86.cpp:4075-4080"
 
   - name: "a1060-bios-2.06.rom"
     mode: standalone
@@ -3217,7 +3218,7 @@ files:
       A1060 BIOS 2.06, ROM id 147. BIOS of the A1060 Sidecar bridgeboard. Without
       it the bridgeboard does not start. Built only with PCem (USE_PCEM), which
       the CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:883-884, source src/expansion.cpp:6202-6209, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:883-884, source src/expansion.cpp:6221-6228, source src/x86.cpp:4075-4080"
 
   - name: "a1060-bios-2.07.rom"
     mode: standalone
@@ -3232,7 +3233,7 @@ files:
       A1060 BIOS 2.07, ROM id 341. BIOS of the A1060 Sidecar bridgeboard. Without
       it the bridgeboard does not start. Built only with PCem (USE_PCEM), which
       the CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:885-886, source src/expansion.cpp:6202-6209, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:885-886, source src/expansion.cpp:6221-6228, source src/x86.cpp:4075-4080"
 
   - name: "a2088-bios-3.4.rom"
     mode: standalone
@@ -3247,7 +3248,7 @@ files:
       A2088 BIOS 3.4, ROM id 148. BIOS of the A2088 bridgeboard. Without it the
       bridgeboard does not start. Built only with PCem (USE_PCEM), which the
       CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:887-888, source src/expansion.cpp:6210-6217, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:887-888, source src/expansion.cpp:6229-6236, source src/x86.cpp:4075-4080"
 
   - name: "a2088-bios-3.5.rom"
     mode: standalone
@@ -3262,7 +3263,7 @@ files:
       A2088 BIOS 3.5, ROM id 158. BIOS of the A2088 bridgeboard. Without it the
       bridgeboard does not start. Built only with PCem (USE_PCEM), which the
       CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:889-890, source src/expansion.cpp:6210-6217, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:889-890, source src/expansion.cpp:6229-6236, source src/x86.cpp:4075-4080"
 
   - name: "a2088-bios-3.6.1.rom"
     mode: standalone
@@ -3277,7 +3278,7 @@ files:
       A2088 BIOS 3.6.1, ROM id 149. BIOS of the A2088 bridgeboard. Without it the
       bridgeboard does not start. Built only with PCem (USE_PCEM), which the
       CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:891-892, source src/expansion.cpp:6210-6217, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:891-892, source src/expansion.cpp:6229-6236, source src/x86.cpp:4075-4080"
 
   - name: "a2088t-bios-4.0-09-11-89.rom"
     mode: standalone
@@ -3292,7 +3293,7 @@ files:
       A2088T BIOS 4.0 (09/11/89), ROM id 203. BIOS of the A2088T bridgeboard.
       Without it the bridgeboard does not start. Built only with PCem (USE_PCEM),
       which the CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:893-894, source src/expansion.cpp:6218-6225, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:893-894, source src/expansion.cpp:6237-6244, source src/x86.cpp:4075-4080"
 
   - name: "a2088t-bios-4.0-14-11-89.rom"
     mode: standalone
@@ -3307,7 +3308,7 @@ files:
       A2088T BIOS 4.0 (14/11/89), ROM id 204. BIOS of the A2088T bridgeboard.
       Without it the bridgeboard does not start. Built only with PCem (USE_PCEM),
       which the CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:895-896, source src/expansion.cpp:6218-6225, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:895-896, source src/expansion.cpp:6237-6244, source src/x86.cpp:4075-4080"
 
   - name: "a2088t-bios-4.10.rom"
     mode: standalone
@@ -3322,7 +3323,7 @@ files:
       A2088T BIOS 4.10, ROM id 150. BIOS of the A2088T bridgeboard. Without it
       the bridgeboard does not start. Built only with PCem (USE_PCEM), which the
       CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:897-898, source src/expansion.cpp:6218-6225, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:897-898, source src/expansion.cpp:6237-6244, source src/x86.cpp:4075-4080"
 
   - name: "a2088t-bios-4.11.rom"
     mode: standalone
@@ -3337,7 +3338,7 @@ files:
       A2088T BIOS 4.11, ROM id 151. BIOS of the A2088T bridgeboard. Without it
       the bridgeboard does not start. Built only with PCem (USE_PCEM), which the
       CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:899-900, source src/expansion.cpp:6218-6225, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:899-900, source src/expansion.cpp:6237-6244, source src/x86.cpp:4075-4080"
 
   - name: "a2088t-bios-4.12.rom"
     mode: standalone
@@ -3352,7 +3353,7 @@ files:
       A2088T BIOS 4.12, ROM id 152. BIOS of the A2088T bridgeboard. Without it
       the bridgeboard does not start. Built only with PCem (USE_PCEM), which the
       CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:901-902, source src/expansion.cpp:6218-6225, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:901-902, source src/expansion.cpp:6237-6244, source src/x86.cpp:4075-4080"
 
   - name: "a2286-bios-3.6.rom"
     mode: standalone
@@ -3368,7 +3369,7 @@ files:
       bridgeboard does not start. Built only with PCem (USE_PCEM), which the
       CMake build enables and the libretro Makefile leaves off. The two chip
       halves the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:903-906, source src/expansion.cpp:6226-6233, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:903-906, source src/expansion.cpp:6245-6252, source src/x86.cpp:4075-4080"
 
   - name: "a2286-bios-4.2.rom"
     mode: standalone
@@ -3384,7 +3385,7 @@ files:
       bridgeboard does not start. Built only with PCem (USE_PCEM), which the
       CMake build enables and the libretro Makefile leaves off. The two chip
       halves the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:907-910, source src/expansion.cpp:6226-6233, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:907-910, source src/expansion.cpp:6245-6252, source src/x86.cpp:4075-4080"
 
   - name: "a2386sx-bios-1.00.rom"
     mode: standalone
@@ -3399,7 +3400,7 @@ files:
       A2386SX BIOS 1.00, ROM id 155. BIOS of the A2386SX bridgeboard. Without it
       the bridgeboard does not start. Built only with PCem (USE_PCEM), which the
       CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:911-912, source src/expansion.cpp:6234-6241, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:911-912, source src/expansion.cpp:6253-6260, source src/x86.cpp:4075-4080"
 
   - name: "a2386sx-bios-1.00.03.rom"
     mode: standalone
@@ -3414,7 +3415,7 @@ files:
       A2386SX BIOS 1.00.03, ROM id 205. BIOS of the A2386SX bridgeboard. Without
       it the bridgeboard does not start. Built only with PCem (USE_PCEM), which
       the CMake build enables and the libretro Makefile leaves off.
-    source_ref: "source src/rommgr.cpp:913-914, source src/expansion.cpp:6234-6241, source src/x86.cpp:4075-4080"
+    source_ref: "source src/rommgr.cpp:913-914, source src/expansion.cpp:6253-6260, source src/x86.cpp:4075-4080"
 
   # --- AROS replacement ROMs ---
   # ref: src/memory.cpp:1925-1946 find_kickstart_replacement_directory,
@@ -3572,8 +3573,8 @@ files:
   # Both builds then replace game-data/whdload_db.json with the one at the
   # first candidate when its "generated" field is later, keeping the old file
   # as a backup.
-  # ref: src/osdep/amiberry.cpp:11903-11928, 12247-12281, 12307-12321,
-  #      src/osdep/amiberry.cpp:12323-12389, 12391-12487,
+  # ref: src/osdep/amiberry.cpp:12012-12037, 12356-12390, 12416-12430,
+  #      src/osdep/amiberry.cpp:12432-12498, 12500-12596,
   #      libretro/libretro.cpp:1459-1475, cmake/linux/install.cmake:196-198
 
   - name: "WHDLoad"
@@ -3588,7 +3589,7 @@ files:
       WHDLoad executable linked into C: of the boot drive the booter builds,
       unless JST is selected. Part of the set the whdboot seed check requires.
       The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1875, source src/osdep/amiberry.cpp:12247-12281"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1875, source src/osdep/amiberry.cpp:12356-12390"
 
   - name: "JST"
     path: "whdboot/JST"
@@ -3602,7 +3603,7 @@ files:
       JST loader linked into C: in place of WHDLoad when the
       use_jst_instead_of_whd option is set. Part of the set the whdboot seed
       check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1869, source src/osdep/amiberry.cpp:12247-12281"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1869, source src/osdep/amiberry.cpp:12356-12390"
 
   - name: "AmiQuit"
     path: "whdboot/AmiQuit"
@@ -3616,7 +3617,7 @@ files:
       Quit helper linked into C: and called at the end of the generated startup-
       sequence. Part of the set the whdboot seed check requires. The core zip
       carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1615, source src/osdep/amiberry_whdbooter.cpp:1875, source src/osdep/amiberry.cpp:12247-12281"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1615, source src/osdep/amiberry_whdbooter.cpp:1875, source src/osdep/amiberry.cpp:12356-12390"
 
   - name: "boot-data.zip"
     path: "whdboot/boot-data.zip"
@@ -3630,7 +3631,7 @@ files:
       Boot volume mounted as DH3. A boot-data directory at the same place is
       used when the zip is absent. Part of the set the whdboot seed check
       requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1652-1665, source src/osdep/amiberry.cpp:12247-12281"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1652-1665, source src/osdep/amiberry.cpp:12356-12390"
 
   - name: "whdload_db.json"
     path: "whdboot/game-data/whdload_db.json"
@@ -3646,7 +3647,7 @@ files:
       whdload_db.xml in the same folder is read when the JSON is absent. With
       neither, the booter scans the archive for a .slave file. Part of the set
       the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12247-12281, source src/osdep/amiberry.cpp:12391-12487"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12356-12390, source src/osdep/amiberry.cpp:12500-12596"
 
   - name: "kick33180.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick33180.A500.RTB"
@@ -3662,7 +3663,7 @@ files:
       beside the image the booter links there. Part of the set the whdboot seed
       check requires. The core zip carries the library alone. The repository
       ships the same bytes as kick33192.A500.RTB.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12247-12281"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12356-12390"
 
   - name: "kick34005.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick34005.A500.RTB"
@@ -3676,7 +3677,7 @@ files:
       WHDLoad relocation table for Kickstart 1.3, read from DEVS:Kickstarts
       beside the image the booter links there. Part of the set the whdboot seed
       check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12247-12281"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12356-12390"
 
   - name: "kick40063.A600.RTB"
     path: "whdboot/save-data/Kickstarts/kick40063.A600.RTB"
@@ -3690,7 +3691,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A600, read from DEVS:Kickstarts
       beside the image the booter links there. Part of the set the whdboot seed
       check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12247-12281"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12356-12390"
 
   - name: "kick40068.A1200.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A1200.RTB"
@@ -3704,7 +3705,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A1200, read from
       DEVS:Kickstarts beside the image the booter links there. Part of the set
       the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12247-12281"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12356-12390"
 
   - name: "kick40068.A4000.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A4000.RTB"
@@ -3718,7 +3719,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A4000, read from
       DEVS:Kickstarts beside the image the booter links there. Part of the set
       the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12247-12281"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12356-12390"
 
   - name: "kick31034.A1000.RTB"
     path: "whdboot/save-data/Kickstarts/kick31034.A1000.RTB"
@@ -3806,7 +3807,7 @@ files:
       whdload_db.xml in the same folder is read when the JSON is absent. With
       neither, the booter scans the archive for a .slave file. Ships in whdboot/
       of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12391-12487"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12500-12596"
 
   - name: "kick33180.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick33180.A500.RTB"

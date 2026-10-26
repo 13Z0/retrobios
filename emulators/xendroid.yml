@@ -6,7 +6,7 @@ upstream: "https://github.com/has207/xenia-edge"
 author: "rfandango"
 profiled_date: "2026-09-17"
 source_commit: "779680ade075d2d2a4c589c6a8d57a8e26c116c0"
-upstream_commit: "e569a1aa15632e957fc2adc3bfc875de51f79eab"
+upstream_commit: "5045c19eefebb5807a699bc8dabac2460889242d"
 core_version: "0b11201"
 display_name: "Microsoft - Xbox 360 (XenDroid)"
 cores:

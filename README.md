@@ -24,7 +24,8 @@ irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
 # Android (Termux, after pkg install python and termux-setup-storage)
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
 
-# SD card mounted on a PC: --dest is the BIOS folder on the card
+# SD card mounted on a PC: a muOS, KNULLI, ROCKNIX, Onion, spruceOS or MinUI card
+# is found by itself. For another card, --dest is its BIOS folder
 # (RetroArch on Switch: retroarch/cores/system, on Android: RetroArch/system)
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system
 
@@ -32,12 +33,12 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 &([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) --check
 ```
 
-The script auto-detects your platform, downloads only missing files, and verifies checksums.
+The script opens a full-screen installer, driven with the arrow keys and Enter, or with a controller on a handheld. It finds your setup and its BIOS folder, downloads only the missing files and checks each one. It can also copy the BIOS files from your old SD card.
 Every option, and what the installer detects and writes, is on the [installer page](https://abdess.github.io/retrobios/wiki/installer/#passing-options).
 
 ## Download BIOS packs
 
-A pack holds everything its platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. Each Download link is a page that keeps its address from one release to the next. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.
+A pack holds everything its platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. Each Download link is a page that keeps its address from one release to the next. The installer above does the same file by file. At a terminal it offers to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.
 
 A pack over 2 GB comes in several parts (`Pack.part1of2.zip`, `Pack.part2of2.zip`), and every part is needed. Each part is an ordinary ZIP: extract them all into the same folder.
 
@@ -199,4 +200,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in [the project's legal position](https://abdess.github.io/retrobios/wiki/legal/).
 
-*Auto-generated on 2026-10-24T00:06:47Z*
+*Auto-generated on 2026-10-24T01:44:28Z*

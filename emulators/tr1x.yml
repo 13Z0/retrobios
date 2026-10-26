@@ -4,7 +4,7 @@ type: standalone
 core_classification: game_engine
 source: "https://github.com/LostArtefacts/TRX"
 upstream: "https://github.com/LostArtefacts/TRX"
-source_commit: "3d39911a1b839c753b6efad236db67d9fb2b273e"
+source_commit: "ba65d2c12e64c6c4f00934ecaa5b3d053a6070d7"
 upstream_commit: "3d39911a1b839c753b6efad236db67d9fb2b273e"
 profiled_date: "2026-10-04"
 cores: []

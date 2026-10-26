@@ -743,8 +743,11 @@ class ARefusalTheProbeDoesNotRaise(unittest.TestCase):
         install._DETECTION_REFUSED.clear()
         self.addCleanup(install._DETECTION_REFUSED.clear)
         quiet = mock.patch.object(install.Path, "exists", lambda self: False)
-        with quiet, mock.patch.object(install._SETUP_SEARCH, "active", True, create=True), \
-                contextlib.redirect_stderr(io.StringIO()):
+        # What _detection_guarded sets while it looks for setups.
+        outer = getattr(install._SETUP_SEARCH, "active", False)
+        install._SETUP_SEARCH.active = True
+        self.addCleanup(setattr, install._SETUP_SEARCH, "active", outer)
+        with quiet, contextlib.redirect_stderr(io.StringIO()):
             self.assertFalse(install._exists(target))
             self.assertFalse(install._exists(base / "absent"))
             self.assertEqual(install.closed_folder(target), (closed, "Permission denied"))

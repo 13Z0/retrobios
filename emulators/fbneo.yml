@@ -6,7 +6,7 @@ upstream: "https://github.com/finalburnneo/FBNeo"
 logo: "https://raw.githubusercontent.com/finalburnneo/FBNeo/master/projectfiles/xcode/Emulator/Assets.xcassets/AppIcon.appiconset/icon_512.png"
 profiled_date: "2026-10-23"
 source_commit: "2b0c1c0679df115cada7df9199ea2762222e58fd"
-upstream_commit: "c89fdfe3abe118dc4a006f3d887094f0d83360f0"
+upstream_commit: "82b31ca6b7dfb6d9fa1ec23ac96c878cfcb613e2"
 core_version: "v1.0.0.2"
 display_name: "Arcade (FinalBurn Neo)"
 cores:

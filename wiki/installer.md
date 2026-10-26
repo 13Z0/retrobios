@@ -198,8 +198,10 @@ file list is downloaded once and handed to each run.
    always come from one commit.
 3. Prints the file count and total size, then a safety notice counting the
    entries the collection cannot serve, how many of those the platform marks
-   required, and why. At a terminal, it then offers to install everything or
-   to choose systems, cores and regions (see below).
+   required, and why. At a terminal, the
+   [full-screen interface](#the-full-screen-interface) then offers to install
+   everything or to choose systems, cores and regions, and `--plain` asks the
+   same as questions (see below).
 4. Hashes what is already in the destination and reports how many entries are
    present, verified, or present with the wrong contents.
 5. Copies from this machine what it already holds: a file misplaced in the
@@ -552,7 +554,10 @@ counts them (`3 fixed from copies already in the BIOS folder`).
 ## Choosing what to install
 
 By default the installer fetches everything the platform runs. At a terminal,
-after detection, it asks:
+the plan screen of the [full-screen interface](#the-full-screen-interface)
+offers **Install**, **Choose systems** and **Options**. With `--plain`, or where
+the full screen cannot open (a terminal smaller than 40x12, `TERM=dumb`), the
+same choice comes as questions after detection:
 
 ```
 RetroArch: 8069 files, 6.5 GB.
@@ -906,10 +911,13 @@ forced `--platform minui` stops and asks for the card's root as `--dest`, and a 
 card (its `Bios/`) is refused with the root to name instead. On Android a forced `--platform retroarch` falls back to
 `<shared storage>/RetroArch/system` instead, a home directory there belonging
 to Termux rather than to the frontend. Pass `--dest` to say where instead of
-relying on that.
+relying on that. When detection met a folder this user cannot open, under the
+home folder or above the default, no default is taken: the frontend's own
+configuration there may name another folder, so the run asks for `--dest`.
 
-With nothing detected, the installer lists the platforms and asks. With several
-detected, it asks which one. Both prompts need a terminal: piped into a script
+With nothing detected, the setup screen lists the platforms to choose from,
+and `--plain` gives the same list numbered. With several detected, the setup
+screen lists each one, and `--plain` asks which. Both need a terminal: piped into a script
 with no platform to install for, it prints the manual invocation, in the form
 the run was started with (the one-line command for a one-liner user), and
 exits 1.
