@@ -280,7 +280,7 @@
   "src/menu/mainmenu.cpp",
   "src/util.cpp"
  ],
- "github.com/AloysHF/BBKEmu@aef61bd59d5eb65780ace33e288086dd98f709c5": [
+ "github.com/AloysHF/BBKEmu@6641863f6ec59a74635753766e3f9d34adf92b05": [
   "crates/bbkemu-core/src/emulator.rs",
   "crates/bbkemu-core/src/memory.rs",
   "crates/bbkemu-core/src/model.rs",
@@ -324,7 +324,7 @@
   "crates/dingooemu-libretro/src/diagnostics.rs",
   "crates/dingooemu/src/main.rs"
  ],
- "github.com/AloysHF/Native32Emu@b83ed7b315054b16d5468c3882d2e59d6c2180e9": [
+ "github.com/AloysHF/Native32Emu@059fa33c658caa4dbbad140ebf2af1197f9dd778": [
   "crates/native32emu-core/src/archive_loader.rs",
   "crates/native32emu-core/src/content_loader.rs",
   "crates/native32emu-core/src/emulator.rs",
@@ -332,6 +332,7 @@
   "crates/native32emu-core/src/header_decryptor.rs",
   "crates/native32emu-core/src/save_manager.rs",
   "crates/native32emu-libretro/src/libretro/api.rs",
+  "crates/native32emu-libretro/src/libretro/callbacks.rs",
   "crates/native32emu-libretro/src/libretro/constants.rs"
  ],
  "github.com/AloysHF/PlaydiaEmu@b1b990e7f28d6baa58d5fcde9faa155990ee8f3f": [
@@ -437,7 +438,7 @@
   "core/loadrom.c",
   "libretro/libretro.c"
  ],
- "github.com/BlitterStudio/amiberry@7f9a47e1c501f5f22d2b25eb61fe0f3b0fe9bc30": [
+ "github.com/BlitterStudio/amiberry@f3924d4d34cf67dc62a6e90474ca8ecb1c8f7c79": [
   "android/app/build.gradle",
   "libretro/libretro.cpp",
   "src/a2091.cpp",
@@ -1604,16 +1605,18 @@
  "github.com/SquirrelJME/SquirrelJME@4fd08e91275994e1181bcbe8744bee9322c5daec": [
   "nanocoat/src/boot.c"
  ],
- "github.com/StillJC/ArcadeDuck@26caf9cd27915a331fa32dc174489383b308ecad": [
+ "github.com/StillJC/ArcadeDuck@80cdb6da6b51d687192a6346efe4499b10fe4faf": [
   "data/resources/arcadedb.yaml",
   "src/arcadeduck-qt/qthost.cpp",
   "src/core/arcade/arcade_database.cpp",
   "src/core/arcade/arcade_machine_handler.cpp",
+  "src/core/arcade/arcade_rom_loader.cpp",
   "src/core/arcade/systems/namco/system11/namco_system11.cpp",
   "src/core/arcade/systems/sony/zn/sony_zn.cpp",
   "src/core/bios.cpp",
   "src/core/settings.cpp",
-  "src/core/system.cpp"
+  "src/core/system.cpp",
+  "src/scmversion/arcadeduck_version.h"
  ],
  "github.com/Sundownersport/gametank-libretro@1a6f2608ae302d613ac17ae8584c7239ae47044b": [
   "src/libretro.cpp"
@@ -2205,7 +2208,7 @@
   "src/ui_text.c",
   "src/version.c"
  ],
- "github.com/amadvance/advancemame@dcf44ccedfefd91e42119c548cb4c0120a8d15df": [
+ "github.com/amadvance/advancemame@81670476672b59f430518a63e9a116db58ed6232": [
   "advance/advance.mak",
   "advance/linux/file.c",
   "advance/osd/emu.c",
@@ -2218,6 +2221,7 @@
   "src/artwork.c",
   "src/cheat.c",
   "src/driver.h",
+  "src/drivers/aleck64.c",
   "src/drivers/arcadia.c",
   "src/drivers/crystal.c",
   "src/drivers/cvs.c",
@@ -2262,7 +2266,7 @@
   "src/media.cpp",
   "src/video.cpp"
  ],
- "github.com/antonioginer/GroovyMAME@ac85e94d491ad1277ac73f81148205657b440b83": [
+ "github.com/antonioginer/GroovyMAME@953db38f4aaab1d75faa4ac79e1b45686214f987": [
   "3rdparty/switchres/monitor.cpp",
   "makefile",
   "plugins/cheat/init.lua",
@@ -2641,7 +2645,7 @@
   "Source/zx81/zx81.cpp",
   "Source/zx81config.cpp"
  ],
- "github.com/chernandezba/zesarux@e1fc8db2957c360c8ff584a2c4d147f70861c3aa": [
+ "github.com/chernandezba/zesarux@8991b390f8bf6d453e8e4774633414ecfd80f088": [
   "src/ALTERNATEROMS",
   "src/configure",
   "src/copy_interfaces/defcon.c",
@@ -2952,7 +2956,7 @@
   "Source/Core/DiscIO/NANDImporter.cpp",
   "Source/Core/DolphinQt/MenuBar.cpp"
  ],
- "github.com/dosbox-staging/dosbox-staging@400bc406cac0b2e7cd3e5f93e34d6fb9f08c80bd": [
+ "github.com/dosbox-staging/dosbox-staging@fa1856c057902be3e08856675d6cc1e7ffe43db6": [
   "src/audio/disk_noise.cpp",
   "src/dos/CMakeLists.txt",
   "src/dos/dos_code_page.cpp",
@@ -2963,6 +2967,7 @@
   "src/gui/render/shader_manager.cpp",
   "src/ints/int10_memory.cpp",
   "src/ints/int10_modes.cpp",
+  "src/midi/clap.cpp",
   "src/midi/fluidsynth.cpp",
   "src/midi/midi.cpp",
   "src/midi/mt32.cpp",
@@ -8995,11 +9000,6 @@
   "src/core/bios.h",
   "src/core/system.cpp"
  ],
- "github.com/stenzek/duckstation@fbf93c3ae9668a1ccaec28630f5ad9cc9627cda6": [
-  "src/core/bios.cpp",
-  "src/core/settings.cpp",
-  "src/core/system.cpp"
- ],
  "github.com/suijingfeng/vkQuake3@650bd625eb725446279c6176804b554e2e1c98f3": [
   "code/qcommon/files.c",
   "code/qcommon/q_shared.h",
@@ -9145,7 +9145,7 @@
   "src/core/gba/gba.cpp",
   "src/libretro/libretro.cpp"
  ],
- "github.com/vpinball/vpinball@639ec097a4b4e2b96455efe80da753606acd245c": [
+ "github.com/vpinball/vpinball@d858a1f30d12d78fb92e2da0548ca0719ca5baca": [
   "lib/src/WebServer.cpp",
   "make/CMakeLists_app.txt",
   "make/CMakeLists_plugin_FlexDMD.txt",
