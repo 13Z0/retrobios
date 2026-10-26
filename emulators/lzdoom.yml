@@ -4,6 +4,7 @@ core_classification: game_engine
 source: "https://github.com/drfrag666/lzdoom"
 profiled_date: "2026-10-20"
 source_commit: "4ce19a12164ebd6802b7fb2f94d700a6e736d0fb"
+pin_frozen: "The platforms that ship it run the 3.88 line: RetroPie builds tag 3.88b (RetroPie scriptmodules/ports/lzdoom.sh:15) and AmberELEC a fork of the g3.3mgw branch that still reports 3.88b (AmberELEC packages/games/emulators/lzdoom/package.mk:5). The l4.x releases are a GZDoom 4 based line that no platform ships."
 core_version: "3.88b"
 display_name: "LZDoom"
 cores: [lzdoom, "LZDoom"]
