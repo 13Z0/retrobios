@@ -6,7 +6,7 @@ source:
   libretro: "https://git.libretro.com/libretro/xenia-libretro"
 upstream: "https://github.com/has207/xenia-edge"
 source_commit:
-  standalone: "5045c19eefebb5807a699bc8dabac2460889242d"
+  standalone: "d881a29125978b4eea6bf44f6ed8c33f8aea8c33"
   libretro: "f23c14c717ef274516f29c9b5e97d6a9db28643d"
 profiled_date: "2026-10-23"
 core_version:
@@ -27,11 +27,11 @@ data_root:
     note: "portable.txt beside the executable, the portable flag or the storage_root setting replaces it"
   macos:
     path: "$XDG_DATA_HOME/Xenia, else ~/.local/share/Xenia"
-    source_ref: "src/xenia/app/xenia_main.cc:533-547, src/xenia/base/filesystem_posix.cc:82-108"
+    source_ref: "src/xenia/app/xenia_main.cc:533-547, src/xenia/base/filesystem_posix.cc:81-107"
     note: "portable.txt beside the executable, the portable flag or the storage_root setting replaces it"
   linux:
     path: "$XDG_DATA_HOME/Xenia, else ~/.local/share/Xenia"
-    source_ref: "src/xenia/app/xenia_main.cc:533-547, src/xenia/base/filesystem_posix.cc:82-108"
+    source_ref: "src/xenia/app/xenia_main.cc:533-547, src/xenia/base/filesystem_posix.cc:81-107"
     note: "portable.txt beside the executable, the portable flag or the storage_root setting replaces it"
 
 notes: |
@@ -74,7 +74,9 @@ notes: |
   registered at startup (src/xenia/emulator.cc:414-423), the XEX2 retail and devkit AES
   keys are constant arrays in the binary (src/xenia/cpu/xex_module.cc:66-71), and every
   XConfig setting is synthesised from cvars and constants by BuildSetting
-  rather than read from a flash image (src/xenia/kernel/xconfig.cc:87-246, 259-272). When the
+  rather than read from a flash image, the console MAC address being drawn at
+  random behind a fixed vendor prefix for each title
+  (src/xenia/kernel/xconfig.cc:94-256, 269-289). When the
   launched title is itself a system title the kernel resolves xam.xex, then
   $flash_xam.xex, through the guest filesystem under the \SystemRoot symlink
   pointing at that title's own directory (src/xenia/emulator.cc:825-845). That is a
@@ -87,14 +89,16 @@ notes: |
   under the storage root, or the folder the xefu_path cvar names
   (src/xenia/emulator.cc:151-165, 861-863). When xbox.xex is missing the
   launch fails, the folder is created and the window names the missing file
-  (src/xenia/emulator.cc:882-895, src/xenia/app/emulator_window.cc:1995-2005).
+  (src/xenia/emulator.cc:882-895, src/xenia/app/emulator_window.cc:2013-2023).
 
-  The fork's data ships inside the executable. assets/font/Inter-VariableFont
-  and assets/icon are linked in by xe_embed_binary_assets and the 33
+  The fork's data ships inside the executable. assets/font, the Inter UI font
+  and the M PLUS 1p Japanese font, and assets/icon are linked in by xe_embed_binary_assets and the 33
   assets/locale catalogues are compiled to .mo at configure time and bundled,
   with no .mo written next to the binary (src/xenia/ui/CMakeLists.txt:48-76).
   The UI font is read from that buffer with AddFontFromMemoryTTF
-  (src/xenia/ui/imgui_drawer.cc:375-385), and xe::EmbeddedBundle decodes the SDL controller
+  (src/xenia/ui/imgui_drawer.cc:375-385), Japanese glyphs are merged from the
+  M PLUS 1p buffer on every platform (src/xenia/ui/imgui_drawer.cc:481-498),
+  and xe::EmbeddedBundle decodes the SDL controller
   mappings (src/xenia/hid/sdl/sdl_input_driver.cc:237-254), the canary game patches
   (src/xenia/patcher/patch_db.cc:318-324), the game-compatibility master.json
   (src/xenia/app/game_compat_db.cc:47-58) and the x360db games.json (src/xenia/app/game_title_db.cc:50-60).
@@ -103,10 +107,11 @@ notes: |
   a fixed path: custom_font_path falls back to the embedded Inter
   (src/xenia/ui/imgui_drawer.cc:39-44, 361-394), mappings_file to the embedded controller DB
   (src/xenia/hid/sdl/sdl_input_driver.cc:36-39, 237-241), achievement_sound_path leaves the
-  achievement sound silent (src/xenia/ui/audio_helper.cc:21-24, 38-53). For glyphs the
-  embedded font lacks, the host font comes from the OS: tahoma.ttf and
-  msgothic.ttc out of the Windows fonts folder, or the fontconfig sans-serif and
-  CJK matches on Linux (src/xenia/ui/imgui_drawer.cc:396-479, 481-565).
+  achievement sound silent (src/xenia/ui/audio_helper.cc:21-24, 38-53). Only when
+  the embedded Inter fails to load does the UI font come from the OS, tahoma.ttf
+  out of the Windows fonts folder or the fontconfig sans-serif match on Linux,
+  then the ProggyTiny font compiled into the binary
+  (src/xenia/ui/imgui_drawer.cc:396-479, 508-521).
 
   Everything under the storage root is written by the emulator or dropped in by
   the user: xenia-edge.config.toml and per-game .config.toml (src/xenia/config.cc:46-49),

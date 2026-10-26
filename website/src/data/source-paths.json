@@ -3342,7 +3342,7 @@
   "src/xenia/ui/wx_locale.cc",
   "third_party/CMakeLists.txt"
  ],
- "github.com/has207/xenia-edge@5045c19eefebb5807a699bc8dabac2460889242d": [
+ "github.com/has207/xenia-edge@d881a29125978b4eea6bf44f6ed8c33f8aea8c33": [
   ".github/workflows/build.yml",
   "src/xenia/app/emulator_window.cc",
   "src/xenia/app/game_compat_db.cc",
