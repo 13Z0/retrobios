@@ -6,7 +6,7 @@
   "platform": "knulli",
   "display_name": "KNULLI",
   "version": "1.0",
-  "generated": "2026-10-24T02:09:46Z",
+  "generated": "2026-10-26T22:11:28Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -29,10 +29,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 9587,
-  "total_size": 9721889083,
-  "pack_files": 9589,
-  "pack_size": 9721889083,
+  "total_files": 9597,
+  "total_size": 9722178666,
+  "pack_files": 9599,
+  "pack_size": 9722178666,
   "total_omitted": 423,
   "omitted_files": [
     {
@@ -13905,6 +13905,110 @@
       "sha256": "7ad083b9fe6f0a16befc1b7b80506d0d253673e7a40a83658bb0cf54bc24dd95",
       "size": 65536,
       "repo_path": "bios/Commodore/Amiga/expansion/a2386sx-bios-1.00.03.rom",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick33180.A500.RTB",
+      "sha1": "1d1c557f4a0f5ea88aeb96d68b09f41990340f70",
+      "sha256": "703637372f6cfec06dc802759bf8907c9a01ba259e0fae5f347d13d4265b0216",
+      "size": 3882,
+      "repo_path": "bios/Commodore/Amiga/kick33180.A500.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick34005.A500.RTB",
+      "sha1": "209c109855f94c935439b60950d049527d2f2484",
+      "sha256": "644bda440d30919e5b4aa9d24b95c6b72a709c871d3a1a5d746d99bd41d08986",
+      "size": 4020,
+      "repo_path": "bios/Commodore/Amiga/kick34005.A500.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick37175.A500.RTB",
+      "sha1": "7c1cf9a97b044a0344648709c187a3505bce7b5a",
+      "sha256": "a063d5e50e224f430dc9d772273b04e812a48972a0156487a32525f7404de0bd",
+      "size": 5576,
+      "repo_path": "bios/Commodore/Amiga/kick37175.A500.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick36143.A3000.RTB",
+      "sha1": "85b691d7c1286cabefda69f61a1e3007d2cc7bca",
+      "sha256": "621937f320398d29a1fa628826af22aad9285f8c967ef2784305ce4bf23f2f14",
+      "size": 5980,
+      "repo_path": "bios/Commodore/Amiga/kick36143.A3000.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick39106.A1200.RTB",
+      "sha1": "4da56f51ce88d321c54fee77c1d37df042ad76ec",
+      "sha256": "1a0f8409879e23a0bfc2e9017fec3c7a42ea9dbfb287bf1a5cb65b2bcfe93c4a",
+      "size": 5002,
+      "repo_path": "bios/Commodore/Amiga/kick39106.A1200.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick40063.A600.RTB",
+      "sha1": "ca2d6e1e2b4883929447a05e29418533723a419c",
+      "sha256": "69809575d9f631eccb3f6d7b3dfa23017a33d9c1a911a5f7f8e5a4246cf8cbac",
+      "size": 5000,
+      "repo_path": "bios/Commodore/Amiga/kick40063.A600.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick40068.A1200.RTB",
+      "sha1": "1ad1b55e7226bd5cd66def8370a69f19244da796",
+      "sha256": "c1176e7b7b9860a8cded820e824677163cf1cc7c674883896a7f32dca5437736",
+      "size": 5008,
+      "repo_path": "bios/Commodore/Amiga/kick40068.A1200.RTB",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/save-data/Kickstarts/kick40068.A4000.RTB",
+      "sha1": "973b42dcaf8d6cb111484b3c4d3b719b15f6792d",
+      "sha256": "7cedf931e8b30620ba69954a30f037260325ff57282833fa557b4b0f2a2689f9",
+      "size": 4976,
+      "repo_path": "bios/Commodore/Amiga/kick40068.A4000.RTB",
       "cores": [
         "amiberry"
       ],
@@ -111404,6 +111508,32 @@
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
       "repo_path": "bios/Roland/CM-32L/CM32L_CONTROL.ROM",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/WHDLoad",
+      "sha1": "c3ecdaf43cc554026c8ef1c440a08c81144f810b",
+      "sha256": "5e66d140e12b09769ba0bba87dc5a6f683261fd40eb43b94c390d1c62db1adb5",
+      "size": 161031,
+      "repo_path": "bios/Commodore/Amiga/whdboot/WHDLoad",
+      "cores": [
+        "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ]
+    },
+    {
+      "dest": "whdboot/JST",
+      "sha1": "55dd3ecd5086528fa984e82db6474b954fc54ad5",
+      "sha256": "173e866329e4d91e1c03db79687b96f6011b2c4940c358b01ad921f22b5c7112",
+      "size": 89108,
+      "repo_path": "bios/Commodore/Amiga/whdboot/JST",
       "cores": [
         "amiberry"
       ],
