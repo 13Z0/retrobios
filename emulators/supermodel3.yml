@@ -5,10 +5,11 @@ source: "https://github.com/DirtBagXon/model3emu-code-sinden"
 upstream: "https://github.com/trzy/Supermodel"
 author: "DirtBagXon"
 profiled_date: "2026-10-23"
-source_commit: "04551891e9ca657347d050bfafc19fa2c0bd5efb"
-upstream_commit: "e048c095839126f552b9c10dac34757a0164a284"
-upstream_frozen: "The fork is rebased on trzy's tree at e048c09, the revision its version string names. Later trzy commits are not in the fork."
-core_version: "0.3a-e048c09-mm DirtBagXon (Sinden)"
+source_commit: "11726c4bad3696a50a8b834eaba6aee3fa08a590"
+prose_written_at: "11726c4bad3696a50a8b834eaba6aee3fa08a590"
+upstream_commit: "14815455dc28fca2c8662fb1ed99d447ecf8f364"
+upstream_frozen: "The fork is rebased on trzy's tree at 1481545, the revision its version string names. Later trzy commits are not in the fork."
+core_version: "0.3a-1481545-mm DirtBagXon (Sinden)"
 display_name: "Sega - Model 3 (Supermodel, Sinden fork)"
 verification: existence
 cores:
@@ -20,7 +21,7 @@ systems:
 
 notes: |
   DirtBagXon's Supermodel fork with Sinden light gun support, rebased on
-  trzy's tree at e048c09, the revision its version string names. RetroPie
+  trzy's tree at 1481545, the revision its version string names. RetroPie
   builds the main branch on x86 and the arm branch everywhere else, the arm
   branch at commit 454ed3f when the system SDL2 is 2.0.22 or older. The arm
   branch is a separate, older line (revision
@@ -68,7 +69,8 @@ notes: |
   (63 sets, size 158300, sha1 ccbc64e2f5b9aefd89ff9acd7227eff230aed8ed)
   differs from the main branch copy. ROCKNIX builds its supermodel-sa
   package from the arm branch at b13fdd5, eight commits before that revision,
-  with the same Games.xml and the same fixed paths
+  which prints version 0.3a-5c83d8a-arm-mm, with the same Games.xml and the
+  same fixed paths
   (ROCKNIX projects/ROCKNIX/packages/emulators/standalone/supermodel-sa/package.mk:5).
 
 files:
@@ -80,7 +82,7 @@ files:
     sha1: "79fa74742f4b18e250c11c1dea5837fdf57cd54c"
     md5: "f2f5f09ca0a275696319176b4f41b8d6"
     description: "ROM set definitions"
-    note: "Parsed by the GameLoader constructor. Without it no game is defined, the archive name matches nothing and main returns 1. The path is the GameXMLFile key, so -game-xml-file moves it. The hash is that of Config/Games.xml at the pinned revision, 64 sets, which RetroPie copies on every install. Shipped in the 0455189 Linux, macOS and Windows release archives."
+    note: "Parsed by the GameLoader constructor. Without it no game is defined, the archive name matches nothing and main returns 1. The path is the GameXMLFile key, so -game-xml-file moves it. The hash is that of Config/Games.xml at the pinned revision, 64 sets, which RetroPie copies on every install. Shipped in the 11726c4 Linux, macOS and Windows release archives."
     source_ref: "upstream Src/OSD/SDL/Main.cpp:122, source Src/OSD/SDL/Main.cpp:1543, source Src/OSD/SDL/Main.cpp:2453-2458, source Src/GameLoader.cpp:601-610, source Src/GameLoader.cpp:1066-1071, source Src/GameLoader.cpp:1111-1113"
 
   - name: "p1crosshair.bmp"
@@ -102,7 +104,7 @@ files:
     sha1: "13c5e692c7acf2ec8243ac421d58fdf69c6c2370"
     md5: "866dbf59a0e2d849de2365e1c953cc97"
     description: "Player 2 light gun crosshair texture"
-    note: "Read in the same call as the player 1 bitmap and equally fatal when it fails to load. Both bitmaps are shipped in the 0455189 release archives."
+    note: "Read in the same call as the player 1 bitmap and equally fatal when it fails to load. Both bitmaps are shipped in the 11726c4 release archives."
     source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:35, source Src/OSD/SDL/Crosshair.cpp:48-51"
 
   - name: "Music.xml"
@@ -113,7 +115,7 @@ files:
     sha1: "b44ed959fe2948a03d81b98e67ca32f2b4c37e78"
     md5: "ddb4e23db15dda67539eee24de23de4b"
     description: "Custom MPEG music track map"
-    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when absent. RetroPie does not copy it. Shipped in the 0455189 release archives, the Windows zip with CRLF line endings (sha1 4c556c3a848ef61205a53a9a73ba5e46970d445f)."
+    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when absent. RetroPie does not copy it. Shipped in the 11726c4 release archives, the Windows zip with CRLF line endings (sha1 4c556c3a848ef61205a53a9a73ba5e46970d445f)."
     source_ref: "upstream Src/OSD/SDL/Main.cpp:123, source Src/OSD/SDL/Main.cpp:963, source Src/Sound/MPEG/MpegAudio.cpp:88-102"
 
   - name: "pro1000.zip"

@@ -591,7 +591,7 @@
   "src/game/timetrav.cpp",
   "src/io/input.cpp"
  ],
- "github.com/DirtBagXon/model3emu-code-sinden@04551891e9ca657347d050bfafc19fa2c0bd5efb": [
+ "github.com/DirtBagXon/model3emu-code-sinden@11726c4bad3696a50a8b834eaba6aee3fa08a590": [
   "Config/Games.xml",
   "Src/GameLoader.cpp",
   "Src/OSD/SDL/Crosshair.cpp",
@@ -9063,7 +9063,10 @@
   "Src/OSD/Unix/FileSystemPath.cpp",
   "Src/OSD/Windows/FileSystemPath.cpp",
   "Src/OSD/Windows/wnaspi32/wnaspi32.cpp",
-  "Src/Sound/MPEG/MpegAudio.cpp"
+  "Src/Pro1000/Pro1000.cpp",
+  "Src/Pro1000/SyntheticSCSIROM.cpp",
+  "Src/Sound/MPEG/MpegAudio.cpp",
+  "Src/Version.h"
  ],
  "github.com/trzy/Supermodel@98fcbff223e23b1530c8f899aca2fc4fd5663ab4": [
   ".github/workflows/release.yml",
@@ -9078,17 +9081,6 @@
   "Src/OSD/SDL/Main.cpp",
   "Src/OSD/Unix/FileSystemPath.cpp",
   "Src/OSD/Windows/FileSystemPath.cpp",
-  "Src/Pro1000/Pro1000.cpp",
-  "Src/Pro1000/SyntheticSCSIROM.cpp",
-  "Src/Sound/MPEG/MpegAudio.cpp",
-  "Src/Version.h"
- ],
- "github.com/trzy/Supermodel@e048c095839126f552b9c10dac34757a0164a284": [
-  "Config/Games.xml",
-  "Src/GameLoader.cpp",
-  "Src/OSD/SDL/Crosshair.cpp",
-  "Src/OSD/SDL/Main.cpp",
-  "Src/OSD/Unix/FileSystemPath.cpp",
   "Src/Pro1000/Pro1000.cpp",
   "Src/Pro1000/SyntheticSCSIROM.cpp",
   "Src/Sound/MPEG/MpegAudio.cpp",
