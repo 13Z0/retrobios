@@ -4,12 +4,12 @@ core_classification: enhanced_fork
 source: "https://github.com/blueminder/flycast-dojo"
 upstream: "https://github.com/flyinghead/flycast"
 source_branch: "dojo"
-source_commit: "745815c929fca4a893be28c99351b44d984b6642"
+source_commit: "fa518ac574b17fbc70837f97275c019b208a8740"
 upstream_commit: "f13d7ad2dcf141f59a999090dbc0f78be196e665"
 upstream_frozen: "The dojo branch carries flyinghead/flycast up to this commit, with the Dojo commits on top and no later merge."
 logo: "https://raw.githubusercontent.com/blueminder/flycast-dojo/master/shell/linux/flycast-dojo.png"
-profiled_date: "2026-10-23"
-core_version: "dojo-7.8"
+profiled_date: "2026-10-27"
+core_version: "dojo-7.9"
 display_name: "Sega - Dreamcast/Naomi (Flycast Dojo)"
 cores:
   - flycast-dojo
@@ -93,7 +93,7 @@ notes: |
   The release archives hold the binary and its libraries alone. The default
   arcade flash images, the on-screen button sheet and the reios font are
   compiled in as resources.
-  ref: CMakeLists.txt:966-1001, .github/workflows/build-and-release.yml:56,
+  ref: CMakeLists.txt:968-1003, .github/workflows/build-and-release.yml:56,
   .github/workflows/build-and-release.yml:71-72
 
   Also read but never user supplied: buttons.png overrides the compiled in
