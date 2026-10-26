@@ -2526,9 +2526,39 @@ class TestWriteDryRun(unittest.TestCase):
         # Profiles live in a repository: git answers "no history" for an
         # untracked file, where outside one it answers nothing at all.
         subprocess.run(["git", "init", "-q"], cwd=self.dir, check=True)
+        # The cited files gained nothing since the pin in these fixtures.
+        from unittest import mock  # noqa: PLC0415
+
+        def nothing_gained(args, profile, report):
+            report.new_files, report.new_hashes = [], []
+
+        self._detection = mock.patch.object(
+            profile_sync, "_attach_detection", side_effect=nothing_gained
+        )
+        self._detection.start()
 
     def tearDown(self):
+        self._detection.stop()
         self.tmp.cleanup()
+
+    def test_a_file_gained_since_the_pin_holds_the_bump(self):
+        # mame2003_plus's zn.c gained two G-NET BIOS sets around refs that
+        # only shifted.
+        from unittest import mock  # noqa: PLC0415
+
+        def gained(args, profile, report):
+            report.new_files = [{"path": "zn.c", "name": "coh3002t.zip", "since_pin": True}]
+            report.new_hashes = []
+
+        before = self.path.read_text()
+        with mock.patch.object(profile_sync, "_attach_detection", side_effect=gained), \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            self._run(self._args(rebase_refs=True, dry_run=False), self._shifted())
+        self.assertEqual(self.path.read_text(), before)
+        self.assertIn("coh3002t.zip", err.getvalue())
+        with mock.patch.object(profile_sync, "_attach_detection", side_effect=gained):
+            self._run(self._args(rebase_refs=True, dry_run=False, accept_changed=True), self._shifted())
+        self.assertIn('source_commit: "newhead"', self.path.read_text())
 
     def _args(self, **over):
         base = dict(

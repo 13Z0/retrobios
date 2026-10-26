@@ -4226,6 +4226,8 @@ def _apply_writes(
         name, path, args, known
     ):
         return
+    if _gained_since_pin(args, name, profile, report):
+        return
     with tempfile.TemporaryDirectory() as scratch:
         # Always work on a copy. A dry run reports what it left there, a real
         # run promotes it. A recale rewrites the refs for HEAD, so the pin
@@ -4282,6 +4284,36 @@ def _apply_writes(
             _WRITTEN.add(name)
         for message in messages:
             print(message)
+
+
+def _gained_since_pin(
+    args: argparse.Namespace, name: str, profile: dict, report: ProfileReport
+) -> bool:
+    """Whether the cited files gained a file name or a hash literal since the pin.
+
+    Refs that still anchor say nothing of what the code added around them:
+    mame2003_plus gained two Taito G-NET BIOS sets in a zn.c whose cited
+    lines only shifted. A bump past that would document a file set the code
+    no longer has. --accept-changed says the additions were read.
+    """
+    if args.accept_changed or not report.head or report.pin == report.head:
+        return False
+    if report.new_files is None and report.new_hashes is None:
+        probe = argparse.Namespace(**{**vars(args), "detect_new_files": True, "watch_hashes": True})
+        _attach_detection(probe, profile, report)
+    gained = sorted({item["name"] for item in report.new_files or () if item.get("since_pin")})
+    added = report.new_hashes or []
+    if not (gained or added or report.detection_skipped):
+        return False
+    detail = ", ".join(gained[:5]) + (f", {len(added)} hash literal(s)" if added else "")
+    if report.detection_skipped:
+        detail = f"cited files unread ({report.detection_skipped})"
+    print(
+        f"{name}: the cited files changed beyond the refs since the pin ({detail.strip(', ')}), "
+        "nothing was written. Read them, then rerun with --accept-changed.",
+        file=sys.stderr,
+    )
+    return True
 
 
 def _cited_paths(report: ProfileReport) -> list[str]:
