@@ -1395,10 +1395,14 @@ class TheBatoceraPort(unittest.TestCase):
         return device, ports
 
     def console_switch(self, device: Device) -> dict[str, str]:
-        (device.root / "active").write_text("tty2\n")
         number = re.fullmatch(r"/dev/pts/(\d+)", device.console)
         self.assertIsNotNone(number)
         self.number = number.group(1)
+        # The console in front before the switch: never the pty the test
+        # was given, which was /dev/pts/2 on a busy machine, so the launcher
+        # found itself already in front and switched nowhere.
+        self.home = "3" if self.number == "2" else "2"
+        (device.root / "active").write_text(f"tty{self.home}\n")
         return {"RB_VT_ACTIVE": str(device.root / "active"), "RB_VT_PREFIX": "/dev/pts/",
                 "RB_VT_SWITCH": self.number}
 
@@ -1443,7 +1447,7 @@ class TheBatoceraPort(unittest.TestCase):
         [call] = device.tui_calls()
         self.assertEqual(call["stdin"], device.console)
         chvt = [line for line in device.tools() if line.startswith("chvt")]
-        self.assertEqual(chvt, [f"chvt {self.number}", "chvt 2"])
+        self.assertEqual(chvt, [f"chvt {self.number}", f"chvt {self.home}"])
         device.assert_console_restored()
 
     def test_a_refused_console_switch_shows_nothing_on_an_unseen_console(self):
@@ -1457,8 +1461,8 @@ class TheBatoceraPort(unittest.TestCase):
         self.assertLess(device.elapsed, 20)
         self.assertEqual(device.tui_calls(), [])
         chvt = [line for line in device.tools() if line.startswith("chvt")]
-        self.assertEqual(chvt, [f"chvt {self.number}", "chvt 2"])
-        self.assertEqual((device.root / "active").read_text(), "tty2\n")
+        self.assertEqual(chvt, [f"chvt {self.number}", f"chvt {self.home}"])
+        self.assertEqual((device.root / "active").read_text(), f"tty{self.home}\n")
         log = (ports / "retrobios" / "log.txt").read_text()
         self.assertIn(f"console {self.number} did not come to the front", log)
         self.assertNotIn("\x1bc", device.screen)
