@@ -11,8 +11,8 @@ From an empty BIOS folder to games that start.
 
 ## 1. Open a terminal and paste
 
-A **terminal** is a window where you type commands. Paste the line for your
-system, then press Enter.
+A **terminal** is a window where you type commands. Paste your system's
+line, then press Enter.
 
 <Tabs syncKey="os">
 <TabItem label="Windows">
@@ -81,9 +81,10 @@ It opens a menu:
 
 - **Right folder?** Press Enter.
 - **Wrong folder?** Choose **Another setup or folder**, then browse to yours.
-- **A handheld's SD card in a reader?** It is listed, as **muOS SD card**.
+- **A handheld's SD card?** Choose it, or its system under **Another setup
+  or folder**: **Where is the SD card?**
 
-Arrows move, Enter chooses, Esc goes back. A handheld's A and B do the same.
+Arrows move, Enter chooses, Esc goes back, as A and B on a handheld.
 
 ## 3. Install
 
