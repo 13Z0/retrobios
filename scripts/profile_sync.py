@@ -4298,6 +4298,9 @@ def _gained_since_pin(
     """
     if args.accept_changed or not report.head or report.pin == report.head:
         return False
+    if report.pinned_tag:
+        # A held pin is not advanced at all: bump_commit says so itself.
+        return False
     if report.new_files is None and report.new_hashes is None:
         probe = argparse.Namespace(**{**vars(args), "detect_new_files": True, "watch_hashes": True})
         _attach_detection(probe, profile, report)
