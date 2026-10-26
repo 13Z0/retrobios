@@ -4434,11 +4434,47 @@ def _attach_version(
                 repo, version.tag_commit, report.pin, args.cache_dir, args.offline
             )
         passed = _passed_release(args, repo, version, report.pin)
+        newer = None if passed or profile.get("pin_frozen") else _newer_release(
+            args, repo, version, report.pin
+        )
     except upstream.RateLimitError:
         raise
     except upstream.UpstreamError as exc:
         print(f"{report.name}: tag ancestry unread: {exc}", file=sys.stderr)
-    report.version_warning = version_warning(version, report.pin, relation, passed)
+        newer = None
+    report.version_warning = version_warning(version, report.pin, relation, passed) or (
+        f"release {newer} is newer than core_version {version.declared} and the pin: "
+        "profile it, or hold the pin with pin_frozen and the reason"
+        if newer else None
+    )
+
+
+def _newer_release(
+    args: argparse.Namespace,
+    repo: upstream.Repo,
+    version: VersionReport | None,
+    pin: str | None,
+) -> str | None:
+    """The latest release, when it comes after both the declared tag and the pin.
+
+    A profile pinned on its release tag reads as clean forever: armsx1 sat on
+    0.1.3, armsx2 on 2.8 and x1-box on 1.2.6 while 0.3.6, 2.9 and 1.3.2 were
+    out, and nothing said so. A held pin (pin_frozen) is left alone.
+    """
+    if not version or not pin or not version.tag_commit or not version.latest_release:
+        return None
+    if version.latest_release == version.declared:
+        return None
+    commit = upstream.tag_commit(repo, version.latest_release, args.cache_dir, args.offline)
+    if not commit or commit == pin:
+        return None
+    after_tag = upstream.ancestry(repo, version.tag_commit, commit, args.cache_dir, args.offline)
+    if not after_tag or after_tag[0] == 0 or after_tag[1] != 0:
+        return None
+    after_pin = upstream.ancestry(repo, pin, commit, args.cache_dir, args.offline)
+    if not after_pin or after_pin[0] == 0:
+        return None
+    return version.latest_release
 
 
 def _passed_release(

@@ -3346,6 +3346,27 @@ class APassedReleaseIsNewerThanTheTag(unittest.TestCase):
             self.assertIsNone(profile_sync._passed_release(args, "repo", version, "pin"))
 
 
+class ANewerReleaseThanTheTag(unittest.TestCase):
+    """armsx2 sat on its 2.8 tag while 2.9 was out, and read as clean."""
+
+    def _newer(self, after_tag, after_pin):
+        from unittest import mock  # noqa: PLC0415
+
+        version = profile_sync.VersionReport("2.8", "2.9", "2.9", "2026-10-01", True, "tag28")
+        args = argparse.Namespace(cache_dir="c", offline=True)
+        answers = iter([after_tag, after_pin])
+        with mock.patch.object(profile_sync.upstream, "tag_commit", return_value="rel29"), \
+                mock.patch.object(profile_sync.upstream, "ancestry", side_effect=lambda *a, **k: next(answers)):
+            return profile_sync._newer_release(args, "repo", version, "tag28")
+
+    def test_a_later_release_is_named(self):
+        self.assertEqual(self._newer((12, 0), (12, 0)), "2.9")
+
+    def test_an_older_or_unrelated_release_is_not(self):
+        self.assertIsNone(self._newer((0, 5), (0, 5)))
+        self.assertIsNone(self._newer((3, 4), (3, 4)))
+
+
 class TestAncestry(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
