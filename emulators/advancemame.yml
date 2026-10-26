@@ -3,8 +3,8 @@ type: standalone
 core_classification: enhanced_fork
 source: "https://github.com/amadvance/advancemame"
 upstream: "https://www.mamedev.org"
-profiled_date: "2026-10-23"
-source_commit: "dcf44ccedfefd91e42119c548cb4c0120a8d15df"
+profiled_date: "2026-10-26"
+source_commit: "81670476672b59f430518a63e9a116db58ed6232"
 core_version: "5.0"
 mame_version: "0.106"
 display_name: "Arcade (AdvanceMAME)"
@@ -38,6 +38,7 @@ systems:
   - acclaim-zn1
   - videosystem-zn1
   - hyper-neogeo64
+  - nintendo-aleck64
   - arcadia-systems
   - exidy-maxaflex
   - brezzasoft-crystal
@@ -47,10 +48,11 @@ systems:
 
 notes: |
   MAME 0.106 core (src/version.c:12) carrying its own video layer and driver
-  backports from later MAME releases. Twenty-seven BIOS root sets, each a
+  backports from later MAME releases. Twenty-eight BIOS root sets, each a
   NOT_A_DRIVER entry (src/driver.h:180) registered in src/mamedriv.c, release
-  5.0 having all but coh1002v, which came with the Video System PSX driver.
-  src/drivers/macs.c:613 declares a twenty-eighth, macs2bios, that
+  5.0 having all but coh1002v, which came with the Video System PSX driver,
+  and aleck64, which came with the Aleck64 games.
+  src/drivers/macs.c:613 declares a twenty-ninth, macs2bios, that
   src/mamedriv.c never registers, so no build reaches it and the five MACS
   games all parent to macsbios.
 
@@ -238,7 +240,7 @@ files:
     required: true
     category: bios_zip
     system: sega-stv
-    source_ref: "src/drivers/stv.c:3092-3094,4026"
+    source_ref: "src/drivers/stv.c:3196-3198,4184"
     note: >-
       Nine BIOS variants selected with misc_bios (japan, japana, us, japanb,
       taiwan, europe, unknown, dev1061, japanc), japan by default.
@@ -642,6 +644,18 @@ files:
         size: 524288
         crc32: "5ff165f3"
         sha1: "8f59314c1093446b9bcb06d232244da6df78e206"
+
+  # Seta Aleck64
+  - name: aleck64.zip
+    required: true
+    category: bios_zip
+    system: nintendo-aleck64
+    source_ref: "src/drivers/aleck64.c:695-697,776"
+    contents:
+      - name: pifdata.bin
+        size: 2048
+        crc32: "5ec82be9"
+        sha1: "9174eadc0f0ea2654c95fd941406ab46b9dc9bdd"
 
   # SNK Hyper Neo Geo 64
   - name: hng64.zip
