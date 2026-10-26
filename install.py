@@ -12559,14 +12559,30 @@ def _unavailable_lines(state: TuiState) -> list[str]:
     rows = {row["system"]: row for row in state.systems}
 
     def system(name: str) -> str:
-        return _tui_system_label(rows.get(name) or {"system": name}, titles)
+        label = _tui_system_label(rows.get(name) or {"system": name}, titles)
+        # An id no title names (jazz-jackrabbit-2) read as a raw key.
+        return label.replace("-", " ").title() if label == name else label
 
-    names = [f"{entry['dest']} ({system(entry['system'])})" if entry.get("system")
-             else entry["dest"] for entry in needed[:3]]
-    more = f" and {len(needed) - 3} more" if len(needed) > 3 else ""
-    return [f"Not available here, and needed to start "
-            f"{'its emulator' if len(needed) == 1 else 'their emulators'}: "
-            f"{', '.join(names)}{more}. Your own copy goes in the BIOS folder."]
+    def named(entries: list[dict]) -> str:
+        names = [f"{entry['dest']} ({system(entry['system'])})" if entry.get("system")
+                 else entry["dest"] for entry in entries[:3]]
+        more = f" and {len(entries) - 3} more" if len(entries) > 3 else ""
+        return f"{', '.join(names)}{more}"
+
+    # A game's own data is not firmware: on every RetroArch plan the one
+    # alarm named Jazz Jackrabbit 2's Anims.j2a, read as a broken install.
+    games = [entry for entry in needed if entry.get("category") == GAME_DATA]
+    firmware = [entry for entry in needed if entry.get("category") != GAME_DATA]
+    lines = []
+    if firmware:
+        lines.append(f"Not available here, and needed to start "
+                     f"{'its emulator' if len(firmware) == 1 else 'their emulators'}: "
+                     f"{named(firmware)}. Your own copy goes in the BIOS folder.")
+    if games:
+        lines.append(f"Game data not available here, read by "
+                     f"{'its game' if len(games) == 1 else 'their games'}: "
+                     f"{named(games)}. Copy it from your own copy of the game.")
+    return lines
 
 
 def tui_outcome(state: TuiState) -> tuple[str, list[str]]:

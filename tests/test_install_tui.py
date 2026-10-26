@@ -3921,6 +3921,25 @@ class ThePlanNumbersAddUp(unittest.TestCase):
                       "machine, 3 downloaded", screen)
 
 
+class GameDataIsNoFirmwareAlarm(unittest.TestCase):
+    """Every RetroArch plan named jazz2/Source/Anims.j2a (jazz-jackrabbit-2)
+    as the file needed to start an emulator: a game's data, under a raw id."""
+
+    def test_game_data_has_its_own_line(self):
+        state = checked_state()
+        state.systems = []
+        state.manifest = {**MANIFEST, "omitted_files": [
+            {"dest": "jazz2/Source/Anims.j2a", "system": "jazz-jackrabbit-2",
+             "required": True, "category": "game_data"},
+            {"dest": "missing.bin", "system": "sony-playstation", "required": True}]}
+        lines = install._unavailable_lines(state)
+        self.assertEqual(len(lines), 2, lines)
+        self.assertIn("needed to start its emulator: missing.bin", lines[0])
+        self.assertNotIn("Anims.j2a", lines[0])
+        self.assertIn("Game data not available here", lines[1])
+        self.assertIn("Anims.j2a (Jazz Jackrabbit 2)", lines[1])
+
+
 class NothingFoundIsSaid(unittest.TestCase):
     """With nothing detected the first screen was the list of 18 setups,
     with no line at 40x15 saying nothing was found, which the beginner's
