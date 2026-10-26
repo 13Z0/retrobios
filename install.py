@@ -13065,9 +13065,7 @@ def _tui_sources(state: TuiState, installed: int, failed: int) -> str:
             name = _last_name(folder)
             folders[name] = folders.get(name, 0) + 1
     copied = fixed + sum(folders.values())
-    line = sources_line(list(folders.items()), fixed, max(0, installed - copied), failed)
-    # A fix copies: the misplaced files are the user's, never moved.
-    return line + (" Your copies at the wrong place were left as they are." if fixed else "")
+    return sources_line(list(folders.items()), fixed, max(0, installed - copied), failed)
 
 
 def _unavailable(state: TuiState) -> tuple[list[dict], int]:
@@ -13148,6 +13146,10 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     sources = _tui_sources(state, installed, len(failed))
     if sources:
         lines.append(sources)
+    ok = {dest for dest, good, _why in state.finished if good}
+    if any(reason and dest in ok for dest, (_folder, reason) in state.local_dests.items()):
+        # A fix copies: the misplaced files are the user's, never moved.
+        lines.append("Your copies at the wrong place were left as they are.")
     lines.append(f"BIOS folder: {state.dest}")
     if installed + up_to_date:
         lines += _saves_lines(state, state.done_saves)
