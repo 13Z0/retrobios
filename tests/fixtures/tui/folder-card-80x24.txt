@@ -2,11 +2,11 @@
 
  NextUI keeps its BIOS files on its SD card. Choose the card's root folder, the
    one holding .system.
+ No NextUI card is mounted. Insert it, then choose Look again.
 
  > Browse for a folder
    Type a path
-
-
+   Look again
 
 
 
