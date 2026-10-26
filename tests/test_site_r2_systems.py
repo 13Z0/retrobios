@@ -100,17 +100,17 @@ class TheConsoleBiosComesFirst(unittest.TestCase):
     def test_the_section_opens_on_the_bios_by_region(self):
         lines = gs._start_with(self.files, self.required_only())
         self.assertEqual(lines[0], "**Start with** the BIOS for the region of your games:")
-        self.assertIn("- **North America**: `scph5501.bin`", lines)
-        self.assertIn("- **Japan**: `scph5500.bin`", lines)
-        self.assertLess(lines.index("- **North America**: `scph5501.bin`"),
-                        lines.index("- **Japan**: `scph5500.bin`"))
+        self.assertIn("- **North America**: [`scph5501.bin`](#sha1-444444444444)", lines)
+        self.assertIn("- **Japan**: [`scph5500.bin`](#sha1-555555555555)", lines)
+        self.assertLess(lines.index("- **North America**: [`scph5501.bin`](#sha1-444444444444)"),
+                        lines.index("- **Japan**: [`scph5500.bin`](#sha1-555555555555)"))
 
     def test_regions_needing_the_same_file_share_a_line(self):
         consumers = _consumers({"4" * 40: [
             {"required": True, "region": ["north-america", "latin-america", "brazil"]}]})
         lines = gs._start_with([_file("scph5501.bin", "4")], consumers)
         # Brazil says nothing Latin America does not.
-        self.assertIn("- **North America, Latin America**: `scph5501.bin`", lines)
+        self.assertIn("- **North America, Latin America**: [`scph5501.bin`](#sha1-444444444444)", lines)
 
     def test_a_long_list_names_the_first_and_counts_the_rest(self):
         files = [_file(f"rom{i}.bin", "abcdefgh"[i]) for i in range(8)]
@@ -120,7 +120,8 @@ class TheConsoleBiosComesFirst(unittest.TestCase):
         consumers.emulator_files = {"emu": [{"required": True}] * len(files)}
         consumers.emulator_entries = {f["sha1"]: {"emu": i} for i, f in enumerate(files)}
         self.assertEqual(gs._start_with(files, consumers)[0],
-                         "**Start with**: `rom0.bin`, `rom1.bin`, `rom2.bin` and 5 more files. "
+                         "**Start with**: [`rom0.bin`](#sha1-aaaaaaaaaaaa), [`rom1.bin`](#sha1-bbbbbbbbbbbb), "
+                         "[`rom2.bin`](#sha1-cccccccccccc) and 5 more files. "
                          "They come first below.")
 
     def test_no_required_file_no_line(self):

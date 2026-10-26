@@ -45,7 +45,7 @@ KEY_TYPES: dict[str, dict] = {
         "pending", "code",
     ), _COUNT),
     **dict.fromkeys(("truncated", "ok", "interrupted"), _FLAG),
-    **dict.fromkeys(("systems", "other_drives", "dests"), _NAMES),
+    **dict.fromkeys(("systems", "other_drives", "dests", "written"), _NAMES),
     **dict.fromkeys(("platforms", "failed", "skipped", "left_out", "kept"), _RECORDS),
 }
 

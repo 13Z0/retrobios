@@ -139,7 +139,10 @@ command line** gives the same choice as one command for a script. **Preview the
 file list** shows what would be downloaded and writes nothing. **Copy the BIOS
 files from your old card or a folder** opens the folder browser, mounted cards
 first, and adds [`--from`](#copy-from-an-old-card): the plan then says how many
-files that folder holds and how many are left to download. Files the BIOS
+files that folder holds and how many are left to download. After an install
+on a muOS, KNULLI or ROCKNIX card, the result offers **Put RetroBIOS on this
+card (update from the console later)**, and **Options** has the same row
+([On a handheld](#on-a-handheld-the-retrobios-port)). Files the BIOS
 folder holds at the wrong place are counted on the plan, and **Show the files
 in the wrong place** lists each one with its reason. Back on the plan
 after a change of options, the folder is checked again, so its numbers are the
@@ -717,6 +720,7 @@ what the options name, everything by default.
 | <span id="option-jobs"></span>`--jobs N`, `-j N` | Parallel downloads, 1 to 32, default 8 |
 | <span id="option-verbose"></span>`--verbose`, `-v` | Print per-attempt failures and hash mismatches |
 | <span id="option-standalone-copies"></span>`--standalone-copies` | Also copy into detected standalone emulator directories |
+| <span id="option-add-app"></span>`--add-app` | After the install, put the RetroBIOS app on the handheld card the BIOS folder is on (muOS, KNULLI, ROCKNIX), to check and update the BIOS files from the console later. Refused (code 2) for a folder on no such card, and with `--check`, `--dry-run`, a listing, `--from-pack` and `--offline`. See [On a handheld](#on-a-handheld-the-retrobios-port) |
 | <span id="option-help"></span>`--help`, `-h` | Print the option list, a few examples in the form the run was started with, and the address of this page |
 
 `--check` reads the same file list, hashes the destination and exits, with
@@ -1141,6 +1145,31 @@ spruceOS, MinUI, muOS, Knulli or ROCKNIX card by itself. For a card it does
 not recognise, add `--platform <platform> --dest <BIOS folder on the card>`.
 This works for every system above too.
 
+**The app, from a computer.** After an install on a muOS, KNULLI or ROCKNIX
+card, the installer can put RetroBIOS on that card too, so the console checks
+and updates its BIOS files later. The result screen offers **Put RetroBIOS on
+this card (update from the console later)**, **Options** has the same row, the
+line questions ask once (`[y/N]`), and a script adds
+[`--add-app`](#option-add-app). Nothing is written without that choice.
+
+| System | Written on the card | Then, on the console |
+|--------|---------------------|----------------------|
+| muOS | `ARCHIVE/RetroBIOS.muxapp`, which the Archive Manager lists | install it from the Archive Manager, start it from Applications |
+| KNULLI | `roms/ports/RetroBIOS.sh`, `RetroBIOS.sh.keys` and the `retrobios` folder, on the SHARE partition | update the game list, start it from Ports |
+| ROCKNIX | `.config/modules/RetroBIOS.sh`, executable, and the `retrobios` folder, on the STORAGE partition | start it from Tools |
+
+The files are the launchers above, from the same ref as the file lists:
+`install/launchers/index.json` lists each one with its size and SHA-256, and
+every file is fetched and checked before the first is written. The muOS
+archive holds the members of `RetroBIOS.muxapp`, stored rather than
+compressed, and is checked against the hash the list records for it. A file
+already in place with that content is left alone, so a second run writes
+nothing. A different one is moved to `retrobios-backup` first, as a BIOS file
+is. Onion, MinUI, NextUI, MyMinUI and Allium have no Python to run it, and the
+result says so in one line. spruceOS and CrossMix have no launcher yet. With
+`--from-pack` or `--offline` the app is not offered, the launchers coming from
+the network.
+
 ## Where the files come from
 
 Each manifest entry names either `repo_path`, served from the repository at the
@@ -1253,8 +1282,8 @@ fields, the installer refuses to narrow rather than install everything.
 | Code | Meaning |
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
-| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, or `--restore` could not put a file back |
-| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
+| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question, or the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`) before an install. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
@@ -1311,9 +1340,10 @@ other schemas under `api/v1/schemas/`.
 | `transfer` | `bytes_local`, `bytes_network` | Right after each `progress` event, and once when the files of a `download` event are done. It splits `bytes_done`: `bytes_local` came from this machine (a copy found by `--from` or in the BIOS folder, the pack, a partial copy resumed), `bytes_network` from the network. A download speed is `bytes_network` over the time elapsed |
 | `downloaded` | `dest`, `ok`, `reason`, `size`, `files_done`, `files_total`, `bytes_done`, `bytes_total` | Each finished file, downloaded or copied from where a `found` event named it. `reason` says why one failed, and is empty otherwise |
 | `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `left_out`, `kept`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply, `left_out` lists `{category, label, files, dests}` for what `--no-game-data` left out, and is empty without it. `kept` lists `{folder, files, bytes}`, one per backup folder, for the files in place the run moved aside before replacing them (with `--dry-run`, would move), and is empty when none. Not written for a listing |
+| `app` | `system`, `folder`, `ok`, `reason`, `dests`, `written`, `kept` | After `summary`, with `--add-app` or a yes to its question: the RetroBIOS app on the card of `system` whose root is `folder`. `dests` lists the app's files below that root, `written` the ones this run wrote (empty when each was in place), `kept` the backup folders as in `summary`. `ok` is false, with `reason`, when the card takes no app (before anything is written, code 2), when the install did not finish, or when a file could not be fetched, verified or written (code 1) |
 | `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
 
-Schema 1 can gain a kind (`found` came with `--from`, `declared` with `--declared-only`, `unsearched` with the search that goes on past a closed folder), never a key of an
+Schema 1 can gain a kind (`found` came with `--from`, `declared` with `--declared-only`, `unsearched` with the search that goes on past a closed folder, `app` with `--add-app`), never a key of an
 existing kind: a reader skips a kind it does not know. An option refused
 before the run starts (`install.py: error:`, code 2) writes
 no event at all. A program reads a missing `end` as that case, or as a

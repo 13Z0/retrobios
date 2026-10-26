@@ -574,6 +574,12 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # would move), one per backup folder, empty when none.
     "summary": ("mode", "installed", "up_to_date", "pending", "failed", "skipped",
                 "left_out", "kept", "interrupted"),
+    # --add-app, or yes to its question, after the summary: the RetroBIOS
+    # app put on the handheld card (folder, its root) of system. dests are
+    # the app's files below the root, written those this run wrote (none
+    # when all were in place), kept the backup folders as in summary.
+    # ok false with reason when it was refused or failed.
+    "app": ("system", "folder", "ok", "reason", "dests", "written", "kept"),
     "end": ("code",),
 }
 # Seconds between two progress events while bytes arrive.
@@ -8419,6 +8425,380 @@ def bulk_hint(
     return []
 
 
+# The RetroBIOS app on a handheld's card. A card prepared on a computer can
+# also carry the launcher of ports/ for its system, so the player checks and
+# updates the BIOS files from the console later. The files come from the
+# same ref as the file lists, listed with their hashes in
+# install/launchers/index.json, which scripts/generate_launcher_index.py
+# writes from the members of the launcher archives.
+LAUNCHERS_URL = f"{BASE_URL}/install/launchers/index.json"
+MAX_LAUNCHERS_BYTES = 256 * 1024
+MAX_APP_FILE_SIZE = 8 * 1024 * 1024
+MAX_APP_FILES = 64
+APP_SCHEMA = 1
+
+
+class AppPlace(NamedTuple):
+    """Where a system's launcher goes on its card, and what the player does next.
+
+    key names its entry in the launcher list, folder is below the card's
+    root, executable says whether the menu runs the launcher script itself.
+    """
+
+    key: str
+    folder: str
+    executable: bool
+    then: str
+
+
+APP_PLACES: dict[str, AppPlace] = {
+    # The Archive Manager lists the .muxapp files of ARCHIVE at the root of
+    # SD1, SD2 and a USB drive, and installs one into Applications
+    # (MustardOS/frontend 9c0fb5da, module/muxarchive.c:16,157-164,196-218,
+    # MUOS_ARCH_PATH "ARCHIVE" in common/base/options.h:180). The archive
+    # carries the modes of its members.
+    "muOS": AppPlace("muos", "ARCHIVE", False,
+                     "Then open the Archive Manager on the console, install RetroBIOS, "
+                     "and start it from Applications."),
+    # The card's root is the SHARE partition, /userdata on the console.
+    # Ports runs a .sh with /bin/bash (knulli-cfw distribution ab3a6809,
+    # configgen/generators/sh/shGenerator.py:19-35), and evmapy reads the
+    # .keys file beside it: no mode is needed on the card.
+    "KNULLI": AppPlace("knulli", "roms/ports", False,
+                       "Then update the game list on the console, and start RetroBIOS "
+                       "from Ports."),
+    # The card's root is the STORAGE partition, /storage on the console. Tools
+    # runs each file of /storage/.config/modules in foot or weston-terminal,
+    # which starts it as a program: the build installs them 0755 (ROCKNIX
+    # distribution 8b70f693, projects/ROCKNIX/packages/virtual/emulators/
+    # package.mk:118-122 and 1701-1707).
+    "ROCKNIX": AppPlace("rocknix", ".config/modules", True,
+                        "Then start RetroBIOS from Tools on the console."),
+}
+
+# Card systems with no Python 3 to run the installer: Onion ships Python 2.7
+# alone (OnionUI/Onion 07505ea5, static/build/.tmp_update/bin/parasyte/),
+# MinUI (dbf89435), NextUI (5291344b) and Allium (ee0dda97) none, and
+# MyMinUI is built from MinUI.
+NO_PYTHON_CARDS = frozenset(("Onion", "Allium", "MinUI", "NextUI", "MyMinUI"))
+NO_PYTHON_WORDS = ("This console cannot run RetroBIOS itself: to update its BIOS files "
+                   "later, run this again on the computer.")
+APP_OFFER = "Put RetroBIOS on this card (update from the console later)"
+
+
+class CardApp(NamedTuple):
+    """A card a BIOS folder is on, and whether the RetroBIOS app can go there."""
+
+    root: Path
+    system: str
+    place: AppPlace | None
+    why: str
+
+
+def card_app(bios_dir: Path) -> CardApp | None:
+    """The card bios_dir is the BIOS folder of, None for a folder on no card
+    the installer recognises. why says, when place is None, why the app
+    cannot go on it."""
+    folder = Path(os.path.abspath(bios_dir))
+    for root in [folder, *list(folder.parents)[:3]]:
+        found = card_system(root)
+        if found is None or Path(os.path.abspath(found[1])) != folder:
+            continue
+        system = found[2]
+        place = APP_PLACES.get(system)
+        if place is not None:
+            return CardApp(root, system, place, "")
+        why = (f"{system} has no Python to run RetroBIOS" if system in NO_PYTHON_CARDS
+               else f"there is no RetroBIOS app for {system} yet")
+        return CardApp(root, system, None, why)
+    return None
+
+
+def _app_entry(value: object, field: str, source: bool = True) -> dict:
+    """One file of the launcher list, checked as a manifest entry is."""
+    if not isinstance(value, dict):
+        raise ValueError("an entry is not an object")
+    _safe_relative_path(value.get(field), field)
+    size = value.get("size")
+    if type(size) is not int or not 0 < size <= MAX_APP_FILE_SIZE:
+        raise ValueError(f"{value.get(field)}: invalid size")
+    digest = value.get("sha256")
+    if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+        raise ValueError(f"{value.get(field)}: invalid sha256")
+    if not isinstance(value.get("executable", False), bool):
+        raise ValueError(f"{value.get(field)}: invalid executable")
+    if source:
+        repo, content = value.get("repo_path"), value.get("content")
+        if (repo is None) == (content is None):
+            raise ValueError(f"{value.get(field)}: needs repo_path or content")
+        if repo is not None:
+            _safe_relative_path(repo, "repo_path")
+        elif not isinstance(content, str):
+            raise ValueError(f"{value.get(field)}: invalid content")
+    return value
+
+
+def app_targets(data: object, place: AppPlace) -> list[dict]:
+    """The files the launcher list puts on a card for place, each under its
+    folder: an archive carries its members, the others their source.
+
+    The list comes from the same base as the file lists, and is held to
+    the folder its system reads: no entry writes elsewhere on the card.
+    """
+    if not isinstance(data, dict) or data.get("schema") != APP_SCHEMA:
+        raise ValueError(f"not a launcher list of schema {APP_SCHEMA}")
+    launchers = data.get("launchers")
+    launcher = launchers.get(place.key) if isinstance(launchers, dict) else None
+    if not isinstance(launcher, dict):
+        raise ValueError(f"it holds no launcher for {place.key}")
+    if "archive" in launcher:
+        target = dict(_app_entry(launcher["archive"], "dest", source=False))
+        members = launcher.get("members")
+        if not isinstance(members, list) or not 0 < len(members) <= MAX_APP_FILES:
+            raise ValueError("invalid members")
+        target["members"] = [_app_entry(member, "name") for member in members]
+        if len({member["name"] for member in target["members"]}) != len(members):
+            raise ValueError("two members share a name")
+        targets = [target]
+    else:
+        files = launcher.get("files")
+        if not isinstance(files, list) or not 0 < len(files) <= MAX_APP_FILES:
+            raise ValueError("invalid files")
+        targets = [_app_entry(entry, "dest") for entry in files]
+    prefix = PurePosixPath(place.folder).parts
+    for target in targets:
+        parts = PurePosixPath(target["dest"]).parts
+        if len(parts) <= len(prefix) or parts[:len(prefix)] != prefix:
+            raise ValueError(f"{target['dest']} is outside {place.folder}")
+    if len({target["dest"].casefold() for target in targets}) != len(targets):
+        raise ValueError("two files share a destination")
+    return targets
+
+
+def app_archive(members: list[tuple[dict, bytes]]) -> bytes:
+    """A launcher archive from its members: stored, sorted, dated 1980-01-01,
+    only the executable bit kept, so the same members give the same bytes
+    on any machine and the list can record their hash."""
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_STORED) as archive:
+        for entry, data in sorted(members, key=lambda member: member[0]["name"]):
+            info = zipfile.ZipInfo(entry["name"], date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_STORED
+            info.create_system = 3
+            mode = 0o755 if entry.get("executable") else 0o644
+            info.external_attr = (0o100000 | mode) << 16
+            archive.writestr(info, data)
+    return buffer.getvalue()
+
+
+def _app_download(url: str, size: int) -> bytes:
+    """The bytes at url, tried MAX_RETRIES times, never more than size + 1."""
+    _network_allowed("the RetroBIOS app")
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            with urllib.request.urlopen(url, timeout=60) as resp:
+                return resp.read(size + 1)
+        except urllib.error.HTTPError as exc:
+            if exc.code < 500 and exc.code != 429 or attempt == MAX_RETRIES:
+                raise
+        except (urllib.error.URLError, OSError, http.client.HTTPException):
+            if attempt == MAX_RETRIES:
+                raise
+        time.sleep(_retry_delay(attempt, None))
+    raise AssertionError("unreachable")
+
+
+def _app_bytes(entry: dict, name: str) -> bytes:
+    """An entry's bytes, from the list itself or the repository, once they
+    have the size and the SHA-256 the list records."""
+    content = entry.get("content")
+    if content is not None:
+        data = content.encode("utf-8")
+    else:
+        url = RAW_FILE_URL.format(path=urllib.parse.quote(entry["repo_path"], safe="/"))
+        data = _app_download(url, entry["size"])
+    if len(data) != entry["size"]:
+        raise ValueError(f"{name} holds {len(data)} bytes, the list records {entry['size']}")
+    if hashlib.sha256(data).hexdigest() != entry["sha256"]:
+        raise ValueError(f"{name}: SHA-256 mismatch")
+    return data
+
+
+def _target_bytes(target: dict) -> bytes:
+    """What goes at a target's place: its file, or its archive built from
+    its members and checked against the hash the list records for it."""
+    members = target.get("members")
+    if members is None:
+        return _app_bytes(target, target["dest"])
+    data = app_archive([(member, _app_bytes(member, member["name"])) for member in members])
+    if len(data) != target["size"] or hashlib.sha256(data).hexdigest() != target["sha256"]:
+        raise ValueError(f"{target['dest']} built from its members is not the one the "
+                         "list records")
+    return data
+
+
+def _app_in_place(path: Path, target: dict) -> bool:
+    try:
+        return (path.is_file() and path.stat().st_size == target["size"]
+                and _sha256_file(path) == target["sha256"])
+    except OSError:
+        return False
+
+
+def _app_failure(exc: BaseException) -> str:
+    if isinstance(exc, urllib.error.HTTPError):
+        return f"the server answered HTTP {exc.code}"
+    if isinstance(exc, ValueError):
+        return str(exc)
+    if isinstance(exc, _Offline) or _transfer_failure(exc):
+        return network_words(exc)[1]
+    return getattr(exc, "strerror", None) or str(exc)
+
+
+def put_app(card: CardApp) -> dict:
+    """Put the launcher of card's system on it: the fields of the app event.
+
+    Every file is fetched and verified before the first one is written, and
+    written as a BIOS file is, the one in place kept aside when it differs.
+    A file already in place with the recorded hash is left alone, so a
+    second run writes nothing.
+    """
+    fields: dict = {"system": card.system, "folder": str(card.root), "ok": False,
+                    "reason": card.why, "dests": [], "written": [], "kept": []}
+    if card.place is None:
+        return fields
+    try:
+        data = _fetch_json(LAUNCHERS_URL, MAX_LAUNCHERS_BYTES, "list of the app's files")
+        targets = app_targets(data, card.place)
+    except (urllib.error.URLError, OSError, ValueError, http.client.HTTPException) as exc:
+        fields["reason"] = f"its list of files could not be read: {_app_failure(exc)}"
+        return fields
+    fields["dests"] = [target["dest"] for target in targets]
+    places = [(target, _destination_path(card.root, target["dest"])) for target in targets]
+    needed = [(target, path) for target, path in places if not _app_in_place(path, target)]
+    try:
+        payloads = [_target_bytes(target) for target, _path in needed]
+    except (urllib.error.URLError, OSError, ValueError, http.client.HTTPException) as exc:
+        fields["reason"] = f"it could not be downloaded: {_app_failure(exc)}"
+        return fields
+    before = {item["folder"]: (item["files"], item["bytes"]) for item in KEPT.summary()}
+    for (target, path), payload in zip(needed, payloads):
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+        except OSError as exc:
+            fields["reason"] = NOT_WRITABLE if _write_refused(exc) else _app_failure(exc)
+            break
+        _dest, ok, why = _write_verified(
+            target, card.root, path, lambda payload=payload: io.BytesIO(payload), None,
+            "the RetroBIOS app")
+        if not ok:
+            fields["reason"] = f"{target['dest']}: {why}"
+            break
+        fields["written"].append(target["dest"])
+    else:
+        fields["ok"], fields["reason"] = True, ""
+    for item in KEPT.summary():
+        files, size = before.get(item["folder"], (0, 0))
+        if item["files"] > files:
+            fields["kept"].append({"folder": item["folder"], "files": item["files"] - files,
+                                   "bytes": item["bytes"] - size})
+    return fields
+
+
+def app_lines(card: CardApp, fields: dict) -> list[str]:
+    """What putting the app on the card did, in words."""
+    if not fields["ok"]:
+        return [f"RetroBIOS could not be put on the {card.system} card: {fields['reason']}."]
+    if fields["written"]:
+        lines = [f"RetroBIOS is on the {card.system} card: "
+                 f"{_plural(len(fields['written']), 'file')} written in {card.root}."]
+    else:
+        lines = [f"RetroBIOS is already on the {card.system} card: nothing to write."]
+    lines += [f"The files it replaced are kept in {kept['folder']}" for kept in fields["kept"]]
+    if card.place is not None:
+        lines.append(card.place.then)
+    return lines
+
+
+def app_refusal(args: argparse.Namespace, platforms: list[tuple[str, Path]]) -> list[CardApp]:
+    """The cards --add-app puts the app on, one per folder. A folder that is
+    on no card the app can go on is refused with the reason, code 2, before
+    anything is written."""
+    cards: list[CardApp] = []
+    if not args.add_app:
+        return cards
+    for _plat, path in platforms:
+        card = card_app(path)
+        if card is None:
+            why = (f"{path} is not on a card this installer recognises (a muOS, "
+                   "KNULLI or ROCKNIX card)")
+        else:
+            why = card.why
+        if why:
+            EVENTS.emit("app", system=card.system if card else "",
+                        folder=str(card.root if card else path), ok=False, reason=why,
+                        dests=[], written=[], kept=[])
+            print(f"Error: --add-app puts the RetroBIOS app on a handheld's SD card, and "
+                  f"{why}.", file=sys.stderr)
+            if card is not None and card.system in NO_PYTHON_CARDS:
+                print(f"  {NO_PYTHON_WORDS}", file=sys.stderr)
+            else:
+                print("  Name the card's root or its BIOS folder with --dest.",
+                      file=sys.stderr)
+            sys.exit(2)
+        if card not in cards:
+            cards.append(card)
+    _APP_PENDING[:] = cards
+    return cards
+
+
+# The cards --add-app named, until the install finishes and the app is put.
+_APP_PENDING: list[CardApp] = []
+
+
+def app_not_added() -> None:
+    """--add-app in a run that stopped before the app: said, never silent."""
+    cards, _APP_PENDING[:] = list(_APP_PENDING), []
+    for card in cards:
+        EVENTS.emit("app", system=card.system, folder=str(card.root), ok=False,
+                    reason="the install did not finish", dests=[], written=[], kept=[])
+        print(f"  RetroBIOS was not put on the {card.system} card: the install did "
+              "not finish.", file=sys.stderr)
+
+
+def finish_app(
+    args: argparse.Namespace, platforms: list[tuple[str, Path]], cards: list[CardApp],
+    interactive: bool,
+) -> None:
+    """After an install that finished: the app on the cards --add-app named,
+    or on those the person says yes for at a terminal."""
+    _APP_PENDING[:] = []
+    chosen = list(cards)
+    if not args.add_app:
+        for card in dict.fromkeys(filter(None, (card_app(path) for _plat, path in platforms))):
+            if card.place is None:
+                if card.system in NO_PYTHON_CARDS:
+                    print(f"\n{NO_PYTHON_WORDS}")
+                continue
+            if not interactive or args.yes or LOCAL.offline:
+                continue
+            answer = _ask(f"\nPut RetroBIOS on this {card.system} card, to check and update "
+                          "its BIOS files from the console later? [y/N] ")
+            if answer.lower() in ("y", "yes"):
+                chosen.append(card)
+    failed = False
+    for card in chosen:
+        print(f"\nPutting RetroBIOS on the {card.system} card...")
+        fields = put_app(card)
+        EVENTS.emit("app", **fields)
+        stream = sys.stdout if fields["ok"] else sys.stderr
+        for line in app_lines(card, fields):
+            print(f"  {line}", file=stream)
+        failed = failed or not fields["ok"]
+    if failed:
+        sys.exit(1)
+
+
 def _help_epilog() -> str:
     """Examples in the form the run was started with, and where the rest is."""
     run = _INVOCATION.launcher()
@@ -8500,6 +8880,13 @@ def main() -> None:
         "--standalone-copies",
         action="store_true",
         help="opt in to copies into detected standalone-emulator directories",
+    )
+    parser.add_argument(
+        "--add-app",
+        action="store_true",
+        help="after the install, put the RetroBIOS app on the handheld card the BIOS "
+             "folder is on (muOS, KNULLI, ROCKNIX), to check and update the BIOS "
+             "files from the console later",
     )
     parser.add_argument(
         "--emulator",
@@ -8730,7 +9117,7 @@ def main() -> None:
                  "cores_dir", "save_dir", "system", "core", "region", "no_game_data",
                  "declared_only", "list_systems",
                  "list_cores", "romm_firmware", "list_emulators", "events", "quiet",
-                 "yes", "verbose", "from_pack", "manifest", "from")
+                 "yes", "verbose", "from_pack", "manifest", "from", "add_app")
         given = [name for name in alone if getattr(args, name)]
         if args.jobs != 8:
             given.append("jobs")
@@ -8740,6 +9127,22 @@ def main() -> None:
         sys.exit(restore_kept(args.restore, args.dry_run))
     if args.every_board and args.target:
         parser.error("--every-board installs every board; --target names one")
+    if args.add_app:
+        # Applied or refused, never ignored.
+        for given, reason in (
+            (args.check or args.dry_run,
+             "--add-app writes the RetroBIOS app on the card, which --check and "
+             "--dry-run do not"),
+            (args.list_platforms or args.list_targets or args.list_systems
+             or args.list_cores or args.list_emulators,
+             "--add-app writes the RetroBIOS app on the card, which a listing does not"),
+            (args.from_pack, "--add-app downloads the RetroBIOS app, and --from-pack "
+             "makes no network request"),
+            (args.offline or offline_requested(), "--add-app downloads the RetroBIOS "
+             "app, which --offline does not"),
+        ):
+            if given:
+                parser.error(reason)
     if args.offline:
         # The runs the full-screen interface starts read it from here.
         os.environ[OFFLINE_VARIABLE] = "1"
@@ -8791,6 +9194,13 @@ def _run(args: argparse.Namespace) -> None:
     """The run, its text quiet or not, the archives it read closed after."""
     try:
         _run_text(args)
+    except SystemExit as exc:
+        if exc.code not in (0, None):
+            app_not_added()
+        raise
+    except KeyboardInterrupt:
+        app_not_added()
+        raise
     finally:
         LOCAL.close_indexes()
 
@@ -9380,6 +9790,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # --check installs nothing, and "Install for:" said it would.
         platforms = _prompt_platform_choice(
             platforms, "Check:" if args.check else "Install for:")
+    # --add-app names a card for each folder, or the run stops here.
+    app_cards = app_refusal(args, platforms)
 
     if args.dest is not None and not listing:
         _missing_dest(args.dest, interactive and not (args.check or args.dry_run or args.yes))
@@ -9984,6 +10396,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             hints=bulk_lines,
             sources=_run_sources(bios_indexes, total_downloaded, total_errors),
         )
+        finish_app(args, platforms, app_cards, interactive and not total_declined)
 
 
 def _run_sources(bios_indexes: list[FolderIndex], installed: int, failed: int) -> str:
@@ -10407,6 +10820,14 @@ class TuiState:
         self.tail: list = []
         self.log: str = ""
         self.exit_code: int | None = None
+        # The RetroBIOS app on the card the BIOS folder is on: asked for
+        # (--add-app, the options), what putting it did (the app event),
+        # and the card, read once per folder.
+        self.add_app: bool = False
+        self.app: dict | None = None
+        self.app_running: bool = False
+        self.card_for: Path | None = None
+        self.card: CardApp | None = None
 
     @property
     def screen(self) -> str:
@@ -10570,6 +10991,9 @@ def tui_argv(state: TuiState, run: str, python: str, script: str) -> list[str]:
     if state.manifest_path is not None:
         argv.append(f"--manifest={state.manifest_path}")
     argv += [flag if value is None else f"{flag}={value}" for flag, value in tui_flags(state)]
+    if run == "install" and state.add_app and _tui_app_ready(state):
+        # Only the install writes: --check and --dry-run refuse it.
+        argv.append("--add-app")
     return argv + _TUI_MODES[run]
 
 
@@ -10580,7 +11004,39 @@ def tui_command(state: TuiState) -> str:
     hint.options = ([("--manifest", str(state.manifest_path))]
                     if state.manifest_given and state.manifest_path else [])
     hint.options += tui_flags(state)
+    if state.add_app and _tui_app_ready(state):
+        hint.options.append(("--add-app", None))
     return hint.command(state.platform, state.dest)
+
+
+def _tui_card(state: TuiState) -> CardApp | None:
+    """The card the BIOS folder is on, read once for each folder."""
+    if state.dest is None:
+        return None
+    if state.card_for != state.dest:
+        state.card_for, state.card = state.dest, card_app(state.dest)
+    return state.card
+
+
+def _tui_app_ready(state: TuiState) -> bool:
+    """Whether the RetroBIOS app can go on this card: its system has one,
+    and the run may use the network to fetch it."""
+    card = _tui_card(state)
+    return card is not None and card.place is not None and not LOCAL.offline
+
+
+def _tui_installed(state: TuiState) -> bool:
+    """An install that finished with every file in place."""
+    summary = state.summary or {}
+    return bool(summary) and not summary.get("interrupted") and not summary.get("failed") \
+        and state.code == 0
+
+
+def _app_offer(state: TuiState) -> bool:
+    """The result offers the app: the install finished, the card can take
+    it, and it was neither asked for nor put already."""
+    return (state.screen == "result" and state.app is None and not state.app_running
+            and _tui_installed(state) and _tui_app_ready(state))
 
 class TuiRow(NamedTuple):
     """One row a screen lists: what Enter does on it, and what it shows."""
@@ -10732,6 +11188,9 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
                        TuiRow("quit", "Quit")]
     if screen == "quit":
         return [TuiRow("quit", "Quit"), TuiRow("stay", "Stay")]
+    if screen == "result" and _app_offer(state):
+        # Exit first: the app is put only when it is chosen.
+        return [TuiRow("exit", "Exit"), TuiRow("addapp", APP_OFFER)]
     return []
 
 
@@ -10866,6 +11325,8 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
         TuiRow("folder", f"BIOS folder: {_short_path(state.dest, state.home)}", "--dest",
                style="path"),
         TuiRow("from", f"Copy from: {copied}", "--from", style="path"),
+        *([TuiRow("addapp", f"Put RetroBIOS on this card: {_yes(state.add_app)}",
+                  "--add-app")] if _tui_app_ready(state) else []),
         TuiRow("preview", "Preview the file list", "--dry-run"),
         TuiRow("command", "Show the command line"),
     ]
@@ -11290,6 +11751,11 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         if action == "quit":
             return tui_quit(state)
         return _back(state)
+    if screen == "result":
+        if action == "addapp":
+            state.add_app = state.app_running = True
+            return [("app", _tui_card(state))]
+        return tui_quit(state)
     return []
 
 
@@ -11317,6 +11783,8 @@ def _option(state: TuiState, action: str, step: int) -> list[tuple]:
         state.installed_only = step > 0 if step else not state.installed_only
     elif action == "jobs":
         state.jobs = max(1, min(32, state.jobs + (step or 1)))
+    elif action == "addapp":
+        state.add_app = step > 0 if step else not state.add_app
     elif action == "cores":
         # On the first core: the filter row under A opened a field a
         # controller cannot type into.
@@ -11537,6 +12005,9 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
     if state.help:
         state.help = False
         return []
+    if state.app_running:
+        # The app is being written to the card: it finishes first.
+        return []
     state.status = ""
     screen = state.screen
     if screen == "path":
@@ -11560,9 +12031,9 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
         return []
     if char == "q":
         return tui_quit(state)
-    if screen in _PAGERS:
-        return _pager_key(state, key)
     rows = tui_rows(state)
+    if screen in _PAGERS and not rows:
+        return _pager_key(state, key)
     if not rows:
         return _back(state) if key.name in ("esc", "backspace") else []
     focus = max(0, min(state.focus.get(screen, 0), len(rows) - 1))
@@ -11590,6 +12061,8 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
         rows = tui_rows(state)
         focus = next((i for i, item in enumerate(rows)
                       if item.action == row.action and item.value == row.value), focus)
+    elif name in ("esc", "backspace") and screen == "result":
+        return tui_quit(state)
     elif name in ("esc", "backspace"):
         return _back(state)
     elif (name == "tab" or char == "o") and screen in ("plan", "systems", "confirm"):
@@ -11616,7 +12089,7 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
         return _activate(state, rows[0 if char == "a" else 1])
     elif screen == "options" and name in ("left", "right"):
         return _option(state, row.action, 1 if name == "right" else -1) \
-            if row.action in ("game_data", "installed", "jobs") \
+            if row.action in ("game_data", "installed", "jobs", "addapp") \
             or (row.action == "from" and name == "left") else []
     elif char == " ":
         return _space(state, row)
@@ -11651,7 +12124,7 @@ def _miyoo_key(state: TuiState, key: TuiKey) -> TuiKey:
 
 # Rows Space leaves alone: it is X (tick) on PortMaster and Y on muxterm, a
 # key pressed for something else, and these end the run or write.
-_SPACE_INERT = ("install", "close", "quit")
+_SPACE_INERT = ("install", "close", "quit", "exit", "addapp")
 
 
 def _space(state: TuiState, row: TuiRow) -> list[tuple]:
@@ -11671,6 +12144,9 @@ def _space(state: TuiState, row: TuiRow) -> list[tuple]:
 
 def _take_event(state: TuiState, event: dict) -> None:
     kind = event.get("event")
+    if kind == "app" and state.run == "install":
+        state.app = event
+        return
     if kind == "checking" and state.run in ("check", "install"):
         state.reading = (event["files_done"], event["files_total"])
     elif kind == "found" and state.run == "check":
@@ -11727,6 +12203,12 @@ def tui_receive(state: TuiState, message: tuple) -> list[tuple]:
             return []
         state.manifest, state.manifest_for = manifest, plat
         return _start_run(state, "check")
+    if kind == "app":
+        # Put from the result screen, in this process.
+        state.app, state.app_running = message[1], False
+        if not state.app["ok"] and state.code == 0:
+            state.code = 1
+        return []
     if kind == "manifest_failed":
         _kind, plat, title, lines, code = message
         if plat != state.platform or state.screen != "checking":
@@ -11856,7 +12338,7 @@ _ROW_VERBS = {
     "preview": "Open", "folder": "Choose", "game_data": "Change", "installed": "Change",
     "jobs": "Change", "retry": "Try again", "back": "Back", "stay": "Stay",
     "fromcard": "Choose", "from": "Add a folder", "misplaced": "Show", "zip": "Copy from it",
-    "unreadable": "Show",
+    "unreadable": "Show", "exit": "Exit", "addapp": "Put it on the card",
 }
 
 
@@ -12673,10 +13155,25 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     for group in summary.get("left_out") or []:
         lines.append(f"Left out as {group['label']}: {_plural(group['files'], 'file')}.")
     lines += _unplaced_lines(summary, state)
+    lines += _tui_app_lines(state)
     lines += ["Same choice without questions:", f"  {tui_command(state)}"]
     if tui_keeps_log(state):
         lines.append(f"Details: {state.log}")
     return title, lines
+
+
+def _tui_app_lines(state: TuiState) -> list[str]:
+    """What became of the RetroBIOS app on the card, once the install finished."""
+    card = _tui_card(state)
+    if card is None:
+        return []
+    if state.app_running:
+        return ["Putting RetroBIOS on the card..."]
+    if state.app is not None:
+        return app_lines(card, state.app)
+    if card.place is None and card.system in NO_PYTHON_CARDS and _tui_installed(state):
+        return [NO_PYTHON_WORDS]
+    return []
 
 
 def tui_keeps_log(state: TuiState) -> bool:
@@ -12691,6 +13188,12 @@ def tui_keeps_log(state: TuiState) -> bool:
 
 def _view_result(state: TuiState, width: int, height: int) -> tuple:
     title, lines = tui_outcome(state)
+    rows = tui_rows(state)
+    if rows:
+        return (title, _compose(state, width, height, lines, rows),
+                ("A/Enter Choose", "B/Esc Exit"))
+    if state.app_running:
+        return (title, _pager(state, width, height, lines), ("Writing to the card...",))
     return (title, _pager(state, width, height, lines), ("A/Enter Exit", "Up/Down Scroll"))
 
 
@@ -12811,8 +13314,6 @@ def _help_key(state: TuiState) -> list[tuple[str, str]]:
 
 def _primary(state: TuiState) -> str | None:
     """What A does on the row in focus, for the first entry of the bar."""
-    if state.screen in _PAGERS:
-        return None
     rows = tui_rows(state)
     if not rows:
         return None
@@ -12928,6 +13429,7 @@ def tui_start(
     state.no_game_data = bool(args.no_game_data)
     state.installed_only = bool(args.installed_cores)
     state.jobs = args.jobs
+    state.add_app = bool(getattr(args, "add_app", False))
     state.passthrough = _tui_passthrough(args)
     if args.manifest is not None:
         state.manifest_path = Path(args.manifest).absolute()
@@ -13070,6 +13572,11 @@ TUI_FETCH_TIMEOUT = 15
 
 
 TUI_OFFLINE_TITLE = "No internet: offline mode"
+
+
+def _tui_put_app(card: CardApp, inbox: queue.Queue) -> None:
+    """The app put on the card in this process, what it did sent back."""
+    inbox.put(("app", put_app(card)))
 
 
 def _tui_fetch(plat: str, inbox: queue.Queue, log: io.StringIO) -> None:
@@ -13455,6 +13962,9 @@ def run_tui(args: argparse.Namespace) -> int:
             elif kind == "kill":
                 for run in current:
                     run.stop(0)
+            elif kind == "app":
+                threading.Thread(target=_tui_put_app, args=(effect[1], inbox),
+                                 daemon=True).start()
 
     def on_interrupt(_signum: int, _frame: object) -> None:
         flags["interrupt"] = True

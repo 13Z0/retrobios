@@ -79,7 +79,7 @@ def _args(**given) -> argparse.Namespace:
         cores_dir=None, system=None, core=None, region=None, no_game_data=False,
         list_systems=False, list_cores=False, romm_firmware=None, list_emulators=False,
         no_input=False, dry_run=False, yes=False, quiet=False, events=False,
-        restore=None, from_pack=None, manifest=None, tui=False, plain=False,
+        restore=None, from_pack=None, manifest=None, tui=False, plain=False, add_app=False,
     )
     values["from"] = None
     values.update(given)
@@ -3445,6 +3445,144 @@ class SaveDirectoryRepository(FakeRepository):
         return self
 
 
+def _app_card(test: unittest.TestCase, system: str) -> tuple[Path, Path]:
+    """A card of system in the repository's tmp/, its root and BIOS folder."""
+    from test_install_app import make_card  # noqa: PLC0415
+
+    (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+    root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+    test.addCleanup(shutil.rmtree, root, True)
+    return root / "card", make_card(root / "card", system)
+
+
+def _installed_state(dest: Path, code: int = 0, failed: list | None = None) -> install.TuiState:
+    """The result screen of an install into dest."""
+    state = fresh_state()
+    state.platform, state.dest, state.manifest = "retroarch", dest, MANIFEST
+    state.stack, state.run, state.code = ["result"], "install", code
+    state.summary = {"event": "summary", "mode": "install", "installed": 5, "up_to_date": 0,
+                     "pending": 0, "failed": failed or [], "skipped": [], "left_out": [],
+                     "kept": [], "interrupted": False}
+    return state
+
+
+class AppOnTheCard(unittest.TestCase):
+    """The RetroBIOS app offered on the result screen and in the options."""
+
+    def setUp(self):
+        patcher = mock.patch.dict(os.environ)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        os.environ.pop(install.OFFLINE_VARIABLE, None)
+
+    def fields(self, card_root: Path, ok: bool = True) -> dict:
+        return {"event": "app", "system": "muOS", "folder": str(card_root), "ok": ok,
+                "reason": "" if ok else "it could not be downloaded: no connection",
+                "dests": ["ARCHIVE/RetroBIOS.muxapp"],
+                "written": ["ARCHIVE/RetroBIOS.muxapp"] if ok else [], "kept": []}
+
+    def test_the_result_offers_it_and_exit_stays_the_default(self):
+        root, bios = _app_card(self, "muOS")
+        state = _installed_state(bios)
+        rows = install.tui_rows(state)
+        self.assertEqual([row.action for row in rows], ["exit", "addapp"])
+        self.assertEqual(rows[1].label, install.APP_OFFER)
+        screen = "\n".join(install.tui_view(state, 80, 24))
+        self.assertIn(install.APP_OFFER, screen)
+        self.assertIn("A/Enter Exit", screen)
+        self.assertEqual(press(state, "enter"), [])
+        self.assertEqual(state.exit_code, 0)
+
+    def test_choosing_it_puts_it_then_says_what_it_did(self):
+        root, bios = _app_card(self, "muOS")
+        state = _installed_state(bios)
+        effects = press(state, "down", "enter")
+        self.assertEqual(effects, [("app", install.card_app(bios))])
+        self.assertTrue(state.app_running)
+        screen = "\n".join(install.tui_view(state, 80, 24))
+        self.assertIn("Putting RetroBIOS on the card...", screen)
+        # Nothing ends the screen while the card is written.
+        self.assertEqual(press(state, "enter", "esc"), [])
+        self.assertIsNone(state.exit_code)
+        install.tui_receive(state, ("app", self.fields(root)))
+        self.assertEqual(install.tui_rows(state), [])
+        screen = "\n".join(install.tui_view(state, 80, 24))
+        self.assertIn("RetroBIOS is on the muOS card: 1 file written", screen)
+        self.assertIn("Archive Manager", screen)
+        self.assertIn("--add-app", install.tui_command(state))
+        press(state, "enter")
+        self.assertEqual(state.exit_code, 0)
+
+    def test_a_failure_is_said_and_ends_on_1(self):
+        root, bios = _app_card(self, "KNULLI")
+        state = _installed_state(bios)
+        press(state, "down", "enter")
+        install.tui_receive(state, ("app", {**self.fields(root, ok=False), "system": "KNULLI"}))
+        _title, lines = install.tui_outcome(state)
+        self.assertTrue(any("could not be put on the KNULLI card" in line for line in lines))
+        press(state, "enter")
+        self.assertEqual(state.exit_code, 1)
+
+    def test_space_and_b_never_put_it(self):
+        _root, bios = _app_card(self, "muOS")
+        state = _installed_state(bios)
+        self.assertEqual(press(state, "down", " "), [])
+        self.assertFalse(state.app_running)
+        press(state, "esc")
+        self.assertEqual(state.exit_code, 0)
+
+    def test_no_offer_where_it_cannot_go(self):
+        _root, muos = _app_card(self, "muOS")
+        _root, onion = _app_card(self, "Onion")
+        cases = {
+            "failed install": _installed_state(muos, 1, [{"dest": "a", "reason": "x"}]),
+            "plain folder": _installed_state(SYSTEM_DIR),
+            "no launcher": _installed_state(onion),
+        }
+        offline = _installed_state(muos)
+        for name, state in cases.items():
+            with self.subTest(case=name):
+                self.assertEqual(install.tui_rows(state), [])
+        os.environ[install.OFFLINE_VARIABLE] = "1"
+        self.assertEqual(install.tui_rows(offline), [])
+        os.environ.pop(install.OFFLINE_VARIABLE)
+        _title, lines = install.tui_outcome(cases["no launcher"])
+        self.assertIn(install.NO_PYTHON_WORDS, lines)
+
+    def test_put_by_the_install_itself_no_second_offer(self):
+        root, bios = _app_card(self, "muOS")
+        state = _installed_state(bios)
+        install._take_event(state, self.fields(root))
+        self.assertEqual(install.tui_rows(state), [])
+        self.assertIn("RetroBIOS is on the muOS card", "\n".join(install.tui_outcome(state)[1]))
+
+    def test_the_options_row_sets_the_flag_of_the_install_only(self):
+        _root, bios = _app_card(self, "muOS")
+        state = _installed_state(bios)
+        state.stack = ["plan", "options"]
+        rows = install.tui_rows(state)
+        row = next(row for row in rows if row.action == "addapp")
+        self.assertEqual((row.label, row.right), ("Put RetroBIOS on this card: no", "--add-app"))
+        state.focus["options"] = rows.index(row)
+        press(state, "enter")
+        self.assertTrue(state.add_app)
+        self.assertIn("--add-app", install.tui_argv(state, "install", "py", "install.py"))
+        for run in ("check", "confirm", "preview"):
+            self.assertNotIn("--add-app", install.tui_argv(state, run, "py", "install.py"))
+        self.assertIn("--add-app", install.tui_command(state))
+        press(state, "left")
+        self.assertFalse(state.add_app)
+        plain = _installed_state(SYSTEM_DIR)
+        plain.stack = ["plan", "options"]
+        self.assertFalse(any(row.action == "addapp" for row in install.tui_rows(plain)))
+
+    def test_the_command_line_flag_ticks_the_row(self):
+        _root, bios = _app_card(self, "ROCKNIX")
+        state, _effects = install.tui_start(_args(add_app=True, platform="rocknix",
+                                                  dest=bios), "linux", detect=False)
+        self.assertTrue(state.add_app)
+
+
 @unittest.skipUnless(pyte and pty and hasattr(pty, "fork"),
                      "screen tests need pyte (pip install pyte==0.8.2) and a pty")
 class EndToEnd(unittest.TestCase):
@@ -3474,6 +3612,61 @@ class EndToEnd(unittest.TestCase):
         term = Pty(list(args), self.env, cols, rows)
         self.addCleanup(lambda: term.status is None and os.kill(term.pid, 9))
         return term
+
+
+    def card_repo(self, system: str) -> tuple[Path, Path]:
+        from test_install_app import AppRepository, make_card  # noqa: PLC0415
+
+        repo = self.repo(AppRepository)
+        root = repo.root / "card"
+        return root, make_card(root, system)
+
+    def assertAppOnCard(self, root: Path, system: str) -> None:
+        index = json.loads((REPO_ROOT / "install" / "launchers" / "index.json").read_text())
+        targets = install.app_targets(index, install.APP_PLACES[system])
+        for target in targets:
+            data = (root / target["dest"]).read_bytes()
+            self.assertEqual(hashlib.sha256(data).hexdigest(), target["sha256"],
+                             target["dest"])
+
+    def test_put_the_app_on_a_muos_card_from_the_result(self):
+        root, bios = self.card_repo("muOS")
+        term = self.start("--platform", "retroarch", "--dest", str(root))
+        term.wait("files to download")
+        term.send("\r")
+        screen = term.wait(install.APP_OFFER)
+        self.assertIn("> Exit", screen)
+        term.send(DOWN, "\r")
+        screen = term.wait("RetroBIOS is on the muOS card")
+        self.assertIn("Archive Manager", screen)
+        term.send("\r")
+        self.assertEqual(term.close(), 0)
+        self.assertAppOnCard(root, "muOS")
+        self.assertEqual(len(list(bios.iterdir())), 5)
+        self.assertIn("RetroBIOS is on the muOS card", term.after())
+
+    def test_put_the_app_on_a_knulli_card_from_the_options(self):
+        root, _bios = self.card_repo("KNULLI")
+        term = self.start("--platform", "knulli", "--dest", str(root))
+        term.wait("files to download")
+        term.send("o")
+        term.wait("Each row is an option")
+        for _step in range(20):
+            if "> Put RetroBIOS on this card: no" in term.settle():
+                break
+            term.send(DOWN)
+        term.send("\r")
+        term.wait("> Put RetroBIOS on this card: yes")
+        term.send("\x1b")
+        term.wait("files to download")
+        term.send("\r")
+        screen = term.wait("RetroBIOS is on the KNULLI card")
+        self.assertIn("start RetroBIOS from Ports", screen)
+        self.assertNotIn(install.APP_OFFER, screen)
+        term.send("\r")
+        self.assertEqual(term.close(), 0)
+        self.assertAppOnCard(root, "KNULLI")
+        self.assertIn("--add-app", term.after())
 
     def test_three_presses_install_everything(self):
         repo = self.repo()

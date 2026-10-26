@@ -6,7 +6,7 @@
   "platform": "myminui",
   "display_name": "MyMinUI",
   "version": "1.0",
-  "generated": "2026-10-24T00:06:47Z",
+  "generated": "2026-10-24T02:09:46Z",
   "base_destination": "",
   "detect": [
     {
@@ -17,10 +17,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 472,
-  "total_size": 1483125994,
-  "pack_files": 474,
-  "pack_size": 1483125994,
+  "total_files": 474,
+  "total_size": 1484127899,
+  "pack_files": 476,
+  "pack_size": 1484127899,
   "total_omitted": 4,
   "omitted_files": [
     {
@@ -377,10 +377,10 @@
     },
     {
       "dest": "Bios/MAME/mame2003-plus/hiscore.dat",
-      "sha1": "d41b1c32e9f5bee0cfca766a64f208dda081858b",
-      "sha256": "e69906f1807665119a7f3ff930618971b71a42621a062658b65f4bcbe3bca6f5",
-      "size": 131902,
-      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.d41b1c32",
+      "sha1": "b48347a133ab8f28b9875ab300fea2ffa2f37ebc",
+      "sha256": "f1b2b78fb847801b542c8c5b1e68c1fc064ba79301db29fbd2878e6bf6b377af",
+      "size": 131926,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.b48347a1",
       "cores": [
         "mame2003_plus"
       ],
@@ -1326,6 +1326,26 @@
       "sha256": "31d0823e4ac37f1e7c8a5d9e98e556b74001c8c34e92fcd6315af3b0852f1ff9",
       "size": 128626,
       "repo_path": "bios/Arcade/Arcade/coh1002e.zip",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "Bios/MAME/coh3002t.zip",
+      "sha1": "96499a322093e675f348fae484295bdcd6d5f135",
+      "sha256": "c72148054270b006d2289d04bc71d060580597d8f4780a01dc8d1d5b975f256e",
+      "size": 785154,
+      "repo_path": "bios/Arcade/Arcade/.variants/coh3002t.zip.db439f9b",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "Bios/MAME/coh1002t.zip",
+      "sha1": "bf92b9645651332fb680c954a6da050a8a773465",
+      "sha256": "ee7c32f207d01be2f863e42c2b3a22183fd36f13029638e49fb8241ddd0ba06b",
+      "size": 216727,
+      "repo_path": "bios/Arcade/MAME/coh1002t.zip",
       "cores": [
         "mame2003_plus"
       ]

@@ -6,7 +6,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-24T00:06:47Z",
+  "generated": "2026-10-24T02:09:46Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -26,7 +26,7 @@
   "total_size": 872654387,
   "pack_files": 467,
   "pack_size": 872654387,
-  "total_omitted": 772,
+  "total_omitted": 774,
   "omitted_files": [
     {
       "dest": "32X_G_BIOS.BIN",
@@ -2026,6 +2026,16 @@
       ]
     },
     {
+      "dest": "coh1002t.zip",
+      "name": "coh1002t.zip",
+      "system": "taito-gnet",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
       "dest": "coh1002v.zip",
       "name": "coh1002v.zip",
       "system": "zn1-video-system",
@@ -2039,6 +2049,16 @@
       "dest": "coh3002c.zip",
       "name": "coh3002c.zip",
       "system": "zn2-capcom",
+      "required": true,
+      "reason": "no_platform_slug",
+      "cores": [
+        "mame2003_plus"
+      ]
+    },
+    {
+      "dest": "coh3002t.zip",
+      "name": "coh3002t.zip",
+      "system": "taito-gnet",
       "required": true,
       "reason": "no_platform_slug",
       "cores": [

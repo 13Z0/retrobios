@@ -111,6 +111,47 @@ class ThePortArchive(unittest.TestCase):
         self.assertIn(f'DEFAULT_INSTALL_SHA256="{bundled}"', install_sh)
 
 
+class LauncherIndex(unittest.TestCase):
+    """install/launchers/index.json, which --add-app reads, lists the members of
+    the archives built from the same tree, each with its size and hash."""
+
+    def test_the_committed_list_is_current(self):
+        import generate_launcher_index  # noqa: PLC0415
+
+        text = generate_launcher_index.render(generate_launcher_index.build_index())
+        self.assertEqual(
+            generate_launcher_index.OUTPUT.read_text(encoding="utf-8"), text,
+            "install/launchers/index.json is stale: run "
+            "python scripts/generate_launcher_index.py")
+
+    def test_every_member_of_the_archives_is_listed(self):
+        import generate_launcher_index  # noqa: PLC0415
+
+        index = json.loads(generate_launcher_index.OUTPUT.read_text(encoding="utf-8"))
+        places = {place.key: place for place in install.APP_PLACES.values()}
+        for key, archive in generate_launcher_index.LAUNCHER_ARCHIVES.items():
+            with self.subTest(key=key):
+                launcher = index["launchers"][key]
+                listed = launcher.get("members") or launcher["files"]
+                names = [entry.get("name") or entry["dest"] for entry in listed]
+                prefix = "" if "members" in launcher else places[key].folder + "/"
+                self.assertEqual(sorted(names), sorted(
+                    prefix + name for name, _path in build_port.archive_members(archive)))
+                for entry in listed:
+                    if "repo_path" in entry:
+                        data = (REPO_ROOT / entry["repo_path"]).read_bytes()
+                        self.assertEqual(hashlib.sha256(data).hexdigest(), entry["sha256"])
+
+    def test_the_list_refuses_an_installer_the_bootstraps_do_not_pin(self):
+        import generate_launcher_index  # noqa: PLC0415
+
+        root = _tempdir(self)
+        shutil.copyfile(REPO_ROOT / "install.py", root / "install.py")
+        (root / "install.sh").write_text('DEFAULT_INSTALL_SHA256="' + "0" * 64 + '"\n')
+        with self.assertRaises(ValueError):
+            generate_launcher_index.build_index(root)
+
+
 class EventRecords(unittest.TestCase):
     """rbevents turns --events into fields the FIFO carries intact."""
 

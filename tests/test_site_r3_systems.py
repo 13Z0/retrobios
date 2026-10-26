@@ -80,18 +80,18 @@ class TheSectionStartsWithItsOwnConsole(unittest.TestCase):
     def test_a_console_its_emulators_run_without_says_so(self) -> None:
         self.assertEqual(gs._start_with(self.files, self.consumers, section=DS), [
             "**No file needed** with emu-a or emu-b. For full accuracy: "
-            "`bios7.bin`, `bios9.bin`.", ""])
+            "[`bios7.bin`](#sha1-777777777777), [`bios9.bin`](#sha1-999999999999).", ""])
 
     def test_the_dsi_section_names_its_file(self) -> None:
         lines = gs._start_with(self.files, self.consumers, section=("Nintendo", "Nintendo DSi"))
-        self.assertEqual(lines, ["**Start with**: `dsi_bios7.bin`.", ""])
+        self.assertEqual(lines, ["**Start with**: [`dsi_bios7.bin`](#sha1-dddddddddddd).", ""])
 
     def test_more_than_three_emulators_are_counted(self) -> None:
         hle = {"required": False, "hle_fallback": True, "system": "nintendo-ds"}
         consumers = _consumers({"7" * 40: [(f"emu-{n}", hle) for n in "abcd"]})
         self.assertEqual(gs._start_with(self.files[:1], consumers, section=DS)[0],
                          "**No file needed**: none of its 4 emulators requires one. "
-                         "For full accuracy: `NDS_Bios7.bin`.")
+                         "For full accuracy: [`NDS_Bios7.bin`](#sha1-777777777777).")
 
     def test_a_shipped_file_is_no_start(self) -> None:
         consumers = _consumers({"7" * 40: [("emu-a", {"required": True, "bundled": True,
@@ -108,7 +108,7 @@ class TheNameSetupsWrite(unittest.TestCase):
             destinations={"a" * 40: {"p1": {"gba_bios.bin"}, "p2": {"bios/gba_bios.bin"},
                                      "p3": {"GBA_bios.rom"}}})
         self.assertEqual(gs._start_with([f], consumers, section=("Nintendo", "Game Boy Advance")),
-                         ["**Start with**: `gba_bios.bin`.", ""])
+                         ["**Start with**: [`gba_bios.bin`](#sha1-aaaaaaaaaaaa).", ""])
 
     def test_no_setup_then_the_emulators_name(self) -> None:
         f = _file("x.rom", "b", "bios/Nintendo/Game Boy Advance/x.rom")
@@ -142,7 +142,7 @@ class ArcadeSetsAreNamedWhereverFiled(unittest.TestCase):
         link = f"[`neogeo.zip`](/retrobios/files/?sha1={'2' * 40})"
         self.assertEqual(lines[0], f"**Start with** {link}. Keep it zipped. "
                                    "mame0, mame1 and mame2 read it.")
-        self.assertIn("Geolith reads `aes.zip` instead.", lines)
+        self.assertIn("Geolith reads [`aes.zip`](#sha1-111111111111) instead.", lines)
 
     def test_another_consoles_file_or_an_emulators_folder_is_left_out(self) -> None:
         text = "\n".join(gs._start_with([self.aes], self.consumers, section=("SNK", "Neo Geo")))
@@ -164,7 +164,8 @@ class ArcadeSetsAreNamedWhereverFiled(unittest.TestCase):
                  for i in range(8)]
         consumers = _consumers({f["sha1"]: [("emu", {"required": True})] for f in files})
         self.assertEqual(gs._start_with(files, consumers, first_below=False)[0],
-                         "**Start with**: `rom0.bin`, `rom1.bin`, `rom2.bin` and 5 more files.")
+                         "**Start with**: [`rom0.bin`](#sha1-aaaaaaaaaaaa), [`rom1.bin`](#sha1-bbbbbbbbbbbb), "
+                         "[`rom2.bin`](#sha1-cccccccccccc) and 5 more files.")
 
 
 class CardsSayWhichReleaseTheSetMatches(unittest.TestCase):

@@ -29,6 +29,11 @@ DIST = REPO_ROOT / "website" / "dist"
 CONTENT = REPO_ROOT / "website" / "src" / "content" / "docs"
 
 
+def _unlinked(text: str) -> str:
+    """A start line's wording: each file it names links to its card."""
+    return re.sub(r"\[(`[^`]*`)\]\([^)]*\)", r"\1", text)
+
+
 def _file(name: str, char: str, path: str = "") -> dict:
     return {"name": name, "sha1": char * 40, "md5": char * 32, "size": 4096,
             "path": path or f"bios/Nintendo/Game Boy/{name}"}
@@ -73,7 +78,7 @@ class AFileFewRequireIsNoStartFile(unittest.TestCase):
         consumers = _consumers({"1" * 40: [
             ("emux_gb", {"name": "dmg_boot.bin", "required": True}),
             ("gambatte", optional), ("mgba", optional), ("sameboy", optional)]})
-        line = gs._start_with([boot], consumers)[0]
+        line = _unlinked(gs._start_with([boot], consumers)[0])
         self.assertTrue(line.startswith("**No file needed** with "), line)
         self.assertRegex(line, r"Only \S.* requires `dmg_boot.bin`\.$")
 
@@ -82,7 +87,7 @@ class AFileFewRequireIsNoStartFile(unittest.TestCase):
         required = {"name": "scph5501.bin", "required": True}
         consumers = _consumers({"2" * 40: [
             ("a", required), ("b", required), ("c", {"required": False, "hle_fallback": True})]})
-        self.assertEqual(gs._start_with([bios], consumers)[0], "**Start with**: `scph5501.bin`.")
+        self.assertEqual(_unlinked(gs._start_with([bios], consumers)[0]), "**Start with**: `scph5501.bin`.")
 
     def test_an_entry_read_for_a_system_with_no_section_is_dropped(self) -> None:
         sample = _file("ym2608_adpcm_rom.bin", "3", "bios/Nintendo/NES/ym2608_adpcm_rom.bin")
@@ -131,7 +136,7 @@ class TheNeoGeoOpensOnItsSet(unittest.TestCase):
             "5" * 40: [("ares", {"name": "neo-epo.sp1", "required": True,
                                  "system": "snk-neogeo"})],
         })
-        lines = gs._start_with([neogeo, epo], consumers, section=("SNK", "Neo Geo"))
+        lines = [_unlinked(line) for line in gs._start_with([neogeo, epo], consumers, section=("SNK", "Neo Geo"))]
         self.assertTrue(lines[0].startswith("**Start with** `neogeo.zip`. Keep it zipped. "))
         self.assertIn("ares reads `neo-epo.sp1` instead.", lines)
         cards = gs._console_cards("SNK", [epo, neogeo], consumers, set(),

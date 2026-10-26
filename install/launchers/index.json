@@ -1,0 +1,211 @@
+{
+  "schema": 1,
+  "launchers": {
+    "knulli": {
+      "files": [
+        {
+          "dest": "roms/ports/RetroBIOS.sh",
+          "repo_path": "ports/batocera/RetroBIOS.sh",
+          "size": 1583,
+          "sha256": "7b30f2f5d1c677dc160290562c24779b8e6d79e6db735e343beed7f377f2bbcf",
+          "executable": false
+        },
+        {
+          "dest": "roms/ports/RetroBIOS.sh.keys",
+          "repo_path": "ports/batocera/RetroBIOS.sh.keys",
+          "size": 1157,
+          "sha256": "82014d185bbefb3358e580ae28b77479d0ba60ee9a4158c719e3e46071eea8a9",
+          "executable": false
+        },
+        {
+          "dest": "roms/ports/retrobios/README.md",
+          "repo_path": "ports/batocera/README.md",
+          "size": 1276,
+          "sha256": "b45f6268d6e3e4e0f57337877ff707670325a8b5f8fa77c56668fb30a474ce34",
+          "executable": false
+        },
+        {
+          "dest": "roms/ports/retrobios/install.py",
+          "repo_path": "install.py",
+          "size": 611006,
+          "sha256": "cec348d9aa6c9f940a2c9dc9bc6414a923acea8137e4a3624d4710c9d88c38ad",
+          "executable": false
+        },
+        {
+          "dest": "roms/ports/retrobios/licenses/LICENSE-retrobios.txt",
+          "repo_path": "LICENSE",
+          "size": 1586,
+          "sha256": "4caf349722255530d2aa5ccb98447a8af89454ed5a1f8499faa674de969878f0",
+          "executable": false
+        },
+        {
+          "dest": "roms/ports/retrobios/licenses/NOTICE-retrobios.txt",
+          "repo_path": "NOTICE",
+          "size": 1555,
+          "sha256": "5df6f621cba97bf5ffde17926373c6384a64041d8e820540226f5eb6d6758f19",
+          "executable": false
+        },
+        {
+          "dest": "roms/ports/retrobios/packs.txt",
+          "content": "batocera\tBatocera\nemudeck\tEmuDeck\nmisterfpga\tMiSTer_FPGA\nretroarch\tRetroArch\nretrobat\tRetroBat\nromm\tRomM\n",
+          "size": 105,
+          "sha256": "d9d48576bbfeb4821816a78310019eb4f9913ac45874c29a0118525f2481c8f9",
+          "executable": false
+        },
+        {
+          "dest": "roms/ports/retrobios/rbevents.py",
+          "repo_path": "ports/shared/rbevents.py",
+          "size": 7258,
+          "sha256": "e3c758e73bc2afb2d94714b2a3c9bd20fe0e75af32f2d9ea5634ba5b83a4205b",
+          "executable": false
+        },
+        {
+          "dest": "roms/ports/retrobios/tui.txt",
+          "repo_path": "ports/shared/tui.txt",
+          "size": 34998,
+          "sha256": "6e22292fc3f0688e0509bebd55f242fb3eecf9e149d5dc365ea75447e921bf78",
+          "executable": false
+        }
+      ]
+    },
+    "muos": {
+      "archive": {
+        "dest": "ARCHIVE/RetroBIOS.muxapp",
+        "size": 661660,
+        "sha256": "681ae3d8eb8572640b57dd4ca8699cb2cb8f011d1071ba5ef286c1b2eeb1877d"
+      },
+      "members": [
+        {
+          "name": "RetroBIOS/README.md",
+          "repo_path": "ports/muos/README.md",
+          "size": 1127,
+          "sha256": "c0cfafad5fae8e6764b263b14a06195b267f66c4fe042333941ae6bcc6dab265",
+          "executable": false
+        },
+        {
+          "name": "RetroBIOS/install.py",
+          "repo_path": "install.py",
+          "size": 611006,
+          "sha256": "cec348d9aa6c9f940a2c9dc9bc6414a923acea8137e4a3624d4710c9d88c38ad",
+          "executable": false
+        },
+        {
+          "name": "RetroBIOS/licenses/LICENSE-retrobios.txt",
+          "repo_path": "LICENSE",
+          "size": 1586,
+          "sha256": "4caf349722255530d2aa5ccb98447a8af89454ed5a1f8499faa674de969878f0",
+          "executable": false
+        },
+        {
+          "name": "RetroBIOS/licenses/NOTICE-retrobios.txt",
+          "repo_path": "NOTICE",
+          "size": 1555,
+          "sha256": "5df6f621cba97bf5ffde17926373c6384a64041d8e820540226f5eb6d6758f19",
+          "executable": false
+        },
+        {
+          "name": "RetroBIOS/mux_launch.sh",
+          "repo_path": "ports/muos/mux_launch.sh",
+          "size": 2216,
+          "sha256": "8566922b2ba50e49314f3dab9e3327ff736dd718bb307bb19b39e46e2e8c0f36",
+          "executable": true
+        },
+        {
+          "name": "RetroBIOS/packs.txt",
+          "content": "batocera\tBatocera\nemudeck\tEmuDeck\nmisterfpga\tMiSTer_FPGA\nretroarch\tRetroArch\nretrobat\tRetroBat\nromm\tRomM\n",
+          "size": 105,
+          "sha256": "d9d48576bbfeb4821816a78310019eb4f9913ac45874c29a0118525f2481c8f9",
+          "executable": false
+        },
+        {
+          "name": "RetroBIOS/rbevents.py",
+          "repo_path": "ports/shared/rbevents.py",
+          "size": 7258,
+          "sha256": "e3c758e73bc2afb2d94714b2a3c9bd20fe0e75af32f2d9ea5634ba5b83a4205b",
+          "executable": false
+        },
+        {
+          "name": "RetroBIOS/retrobios.gptk",
+          "repo_path": "ports/shared/retrobios.gptk",
+          "size": 659,
+          "sha256": "fdb30597ec757ff769add5052476ff51e3bc3910022a73ab2a91670a1b65c65a",
+          "executable": false
+        },
+        {
+          "name": "RetroBIOS/tui.txt",
+          "repo_path": "ports/shared/tui.txt",
+          "size": 34998,
+          "sha256": "6e22292fc3f0688e0509bebd55f242fb3eecf9e149d5dc365ea75447e921bf78",
+          "executable": false
+        }
+      ]
+    },
+    "rocknix": {
+      "files": [
+        {
+          "dest": ".config/modules/RetroBIOS.sh",
+          "repo_path": "ports/tools/RetroBIOS.sh",
+          "size": 4732,
+          "sha256": "556c83159111a2071097a38590e3335aea90f76201473e064ba8365882fb2a6f",
+          "executable": true
+        },
+        {
+          "dest": ".config/modules/retrobios/README.md",
+          "repo_path": "ports/tools/README.md",
+          "size": 949,
+          "sha256": "a5dfc71ff2a932a6c102558c0ac49790b112e96914bf29f396d3f90af75d0997",
+          "executable": false
+        },
+        {
+          "dest": ".config/modules/retrobios/install.py",
+          "repo_path": "install.py",
+          "size": 611006,
+          "sha256": "cec348d9aa6c9f940a2c9dc9bc6414a923acea8137e4a3624d4710c9d88c38ad",
+          "executable": false
+        },
+        {
+          "dest": ".config/modules/retrobios/licenses/LICENSE-retrobios.txt",
+          "repo_path": "LICENSE",
+          "size": 1586,
+          "sha256": "4caf349722255530d2aa5ccb98447a8af89454ed5a1f8499faa674de969878f0",
+          "executable": false
+        },
+        {
+          "dest": ".config/modules/retrobios/licenses/NOTICE-retrobios.txt",
+          "repo_path": "NOTICE",
+          "size": 1555,
+          "sha256": "5df6f621cba97bf5ffde17926373c6384a64041d8e820540226f5eb6d6758f19",
+          "executable": false
+        },
+        {
+          "dest": ".config/modules/retrobios/packs.txt",
+          "content": "batocera\tBatocera\nemudeck\tEmuDeck\nmisterfpga\tMiSTer_FPGA\nretroarch\tRetroArch\nretrobat\tRetroBat\nromm\tRomM\n",
+          "size": 105,
+          "sha256": "d9d48576bbfeb4821816a78310019eb4f9913ac45874c29a0118525f2481c8f9",
+          "executable": false
+        },
+        {
+          "dest": ".config/modules/retrobios/rbevents.py",
+          "repo_path": "ports/shared/rbevents.py",
+          "size": 7258,
+          "sha256": "e3c758e73bc2afb2d94714b2a3c9bd20fe0e75af32f2d9ea5634ba5b83a4205b",
+          "executable": false
+        },
+        {
+          "dest": ".config/modules/retrobios/retrobios.gptk",
+          "repo_path": "ports/shared/retrobios.gptk",
+          "size": 659,
+          "sha256": "fdb30597ec757ff769add5052476ff51e3bc3910022a73ab2a91670a1b65c65a",
+          "executable": false
+        },
+        {
+          "dest": ".config/modules/retrobios/tui.txt",
+          "repo_path": "ports/shared/tui.txt",
+          "size": 34998,
+          "sha256": "6e22292fc3f0688e0509bebd55f242fb3eecf9e149d5dc365ea75447e921bf78",
+          "executable": false
+        }
+      ]
+    }
+  }
+}
