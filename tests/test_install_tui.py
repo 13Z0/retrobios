@@ -2004,8 +2004,10 @@ class CopyFromAnOldCard(unittest.TestCase):
         self.recheck(state, [found("scph5500.bin", str(SYSTEM_DIR),
                                    "nested folder: bios/scph5500.bin")])
         text = " ".join(line.strip() for line in install.tui_view(state, 120, 40))
+        # tui_audit_4 P3-10.13: a fix copies, and the screen says the user's
+        # copy stays.
         self.assertIn("1 file is in the wrong place, it will be copied where the emulators "
-                      "read it.", text)
+                      "read it, your copy left as it is.", text)
         row = next(i for i, r in enumerate(install.tui_rows(state)) if r.action == "misplaced")
         state.focus["plan"] = row
         press(state, "enter")
@@ -2014,6 +2016,19 @@ class CopyFromAnOldCard(unittest.TestCase):
                       "\n".join(install.tui_view(state, 80, 24)))
         press(state, "esc")
         self.assertEqual(state.screen, "plan")
+
+    def test_the_result_says_the_misplaced_copies_stay(self):
+        state = checked_state()
+        state.stack.append("result")
+        state.code = 0
+        state.summary = {"event": "summary", "mode": "install", "installed": 2,
+                         "up_to_date": 0, "pending": 0, "failed": [], "skipped": [],
+                         "left_out": [], "kept": [], "interrupted": False}
+        state.local_dests = {"scph5500.bin": (str(SYSTEM_DIR), "nested folder: bios/a")}
+        state.finished = [("scph5500.bin", True, ""), ("gba_bios.bin", True, "")]
+        text = " ".join(" ".join(install.tui_outcome(state)[1]).split())
+        self.assertIn("1 file fixed from copies already in the BIOS folder, 1 downloaded. "
+                      "Your copies at the wrong place were left as they are.", text)
 
     def test_a_local_copy_is_no_download_speed(self):
         state = checked_state()

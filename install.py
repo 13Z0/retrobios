@@ -12641,7 +12641,9 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
                      f"{'is' if len(misplaced) == 1 else 'are'} in the wrong place, "
                      f"{'it' if len(misplaced) == 1 else 'they'} will be copied where the "
                      "emulators read "
-                     f"{'it' if len(misplaced) == 1 else 'them'}.")
+                     f"{'it' if len(misplaced) == 1 else 'them'}, your "
+                     f"{'copy' if len(misplaced) == 1 else 'copies'} left as "
+                     f"{'it is' if len(misplaced) == 1 else 'they are'}.")
     if state.facts.get("writable") is False:
         if state.os_type == "windows":
             lines.append("Or run the installer as an administrator.")
@@ -13063,7 +13065,9 @@ def _tui_sources(state: TuiState, installed: int, failed: int) -> str:
             name = _last_name(folder)
             folders[name] = folders.get(name, 0) + 1
     copied = fixed + sum(folders.values())
-    return sources_line(list(folders.items()), fixed, max(0, installed - copied), failed)
+    line = sources_line(list(folders.items()), fixed, max(0, installed - copied), failed)
+    # A fix copies: the misplaced files are the user's, never moved.
+    return line + (" Your copies at the wrong place were left as they are." if fixed else "")
 
 
 def _unavailable(state: TuiState) -> tuple[list[dict], int]:
