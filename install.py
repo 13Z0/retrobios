@@ -5403,7 +5403,7 @@ def _report_outcome(
             print(f"  ... and {len(failures) - 10} more")
     if declined and not downloaded and not errors and not interrupted:
         print(f"\nNothing installed: {_plural(declined, 'file')} not downloaded, "
-              "as answered.")
+              + ("which --offline does not do." if _offline_only() else "as answered."))
         print(f"{_plural(up_to_date, 'file')} already up to date at {_locations(paths)}.")
         return
     kept = _kept_lines()
@@ -10405,7 +10405,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                       "--offline does not use. Copy them from your old card or a folder "
                       "(--from), or run the installer again with a pack (--from-pack) or "
                       "without --offline.")
+                # Not done: the summary says they were not downloaded.
                 files_pending += len(fetched)
+                total_declined += len(fetched)
                 to_download = [f for f in to_download if id(f) in copies]
                 fetched = []
             dl_size = sum(f.get("size", 0) for f in to_download)

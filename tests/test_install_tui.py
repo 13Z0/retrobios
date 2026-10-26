@@ -3578,7 +3578,9 @@ class LineModeOffline(unittest.TestCase):
         self.assertIn("--offline: only the files found on this machine are installed.", out)
         self.assertIn("5 files need the internet, which --offline does not use.", out)
         self.assertNotIn("Downloading", out)
-        self.assertNotIn("failed", out.lower().replace("not failed", ""))
+        self.assertNotIn("failed", out.lower())
+        self.assertIn("Nothing installed: 5 files not downloaded, which --offline does not do.",
+                      out.replace("\r\n", " ").replace("\n", " "))
 
     def test_the_data_files_are_counted_before_the_question(self):
         files = [{"dest": "a.bin", "size": 1024}]
