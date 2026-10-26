@@ -4,11 +4,12 @@ core_classification: community_fork
 source: "https://github.com/ARMSX2/ARMSX1"
 source_branch: "android-compose"
 upstream: "https://github.com/allkern/psxe"
-profiled_date: "2026-08-11"
-source_commit: "fadd20b6587a291e59b49378a2428358c6663b8c"
-core_version: "0.1.3"
+profiled_date: "2026-10-26"
+source_commit: "d96a5b8ad6ccccb40a431488aa89b06f0318c217"
+core_version: "0.3.6"
 display_name: "Sony - PlayStation (ARMSX1)"
-verification: existence
+verification: md5
+found_by: content
 bios_size: 524288
 bios_directory: "bios/"
 cores:
@@ -17,83 +18,318 @@ systems:
   - sony-playstation
 
 notes: |
-  PlayStation emulator forked from psxe, rebuilt around SDL2 frontends and a
-  Dear ImGui fullscreen shell. Desktop, Android, iOS, UWP, WebAssembly and
-  PSVita builds come out of one tree. The Android application is
-  com.nanodata.armsx with the activity com.armsx2.Main, and its Compose
-  launcher hosts the same core in process.
-  ref: README.md:1-2, android/app/build.gradle:71-79,
-       android/app/src/main/AndroidManifest.xml:78-92
+  PlayStation emulator forked from psxe. The released application is the
+  Android build, com.nanodata.armsx, version 0.3.6 at this revision. That
+  build runs libretro SwanStation, checked out as the core/swanstation
+  submodule at dd4805619bbbfc6e0d1776372cb16377088b448e and driven by an
+  in-process adapter, and no longer the psxe engine. The SDL desktop, iOS,
+  UWP, web and PSVita frontends in the same tree still build on psxe. The
+  release tags 0.1.5 to 0.3.6 all sit on 99b3081 of the main branch, a
+  2026-09-05 tree that carries none of this code. The version is the
+  versionName android-compose builds.
+  ref: android/app/build.gradle:72-75, SWANSTATION-DEV.md:10-19
 
-  A BIOS image is required. Boot stops before a session exists when no path
-  resolves, and again when the file cannot be read. Skip BIOS does not change
-  that: the image runs from reset and the hook only takes over at the shell
-  entry point, once the kernel is built.
-  ref: frontend/main.cpp:2529-2549, psx/psx.c:249-252, psx/fastboot.h:45,
-       psx/fastboot.c:225-239
+  Android accepts a BIOS only through its importer. The setup wizard, the
+  BIOS manager and its folder scan all ask getBiosInfoFromFd, which requires
+  exactly 512 KB and then either the OpenBIOS signature at 0x78 or one of 25
+  MD5 values taken from SwanStation's table. A recognised file is copied into
+  <external files>/bios under its own name. The wizard does not leave the
+  BIOS page until one is recognised.
+  ref: android/app/src/main/java/kr/co/iefriends/pcsx2/NativeApp.java:1252-1262,
+       android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:16-79,
+       android/app/src/main/java/com/armsx2/ui/onboarding/OnboardingViewModel.kt:183-203,
+       android/app/src/main/java/com/armsx2/ui/onboarding/OnboardingViewModel.kt:250-255,
+       android/app/src/main/java/com/armsx2/ui/bios/BiosManagerViewModel.kt:172-187
 
-  psxe_cfg_get_bios_path answers in three steps: the override file when it
-  exists, then a scan of the search folder, then the override path unchanged.
-  The override is [bios].override_file or -b and defaults to bios.bin under the
-  preference path SDL_GetPrefPath("nanodata", "armsx"). The search folder is
-  [bios].search_path or -B and defaults to the relative path bios.
-  ref: frontend/config.c:1540-1559, frontend/config.c:1385-1404,
-       frontend/config.c:677-683, frontend/config.c:54-57
+  Before each launch the settings store walks the BIOS folder, the search
+  folder and the selected file's folder, each sorted by path, then the older
+  user_bios.bin and bios.bin imports, and keeps the first 512 KB file whose
+  MD5 entry names the preferred_model console, SCPH-1001 by default. It writes
+  that path as [bios].resolved_file, and the adapter hands it to SwanStation
+  as the BIOS path of all three regions, relative to the system directory,
+  which is the folder of the selected BIOS or <external files>/bios.
+  ref: android/app/src/main/java/com/armsx2/config/Ps1SettingsStore.kt:176-195,
+       android/app/src/main/java/com/armsx2/core/Ps1BiosSelection.java:17-64,
+       android/app/src/main/java/com/armsx2/config/Ps1Settings.kt:32-33,
+       android/app/src/main/java/kr/co/iefriends/pcsx2/NativeApp.java:108-123,
+       native/swanstation/runtime.cpp:243-247, native/swanstation/runtime.cpp:255
 
-  The scan reads that folder once, keeps .bin and .rom, and returns the entry
-  named bios.bin. Its other branch compares [bios].preferred_model against each
-  filename through a normaliser that drops every non-alphanumeric character and
-  lowercases the rest, applied to the name including its extension, so
-  scph1001.bin normalises to scph1001bin and no model value equals it. A name
-  carrying no extension, which would, is dropped by the extension filter first.
-  ref: frontend/config.c:292-357, frontend/config.c:226-247,
-       frontend/config.c:249-260
+  No match leaves the path empty, and SwanStation scans the system directory
+  itself: files of 512 KB, 4 MB or 0x3E66F0 bytes, the first 512 KB hashed
+  against its 27-entry table, the first image of the console region returned,
+  otherwise the first known image of another region. An unknown image is
+  never used, and with nothing found the core boots its built-in OpenBIOS.
+  The region is Auto unless console.region says pal or ntsc, and Auto follows
+  the disc, NTSC-U without one.
+  ref: swanstation src/core/host_interface.cpp:100-194,
+       swanstation src/core/bios.cpp:28-104,
+       swanstation src/core/system.cpp:592-645,
+       swanstation src/core/system.cpp:677-682,
+       native/swanstation/runtime.cpp:209
 
-  Nothing identifies the image beyond that. No name table, no size test, no
-  hash. The loader takes the file's own length, allocates it, and the bus maps
-  the device from 0x1fc00000 over that same length, which is how the 1 MB
-  SCPH-5903 image stays addressable in full.
-  ref: psx/dev/bios.c:21-54, psx/bus.c:50-54, psx/dev/bios.h:8-10
-
-  preferred_model carries 22 values, SCPH-1000 through SCPH-102C, printed by
-  --help-model and mirrored by the Android model picker.
-  ref: frontend/config.c:177-200,
-       android/app/src/main/java/com/armsx2/config/Ps1Settings.kt:416-423
-
-  On Android the preference path is the application files directory, so
-  settings.toml and the default bios.bin sit there. The BIOS picker copies the
-  chosen dump to user_bios.bin and writes its absolute path into
-  [bios].override_file. EmulatorActivity passes --bios <files>/bios.bin when
-  the package carries an assets/bios.bin, and the in-process launcher repeats
-  that check with stat. Release 0.1.3 ships no such asset.
-  ref: android/app/src/main/java/com/armsx2/core/Ps1Config.kt:20-41,
-       android/app/src/main/java/com/armsx2/ui/settings/Ps1BiosTab.kt:38-48,
-       android/app/src/main/java/com/nanodata/armsx/EmulatorActivity.java:58-61,
-       android/app/src/main/java/com/nanodata/armsx/EmulatorActivity.java:95-99,
-       frontend/android_jni.cpp:1708-1743, ARMSX1-0.1.3-release.apk assets
-
-  The remaining paths the core opens are per game, and are written by the
-  emulator or picked by the user: memory cards (created blank at first use),
-  save states, rewind snapshots and screenshots, a GameShark .cht catalogue
-  named by [cheats].cheats_file, and content-addressed PNG packs under the
-  replacements folder of [video].texture_dir.
-  ref: psx/dev/mcd.c:139-154, psx/cheats.c:346-390, psx/texrep.c:846-848
+  The psxe frontends take [bios].override_file or -b, by default bios.bin
+  under SDL_GetPrefPath("nanodata", "armsx"), when that file exists.
+  Otherwise they scan [bios].search_path, bios by default, for .bin and .rom
+  files and return the first whose stem normalises to preferred_model, else
+  one named bios.bin, else the override path unchanged. psx_bios_load refuses
+  anything but 512 KB or the 1 MB SCPH-5903 image and checks no hash.
+  ref: frontend/config.c:54-57, frontend/config.c:279-352,
+       frontend/config.c:1378-1399, frontend/config.c:1535-1554,
+       frontend/main.cpp:2555-2561, psx/dev/bios.c:22-75
 
 files:
-  - name: scph1001.bin
-    agnostic: true
-    required: true
-    min_size: 524288
-    max_size: 1048576
-    description: "PlayStation BIOS image"
+  - name: "scph1000.bin"
+    description: "SCPH-1000, DTL-H1000 (v1.0)"
+    region: [japan]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "239665b1a3dade1b5a52c06338011044"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:30"
+
+  - name: "scph1001.bin"
+    description: "SCPH-1001, 5003, DTL-H1201, H3001 (v2.2 12-04-95 A)"
+    region: [north-america, latin-america]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "924e392ed05558ffdb115408c263dccf"
+    validation: [size, md5]
     note: >-
-      Any image is accepted, whatever its name and length: the file is read
-      whole and mapped at its own size. 524288 is the region psx_bios_init
-      declares before the load, and 1048576 the SCPH-5903 image the loader
-      names as the exception. The folder scan reaches an image only under the
-      name bios.bin. [bios].override_file, -b and the Android picker open a
-      path directly.
-    source_ref: "source psx/dev/bios.c:21-54, source psx/dev/bios.h:8-10, source frontend/config.c:292-357, source frontend/config.c:1540-1559, source frontend/main.cpp:2529-2535"
+      The model both settings files preselect, SCPH-1001. The desktop
+      scan also reaches this image by its stem.
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:31"
+
+  - name: "scph1002a.bin"
+    description: "SCPH-1002, DTL-H1002 (v2.0 05-10-95 E)"
+    region: [europe, oceania]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "54847e693405ffeb0359c6287434cbef"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:32"
+
+  - name: "scph1002b.bin"
+    description: "SCPH-1002, DTL-H1102 (v2.1 07-17-95 E)"
+    region: [europe, oceania]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "417b34706319da7cf001e76e40136c23"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:33"
+
+  - name: "scph1002c.bin"
+    description: "SCPH-1002, DTL-H1202, H3002 (v2.2 12-04-95 E)"
+    region: [europe, oceania]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "e2110b8a2b97a8e0b857a45d32f7e187"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:34"
+
+  - name: "dtlh1100.bin"
+    description: "DTL-H1100 (v2.2 03-06-96 D)"
+    region: [japan]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "ca5cfc321f916756e3f0effbfaeba13b"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:35"
+
+  - name: "scph3000.bin"
+    description: "SCPH-3000, DTL-H1000H (v1.1 01-22-95)"
+    region: [japan]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "849515939161e62f6b866f6853006780"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:36"
+
+  - name: "scph1001_v20.bin"
+    description: "SCPH-1001, DTL-H1001 (v2.0 05-07-95 A)"
+    region: [north-america, latin-america]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "dc2b9bf8da62ec93e868cfd29f0d067d"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:37"
+
+  - name: "scph3500.bin"
+    description: "SCPH-3500 (v2.1 07-17-95 J)"
+    region: [japan]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "cba733ceeff5aef5c32254f1d617fa62"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:38"
+
+  - name: "scph1001_v21.bin"
+    description: "SCPH-1001, DTL-H1101 (v2.1 07-17-95 A)"
+    region: [north-america, latin-america]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "da27e8b6dab242d8f91a9b25d80c63b8"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:39"
+
+  - name: "scph5000.bin"
+    description: "SCPH-5000, DTL-H1200, H3000 (v2.2 12-04-95 J)"
+    region: [japan]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "57a06303dfa9cf9351222dfcbb4a29d9"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:40"
+
+  - name: "scph5500.bin"
+    description: "SCPH-5500 (v3.0 09-09-96 J)"
+    region: [japan]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "8dd7d5296a650fac7319bce665a6a53c"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:41"
+
+  - name: "scph5501.bin"
+    description: "SCPH-5501, 5503, 7003 (v3.0 11-18-96 A)"
+    region: [north-america, latin-america]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "490f666e1afb15b7362b406ed1cea246"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:42"
+
+  - name: "scph5502.bin"
+    description: "SCPH-5502, 5552 (v3.0 01-06-97 E)"
+    region: [europe, oceania]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "32736f17079d0b2b7024407c39bd3050"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:43"
+
+  - name: "scph7000.bin"
+    description: "SCPH-7000, 7500, 9000 (v4.0 08-18-97 J)"
+    region: [japan]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "8e4c14f567745eff2f0408c8129f72a6"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:44"
+
+  - name: "scph7000w.bin"
+    description: "SCPH-7000W (v4.1 11-14-97 A)"
+    region: [japan]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "b84be139db3ee6cbd075630aa20a6553"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:45"
+
+  - name: "scph7001.bin"
+    description: "SCPH-7001, 7501, 7503, 9001, 9003, 9903 (v4.1 12-16-97 A)"
+    region: [north-america, latin-america]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "1e68c231d0896b7eadcad1d7d8e76129"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:46"
+
+  - name: "scph7002.bin"
+    description: "SCPH-7002, 7502, 9002 (v4.1 12-16-97 E)"
+    region: [europe, oceania]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "b9d9a0286c33dc6b7237bb13cd46fdee"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:47"
+
+  - name: "scph100.bin"
+    description: "SCPH-100 (v4.3 03-11-00 J)"
+    region: [japan]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "8abc1b549a4a80954addc48ef02c4521"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:48"
+
+  - name: "scph101_v44.bin"
+    description: "SCPH-101 (v4.4 03-24-00 A)"
+    region: [north-america, latin-america]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "9a09ab7e49b422c007e6d54d7c49b965"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:49"
+
+  - name: "scph101_v45.bin"
+    description: "SCPH-101 (v4.5 05-25-00 A)"
+    region: [north-america, latin-america]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "6e3735ff4c7dc899ee98981385f6f3d0"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:50"
+
+  - name: "scph102_v44.bin"
+    description: "SCPH-102 (v4.4 03-24-00 E)"
+    region: [europe, oceania]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "b10f5e0e3d9eb60e5159690680b1e774"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:51"
+
+  - name: "scph102_v45.bin"
+    description: "SCPH-102 (v4.5 05-25-00 E)"
+    region: [europe, oceania]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "de93caec13d1a141a40a79f5c86168d6"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:52"
+
+  - name: "psxonpsp660.bin"
+    description: "PSP, SCPH-1000R (v4.5 05-25-00 J)"
+    region: [world]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "c53ca5908936d412331790f4426c6c33"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:53"
+
+  - name: "scph1000r.bin"
+    description: "SCPH-1000R (v4.5 05-25-00 J)"
+    region: [japan]
+    required: false
+    variant_group: "psx-bios"
+    size: 524288
+    md5: "476d68a94ccec3b9c8303bbd1daf2810"
+    validation: [size, md5]
+    source_ref: "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java:54"
 
   - name: "<expansion>.rom"
     required: false
@@ -102,8 +338,8 @@ files:
     unsourceable: "any expansion port ROM the user points at, under no name and no version the code expects"
     description: "Expansion port ROM image"
     note: >-
-      Read into the 512 KB region at 0x1f000000, which is filled with 0xff when
-      no path is set. Named by [paths].expansion_rom, -e, or the Advanced tab of
-      the Android settings. A path that is set and cannot be opened fails
-      psx_init and stops the boot.
-    source_ref: "source psx/dev/exp1.c:12-44, source psx/dev/exp1.h:8-10, source psx/psx.c:260-261, source frontend/config.c:681, source frontend/main.cpp:1906, source android/app/src/main/java/com/armsx2/ui/settings/Ps1AdvancedTab.kt:96-100"
+      Read by the psxe frontends into the 512 KB region at 0x1f000000, which
+      is filled with 0xff when no path is set. A path that is set and cannot be
+      opened fails psx_init. The Android settings only display the key, and
+      the SwanStation adapter never reads it.
+    source_ref: "psx/dev/exp1.c:12-44, psx/dev/exp1.h:9, psx/psx.c:312-313, frontend/config.c:93, frontend/main.cpp:2569-2570, android/app/src/main/java/com/armsx2/ui/settings/Ps1AdvancedTab.kt:102-108"
