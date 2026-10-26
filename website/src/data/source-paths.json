@@ -570,7 +570,7 @@
   "bsnes/sfc/cartridge/load.cpp",
   "bsnes/target-libretro/libretro.cpp"
  ],
- "github.com/DirtBagXon/hypseus-singe@cda87965fe0a031d027b2253c6715d37cca6b56a": [
+ "github.com/DirtBagXon/hypseus-singe@a16e2521ee3233ef20c44e562008c47f4b4293df": [
   "src/game/astron.cpp",
   "src/game/badlands.cpp",
   "src/game/bega.cpp",
@@ -578,6 +578,7 @@
   "src/game/cobraconv.cpp",
   "src/game/esh.cpp",
   "src/game/firefox.cpp",
+  "src/game/game.cpp",
   "src/game/gpworld.cpp",
   "src/game/interstellar.cpp",
   "src/game/lair.cpp",
@@ -586,10 +587,18 @@
   "src/game/lgp.cpp",
   "src/game/mach3.cpp",
   "src/game/multicputest.cpp",
+  "src/game/singe/singe_utils.cpp",
+  "src/game/starrider.cpp",
   "src/game/superd.cpp",
   "src/game/thayers.cpp",
   "src/game/timetrav.cpp",
-  "src/io/input.cpp"
+  "src/hypseus.cpp",
+  "src/io/homedir.cpp",
+  "src/io/input.cpp",
+  "src/sound/sound.cpp",
+  "src/video/splash.cpp",
+  "src/video/video.cpp",
+  "src/video/video.h"
  ],
  "github.com/DirtBagXon/model3emu-code-sinden@11726c4bad3696a50a8b834eaba6aee3fa08a590": [
   "Config/Games.xml",
@@ -859,10 +868,10 @@
   "Core/gb.h",
   "libretro/libretro.c"
  ],
- "github.com/LLeny/holani-retro@19b974f77247a937369adf48280d2b34a5a66245": [
+ "github.com/LLeny/holani-retro@d0d79b4928e3d32695294142784c033ce7aeda9b": [
   "src/lib.rs"
  ],
- "github.com/LLeny/holani@4fa0ee920c63a9cf8d07b974ae77fb15161ff967": [
+ "github.com/LLeny/holani@7871f5cc6a26cf458f1adaaf54c4ccbd3ab3e338": [
   "src/lib.rs",
   "src/rom.rs"
  ],
@@ -2527,7 +2536,7 @@
   "src/frontend/sdl/config.cpp",
   "src/frontend/sdl/main.cpp"
  ],
- "github.com/beudbeud/libretro-stv@4e899aa2951a4714f82523d2d0f00c98599fd574": [
+ "github.com/beudbeud/libretro-stv@e65713478870dd494afd5c0bcd852fc76c383f14": [
   "libretro/libretro.cpp",
   "mednafen/ss/smpc.h",
   "mednafen/ss/ss.cpp"
@@ -2536,7 +2545,7 @@
   "src/bstone/src/id_ca.cpp",
   "src/bstone/src/jm_free.cpp"
  ],
- "github.com/blueminder/flycast-dojo@745815c929fca4a893be28c99351b44d984b6642": [
+ "github.com/blueminder/flycast-dojo@fa518ac574b17fbc70837f97275c019b208a8740": [
   ".github/workflows/build-and-release.yml",
   "CMakeLists.txt",
   "core/cfg/option.cpp",
@@ -2740,7 +2749,7 @@
   "crawl-ref/source/maps.cc",
   "crawl-ref/source/tiletex.cc"
  ],
- "github.com/cxong/cdogs-sdl@57782a74ae245d868487094d201d0e56e94a9390": [
+ "github.com/cxong/cdogs-sdl@c70d1feaf9d89cf80e23265b256d9a364848e6ea": [
   "CMakeLists.txt",
   "src/cdogs.c",
   "src/cdogs/ammo.c",
@@ -2754,7 +2763,7 @@
   "src/cdogs/map_object.c",
   "src/cdogs/map_wolf.c",
   "src/cdogs/music.c",
-  "src/cdogs/particle.c",
+  "src/cdogs/particle_class.c",
   "src/cdogs/pic_manager.c",
   "src/cdogs/pickup_class.c",
   "src/cdogs/sounds.c",
@@ -3032,7 +3041,7 @@
   "platforms/libretro/libretro.cpp",
   "src/Memory.cpp"
  ],
- "github.com/drhelius/Geartowns@d157715112589aeb7e88319b2f2b4ac4e2cafc5f": [
+ "github.com/drhelius/Geartowns@996d42b098bd572ba66a8246bfe56cee39e5ff6e": [
   "platforms/libretro/Makefile",
   "platforms/libretro/libretro.cpp",
   "src/common/defines.h",
@@ -7788,6 +7797,7 @@
   "src/game/cobraconv.cpp",
   "src/game/esh.cpp",
   "src/game/firefox.cpp",
+  "src/game/game.cpp",
   "src/game/gpworld.cpp",
   "src/game/interstellar.cpp",
   "src/game/lair.cpp",
@@ -7796,10 +7806,15 @@
   "src/game/lgp.cpp",
   "src/game/mach3.cpp",
   "src/game/multicputest.cpp",
+  "src/game/starrider.cpp",
   "src/game/superd.cpp",
   "src/game/thayers.cpp",
   "src/game/timetrav.cpp",
-  "src/io/input.cpp"
+  "src/io/homedir.cpp",
+  "src/io/input.cpp",
+  "src/sound/sound.cpp",
+  "src/video/video.cpp",
+  "src/video/video.h"
  ],
  "github.com/mittonk/dice-libretro@4b4596b8dd2252b9d08bd6aaa02afda4be834db3": [
   "chips/rom.cpp",
@@ -9547,7 +9562,7 @@
   "src/sdl/sf_fonts.c",
   "src/sdl/sf_resource.c"
  ],
- "gitlab.com/Dringgstein/Commander-Genius@bee4fcbd235b9d3d804a50cc6ecaccbbe89490f7": [
+ "gitlab.com/Dringgstein/Commander-Genius@58a3c4fd0782fa2a087e38a039599b2ecf69ccc9": [
   "GsKit/fileio/ResourceMgmt.cpp",
   "src/engine/CGameLauncher.cpp",
   "src/engine/CGameLauncher.h",
