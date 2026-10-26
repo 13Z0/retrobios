@@ -131,7 +131,8 @@ how many files are missing, how much they weigh, how many are in place and how
 much space is free, before anything is written.
 
 The other choices sit one press away. **Choose systems** ticks the consoles you
-play, with the total to download under the list. **Options** sets the
+play, with the total to download under the list. A long list opens on **None**:
+A there unticks every system, and A on a system then installs that one alone. **Options** sets the
 preferred regions, game data, the installed cores only, the cores, the parallel
 downloads and the folder. Each row names the option it sets, and **Show the
 command line** gives the same choice as one command for a script. **Preview the
@@ -1072,8 +1073,8 @@ Start pressed first also chooses the line in focus: hold Select first. A
 running install is then stopped the way B stops it, and the last screen says
 what it wrote. On muOS without PortMaster, muxterm reads the pad itself: Y
 ticks a system, Select shows its keyboard, and Menu quits. L1 and R1 do not
-page there: muxterm keeps PgUp and PgDn for its own scrollback, so a list
-moves with the D-pad.
+page there: muxterm keeps PgUp and PgDn for its own scrollback, so Left and
+Right on the D-pad page a list instead, as they do with gptokeyb in muxterm.
 
 Each launcher also sets `RETROBIOS_IDLE_EXIT` to 300: with no button pressed
 for 5 minutes since it opened, and no check or install running, the interface
@@ -1087,8 +1088,8 @@ Each launcher tells the interface which buttons reach it, in
 | Value | Input | Set by |
 |-------|-------|--------|
 | `gptokeyb` | gptokeyb or gptokeyb2 with `retrobios.gptk`, the table above | the PortMaster port and the Tools entry |
-| `gptokeyb_muxterm` | the same, inside muxterm, which keeps L1 and R1 for its scrollback: no button pages | the muOS app with PortMaster |
-| `muxterm` | muxterm's own keys: D-pad, Start as Enter, B as Backspace, Y as Space | the muOS app without PortMaster |
+| `gptokeyb_muxterm` | the same, inside muxterm, which keeps L1 and R1 for its scrollback: Left and Right page | the muOS app with PortMaster |
+| `muxterm` | muxterm's own keys: D-pad (Left and Right page), Start as Enter, B as Backspace, Y as Space | the muOS app without PortMaster |
 | `evmapy` | `RetroBIOS.sh.keys`, the same buttons as the table | the Batocera and Knulli port |
 | `miyoo` | buttons that are already keys: A as Space, Start as Enter, L1 and R1 as E and T, L2 as Tab, R2 as Backspace | no launcher yet |
 

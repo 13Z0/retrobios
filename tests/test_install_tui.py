@@ -444,13 +444,12 @@ class Flow(unittest.TestCase):
         self.assertEqual(install.tui_rows(state)[state.focus["systems"]].action, "system")
         press(state, "n")
         self.assertEqual(state.ticked, set())
-        self.assertEqual(press(state, "enter"), [])
-        self.assertIn("No system is ticked", state.status)
         focus = next(i for i, row in enumerate(install.tui_rows(state))
                      if row.value == "nintendo-gba")
         state.focus["systems"] = focus
-        press(state, "right")
+        # Nothing ticked: Enter takes the system in focus alone.
         self.assertEqual(press(state, "enter"), [("run", "confirm")])
+        self.assertEqual(state.ticked, {"nintendo-gba"})
         self.assertEqual(state.screen, "confirm")
         self.assertIn("--system=nintendo-gba", install.tui_argv(state, "confirm", "py", "i.py"))
         self.assertIn("--dry-run", install.tui_argv(state, "confirm", "py", "i.py"))
@@ -1127,19 +1126,20 @@ class PadRoutes(unittest.TestCase):
             self.assertIn(words, muxterm)
         self.assertNotIn("Start+Select", muxterm)
         # gptokeyb2 owns the pad inside muxterm, which keeps PgUp and PgDn
-        # for its scrollback: the gptokeyb buttons, and no page key.
+        # for its scrollback: the gptokeyb buttons, Left and Right to page.
         in_muxterm = help_text("gptokeyb_muxterm", "preview")
         for words in ("A, Start, Enter", "Select, then Start"):
             self.assertIn(words, in_muxterm)
         self.assertNotIn("L1/R1", in_muxterm)
         self.assertIn("L1/R1", help_text("gptokeyb", "preview"))
         # muxterm keeps PgUp and PgDn for its scrollback, and L1 and R1
-        # send nothing: no paging is offered there, on a list or a pager.
+        # send nothing: the D-pad's Left and Right page there instead.
         for screen in ("systems", "result", "plan"):
             with self.subTest(screen=screen):
                 text = help_text("muxterm", screen)
-                for words in ("L1", "R1", "PgUp", "PgDn", "Page"):
+                for words in ("L1", "R1", "PgUp", "PgDn"):
                     self.assertNotIn(words, text)
+        self.assertIn("D-pad Left/Right   Page", help_text("muxterm", "result"))
         miyoo = help_text("miyoo", "systems")
         for words in ("Start, Enter", "A, Space, Right/Left", "R2, Esc, Backspace",
                       "L2, Tab, o", "Sends no key here"):
@@ -2879,7 +2879,10 @@ class TheSetupFilterKnowsDevices(unittest.TestCase):
         self.assertIn("muOS", {row.value: row for row in self.rows("")}["retroarch"].right)
 
     def test_the_handheld_lists_are_the_guides(self):
-        import yaml
+        try:
+            import yaml
+        except ImportError:
+            self.skipTest("pyyaml is not installed")
 
         guides = yaml.safe_load((REPO_ROOT / "platforms" / "_guides.yml").read_text())
         for system in guides["handheld_guide"]["systems"]:
@@ -2887,6 +2890,126 @@ class TheSetupFilterKnowsDevices(unittest.TestCase):
                 with self.subTest(system=system["name"]):
                     self.assertEqual(install._SETUP_DEVICES[system["name"]],
                                      tuple(str(name) for name in system["devices"]))
+
+
+class OneSystemInFewPresses(unittest.TestCase):
+    """tui_audit_4 P3-10.11: one system with a controller took 15 presses on
+    the fixture list, about 60 on muxterm, which has no page key."""
+
+    # The buttons each route sends, as the keys the interface reads.
+    PADS = {
+        "gptokeyb": {"A": "enter", "X": " ", "Start": "enter", "R1": "pgdn"},
+        "muxterm": {"A": "enter", "X": " ", "Start": "enter", "R1": "right"},
+    }
+
+    def long_list(self, pad: str) -> install.TuiState:
+        state = checked_state()
+        state.pad = pad
+        state.cols, state.rows = 40, 15
+        state.systems = [{"event": "system", "platform": "retroarch", "system": f"sys-{n:02d}",
+                          "name": f"System {n:02d}", "files": 1, "present": 0, "missing": 1,
+                          "wrong_hash": 0, "bytes_needed": 10} for n in range(66)]
+        state.ticked = {row["system"] for row in state.systems}
+        state.focus["plan"] = next(i for i, row in enumerate(install.tui_rows(state))
+                                   if row.action == "install")
+        return state
+
+    def press_button(self, state, pad: str, button: str) -> list:
+        name = self.PADS[pad].get(button, button)
+        return install.tui_update(state, Key("char", name) if len(name) == 1 else Key(name))
+
+    def go_to(self, state, pad: str, target: str, paging: bool) -> int:
+        """Presses from the focus to the target system, as a person does."""
+        count = 0
+        while True:
+            rows = install.tui_rows(state)
+            focus = state.focus.get("systems", 0)
+            index = next(i for i, row in enumerate(rows) if row.value == target)
+            if index == focus:
+                return count
+            page = max(1, state.rows - 6)
+            button = "R1" if paging and index - focus >= page else "down"
+            self.press_button(state, pad, button)
+            count += 1
+
+    def presses(self, pad: str, fast: bool) -> int:
+        """From the plan to the run that installs sys-45 alone, with the
+        setup's A before it."""
+        state = self.long_list(pad)
+        count = 1
+        for button in ("down", "A"):
+            self.press_button(state, pad, button)
+            count += 1
+        self.assertEqual(state.screen, "systems")
+        paging = pad != "muxterm" or fast
+        if fast:
+            self.assertEqual(install.tui_rows(state)[state.focus["systems"]].action, "none")
+            self.press_button(state, pad, "A")
+            count += 1
+            count += self.go_to(state, pad, "sys-45", paging)
+            effects = self.press_button(state, pad, "A")
+            count += 1
+        else:
+            state.focus["systems"] = 3
+            for button in ("up", "up", "A"):
+                self.press_button(state, pad, button)
+                count += 1
+            count += self.go_to(state, pad, "sys-45", paging)
+            self.press_button(state, pad, "X")
+            effects = self.press_button(state, pad, "Start")
+            count += 2
+        self.assertEqual(state.ticked, {"sys-45"})
+        self.assertEqual(effects, [("run", "confirm")])
+        # Install on the confirm screen, then Exit on the result.
+        return count + 2
+
+    def test_presses_before_and_after(self):
+        # The audit's path, A Down A Up Up A R1 x5 X Start A A. Before the
+        # fast path it took 17 presses here, 57 on muxterm (None kept the
+        # focus, and muxterm had no page key).
+        self.assertEqual(self.presses("gptokeyb", fast=False), 15)
+        self.assertEqual(self.presses("gptokeyb", fast=True), 12)
+        self.assertEqual(self.presses("muxterm", fast=False), 55)
+        self.assertEqual(self.presses("muxterm", fast=True), 12)
+
+    def test_a_on_a_system_with_none_ticked_takes_it_alone(self):
+        state = self.long_list("keys")
+        state.stack.append("systems")
+        state.ticked = set()
+        state.focus["systems"] = 5
+        text = install.tui_view(state, 80, 24)[-1]
+        self.assertIn("Enter Only this system", text)
+        focused = install.tui_rows(state)[5].value
+        self.assertEqual(press(state, "enter"), [("run", "confirm")])
+        self.assertEqual(state.ticked, {focused})
+
+    def test_enter_still_continues_with_the_ticks_as_they_are(self):
+        state = self.long_list("keys")
+        state.stack.append("systems")
+        state.focus["systems"] = 5
+        self.assertEqual(press(state, "enter"), [("run", "install")])
+        self.assertEqual(len(state.ticked), 66)
+
+    def test_left_and_right_page_inside_muxterm_only(self):
+        for pad in ("muxterm", "gptokeyb_muxterm", "gptokeyb"):
+            with self.subTest(pad=pad):
+                state = self.long_list(pad)
+                state.stack.append("systems")
+                state.focus["systems"] = 3
+                press(state, "right")
+                paged = pad != "gptokeyb"
+                self.assertEqual(state.focus["systems"] > 4, paged)
+                self.assertEqual(len(state.ticked), 66)
+                state.help = True
+                help_text = " ".join(install.tui_view(state, 80, 24))
+                self.assertEqual("D-pad Left/Right" in help_text, paged)
+
+    def test_a_short_list_opens_on_its_first_system(self):
+        state = checked_state()
+        state.focus["plan"] = next(i for i, row in enumerate(install.tui_rows(state))
+                                   if row.action == "systems")
+        press(state, "enter")
+        self.assertEqual(install.tui_rows(state)[state.focus["systems"]].action, "system")
 
 
 class DataFilesHaveASize(unittest.TestCase):
@@ -3896,8 +4019,9 @@ class EndToEnd(unittest.TestCase):
         term.wait("> Install")
         term.send(DOWN, "\r")
         term.wait("Choose systems")
-        # D-pad and A only: up to None, A, down to the second system, Right.
-        term.send(UP, UP, "\r", DOWN, DOWN, DOWN, RIGHT)
+        # D-pad and A only: up to None, A (on the first system), down to the
+        # second system, Right.
+        term.send(UP, UP, "\r", DOWN, RIGHT)
         screen = term.wait("1 of 2 systems")
         self.assertIn("> [x] sony-playstation", screen)
         term.send("\r")

@@ -11,7 +11,8 @@ It runs in muxterm, muOS's terminal. With PortMaster installed, gptokeyb2
 turns every button into a key and muxterm is told to leave the pad alone, so
 each button is sent once: D-pad to move, A or Start to choose, B or Select to
 go back, X to tick a system, Y for the options. L1 and R1 do nothing in
-muxterm, which keeps Page Up and Page Down for its own scrollback. Hold
+muxterm, which keeps Page Up and Page Down for its own scrollback: Left and
+Right on the D-pad page a list instead. Hold
 Select, then press Start to quit. Without PortMaster, muxterm reads the pad
 itself (Y then ticks a system) and Menu closes it.
 

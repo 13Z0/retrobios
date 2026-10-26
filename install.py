@@ -11685,6 +11685,9 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             return _open_from_browser(state)
         if action in ("misplaced", "unreadable"):
             return _push(state, action)
+        if action == "systems" and len(state.systems) > TUI_LONG_LIST:
+            # On None: picking one system of 66 began with Up, Up, A.
+            return _push(state, action, 1)
         # On the first system, so A continues and the D-pad ticks.
         return _push(state, action, 3 if action == "systems" else 0)
     if screen == "systems":
@@ -11692,7 +11695,14 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             state.ticked = {row["system"] for row in state.systems}
         elif action == "none":
             state.ticked = set()
+            # On the first system: the next A takes the one in focus alone.
+            state.focus["systems"] = next(
+                (i for i, item in enumerate(tui_rows(state)) if item.action == "system"),
+                state.focus.get("systems", 0))
         else:
+            if action == "system" and not state.ticked:
+                # Nothing ticked: A takes the system in focus, and only it.
+                state.ticked = {row.value}
             return _begin_install(state)
         return []
     if screen == "options":
@@ -12046,6 +12056,12 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
         return _filter_key(state, key)
     if state.pad == "miyoo":
         key = _miyoo_key(state, key)
+    if (state.pad in _NO_PAGE_PADS and key.name in ("left", "right")
+            and screen not in ("regions", "options")):
+        # muxterm keeps PgUp and PgDn for its scrollback: the D-pad's Left
+        # and Right page instead (X or Y still ticks). One system of 66 took
+        # about 60 Down presses.
+        key = TuiKey("pgup" if key.name == "left" else "pgdn")
     char = key.text if key.name == "char" else ""
     if key.name == "f1" or char == "?":
         state.help = True
@@ -12127,6 +12143,10 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
         return _activate(state, row)
     state.focus[screen] = focus
     return []
+
+
+# The routes inside muxterm, where no button sends PgUp or PgDn.
+_NO_PAGE_PADS = ("muxterm", "gptokeyb_muxterm")
 
 
 # A Miyoo's L1 and R1 are the keys E and T (codes 18 and 20).
@@ -12422,6 +12442,9 @@ def _scrolled(lines: list[TuiLine], first: int, height: int, lead: int = 0) -> l
 
 # The rows a screen keeps for its list under pinned lines.
 TUI_PINNED_ROWS = 4
+# A list longer than this opens its systems on None, and its help names a
+# page key.
+TUI_LONG_LIST = 9
 
 
 def _compose(
@@ -13243,9 +13266,9 @@ _HELP_KEYS: dict[str, dict[str, str | None]] = {
                "back": "B, Select, Esc", "stop": "B, Esc, Ctrl-C", "kill": None,
                "enter": "A, Enter", "esc": "B, Esc"},
     # muxterm keeps PgUp and PgDn for its own scrollback, and its L1 and R1
-    # send nothing: no key pages a list there.
-    "muxterm": {"move": "D-pad, Up/Down", "page": None, "ok": "Start, Enter",
-                "tick": "Y, Space, Right/Left", "options": "o, Tab",
+    # send nothing: the D-pad's Left and Right page a list there.
+    "muxterm": {"move": "D-pad, Up/Down", "page": "D-pad Left/Right", "ok": "Start, Enter",
+                "tick": "Y, Space", "options": "o, Tab",
                 "back": "B, Esc, Backspace", "stop": "B, Esc, Ctrl-C", "kill": None,
                 "enter": "Start, Enter", "esc": "Esc"},
     "miyoo": {"move": "D-pad, Up/Down", "page": "L1/R1, PgUp/PgDn", "ok": "A, Start, Enter",
@@ -13254,8 +13277,9 @@ _HELP_KEYS: dict[str, dict[str, str | None]] = {
               "enter": "Start, Enter", "esc": "Esc"},
 }
 # muxterm keeps PgUp and PgDn for its scrollback even when gptokeyb2 owns the
-# pad, and the launcher sends nothing on L1 and R1 there.
-_HELP_KEYS["gptokeyb_muxterm"] = {**_HELP_KEYS["gptokeyb"], "page": None}
+# pad, and the launcher sends nothing on L1 and R1 there: Left and Right page.
+_HELP_KEYS["gptokeyb_muxterm"] = {**_HELP_KEYS["gptokeyb"], "page": "D-pad Left/Right",
+                                  "tick": "X, Space"}
 
 
 def _route_extras(state: TuiState) -> list[tuple[str, str]]:
@@ -13282,7 +13306,7 @@ def _help_lines(state: TuiState) -> list[tuple[str, str]]:
                 ("Ctrl-U", "Clear"), (names["esc"], "Back"), ("Ctrl-C", "Quit"),
                 *_route_extras(state)]
     keys = [(names["move"], "Move")]
-    if len(tui_rows(state)) > 9 or screen in _PAGERS:
+    if len(tui_rows(state)) > TUI_LONG_LIST or screen in _PAGERS:
         keys += [*([(names["page"], "Page")] if names["page"] else []),
                  ("Home/End, g/G", "First, last")]
     primary = _primary(state) or _TUI_VIEWS[screen](state, 80, 24)[2][0]
@@ -13315,6 +13339,8 @@ def _primary(state: TuiState) -> str | None:
         return None
     row = rows[max(0, min(state.focus.get(state.screen, 0), len(rows) - 1))]
     verb = _ROW_VERBS.get(row.action)
+    if state.screen == "systems" and row.action == "system" and not state.ticked:
+        verb = "Only this system"
     return f"A/Enter {verb}" if verb else None
 
 
