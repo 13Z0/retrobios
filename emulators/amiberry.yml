@@ -3,9 +3,9 @@ type: standalone + libretro
 core_classification: official_port
 source: "https://github.com/BlitterStudio/amiberry"
 upstream: "https://github.com/tonioni/WinUAE"
-profiled_date: "2026-10-23"
-source_commit: "7f9a47e1c501f5f22d2b25eb61fe0f3b0fe9bc30"
-upstream_commit: "b5944088b805e518e7978ba821dca299cd1bae83"
+profiled_date: "2026-10-26"
+source_commit: "f3924d4d34cf67dc62a6e90474ca8ecb1c8f7c79"
+upstream_commit: "15110cf6606d1188800ea7ad86bf1cbd9c688741"
 core_version: "v8.4.2"
 display_name: "Commodore - Amiga (Amiberry)"
 cores: [amiberry, "AMIBERRY"]
@@ -17,22 +17,22 @@ systems:
 data_root:
   windows:
     path: "%USERPROFILE%/Amiberry"
-    source_ref: "src/osdep/amiberry.cpp:9176-9185, src/osdep/amiberry.cpp:9233-9256, src/osdep/amiberry.cpp:12662-12699, src/osdep/amiberry.cpp:4857-4860, src/osdep/amiberry.cpp:12744"
+    source_ref: "src/osdep/amiberry.cpp:9222-9231, src/osdep/amiberry.cpp:9279-9302, src/osdep/amiberry.cpp:13204-13241, src/osdep/amiberry.cpp:4891-4894, src/osdep/amiberry.cpp:13286"
     note: "AMIBERRY_HOME_DIR overrides it. An amiberry.portable file beside the executable makes its folder the root. rom_path and base_content_path in amiberry.conf move ROMs"
   macos:
     path: "~/Documents/Amiberry"
-    source_ref: "src/osdep/amiberry.cpp:9165-9174, src/osdep/amiberry.cpp:9257-9274, src/osdep/amiberry.cpp:12662-12699, src/osdep/amiberry.cpp:4857-4860, src/osdep/amiberry.cpp:12744"
+    source_ref: "src/osdep/amiberry.cpp:9211-9220, src/osdep/amiberry.cpp:9303-9320, src/osdep/amiberry.cpp:13204-13241, src/osdep/amiberry.cpp:4891-4894, src/osdep/amiberry.cpp:13286"
     note: "AMIBERRY_HOME_DIR overrides it. rom_path and base_content_path in amiberry.conf move ROMs"
   linux:
     path: "~/Amiberry"
-    source_ref: "src/osdep/amiberry.cpp:9187-9194, src/osdep/amiberry.cpp:9275-9303, src/osdep/amiberry.cpp:12662-12735, src/osdep/amiberry.cpp:4857-4860, src/osdep/amiberry.cpp:12744"
+    source_ref: "src/osdep/amiberry.cpp:9233-9240, src/osdep/amiberry.cpp:9321-9349, src/osdep/amiberry.cpp:13204-13277, src/osdep/amiberry.cpp:4891-4894, src/osdep/amiberry.cpp:13286"
     note: "AMIBERRY_HOME_DIR overrides it, and an amiberry.portable file beside the executable makes its folder the root. Outside portable mode WHDBoot sits in $XDG_DATA_HOME/amiberry, else ~/.local/share/amiberry. rom_path and base_content_path in amiberry.conf move ROMs"
   android:
     path: "Android/data/com.blitterstudio.amiberry/files"
-    source_ref: "src/osdep/amiberry.cpp:9225-9232, src/osdep/amiberry.cpp:12662-12699, src/osdep/amiberry.cpp:4857-4860, src/osdep/amiberry.cpp:12744, android/app/build.gradle:118"
+    source_ref: "src/osdep/amiberry.cpp:9271-9278, src/osdep/amiberry.cpp:13204-13241, src/osdep/amiberry.cpp:4891-4894, src/osdep/amiberry.cpp:13286, android/app/build.gradle:118"
   ios:
     path: "Documents/Amiberry"
-    source_ref: "src/osdep/amiberry.cpp:9216-9224, src/osdep/amiberry.cpp:12662-12699, src/osdep/amiberry.cpp:4857-4860, src/osdep/amiberry.cpp:12744"
+    source_ref: "src/osdep/amiberry.cpp:9262-9270, src/osdep/amiberry.cpp:13204-13241, src/osdep/amiberry.cpp:4891-4894, src/osdep/amiberry.cpp:13286"
 
 notes: |
   Amiberry is an Amiga emulator based on WinUAE, available as both standalone
@@ -50,15 +50,15 @@ notes: |
   system_dir/amiberry/whdboot/save-data/Kickstarts,
   system_dir/save-data/Kickstarts, else system_dir. system_dir stays first
   in the ROM multipath, the detected directory follows it.
-  ref: libretro/libretro.cpp:4529-4567
+  ref: libretro/libretro.cpp:4537-4575
 
   Standalone ROM path: configurable via amiberry.conf "rom_path" setting.
   kickstart_rom_file and kickstart_ext_rom_file are opened as given, with
   no hash check. When the main ROM is not found there, the fallback order
   is {home_dir}/roms/kick.rom, {home_dir}/kick.rom, ../shared/rom/kick.rom,
   ../System/rom/kick.rom, then ROM database guess.
-  ref: src/cfgfile.cpp:6655-6656, src/memory.cpp:1833-1856,
-       src/memory.cpp:2106-2148
+  ref: src/cfgfile.cpp:6660-6661, src/memory.cpp:1843-1866,
+       src/memory.cpp:2116-2158
 
   ROM identification uses SHA1 against the WinUAE ROM database but does
   not reject unknown ROMs. Cloanto encrypted ROMs supported with rom.key.
@@ -69,7 +69,7 @@ notes: |
   ROM is missing does not start, and the quickstart configs that select one
   (A1200 configs 2-5, A4000 config 2) count as not installed without it.
   ref: src/osdep/sysconfig.h:191-192, src/cpuboard.cpp:2897-2954,
-  src/cfgfile.cpp:10015-10025, src/cfgfile.cpp:10262-10349,
+  src/cfgfile.cpp:10030-10040, src/cfgfile.cpp:10277-10364,
   src/osdep/settings/settings_presets.cpp:398-415
 
   Munt MT-32/CM-32L emulation compiled in (WITH_MIDIEMU). ROMs loaded from
@@ -84,16 +84,19 @@ notes: |
   src/kbmcu/keyboard_mcu_d8039hlc.cpp:235
 
   WHDLoad autoboot reads the whdboot/ directory: boot-data.zip (or a
-  boot-data directory), WHDLoad or JST, AmiQuit, and game-data/whdload_db.json
-  with game-data/whdload_db.xml as fallback. These ship with the standalone
-  build but must be obtained separately for the libretro core.
-  ref: src/osdep/amiberry_whdbooter.cpp:1652-1654,1804-1823,1866-1875
+  boot-data directory), WHDLoad or JST, host-quit, the skick346 RTB files and
+  game-data/whdload_db.json with game-data/whdload_db.xml as fallback. The
+  standalone build ships boot-data.zip, host-quit, the database and the A1000
+  RTB file, and downloads WHDLoad, JST and the skick346 RTB files on request.
+  The libretro core downloads nothing and names the missing tool in a message.
+  ref: src/osdep/amiberry_whdbooter.cpp:1676-1678,1828-1847,1888-1943,
+  src/osdep/amiberry.cpp:12257-12267
 
 files:
   # --- Kickstart ROMs ---
   # Libretro: find_kickstart_in_system_dir() with per-model candidate lists
   # Standalone: get_kickstart_filehandle() with ROM database + config
-  # ref: libretro/libretro.cpp:1792-1855, src/memory.cpp:2106-2148
+  # ref: libretro/libretro.cpp:1792-1855, src/memory.cpp:2116-2158
 
   - name: kick13.rom
     system: commodore-amiga
@@ -205,7 +208,7 @@ files:
     note: >
       Identified as KS ROM v3.1 (A4000)(Cloanto), ROM id 31, whatever the file
       is called. The A4000 model takes id 16 first and id 31 after it.
-    source_ref: "source src/rommgr.cpp:204-205, source src/cfgfile.cpp:9982-9990, source src/cfgfile.cpp:10043-10044"
+    source_ref: "source src/rommgr.cpp:204-205, source src/cfgfile.cpp:9997-10005, source src/cfgfile.cpp:10058-10059"
 
   # --- CD32 and CDTV ROMs found by the standalone ROM scan ---
   # configure_rom() writes a CD32 Kickstart to the Kickstart setting and a
@@ -224,7 +227,7 @@ files:
     note: >
       CD32 KS ROM v3.1, ROM id 18. Loaded as the Kickstart. The CD32 quickstart
       takes ROM id 64, else ROM ids 18 and 19.
-    source_ref: "source src/rommgr.cpp:334-335, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10224-10233"
+    source_ref: "source src/rommgr.cpp:334-335, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1843-1867, source src/cfgfile.cpp:10239-10248"
 
   - name: "amiga-ext-310-cd32.rom"
     mode: standalone
@@ -238,7 +241,7 @@ files:
     note: >
       CD32 extended ROM, ROM id 19. Loaded as the extended ROM. The CD32
       quickstart takes ROM id 64, else ROM ids 18 and 19.
-    source_ref: "source src/rommgr.cpp:336-339, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10224-10233"
+    source_ref: "source src/rommgr.cpp:336-339, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1843-1867, source src/cfgfile.cpp:10239-10248"
 
   - name: "cd32-rom-ks-plus-extended.rom"
     mode: standalone
@@ -254,7 +257,7 @@ files:
       image, loaded as the Kickstart. The CD32 quickstart takes ROM id 64, else
       ROM ids 18 and 19. A second dump of the same image, listed after it in the
       table, is also accepted.
-    source_ref: "source src/rommgr.cpp:340-343, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10224-10233"
+    source_ref: "source src/rommgr.cpp:340-343, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1843-1867, source src/cfgfile.cpp:10239-10248"
 
   - name: "amiga-ext-130-cdtv.rom"
     mode: standalone
@@ -269,7 +272,7 @@ files:
       CDTV extended ROM v1.0, ROM id 20. Loaded as the extended ROM. The CDTV
       quickstart asks for ROM id 20, then 21, then 22. The two chip halves the
       table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:350-353, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10199-10204"
+    source_ref: "source src/rommgr.cpp:350-353, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1843-1867, source src/cfgfile.cpp:10214-10219"
 
   - name: "cdtv-extended-rom-v2.7.rom"
     mode: standalone
@@ -284,7 +287,7 @@ files:
       CDTV extended ROM v2.7, ROM id 22. Loaded as the extended ROM. The CDTV
       quickstart asks for ROM id 20, then 21, then 22. The two chip halves the
       table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:354-357, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10199-10204"
+    source_ref: "source src/rommgr.cpp:354-357, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1843-1867, source src/cfgfile.cpp:10214-10219"
 
   - name: "cdtv-a570-extended-rom-v2.30.rom"
     mode: standalone
@@ -299,7 +302,7 @@ files:
       CDTV/A570 extended ROM v2.30, ROM id 21. Loaded as the extended ROM. The
       CDTV quickstart asks for ROM id 20, then 21, then 22. The two chip halves
       the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:358-361, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10199-10204"
+    source_ref: "source src/rommgr.cpp:358-361, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1843-1867, source src/cfgfile.cpp:10214-10219"
 
   - name: "cdtv-extended-rom-v47.1.rom"
     mode: standalone
@@ -313,7 +316,7 @@ files:
     note: >
       CDTV extended ROM v47.1, ROM id 297. Loaded as the extended ROM. The two
       chip halves the table lists are also accepted and merged.
-    source_ref: "source src/rommgr.cpp:362-365, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857"
+    source_ref: "source src/rommgr.cpp:362-365, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1843-1867"
 
   - name: "cdtv-cr-extended-rom-v3.32.rom"
     mode: standalone
@@ -327,7 +330,7 @@ files:
     note: >
       CDTV-CR extended ROM v3.32, ROM id 107. Loaded as the extended ROM. The
       CDTV-CR quickstart asks for ROM id 108, then 107.
-    source_ref: "source src/rommgr.cpp:367-368, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10160-10164"
+    source_ref: "source src/rommgr.cpp:367-368, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1843-1867, source src/cfgfile.cpp:10175-10179"
 
   - name: "cdtv-cr-extended-rom-v3.44.rom"
     mode: standalone
@@ -341,7 +344,7 @@ files:
     note: >
       CDTV-CR extended ROM v3.44, ROM id 108. Loaded as the extended ROM. The
       CDTV-CR quickstart asks for ROM id 108, then 107.
-    source_ref: "source src/rommgr.cpp:369-370, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1833-1857, source src/cfgfile.cpp:10160-10164"
+    source_ref: "source src/rommgr.cpp:369-370, source src/rommgr.cpp:2565-2568, source src/memory.cpp:1843-1867, source src/cfgfile.cpp:10175-10179"
 
   # --- Expansion ROMs found by the ROM scan ---
   # A board, freezer cartridge or accelerator takes the file its configuration
@@ -370,7 +373,7 @@ files:
       CD32 Full Motion Video Cartridge ROM, ROM id 23. Mapped when the CD32 FMV
       board is enabled. The CD32 quickstart config 1 (FMV) asks for ROM id 74,
       then 23.
-    source_ref: "source src/rommgr.cpp:345-346, source src/expansion.cpp:5435-5440, source src/cd32_fmv.cpp:1566, source src/cfgfile.cpp:10239-10246"
+    source_ref: "source src/rommgr.cpp:345-346, source src/expansion.cpp:5435-5440, source src/cd32_fmv.cpp:1566, source src/cfgfile.cpp:10254-10261"
 
   - name: "cd32fmv-391777-01.rom"
     path: "roms/cd32fmv-391777-01.rom"
@@ -386,7 +389,7 @@ files:
       CD32 Full Motion Video Cartridge ROM, ROM id 74. Mapped when the CD32 FMV
       board is enabled. The CD32 quickstart config 1 (FMV) asks for ROM id 74,
       then 23.
-    source_ref: "source src/rommgr.cpp:347-348, source src/expansion.cpp:5435-5440, source src/cd32_fmv.cpp:1566, source src/cfgfile.cpp:10239-10246"
+    source_ref: "source src/rommgr.cpp:347-348, source src/expansion.cpp:5435-5440, source src/cd32_fmv.cpp:1566, source src/cfgfile.cpp:10254-10261"
 
   # Freezer cartridges
 
@@ -657,7 +660,7 @@ files:
       ROM setting. Built only with PCem (USE_PCEM), which the CMake build enables
       and the libretro Makefile leaves off. The DraCo quickstart asks for ROM id
       234, then 311.
-    source_ref: "source src/rommgr.cpp:329-330, source src/expansion.cpp:6922-6924, source src/draco.cpp:1521-1527, source src/cfgfile.cpp:10657-10662"
+    source_ref: "source src/rommgr.cpp:329-330, source src/expansion.cpp:6922-6924, source src/draco.cpp:1521-1527, source src/cfgfile.cpp:10672-10677"
 
   - name: "draco-boot-rom-v1.5.rom"
     mode: standalone
@@ -673,7 +676,7 @@ files:
       ROM setting. Built only with PCem (USE_PCEM), which the CMake build enables
       and the libretro Makefile leaves off. The DraCo quickstart asks for ROM id
       234, then 311.
-    source_ref: "source src/rommgr.cpp:331-332, source src/expansion.cpp:6922-6924, source src/draco.cpp:1521-1527, source src/cfgfile.cpp:10657-10662"
+    source_ref: "source src/rommgr.cpp:331-332, source src/expansion.cpp:6922-6924, source src/draco.cpp:1521-1527, source src/cfgfile.cpp:10672-10677"
 
   - name: "blizzard-1230-i-ii.rom"
     path: "roms/blizzard-1230-i-ii.rom"
@@ -719,7 +722,7 @@ files:
       Blizzard 1230-IV, ROM id 89. Board ROM of the Blizzard 1230 IV accelerator.
       Without it the board does not start. The A1200 quickstart config 2 selects
       this board and this ROM.
-    source_ref: "source src/rommgr.cpp:523-524, source src/expansion.cpp:6781-6783, source src/cpuboard.cpp:2897-2953, source src/cfgfile.cpp:10295-10302"
+    source_ref: "source src/rommgr.cpp:523-524, source src/expansion.cpp:6781-6783, source src/cpuboard.cpp:2897-2953, source src/cfgfile.cpp:10310-10317"
 
   - name: "blizzard-1240-1260.rom"
     path: "roms/blizzard-1240-1260.rom"
@@ -735,7 +738,7 @@ files:
       Blizzard 1240/1260, ROM id 90. Board ROM of the Blizzard 1260 accelerator.
       Without it the board does not start. The A1200 quickstart configs 3 and 4
       select this board and this ROM.
-    source_ref: "source src/rommgr.cpp:525-526, source src/expansion.cpp:6792-6794, source src/cpuboard.cpp:2897-2953, source src/cfgfile.cpp:10303-10320"
+    source_ref: "source src/rommgr.cpp:525-526, source src/expansion.cpp:6792-6794, source src/cpuboard.cpp:2897-2953, source src/cfgfile.cpp:10318-10335"
 
   - name: "blizzard-2060-v7.25.rom"
     path: "roms/blizzard-2060-v7.25.rom"
@@ -1455,7 +1458,7 @@ files:
       327. The scan hashes the first 0x1c000 bytes with bytes 0x10-0x2f cleared,
       so the table SHA-1 is not the hash of the file. The code also opens it by
       the name cyberstormppc.rom.
-    source_ref: "source src/rommgr.cpp:856-857, source src/expansion.cpp:6857-6859, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10015-10025, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:856-857, source src/expansion.cpp:6857-6859, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10030-10040, source src/rommgr.cpp:1797-1810"
 
   - name: "cyberstorm-ppc-v44.69.rom"
     path: "roms/cyberstorm-ppc-v44.69.rom"
@@ -1470,7 +1473,7 @@ files:
       start. The A4000 quickstart config 2 asks for ROM id 98, then 326, then
       327. The scan hashes the first 0x1c000 bytes with bytes 0x10-0x2f cleared,
       so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:858-859, source src/expansion.cpp:6857-6859, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10015-10025, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:858-859, source src/expansion.cpp:6857-6859, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10030-10040, source src/rommgr.cpp:1797-1810"
 
   - name: "cyberstorm-ppc-v44.71.rom"
     path: "roms/cyberstorm-ppc-v44.71.rom"
@@ -1485,7 +1488,7 @@ files:
       start. The A4000 quickstart config 2 asks for ROM id 98, then 326, then
       327. The scan hashes the first 0x1c000 bytes with bytes 0x10-0x2f cleared,
       so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:860-861, source src/expansion.cpp:6857-6859, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10015-10025, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:860-861, source src/expansion.cpp:6857-6859, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10030-10040, source src/rommgr.cpp:1797-1810"
 
   - name: "blizzardppc_040.rom"
     path: "roms/blizzardppc_040.rom"
@@ -1516,7 +1519,7 @@ files:
       330. The scan hashes the first 0x1c000 or 0x50000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file. The code
       also opens it by the name blizzardppc_060.rom.
-    source_ref: "source src/rommgr.cpp:864-865, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10322-10336, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:864-865, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10337-10351, source src/rommgr.cpp:1797-1810"
 
   - name: "blizzard-ppc-68040-v44.69.rom"
     path: "roms/blizzard-ppc-68040-v44.69.rom"
@@ -1545,7 +1548,7 @@ files:
       start. The A1200 quickstart config 5 asks for ROM id 100, then 329, then
       330. The scan hashes the first 0x1c000 or 0x50000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:868-869, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10322-10336, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:868-869, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10337-10351, source src/rommgr.cpp:1797-1810"
 
   - name: "blizzard-ppc-68040-v44.71.rom"
     path: "roms/blizzard-ppc-68040-v44.71.rom"
@@ -1560,7 +1563,7 @@ files:
       start. The A1200 quickstart config 5 asks for ROM id 100, then 329, then
       330. The scan hashes the first 0x1c000 or 0x50000 bytes with bytes
       0x10-0x2f cleared, so the table SHA-1 is not the hash of the file.
-    source_ref: "source src/rommgr.cpp:870-871, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10322-10336, source src/rommgr.cpp:1797-1810"
+    source_ref: "source src/rommgr.cpp:870-871, source src/expansion.cpp:6815-6817, source src/cpuboard.cpp:2897-2953, source src/rommgr.cpp:3152-3184, source src/cfgfile.cpp:10337-10351, source src/rommgr.cpp:1797-1810"
 
   - name: "blizzard-ppc-68060-v44.71.rom"
     path: "roms/blizzard-ppc-68060-v44.71.rom"
@@ -3418,8 +3421,8 @@ files:
     source_ref: "source src/rommgr.cpp:913-914, source src/expansion.cpp:6253-6260, source src/x86.cpp:4075-4080"
 
   # --- AROS replacement ROMs ---
-  # ref: src/memory.cpp:1925-1946 find_kickstart_replacement_directory,
-  #      src/memory.cpp:1949-2030 load_kickstart_replacement
+  # ref: src/memory.cpp:1935-1956 find_kickstart_replacement_directory,
+  #      src/memory.cpp:1959-2040 load_kickstart_replacement
   # Both files must sit together in one of the configured ROM directories:
   # the search accepts a directory only when it holds both of them.
 
@@ -3432,7 +3435,7 @@ files:
       AROS extended ROM replacement, used when no Kickstart ROM is found. Looked
       up in the configured ROM directories, and only in a directory that also
       holds aros-rom.bin. The core zip carries the library alone.
-    source_ref: "source src/memory.cpp:1933 (paired existence check), source src/memory.cpp:1958-1959 (load)"
+    source_ref: "source src/memory.cpp:1943 (paired existence check), source src/memory.cpp:1968-1969 (load)"
 
   - name: aros-ext.bin
     mode: standalone
@@ -3449,7 +3452,7 @@ files:
       up in the configured ROM directories, and only in a directory that also
       holds aros-rom.bin. Shipped in roms/ of the 8.4.2 installs. The Recalbox
       and ROCKNIX packages leave it out.
-    source_ref: "source src/memory.cpp:1933 (paired existence check), source src/memory.cpp:1958-1959 (load)"
+    source_ref: "source src/memory.cpp:1943 (paired existence check), source src/memory.cpp:1968-1969 (load)"
 
   - name: aros-rom.bin
     mode: libretro
@@ -3460,7 +3463,7 @@ files:
       AROS main ROM replacement, used with aros-ext.bin as Kickstart fallback.
       Looked up in the configured ROM directories, and only in a directory that
       also holds aros-ext.bin. The core zip carries the library alone.
-    source_ref: "source src/memory.cpp:1934 (paired existence check), source src/memory.cpp:1987-1988 (load)"
+    source_ref: "source src/memory.cpp:1944 (paired existence check), source src/memory.cpp:1997-1998 (load)"
 
   - name: aros-rom.bin
     mode: standalone
@@ -3477,7 +3480,7 @@ files:
       Looked up in the configured ROM directories, and only in a directory that
       also holds aros-ext.bin. Shipped in roms/ of the 8.4.2 installs. The
       Recalbox and ROCKNIX packages leave it out.
-    source_ref: "source src/memory.cpp:1934 (paired existence check), source src/memory.cpp:1987-1988 (load)"
+    source_ref: "source src/memory.cpp:1944 (paired existence check), source src/memory.cpp:1997-1998 (load)"
 
   # --- Cloanto key ---
 
@@ -3563,18 +3566,25 @@ files:
 
   # --- WHDLoad booter files ---
   # Read from the WHDBoot directory when an .lha or .lzh archive is launched.
+  # Amiberry carries host-quit, boot-data.zip, the game database and
+  # kick31034.A1000.RTB. WHDLoad, JST and the skick346 RTB files are not in the
+  # repository: the standalone build downloads them on request (Paths panel,
+  # App Settings in the native apps, --download-whdboot), WHDLoad from
+  # whdload.de, JST and skick346.lha from Aminet, and refuses a skick346.lha
+  # whose SHA-256 is not the pinned one. The libretro core downloads nothing.
   # Libretro: on first start the core copies a whdboot tree into
   # <save>/WHDBoot, taking it from system/whdboot, system/amiberry/whdboot,
   # system/Amiberry/whdboot or system itself. A candidate is used only when it
-  # holds WHDLoad, JST, AmiQuit, boot-data.zip or boot-data/, the game
-  # database, and the five RTB files the seed check names.
+  # holds host-quit, boot-data.zip or boot-data/, the game database and
+  # kick31034.A1000.RTB.
   # Standalone: the Linux, macOS and Windows installs ship the tree, and it is
   # copied into the user WHDBoot directory the same way.
   # Both builds then replace game-data/whdload_db.json with the one at the
   # first candidate when its "generated" field is later, keeping the old file
   # as a backup.
-  # ref: src/osdep/amiberry.cpp:12012-12037, 12356-12390, 12416-12430,
-  #      src/osdep/amiberry.cpp:12432-12498, 12500-12596,
+  # ref: src/osdep/amiberry.cpp:12058-12083, 12900-12931, 12957-12972,
+  #      src/osdep/amiberry.cpp:12974-13040, 13042-13138,
+  #      src/osdep/amiberry.cpp:12257-12267, 12700-12870,
   #      libretro/libretro.cpp:1459-1475, cmake/linux/install.cmake:196-198
 
   - name: "WHDLoad"
@@ -3582,56 +3592,52 @@ files:
     mode: libretro
     system: commodore-amiga
     required: false
-    size: 161031
-    sha1: "c3ecdaf43cc554026c8ef1c440a08c81144f810b"
-    md5: "6670a9571f235ec31b8bbd48fc18f428"
     note: >
       WHDLoad executable linked into C: of the boot drive the booter builds,
-      unless JST is selected. Part of the set the whdboot seed check requires.
-      The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1875, source src/osdep/amiberry.cpp:12356-12390"
+      unless JST is selected. When it is missing the core shows a message naming
+      whdload.de and the folder to put it in. The core zip carries the library
+      alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1888-1909, source src/osdep/amiberry_whdbooter.cpp:1930-1940"
 
   - name: "JST"
     path: "whdboot/JST"
     mode: libretro
     system: commodore-amiga
     required: false
-    size: 89108
-    sha1: "55dd3ecd5086528fa984e82db6474b954fc54ad5"
-    md5: "2a3a61bbd7c351751506e22a4354b76a"
     note: >
       JST loader linked into C: in place of WHDLoad when the
-      use_jst_instead_of_whd option is set. Part of the set the whdboot seed
-      check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1869, source src/osdep/amiberry.cpp:12356-12390"
+      use_jst_instead_of_whd option is set. When it is missing the core shows a
+      message naming aminet.net/game/patch/jst.lha and the folder to put it in.
+      The core zip carries the library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1888-1909, source src/osdep/amiberry_whdbooter.cpp:1930-1940"
 
-  - name: "AmiQuit"
-    path: "whdboot/AmiQuit"
+  - name: "host-quit"
+    path: "whdboot/host-quit"
     mode: libretro
     system: commodore-amiga
     required: false
-    size: 76
-    sha1: "faaaa08b29b391381771222f10b7b22c3b99f4ca"
-    md5: "36ab26d3b855e634fdda062c052cd52b"
+    size: 3180
+    sha1: "3ae8939c8f1cdd721eabd7d73c2d6277a038672a"
+    md5: "a491e6bc79db7e968d35577cee2769a5"
     note: >
-      Quit helper linked into C: and called at the end of the generated startup-
-      sequence. Part of the set the whdboot seed check requires. The core zip
-      carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1615, source src/osdep/amiberry_whdbooter.cpp:1875, source src/osdep/amiberry.cpp:12356-12390"
+      Quit helper linked into C: and called at the end of the generated
+      startup-sequence when quit_on_exit is set. Part of the set the whdboot
+      seed check requires. The core zip carries the library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1639, source src/osdep/amiberry_whdbooter.cpp:1941-1942, source src/osdep/amiberry.cpp:12901-12931"
 
   - name: "boot-data.zip"
     path: "whdboot/boot-data.zip"
     mode: libretro
     system: commodore-amiga
     required: false
-    size: 357265
-    sha1: "18a9dba5cfe2f375f111dd5148691ecaecc6293b"
-    md5: "9e638f3d531eb7cd82594f49a4cf03b7"
+    size: 297373
+    sha1: "bce26f64e0ad02a1f7ccc4a8ff43ef6ecd635f86"
+    md5: "28b7fd41cd5d1b345324aa2571fb1c5d"
     note: >
       Boot volume mounted as DH3. A boot-data directory at the same place is
       used when the zip is absent. Part of the set the whdboot seed check
       requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1652-1665, source src/osdep/amiberry.cpp:12356-12390"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1676-1689, source src/osdep/amiberry.cpp:12901-12931"
 
   - name: "whdload_db.json"
     path: "whdboot/game-data/whdload_db.json"
@@ -3642,12 +3648,12 @@ files:
     sha1: "6540ae1a35080e3dbeacfba5139e4781eb74ca86"
     md5: "51d44cd24e16fbb395b1bfefbaacd375"
     note: >
-      Per-game slave and hardware settings, matched on the archive SHA1 and
-      then on its name.
-      whdload_db.xml in the same folder is read when the JSON is absent. With
-      neither, the booter scans the archive for a .slave file. Part of the set
-      the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12356-12390, source src/osdep/amiberry.cpp:12500-12596"
+      Per-game slave and hardware settings, matched on the archive SHA1 and then
+      on its name. whdload_db.xml in the same folder is read when the JSON is
+      absent. With neither, the booter scans the archive for a .slave file. Part
+      of the set the whdboot seed check requires. The core zip carries the
+      library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1828-1847, source src/osdep/amiberry_whdbooter.cpp:1085-1103, source src/osdep/amiberry_whdbooter.cpp:1850-1864, source src/osdep/amiberry.cpp:12901-12931, source src/osdep/amiberry.cpp:13042-13138"
 
   - name: "kick33180.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick33180.A500.RTB"
@@ -3660,10 +3666,10 @@ files:
     aliases: ["whdboot/save-data/Kickstarts/kick33192.A500.RTB"]
     note: >
       WHDLoad relocation table for Kickstart 1.2, read from DEVS:Kickstarts
-      beside the image the booter links there. Part of the set the whdboot seed
-      check requires. The core zip carries the library alone. The repository
-      ships the same bytes as kick33192.A500.RTB.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12356-12390"
+      beside the image the booter links there. Member of skick346.lha. WHDLoad
+      also looks for the same bytes as kick33192.A500.RTB. The core does not
+      download it. The core zip carries the library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296, source src/osdep/amiberry.cpp:12855-12865"
 
   - name: "kick34005.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick34005.A500.RTB"
@@ -3675,9 +3681,53 @@ files:
     md5: "7eb13d974af0992d672b67c317a7e0a1"
     note: >
       WHDLoad relocation table for Kickstart 1.3, read from DEVS:Kickstarts
-      beside the image the booter links there. Part of the set the whdboot seed
-      check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12356-12390"
+      beside the image the booter links there. Member of skick346.lha. The core
+      does not download it. The core zip carries the library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296"
+
+  - name: "kick37175.A500.RTB"
+    path: "whdboot/save-data/Kickstarts/kick37175.A500.RTB"
+    mode: libretro
+    system: commodore-amiga
+    required: false
+    size: 5576
+    sha1: "7c1cf9a97b044a0344648709c187a3505bce7b5a"
+    md5: "e057054449b5e21591ce27d2eb9ac720"
+    note: >
+      WHDLoad relocation table for Kickstart 2.04, read from DEVS:Kickstarts
+      beside the image the booter links there. Member of skick346.lha. The core
+      does not download it. The core zip carries the library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296"
+
+  - name: "kick36143.A3000.RTB"
+    path: "whdboot/save-data/Kickstarts/kick36143.A3000.RTB"
+    mode: libretro
+    system: commodore-amiga
+    required: false
+    size: 5980
+    sha1: "85b691d7c1286cabefda69f61a1e3007d2cc7bca"
+    md5: "2a2652daba6be3ef1d0bdf5ddd4347c6"
+    note: >
+      WHDLoad relocation table for Kickstart 2.0 A3000, read from
+      DEVS:Kickstarts beside the image the booter links there. Member of
+      skick346.lha. The core does not download it. The core zip carries the
+      library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296"
+
+  - name: "kick39106.A1200.RTB"
+    path: "whdboot/save-data/Kickstarts/kick39106.A1200.RTB"
+    mode: libretro
+    system: commodore-amiga
+    required: false
+    size: 5002
+    sha1: "4da56f51ce88d321c54fee77c1d37df042ad76ec"
+    md5: "af8b2e2227f01a142e20c8ab463f14ed"
+    note: >
+      WHDLoad relocation table for Kickstart 3.0 A1200, read from
+      DEVS:Kickstarts beside the image the booter links there. Member of
+      skick346.lha. The core does not download it. The core zip carries the
+      library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296"
 
   - name: "kick40063.A600.RTB"
     path: "whdboot/save-data/Kickstarts/kick40063.A600.RTB"
@@ -3689,9 +3739,9 @@ files:
     md5: "3f97c1963d82c808ef29e7c984c4c688"
     note: >
       WHDLoad relocation table for Kickstart 3.1 A600, read from DEVS:Kickstarts
-      beside the image the booter links there. Part of the set the whdboot seed
-      check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12356-12390"
+      beside the image the booter links there. Member of skick346.lha. The core
+      does not download it. The core zip carries the library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296"
 
   - name: "kick40068.A1200.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A1200.RTB"
@@ -3703,9 +3753,10 @@ files:
     md5: "547b42b7b070c7f227ea45e0986d57a1"
     note: >
       WHDLoad relocation table for Kickstart 3.1 A1200, read from
-      DEVS:Kickstarts beside the image the booter links there. Part of the set
-      the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12356-12390"
+      DEVS:Kickstarts beside the image the booter links there. Member of
+      skick346.lha. The core does not download it. The core zip carries the
+      library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296"
 
   - name: "kick40068.A4000.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A4000.RTB"
@@ -3717,9 +3768,10 @@ files:
     md5: "f89f19b858ea6b1a04327c6f71ee1600"
     note: >
       WHDLoad relocation table for Kickstart 3.1 A4000, read from
-      DEVS:Kickstarts beside the image the booter links there. Part of the set
-      the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12356-12390"
+      DEVS:Kickstarts beside the image the booter links there. Member of
+      skick346.lha. The core does not download it. The core zip carries the
+      library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296"
 
   - name: "kick31034.A1000.RTB"
     path: "whdboot/save-data/Kickstarts/kick31034.A1000.RTB"
@@ -3731,52 +3783,50 @@ files:
     md5: "c5ba6165df42fc69b32942b248fca725"
     note: >
       WHDLoad relocation table for the A1000 Kickstart 1.1 image, read from
-      DEVS:Kickstarts beside the image the booter links there. The core zip
-      carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-345, source src/osdep/amiberry_whdbooter.cpp:1876"
+      DEVS:Kickstarts beside the image the booter links there. Not in skick346.
+      Part of the set the whdboot seed check requires. The core zip carries the
+      library alone.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-369, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12901-12931"
 
   - name: "WHDLoad"
     path: "whdboot/WHDLoad"
     mode: standalone
     system: commodore-amiga
     required: false
-    bundled: true
-    size: 161031
-    sha1: "c3ecdaf43cc554026c8ef1c440a08c81144f810b"
-    md5: "6670a9571f235ec31b8bbd48fc18f428"
     note: >
       WHDLoad executable linked into C: of the boot drive the booter builds,
-      unless JST is selected. Ships in whdboot/ of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1875"
+      unless JST is selected. Not shipped: the download step extracts
+      WHDLoad/C/WHDLoad from whdload.de's WHDLoad_usr.lha and replaces it on
+      every download.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1888-1909, source src/osdep/amiberry_whdbooter.cpp:1930-1940, source src/osdep/amiberry.cpp:12257-12267, source src/osdep/amiberry.cpp:12753-12772"
 
   - name: "JST"
     path: "whdboot/JST"
     mode: standalone
     system: commodore-amiga
     required: false
-    bundled: true
-    size: 89108
-    sha1: "55dd3ecd5086528fa984e82db6474b954fc54ad5"
-    md5: "2a3a61bbd7c351751506e22a4354b76a"
     note: >
       JST loader linked into C: in place of WHDLoad when the
-      use_jst_instead_of_whd option is set. Ships in whdboot/ of the installed
-      build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1869"
+      use_jst_instead_of_whd option is set. Not shipped: the download step
+      extracts jst_usr/bin/jst from Aminet's jst.lha when JST is selected and
+      missing.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1888-1909, source src/osdep/amiberry_whdbooter.cpp:1930-1940, source src/osdep/amiberry.cpp:12776-12794"
 
-  - name: "AmiQuit"
-    path: "whdboot/AmiQuit"
+  - name: "host-quit"
+    path: "whdboot/host-quit"
     mode: standalone
     system: commodore-amiga
     required: false
     bundled: true
-    size: 76
-    sha1: "faaaa08b29b391381771222f10b7b22c3b99f4ca"
-    md5: "36ab26d3b855e634fdda062c052cd52b"
+    size: 3180
+    sha1: "3ae8939c8f1cdd721eabd7d73c2d6277a038672a"
+    md5: "a491e6bc79db7e968d35577cee2769a5"
     note: >
-      Quit helper linked into C: and called at the end of the generated startup-
-      sequence. Ships in whdboot/ of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1615, source src/osdep/amiberry_whdbooter.cpp:1875"
+      Quit helper linked into C: and called at the end of the generated
+      startup-sequence when quit_on_exit is set. Ships in whdboot/ of the
+      installed build, and the download step fetches it again from the
+      repository.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1639, source src/osdep/amiberry_whdbooter.cpp:1941-1942, source src/osdep/amiberry.cpp:12798-12801"
 
   - name: "boot-data.zip"
     path: "whdboot/boot-data.zip"
@@ -3784,13 +3834,14 @@ files:
     system: commodore-amiga
     required: false
     bundled: true
-    size: 357265
-    sha1: "18a9dba5cfe2f375f111dd5148691ecaecc6293b"
-    md5: "9e638f3d531eb7cd82594f49a4cf03b7"
+    size: 297373
+    sha1: "bce26f64e0ad02a1f7ccc4a8ff43ef6ecd635f86"
+    md5: "28b7fd41cd5d1b345324aa2571fb1c5d"
     note: >
       Boot volume mounted as DH3. A boot-data directory at the same place is
-      used when the zip is absent. Ships in whdboot/ of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1652-1665"
+      used when the zip is absent. Ships in whdboot/ of the installed build, and
+      the download step fetches it again from the repository.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1676-1689, source src/osdep/amiberry.cpp:12805-12808"
 
   - name: "whdload_db.json"
     path: "whdboot/game-data/whdload_db.json"
@@ -3802,89 +3853,133 @@ files:
     sha1: "6540ae1a35080e3dbeacfba5139e4781eb74ca86"
     md5: "51d44cd24e16fbb395b1bfefbaacd375"
     note: >
-      Per-game slave and hardware settings, matched on the archive SHA1 and
-      then on its name.
-      whdload_db.xml in the same folder is read when the JSON is absent. With
-      neither, the booter scans the archive for a .slave file. Ships in whdboot/
-      of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12500-12596"
+      Per-game slave and hardware settings, matched on the archive SHA1 and then
+      on its name. whdload_db.xml in the same folder is read when the JSON is
+      absent. With neither, the booter scans the archive for a .slave file.
+      Ships in whdboot/ of the installed build.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1828-1847, source src/osdep/amiberry_whdbooter.cpp:1085-1103, source src/osdep/amiberry_whdbooter.cpp:1850-1864, source src/osdep/amiberry.cpp:13042-13138"
 
   - name: "kick33180.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick33180.A500.RTB"
     mode: standalone
     system: commodore-amiga
     required: false
-    bundled: true
     size: 3882
     sha1: "1d1c557f4a0f5ea88aeb96d68b09f41990340f70"
     md5: "c993feb1eeddec1d2e687aa514231028"
     aliases: ["whdboot/save-data/Kickstarts/kick33192.A500.RTB"]
     note: >
       WHDLoad relocation table for Kickstart 1.2, read from DEVS:Kickstarts
-      beside the image the booter links there. Ships in whdboot/ of the
-      installed build. The repository ships the same bytes as
-      kick33192.A500.RTB.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876"
+      beside the image the booter links there. Member of skick346.lha. The
+      download step copies it to kick33192.A500.RTB, the name WHDLoad also looks
+      for. Not shipped: the download step extracts it from skick346.lha while
+      one of the eight is missing.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296, source src/osdep/amiberry.cpp:12812-12851, source src/osdep/amiberry.cpp:12855-12865"
 
   - name: "kick34005.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick34005.A500.RTB"
     mode: standalone
     system: commodore-amiga
     required: false
-    bundled: true
     size: 4020
     sha1: "209c109855f94c935439b60950d049527d2f2484"
     md5: "7eb13d974af0992d672b67c317a7e0a1"
     note: >
       WHDLoad relocation table for Kickstart 1.3, read from DEVS:Kickstarts
-      beside the image the booter links there. Ships in whdboot/ of the
-      installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876"
+      beside the image the booter links there. Member of skick346.lha. Not
+      shipped: the download step extracts it from skick346.lha while one of the
+      eight is missing.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296, source src/osdep/amiberry.cpp:12812-12851"
+
+  - name: "kick37175.A500.RTB"
+    path: "whdboot/save-data/Kickstarts/kick37175.A500.RTB"
+    mode: standalone
+    system: commodore-amiga
+    required: false
+    size: 5576
+    sha1: "7c1cf9a97b044a0344648709c187a3505bce7b5a"
+    md5: "e057054449b5e21591ce27d2eb9ac720"
+    note: >
+      WHDLoad relocation table for Kickstart 2.04, read from DEVS:Kickstarts
+      beside the image the booter links there. Member of skick346.lha. Not
+      shipped: the download step extracts it from skick346.lha while one of the
+      eight is missing.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296, source src/osdep/amiberry.cpp:12812-12851"
+
+  - name: "kick36143.A3000.RTB"
+    path: "whdboot/save-data/Kickstarts/kick36143.A3000.RTB"
+    mode: standalone
+    system: commodore-amiga
+    required: false
+    size: 5980
+    sha1: "85b691d7c1286cabefda69f61a1e3007d2cc7bca"
+    md5: "2a2652daba6be3ef1d0bdf5ddd4347c6"
+    note: >
+      WHDLoad relocation table for Kickstart 2.0 A3000, read from
+      DEVS:Kickstarts beside the image the booter links there. Member of
+      skick346.lha. Not shipped: the download step extracts it from skick346.lha
+      while one of the eight is missing.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296, source src/osdep/amiberry.cpp:12812-12851"
+
+  - name: "kick39106.A1200.RTB"
+    path: "whdboot/save-data/Kickstarts/kick39106.A1200.RTB"
+    mode: standalone
+    system: commodore-amiga
+    required: false
+    size: 5002
+    sha1: "4da56f51ce88d321c54fee77c1d37df042ad76ec"
+    md5: "af8b2e2227f01a142e20c8ab463f14ed"
+    note: >
+      WHDLoad relocation table for Kickstart 3.0 A1200, read from
+      DEVS:Kickstarts beside the image the booter links there. Member of
+      skick346.lha. Not shipped: the download step extracts it from skick346.lha
+      while one of the eight is missing.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296, source src/osdep/amiberry.cpp:12812-12851"
 
   - name: "kick40063.A600.RTB"
     path: "whdboot/save-data/Kickstarts/kick40063.A600.RTB"
     mode: standalone
     system: commodore-amiga
     required: false
-    bundled: true
     size: 5000
     sha1: "ca2d6e1e2b4883929447a05e29418533723a419c"
     md5: "3f97c1963d82c808ef29e7c984c4c688"
     note: >
       WHDLoad relocation table for Kickstart 3.1 A600, read from DEVS:Kickstarts
-      beside the image the booter links there. Ships in whdboot/ of the
-      installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876"
+      beside the image the booter links there. Member of skick346.lha. Not
+      shipped: the download step extracts it from skick346.lha while one of the
+      eight is missing.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296, source src/osdep/amiberry.cpp:12812-12851"
 
   - name: "kick40068.A1200.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A1200.RTB"
     mode: standalone
     system: commodore-amiga
     required: false
-    bundled: true
     size: 5008
     sha1: "1ad1b55e7226bd5cd66def8370a69f19244da796"
     md5: "547b42b7b070c7f227ea45e0986d57a1"
     note: >
       WHDLoad relocation table for Kickstart 3.1 A1200, read from
-      DEVS:Kickstarts beside the image the booter links there. Ships in whdboot/
-      of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876"
+      DEVS:Kickstarts beside the image the booter links there. Member of
+      skick346.lha. Not shipped: the download step extracts it from skick346.lha
+      while one of the eight is missing.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296, source src/osdep/amiberry.cpp:12812-12851"
 
   - name: "kick40068.A4000.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A4000.RTB"
     mode: standalone
     system: commodore-amiga
     required: false
-    bundled: true
     size: 4976
     sha1: "973b42dcaf8d6cb111484b3c4d3b719b15f6792d"
     md5: "f89f19b858ea6b1a04327c6f71ee1600"
     note: >
       WHDLoad relocation table for Kickstart 3.1 A4000, read from
-      DEVS:Kickstarts beside the image the booter links there. Ships in whdboot/
-      of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876"
+      DEVS:Kickstarts beside the image the booter links there. Member of
+      skick346.lha. Not shipped: the download step extracts it from skick346.lha
+      while one of the eight is missing.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-376, source src/osdep/amiberry_whdbooter.cpp:1943, source src/osdep/amiberry.cpp:12280-12296, source src/osdep/amiberry.cpp:12812-12851"
 
   - name: "kick31034.A1000.RTB"
     path: "whdboot/save-data/Kickstarts/kick31034.A1000.RTB"
@@ -3897,6 +3992,6 @@ files:
     md5: "c5ba6165df42fc69b32942b248fca725"
     note: >
       WHDLoad relocation table for the A1000 Kickstart 1.1 image, read from
-      DEVS:Kickstarts beside the image the booter links there. Ships in whdboot/
-      of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-345, source src/osdep/amiberry_whdbooter.cpp:1876"
+      DEVS:Kickstarts beside the image the booter links there. Not in skick346.
+      Ships in whdboot/ of the installed build.
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:348-369, source src/osdep/amiberry_whdbooter.cpp:1943"
