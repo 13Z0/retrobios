@@ -5,9 +5,9 @@ source: "https://github.com/izzy2lost/Super3"
 upstream: "https://github.com/trzy/Supermodel"
 based_on: "Supermodel 0.3a through the arm branch of DirtBagXon/model3emu-code-sinden at fa1e305"
 author: "izzy2lost"
-profiled_date: "2026-08-12"
-source_commit: "b435c80a88fd496d4a9858be0681260e84342c85"
-core_version: "1.2.1"
+profiled_date: "2026-10-27"
+source_commit: "c410f82f771b33094b8c1cdbf96ef7c74ec9cff1"
+core_version: "1.2.2"
 display_name: "Sega - Model 3 (SUPER3)"
 verification: existence
 cores:
@@ -21,12 +21,12 @@ mode: standalone
 data_root:
   android:
     path: "Android/data/com.izzy2lost.super3/files/super3"
-    source_ref: "android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:501-503,1155-1161,1209-1222, android/app/src/main/java/com/izzy2lost/super3/UserDataSync.kt:10-20"
+    source_ref: "android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:540-542, android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:1194-1200, android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:1248-1261, android/app/src/main/java/com/izzy2lost/super3/UserDataSync.kt:10-20"
     note: "when the user picks a folder through the storage framework, its NVRAM, Saves, Config and Flyers are copied into this root before each launch"
 
 notes: |
-  Sega Model 3 emulator for Android, package com.izzy2lost.super3, versionName 1.2.1
-  versionCode 22, arm64-v8a alone, minSdk 26 and targetSdk 36, GPL-3.0 with the tree in
+  Sega Model 3 emulator for Android, package com.izzy2lost.super3, versionName 1.2.2
+  versionCode 23, arm64-v8a alone, minSdk 26 and targetSdk 36, GPL-3.0 with the tree in
   the open. A Kotlin front end carries the launcher, setup wizard, ini editor and save
   state browser over the Supermodel core, built through CMake against SDL2 with an
   OpenGL ES presenter of its own. The core states its own lineage: SUPERMODEL_VERSION
@@ -39,7 +39,7 @@ notes: |
   its SUPER3 find rule, on Android alone among the seven find rule sets, starting
   MainActivity with an intent VIEW whose data is the storage framework URI of the game.
   ref: android/app/build.gradle.kts:22-36, Src/Version.h:32, README.md:3-4,
-       android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:453-463,
+       android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:492-502,
        es-de resources/systems/android/es_find_rules.xml:552-557,
        es-de resources/systems/android/es_systems.xml:1091
 
@@ -64,8 +64,8 @@ notes: |
   <root>/super3/Games.xml over external storage, internal storage, /storage/emulated/0
   and /sdcard when no path is passed, but the front end always passes one, along with
   the ROM path, the game name and the user data root as its four arguments.
-  ref: android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:501-503,
-       1155-1161, 1209-1222,
+  ref: android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:540-542,
+       1194-1200, 1248-1261,
        android/app/src/main/java/com/izzy2lost/super3/AssetInstaller.kt:7-18,
        android/app/src/main/cpp/native-lib.cpp:247-260, 1080-1117,
        android/app/src/main/java/com/izzy2lost/super3/Super3Activity.kt:99-111
@@ -84,7 +84,7 @@ notes: |
   named parent itself a game, and not one non-game or BIOS set among them.
   ref: Src/GameLoader.cpp:873-928, 882-890, 913-921, 148-153,
        Src/Model3/Model3.cpp:2919-2933,
-       android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:1163-1208,
+       android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:1202-1247,
        Config/Games.xml
 
   Three files ship inside the package and are read from Config/ at runtime. Games.xml is
@@ -95,7 +95,7 @@ notes: |
   in the second. Nothing about any of the three is verified: no length is compared and
   no hash is computed, the only tests being that the file is there and that it parses.
   ref: android/app/src/main/cpp/native-lib.cpp:531-538, 568-580, 1123-1135,
-       android/app/src/main/cpp/android_input_system.cpp:291-311,
+       android/app/src/main/cpp/android_input_system.cpp:292-312,
        Src/Util/ConfigBuilders.cpp:60-73, 134-142
 
   Two files that AssetInstaller lands are read by nothing in this build.
@@ -142,7 +142,7 @@ files:
       load is refused outright when the file is not there. The Kotlin launcher parses the same copy out of the assets for its game
       list and its per-game input hints. Byte identical to the copy in the repository
       root Config directory.
-    source_ref: "source android/app/src/main/cpp/native-lib.cpp:568-580, 1096-1114, source Src/Util/ConfigBuilders.cpp:60-73, source android/app/src/main/java/com/izzy2lost/super3/GameXml.kt:23-24, source android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:1211"
+    source_ref: "source android/app/src/main/cpp/native-lib.cpp:568-580, 1096-1114, source Src/Util/ConfigBuilders.cpp:60-73, source android/app/src/main/java/com/izzy2lost/super3/GameXml.kt:23-24, source android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:1250"
 
   - name: Supermodel.ini
     path: "Config/Supermodel.ini"
@@ -161,8 +161,11 @@ files:
       the repository root Config directory: the Android build ships its own. They
       describe the file as shipped, since AssetInstaller rewrites it on first run,
       substituting the Android control defaults, and the in-app editor writes per-game
-      keys such as LegacyReal3DTiming afterwards.
-    source_ref: "source android/app/src/main/cpp/native-lib.cpp:531-566, 620-621, source Src/Util/ConfigBuilders.cpp:134-142, source android/app/src/main/java/com/izzy2lost/super3/AssetInstaller.kt:17, 43-159, source android/app/src/main/java/com/izzy2lost/super3/Super3Activity.kt:880-884"
+      keys such as LegacyReal3DTiming afterwards. The controller mapping screen
+      rewrites the Input keys of the Global section or of one game's section, and
+      sets AndroidControllerShortcuts to 0 so the native input system stops adding
+      its own Start, Back and D-pad shortcuts on top of the new bindings.
+    source_ref: "source android/app/src/main/cpp/native-lib.cpp:531-566, 620-621, source Src/Util/ConfigBuilders.cpp:134-142, source android/app/src/main/java/com/izzy2lost/super3/AssetInstaller.kt:17, 43-159, source android/app/src/main/java/com/izzy2lost/super3/Super3Activity.kt:880-884, source android/app/src/main/java/com/izzy2lost/super3/ControlsMappingActivity.kt:87-110, 232-305, source android/app/src/main/cpp/android_input_system.cpp:216, 458-460"
 
   - name: gamecontrollerdb.txt
     path: "Config/gamecontrollerdb.txt"
@@ -179,7 +182,7 @@ files:
       its own, and a handle that cannot be opened is passed over, leaving SDL on its
       built-in mappings. Byte identical to the copy in the repository root Config
       directory.
-    source_ref: "source android/app/src/main/cpp/android_input_system.cpp:291-311, 207-213"
+    source_ref: "source android/app/src/main/cpp/android_input_system.cpp:292-312, 207-213"
 
 exclusion_note: >
   No BIOS or firmware file is loaded. Sega Model 3 hardware has no shared system ROM:
