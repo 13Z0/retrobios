@@ -99,7 +99,7 @@
 }
 
 /* Links and focus */
-.sl-markdown-content a:not(.rb-button):not(.rb-badge):not(.rb-permalink) {
+.sl-markdown-content a:not(.rb-button):not(.rb-badge):not(.rb-permalink):not(.rb-download) {
 	color: var(--rb-link);
 	text-decoration-thickness: 0.08em;
 	text-underline-offset: 0.14em;
@@ -485,6 +485,22 @@ body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: var(--rb-grid-width
 @media (hover: none) {
 	.rb-permalink { opacity: 1; }
 }
+
+.rb-download {
+	display: inline-flex;
+	align-items: center;
+	min-height: 32px;
+	margin-left: 0.5rem;
+	padding: 0.15rem 0.7rem;
+	border: 1px solid var(--rb-link);
+	border-radius: 4px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: var(--rb-link);
+	text-decoration: none;
+	vertical-align: middle;
+}
+.rb-download:hover { background: var(--sl-color-accent-low); }
 
 /* The facts of a file card: label column, value column, one column on a phone. */
 .sl-markdown-content dl.rb-facts {

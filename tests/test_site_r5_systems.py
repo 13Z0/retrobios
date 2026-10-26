@@ -52,11 +52,17 @@ def _consumers(reads: dict[str, list[tuple[str, dict]]]) -> types.SimpleNamespac
     )
 
 
+def _unlinked(text: str) -> str:
+    """The wording of a start line: each file it names links to its card,
+    which EachFileDownloadsFromItsCard holds."""
+    return re.sub(r"\[(`[^`]*`)\]\([^)]*\)", r"\1", text)
+
+
 def _page(stem: str) -> str:
     path = SYSTEMS / f"{stem}.md"
     if not path.is_file():
         raise unittest.SkipTest(f"systems/{stem}.md not generated")
-    return path.read_text(encoding="utf-8")
+    return _unlinked(path.read_text(encoding="utf-8"))
 
 
 def _start_line(text: str) -> str:
@@ -83,7 +89,7 @@ class AStartFileIsNoOnesExtra(unittest.TestCase):
             "1" * 40: [(e, {"name": "naomi.zip", "required": True}) for e, _ in both + extra],
             "2" * 40: both + extra,
         })
-        self.assertEqual(gs._start_with([naomi, hod2], consumers),
+        self.assertEqual([_unlinked(line) for line in gs._start_with([naomi, hod2], consumers)],
                          ["**Start with**: `naomi.zip`.", ""])
 
     def test_the_naomi_page_opens_on_naomi_zip(self) -> None:
@@ -95,7 +101,7 @@ class AStartFileIsNoOnesExtra(unittest.TestCase):
             "3" * 40: [(e, {"name": "bios7.bin", "required": True}) for e in ("a", "b")],
             "4" * 40: [(e, {"name": "bios9.bin", "required": True}) for e in ("a", "b")],
         })
-        self.assertEqual(gs._start_with([bios7, bios9], consumers)[0],
+        self.assertEqual(_unlinked(gs._start_with([bios7, bios9], consumers)[0]),
                          "**Start with**: `bios7.bin`, `bios9.bin`.")
 
     def test_some_files_each_is_not_every_file_for_one(self) -> None:
@@ -121,7 +127,7 @@ class OtherNamesForOneSlotReadAsAlternatives(unittest.TestCase):
                        for e in ("mesen", "nestopia", "fceumm")],
             "6" * 40: [("fbneo", {"name": "fdsbios.zip", "required": True})],
         })
-        self.assertEqual(gs._start_with([disk, fds], consumers)[0],
+        self.assertEqual(_unlinked(gs._start_with([disk, fds], consumers)[0]),
                          "**Start with**: `disksys.rom`. FinalBurn Neo reads `fdsbios.zip` instead.")
 
     def test_a_card_read_under_another_name_says_both(self) -> None:
@@ -131,7 +137,7 @@ class OtherNamesForOneSlotReadAsAlternatives(unittest.TestCase):
             "7" * 40: [("c", {"name": "short.rom", "required": True})],
         })
         self.assertIn("reads `long name (1986).bin` (as `short.rom`) instead.",
-                      gs._start_with([disk, card], consumers)[0])
+                      _unlinked(gs._start_with([disk, card], consumers)[0]))
 
     def test_a_regional_line_names_one_file_per_reader(self) -> None:
         mega_cd = _page("sega").split("{ #mega-cd }", 1)[1].split("\n## ", 1)[0]
@@ -291,6 +297,45 @@ class OneLabelOnceOnABoardPage(unittest.TestCase):
             self.skipTest("pages not generated")
         self.assertEqual([t for t in titles if not t.startswith(("MAME files", "Other: MAME"))],
                          [])
+
+
+class EachFileDownloadsFromItsCard(unittest.TestCase):
+    """The Apple II page named eight start files and gave no visible way to
+    get one: the download was a "(download)" after the collection path,
+    fourth of a card's facts."""
+
+    def test_the_card_title_holds_the_download(self) -> None:
+        from cross_reference import FileConsumers  # noqa: PLC0415
+
+        f = _file("apple2-asoft-auto.rom", "3", "bios/Apple/Apple II/apple2-asoft-auto.rom")
+        title = next(line for line in gs._system_file_card(f, FileConsumers({"files": {}}))
+                     if "rb-file-title" in line)
+        self.assertIn('class="rb-download" href="https://raw.githubusercontent.com/Abdess/'
+                      'retrobios/main/bios/Apple/Apple%20II/apple2-asoft-auto.rom"', title)
+        self.assertIn('aria-label="Download apple2-asoft-auto.rom"', title)
+        facts = "\n".join(gs._system_file_card(f, FileConsumers({"files": {}})))
+        self.assertNotIn("(download)", facts)
+
+    def test_a_start_name_leads_to_its_card(self) -> None:
+        line = gs._link_held_names("- **Apple II**: `a.rom`, `b.rom`.",
+                                   {"a.rom": "a" * 40, "b.rom": "b" * 40}, {"a" * 40})
+        self.assertEqual(line, "- **Apple II**: [`a.rom`](#sha1-aaaaaaaaaaaa), `b.rom`.")
+
+    def test_a_card_on_another_part_is_reached_by_its_permalink(self) -> None:
+        full = next(iter(json.loads((REPO_ROOT / "database.json").read_text())["files"]))
+        here = f'[`x.rom`](#sha1-{full[:12]})'
+        away = gs._cards_elsewhere(here)
+        self.assertEqual(away, f"[`x.rom`](/retrobios/files/?sha1={full})")
+        held = here + f'\n<h3 id="sha1-{full[:12]}" class="rb-file-title">'
+        self.assertEqual(gs._cards_elsewhere(held), held)
+
+    def test_every_start_name_on_the_built_apple_page_links(self) -> None:
+        page = next(SYSTEMS.glob("apple.md*"), None)
+        if page is None:
+            self.skipTest("site not generated")
+        section = page.read_text(encoding="utf-8").split("## Apple II {", 1)[1]
+        start = section.split("<section", 1)[0]
+        self.assertIn("[`apple2-asoft-auto.rom`](#sha1-33a24f5489ba)", start)
 
 
 if __name__ == "__main__":

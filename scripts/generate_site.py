@@ -3007,6 +3007,26 @@ def _front_matter(markdown: str) -> dict:
     return data if isinstance(data, dict) else {}
 
 
+_SHA1_BY_PREFIX: dict[str, str] = {}
+
+
+def _cards_elsewhere(markdown: str) -> str:
+    """A start line links each file to its card. A console split over part
+    pages keeps its cards on the parts, so a card this page does not hold
+    is reached by its permanent link instead."""
+    links = set(re.findall(r"\]\(#(sha1-[0-9a-f]{12})\)", markdown))
+    away = {ident for ident in links if f'id="{ident}"' not in markdown}
+    if not away:
+        return markdown
+    if not _SHA1_BY_PREFIX:
+        db = load_database(str(_REPO_ROOT / "database.json"))
+        _SHA1_BY_PREFIX.update({sha1[:12]: sha1 for sha1 in db["files"]})
+    for ident in away:
+        full = _SHA1_BY_PREFIX[ident.removeprefix("sha1-")]
+        markdown = markdown.replace(f"](#{ident})", f"]({markup.site_href(f'files/?sha1={full}')})")
+    return markdown
+
+
 def decorate_markdown_pages(docs: Path) -> dict[str, str]:
     """Add per-page descriptions and machine-readable structured data.
 
@@ -3026,7 +3046,7 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
             # Written in its final form by an earlier pass and rewritten by
             # nothing since: a second pass would find no title to read.
             continue
-        markdown = prepare_page(original, relative)
+        markdown = _cards_elsewhere(prepare_page(original, relative))
         for image_id in unresolved_images(markdown):
             print(f"  WARNING: {relative}: no diagram named {image_id!r}", file=sys.stderr)
         stripped = _undecorated(markdown)
@@ -5477,8 +5497,14 @@ def _system_file_card(
     # emulator, platform or pack line and looked unfinished.
     unread = (f' <span class="rb-badge rb-badge-muted" {skip}>No reader</span>'
               if not (emus or plats or installed) else "")
+    # The download leads the card: as a "(download)" after the collection
+    # path, fourth of the facts, a reader of the Apple II page found none.
+    download = (
+        f' <a class="rb-download" href="{html.escape(_fetch_url(f["path"]))}" '
+        f'aria-label="Download {html.escape(name)}" {skip}>Download</a>'
+    ) if f.get("path") and markup.starlight() else ""
     lines.append(_card_title(
-        f'{_code(name)} <span class="rb-badge rb-badge-muted">{size}</span>{unread}{permalink}',
+        f'{_code(name)} <span class="rb-badge rb-badge-muted">{size}</span>{unread}{download}{permalink}',
         anchor, searchable,
     ))
     lines.append("")
@@ -5509,8 +5535,10 @@ def _system_file_card(
         # The card named a file, its hashes and provenance, but not where to
         # get it: a user missing scph5501.bin found the reference and no way
         # to the bytes.
-        facts.append(("Collection path",
-                      [f"{_code(f['path'])} ([download]({_fetch_url(f['path'])}))"], False))
+        path = _code(f["path"])
+        if not markup.starlight():
+            path += f" ([download]({_fetch_url(f['path'])}))"
+        facts.append(("Collection path", [path], False))
     catalogued = [line.split(": ", 1)[1]
                   for line in _provenance_lines(f.get("provenance") or {}, "../")]
     if catalogued:
@@ -6196,7 +6224,18 @@ def _start(
             sha1 = sha1s.get(visible)
             if sha1 and sha1 not in order:
                 order.append(sha1)
-    return lines, order
+    return [_link_held_names(line, sha1s, held) for line in lines], order
+
+
+def _link_held_names(line: str, sha1s: dict[str, str], held: set[str]) -> str:
+    """Each file the start line names leads to its card, where it downloads:
+    the Apple II line named eight files and none was a way to get one."""
+    def link(match: re.Match) -> str:
+        sha1 = sha1s.get(match[1], "")
+        return f"[{match[0]}](#sha1-{sha1[:12]})" if sha1 in held else match[0]
+    # A name inside a link already (a "Keep it zipped" archive) stays as
+    # is, and so does the name a file is read under, "(as `d2fdc.zip`)".
+    return re.sub(r"(?<!\[)(?<!\(as )`([^`]*)`(?!\]\()", link, line)
 
 
 def _group_lines(
