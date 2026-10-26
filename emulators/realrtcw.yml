@@ -5,6 +5,7 @@ source: "https://github.com/wolfETPlayer/RealRTCW"
 upstream: "https://github.com/wolfETPlayer/RealRTCW"
 profiled_date: "2026-10-20"
 source_commit: "ad529d588e4dec717aff0779f9d1555eddc1e2be"
+pin_frozen: "RetroBat, the only platform that ships it, installs this release: the RealRTCW.x64.exe of its rtcw.7z package (31 March 2026) reports RealRTCW 5.2. Later releases are not part of that package."
 core_version: "5.2"
 display_name: "RealRTCW"
 mode: standalone
