@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://gitlab.com/jengun/sdltrs"
 upstream: "http://sdltrs.sourceforge.net"
 profiled_date: "2026-10-23"
-source_commit: "675d169d350e77b31d494e1efd0354abacc3c8e3"
+source_commit: "205ddfd78fd00b32b3f730453175dbd70782ce79"
 core_version: "1.2.35"
 display_name: "Tandy - TRS-80 (SDL2TRS)"
 cores:
@@ -42,7 +42,7 @@ notes: |
   means a MODELA/III CMD file, rejected above 14 KB. Anything else is read as
   raw binary with no check (src/trs_cmd_rom.c:720-767, 779-843), which is the path a
   dump takes. No hash is computed anywhere in the tree. rom_write drops any byte
-  at or past MAX_ROM_SIZE, 18432 (src/trs_memory.c:63, 728-732), and trs_rom_size,
+  at or past MAX_ROM_SIZE, 18432 (src/trs_memory.c:64, 729-733), and trs_rom_size,
   the extent of the plain ROM mapping, is capped at 14336 (src/trs_cmd_rom.c:896-898).
 
   A failed load is not fatal. Model I and Model III/4 fall back to trs_fakerom,
@@ -154,12 +154,12 @@ analysis:
       buffer. They arrive through romfile1 or romfile3 like any other image and
       are recognised from the ROM data, so the emulator defines no filename for
       them and no option selects them.
-    source_ref: "src/trs_clones.c:9-21 (clone table), src/trs_memory.c:63 (MAX_ROM_SIZE)"
+    source_ref: "src/trs_clones.c:9-21 (clone table), src/trs_memory.c:64 (MAX_ROM_SIZE)"
     layouts:
       - machine: "Prologica CP-300, CP-500 and CP-500 M80"
         slot: model3.rom
         image_size: 16384
-        source_ref: "src/trs_cp500.c:1-22, src/trs_cp500.c:154-161, src/trs_memory.c:1038-1041"
+        source_ref: "src/trs_cp500.c:1-22, src/trs_cp500.c:154-161, src/trs_memory.c:1039-1042"
         note: >
           14 KB of patched Model III ROM plus a 2 KB resident monitor read back
           from 0x3800-0x3FFF and banked into 0x3000-0x37FF. README.md:21 and
@@ -168,41 +168,41 @@ analysis:
       - machine: "Holmes VID-80 (VX-3) on Model III"
         slot: model3.rom
         image_size: 18432
-        source_ref: "src/trs_memory.c:570-580, src/trs_memory.c:1043-1065"
+        source_ref: "src/trs_memory.c:571-581, src/trs_memory.c:1044-1066"
         note: "4 KB VID-80 ROM with the Model III ROM appended behind it. This pairing is what sets MAX_ROM_SIZE."
 
       - machine: "TCS SpeedMaster, also sold as Genie IIs"
         slot: level2.rom
         image_size: 16384
-        source_ref: "src/trs_memory.c:1011-1033"
+        source_ref: "src/trs_memory.c:1012-1034"
         note: "BASIC at 0x0000-0x2FFF and a ROM card read from 0x1000-0x3FFF into 0x4000-0xBFFF. Needs -speedup tcs (html/Features.html)."
 
       - machine: "Aster CT-80"
         slot: level2.rom
         image_size: 14336
-        source_ref: "src/trs_memory.c:948-979"
+        source_ref: "src/trs_memory.c:949-980"
         note: "BASIC at 0x0000-0x2FFF plus a 2 KB boot ROM at 0x3000-0x37FF, mirrored into 0xEC00 in CP/M mode."
 
       - machine: "EACA EG 3200 Genie III"
         slot: level2.rom
         image_size: 14336
-        source_ref: "src/trs_memory.c:895-916"
+        source_ref: "src/trs_memory.c:896-917"
         note: "Bank 1 is read through trs_rom_size, so the 14 KB cap on the plain mapping is the ceiling."
 
       - machine: "TCS Genie IIIs"
         slot: level2.rom
         image_size: 12288
-        source_ref: "src/trs_memory.c:918-946"
+        source_ref: "src/trs_memory.c:919-947"
         note: "Reads 0x0000-0x2FFF only. The rest of the address space is banked RAM, video and the HRG window."
 
       - machine: "LNW Research LNW80/II"
         slot: level2.rom
         image_size: 12288
-        source_ref: "src/trs_memory.c:981-1009"
+        source_ref: "src/trs_memory.c:982-1010"
         note: "Reads 0x0000-0x2FFF only. -speedup lnw sets the 4 MHz clock and the low 16 KB banking."
 
   character_generators:
-    source_ref: "src/trs_chars.c:12 (trs_char_data), src/trs_options.c:404-436 (charset names), src/trs_sdl_interface.c:1904-1909"
+    source_ref: "src/trs_chars.c:12 (trs_char_data), src/trs_options.c:404-436 (charset names), src/trs_sdl_interface.c:1905-1910"
     note: >
       Every character set is a compiled-in bitmap table selected by -charset1,
       -charset3 and -charset4. The tree holds no external font file and reads
@@ -252,7 +252,7 @@ analysis:
       - what: "floppy images in drives 0-7, JV1, JV3 and DMK"
         source_ref: "src/trs_options.c:587-589, src/trs_disk.c:775-913"
       - what: "hard drive images, units 0-3"
-        source_ref: "src/trs_options.c:590-592, src/trs_hard.c:312-320, src/trs_hard.c:569-654"
+        source_ref: "src/trs_options.c:590-592, src/trs_hard.c:312-320, src/trs_hard.c:569-653"
       - what: "cassette images, .cas, .cpt and .wav"
         source_ref: "src/trs_options.c:584-586, src/trs_cassette.c:522-557"
       - what: "stringy floppy wafers in drives 0-7, .esf"
