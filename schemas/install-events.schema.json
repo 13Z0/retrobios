@@ -28,6 +28,7 @@
         "transfer",
         "downloaded",
         "summary",
+        "app",
         "end"
       ]
     }
@@ -86,6 +87,9 @@
     },
     {
       "$ref": "#/$defs/summary"
+    },
+    {
+      "$ref": "#/$defs/app"
     },
     {
       "$ref": "#/$defs/end"
@@ -737,6 +741,55 @@
         },
         "interrupted": {
           "type": "boolean"
+        }
+      }
+    },
+    "app": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "system",
+        "folder",
+        "ok",
+        "reason",
+        "dests",
+        "written",
+        "kept"
+      ],
+      "properties": {
+        "event": {
+          "const": "app"
+        },
+        "system": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "ok": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "dests": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "written": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "kept": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
         }
       }
     },
