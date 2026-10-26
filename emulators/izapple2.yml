@@ -4,7 +4,7 @@ core_classification: embedded_hle
 source: "https://github.com/ivanizag/izapple2"
 upstream: "https://github.com/ivanizag/izapple2"
 profiled_date: "2026-08-08"
-source_commit: "dc28a566c9c733119b0511d9f77e1b4574e28718"
+source_commit: "4e773baf9f1f3fb692e3f3444eb5f42fddb205ef"
 core_version: "v2.5.0"
 display_name: "Apple - Apple II (izapple2)"
 cores:
@@ -30,10 +30,10 @@ notes: |
   (setup.go:203-213, boardBase64a.go:7-16, boardBasis108.go:28-37).
 
   Two of the 27 registered cards name an image the emulator downloads instead
-  of carrying: prodosromdrive and prodosromcard3 (cardBuilder.go:86-87). Both
+  of carrying: prodosromdrive and prodosromcard3 (cardBuilder.go:87-88). Both
   read the card slot ROM out of that image, so neither card has a boot ROM
   without it. No shipped model uses either card, they are reached with -sN.
-  prodosnvramdrive is left out of the factory (cardBuilder.go:88).
+  prodosnvramdrive is left out of the factory (cardBuilder.go:89).
 
   -rom and -charrom replace the embedded main and character ROM with a file of
   the user's choosing, and every disk, hard disk and cassette parameter takes

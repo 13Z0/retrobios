@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/TheXTech/TheXTech"
 upstream: "https://github.com/TheXTech/TheXTech"
 profiled_date: "2026-10-04"
-source_commit: "df191fa3bc3a0dc22c4fbdb32218bf68932cff7d"
+source_commit: "e07c5bfb92377d315d0ab33177092fa7cadeb84e"
 display_name: "TheXTech"
 cores: []
 systems: [smbx]

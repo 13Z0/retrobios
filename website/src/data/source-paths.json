@@ -85,7 +85,7 @@
   "Makefile",
   "libretro-radio.c"
  ],
- "git.libretro.com/libretro/rust-dos@b45946b8d996f1a7fecbdc0f5aa6d4420087d4ea": [
+ "git.libretro.com/libretro/rust-dos@163ce1e28da82307185eaa8287a813e8e52cc94c": [
   "crates/gus/build.rs",
   "crates/gus/src/builtin.rs",
   "crates/mt32/src/lib.rs",
@@ -437,7 +437,7 @@
   "core/loadrom.c",
   "libretro/libretro.c"
  ],
- "github.com/BlitterStudio/amiberry@f3924d4d34cf67dc62a6e90474ca8ecb1c8f7c79": [
+ "github.com/BlitterStudio/amiberry@49dbd1f027ef2afc12862b30c0c31ac8efa66221": [
   "android/app/build.gradle",
   "libretro/libretro.cpp",
   "src/a2091.cpp",
@@ -1151,7 +1151,7 @@
   "Source/Core/DiscIO/NANDImporter.cpp",
   "Source/Core/DolphinQt/MenuBar.cpp"
  ],
- "github.com/RPCS3/rpcs3@979a52415003fd7a74ddd216e1a5782b3731281f": [
+ "github.com/RPCS3/rpcs3@f4d4c1b4712ae6c6fe8c80ff8eaa4036f80f26fc": [
   "rpcs3/Crypto/key_vault.h",
   "rpcs3/Emu/Cell/Modules/cellFont.cpp",
   "rpcs3/Emu/Cell/Modules/cellSsl.cpp",
@@ -1703,7 +1703,7 @@
   "TheForceEngine/TFE_FrontEndUI/frontEndUi.cpp",
   "TheForceEngine/main.cpp"
  ],
- "github.com/TheXTech/TheXTech@df191fa3bc3a0dc22c4fbdb32218bf68932cff7d": [
+ "github.com/TheXTech/TheXTech@e07c5bfb92377d315d0ab33177092fa7cadeb84e": [
   "CMakeLists.txt",
   "lib/AppPath/private/app_path.cpp",
   "lib/AppPath/private/app_path_unix.cpp",
@@ -2388,7 +2388,7 @@
   "src/mame/vtech/vtech1.cpp",
   "src/osd/modules/switchres/switchres_module.cpp"
  ],
- "github.com/ares-emulator/ares@a774671dc005ceff8ae400b62f097c1cac0cbf4b": [
+ "github.com/ares-emulator/ares@d400eee9764fe22a8de0247a52757d2021d0539c": [
   "desktop-ui/desktop-ui.cpp",
   "desktop-ui/emulator/atari-5200.cpp",
   "desktop-ui/emulator/colecovision.cpp",
@@ -2645,7 +2645,7 @@
   "Source/zx81/zx81.cpp",
   "Source/zx81config.cpp"
  ],
- "github.com/chernandezba/zesarux@8991b390f8bf6d453e8e4774633414ecfd80f088": [
+ "github.com/chernandezba/zesarux@e14e9b2796a7c1137d83f1ad14cdeb4efbb4557f": [
   "src/ALTERNATEROMS",
   "src/configure",
   "src/copy_interfaces/defcon.c",
@@ -2831,7 +2831,7 @@
  "github.com/digarok/gsplus@41e71031debbde98e66ea5c5c67498e9b4726a6d": [
   "gsplus/src/config.c"
  ],
- "github.com/dividebysandwich/rust-dos@b45946b8d996f1a7fecbdc0f5aa6d4420087d4ea": [
+ "github.com/dividebysandwich/rust-dos@b53562f080b667c0fcbb2f54bab7be549cce46b9": [
   "crates/gus/build.rs",
   "crates/gus/src/builtin.rs",
   "crates/mt32/src/lib.rs",
@@ -3480,18 +3480,7 @@
  "github.com/hex007/freej2me@eb4ac87e9a0b212ba701691eb67ee4892b2b1173": [
   "src/libretro/freej2me_libretro.c"
  ],
- "github.com/hrydgard/ppsspp@a1e74d0d4f89ba3fa2d4fe64bac7a0fa16fc146f": [
-  "Core/Compatibility.cpp",
-  "Core/Config.cpp",
-  "Core/HLE/sceFont.cpp",
-  "Core/Util/PPGeDraw.cpp",
-  "GPU/Common/PostShader.cpp",
-  "SDL/SDLJoystick.cpp",
-  "UI/NativeApp.cpp",
-  "ext/native/i18n/i18n.cpp",
-  "ext/native/image/zim_load.cpp"
- ],
- "github.com/hrydgard/ppsspp@e77f0e46b8f0c1e0da99297728d7c940efa3b5f6": [
+ "github.com/hrydgard/ppsspp@43a69b1c84dfe29e82b46bd3797a1106cbd65c5b": [
   "Core/ConfigValues.h",
   "Core/HLE/HLE.cpp",
   "Core/HLE/sceFont.cpp",
@@ -3505,6 +3494,17 @@
   "Windows/main.cpp",
   "android/src/org/ppsspp/ppsspp/PpssppActivity.java",
   "libretro/libretro.cpp"
+ ],
+ "github.com/hrydgard/ppsspp@a1e74d0d4f89ba3fa2d4fe64bac7a0fa16fc146f": [
+  "Core/Compatibility.cpp",
+  "Core/Config.cpp",
+  "Core/HLE/sceFont.cpp",
+  "Core/Util/PPGeDraw.cpp",
+  "GPU/Common/PostShader.cpp",
+  "SDL/SDLJoystick.cpp",
+  "UI/NativeApp.cpp",
+  "ext/native/i18n/i18n.cpp",
+  "ext/native/image/zim_load.cpp"
  ],
  "github.com/icculus/DirkSimple@d5d75f97af34690010166a786ee41e15dd142c15": [
   "dirksimple_libretro.c",
@@ -3617,7 +3617,7 @@
   "platform/common/emu.c",
   "platform/libretro/libretro.c"
  ],
- "github.com/ivanizag/izapple2@dc28a566c9c733119b0511d9f77e1b4574e28718": [
+ "github.com/ivanizag/izapple2@4e773baf9f1f3fb692e3f3444eb5f42fddb205ef": [
   "boardBase64a.go",
   "boardBasis108.go",
   "cardBuilder.go",
@@ -6055,7 +6055,7 @@
   "core/nullDC.cpp",
   "core/reios/reios.cpp"
  ],
- "github.com/libretro/parallel-n64@0aad7728439cb37bebc4c84fc02b0494b72f4855": [
+ "github.com/libretro/parallel-n64@eace19113ab201ae724dc58d530e2db2b4ab93cc": [
   "libretro/libretro.c",
   "mupen64plus-core/src/device/pif/bootrom_hle.c"
  ],
@@ -8812,7 +8812,7 @@
   "source/linux/context.cpp",
   "source/linux/linuxframe.cpp"
  ],
- "github.com/shadps4-emu/shadPS4@f6181d0631d45782d2722eb98cbf3b73867eb9d6": [
+ "github.com/shadps4-emu/shadPS4@3eecea94ddaca360b19f4b800523b609a8b2ffcc": [
   "src/core/libraries/sysmodule/sysmodule_internal.cpp",
   "src/core/linker.cpp"
  ],
@@ -9385,7 +9385,7 @@
   "ui/xui/main-menu.cc",
   "winpcap-loader/loader.c"
  ],
- "github.com/xenia-canary/xenia-canary@291f0c9be398a3e0a0e29f378cbd564fa28c55a9": [
+ "github.com/xenia-canary/xenia-canary@b71ddd72fae5adbd1182b6ad99b26cda8718a2b8": [
   "src/xenia/emulator.cc"
  ],
  "github.com/xenios-jp/XeniOS@87b176a078c316fde3adf67a217f0c44615b0e0d": [

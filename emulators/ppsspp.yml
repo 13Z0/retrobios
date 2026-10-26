@@ -3,7 +3,7 @@ type: standalone + libretro
 core_classification: official_port
 source: "https://github.com/hrydgard/ppsspp"
 profiled_date: "2026-10-21"
-source_commit: "e77f0e46b8f0c1e0da99297728d7c940efa3b5f6"
+source_commit: "43a69b1c84dfe29e82b46bd3797a1106cbd65c5b"
 core_version: "Git"
 display_name: "Sony - PlayStation Portable (PPSSPP)"
 cores:

@@ -3,7 +3,7 @@ type: standalone
 source: "https://github.com/shadps4-emu/shadPS4"
 upstream: "https://github.com/shadps4-emu/shadPS4"
 profiled_date: "2026-03-26"
-source_commit: "f6181d0631d45782d2722eb98cbf3b73867eb9d6"
+source_commit: "3eecea94ddaca360b19f4b800523b609a8b2ffcc"
 core_version: "pre-release 2026-08-08"
 display_name: "shadPS4 (PlayStation 4)"
 cores:
