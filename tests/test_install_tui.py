@@ -3940,6 +3940,28 @@ class GameDataIsNoFirmwareAlarm(unittest.TestCase):
         self.assertIn("Anims.j2a (Jazz Jackrabbit 2)", lines[1])
 
 
+class TheHelpNamesKeysThatCome(unittest.TestCase):
+    """Every route's help listed "?, F1  This help", which no pad sends, and
+    a key as wide as the column touched its text."""
+
+    def test_pad_routes_name_no_help_key(self):
+        for pad in ROUTES:
+            with self.subTest(route=pad):
+                state = checked_state()
+                state.pad = pad
+                keys = [key for key, _what in install._help_lines(state)]
+                self.assertEqual("?, F1" in keys, pad == "keys")
+
+    def test_a_wide_key_keeps_two_spaces(self):
+        state = checked_state()
+        state.help = True
+        with mock.patch.object(install, "_help_lines",
+                               return_value=[("A, Start, Enter, Space, x", "Choose"),
+                                             ("q", "Quit")]):
+            lines = install._view_help(state, 80, 24)[1]
+        self.assertTrue(any("A, Start, Enter, Space, x  Choose" in line for line in lines))
+
+
 class NothingFoundIsSaid(unittest.TestCase):
     """With nothing detected the first screen was the list of 18 setups,
     with no line at 40x15 saying nothing was found, which the beginner's

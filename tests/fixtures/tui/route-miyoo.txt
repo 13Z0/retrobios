@@ -1141,9 +1141,9 @@
  R2, Esc, Backspace  Back
  q, Ctrl-C           Quit
  B                   Sends no key here
- ?, F1               This help
 
-
+ BIOS folder:
+   /home/user/.config/retroarch/system
  Any key closes this help
 === help 40x15
  RetroBIOS: Keys
@@ -1154,10 +1154,10 @@
  R2, Esc, Backspace  Back
  q, Ctrl-C           Quit
  B                   Sends no key here
- ?, F1               This help
 
  BIOS folder:
    /home/user/.config/retroarch/system
+
 
 
  Any key closes this help
@@ -1170,9 +1170,9 @@
  R2, Esc, Backspace  Back
  q, Ctrl-C           Quit
  B                   Sends no key here
- ?, F1               This help
 
  BIOS folder: /home/user/.config/retroarch/system
+
 
 
 

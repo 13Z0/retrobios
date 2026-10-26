@@ -12758,7 +12758,7 @@ def _help_lines(state: TuiState) -> list[tuple[str, str]]:
     if screen == "installing":
         return [(names["stop"], "Stop: what is done stays done"),
                 *([(names["kill"], "Stop")] if names["kill"] else []),
-                *_route_extras(state), ("?, F1", "This help")]
+                *_route_extras(state), *_help_key(state)]
     if screen == "path":
         return [(names["enter"], "Use this folder"), ("Backspace", "Delete a character"),
                 ("Ctrl-U", "Clear"), (names["esc"], "Back"), ("Ctrl-C", "Quit"),
@@ -12786,8 +12786,14 @@ def _help_lines(state: TuiState) -> list[tuple[str, str]]:
         keys.append((names["options"], "Options"))
     back = "Quit" if len(state.stack) == 1 else "Back"
     keys += [(names["back"], back), ("q, Ctrl-C", "Quit"), *kill, *_route_extras(state),
-             ("?, F1", "This help")]
+             *_help_key(state)]
     return keys
+
+
+def _help_key(state: TuiState) -> list[tuple[str, str]]:
+    """? and F1, named only where a keyboard may send them: no pad route
+    maps a button to either."""
+    return [("?, F1", "This help")] if state.pad in ("both", "keys") else []
 
 
 def _primary(state: TuiState) -> str | None:
@@ -12805,7 +12811,10 @@ def _primary(state: TuiState) -> str | None:
 def _view_help(state: TuiState, width: int, height: int) -> tuple:
     keys = _help_lines(state)
     column = min(22, max(cell_width(key) for key, _what in keys) + 2)
-    lines = [f"{_pad(key, column)}{what}" for key, what in keys]
+    # Two spaces at least: a key as wide as the column touched its text
+    # ("Select Keyboard on or off" on muxterm).
+    lines = [f"{_pad(key, column)}{what}" if cell_width(key) <= column - 2
+             else f"{key}  {what}" for key, what in keys]
     if state.screen in ("setup", "plan", "browse", "folder") and state.dest is not None:
         lines += ["", f"BIOS folder: {state.dest}"]
     return ("Keys", _compose(state, width, height, lines, []), ("Any key closes this help",))

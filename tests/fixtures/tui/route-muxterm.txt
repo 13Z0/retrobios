@@ -1142,7 +1142,7 @@
  q, Ctrl-C          Quit
  Select             Keyboard on or off
  Menu               Close the terminal
- ?, F1              This help
+
 
  Any key closes this help
 === help 40x15
@@ -1155,10 +1155,10 @@
  q, Ctrl-C          Quit
  Select             Keyboard on or off
  Menu               Close the terminal
- ?, F1              This help
 
  BIOS folder:
    /home/user/.config/retroarch/system
+
 
  Any key closes this help
 === help 80x24
@@ -1171,9 +1171,9 @@
  q, Ctrl-C          Quit
  Select             Keyboard on or off
  Menu               Close the terminal
- ?, F1              This help
 
  BIOS folder: /home/user/.config/retroarch/system
+
 
 
 
