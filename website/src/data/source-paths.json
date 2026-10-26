@@ -161,31 +161,26 @@
   "koyote_bin.h",
   "memory.cpp"
  ],
- "github.com/ARMSX2/ARMSX1@fadd20b6587a291e59b49378a2428358c6663b8c": [
-  "README.md",
+ "github.com/ARMSX2/ARMSX1@d96a5b8ad6ccccb40a431488aa89b06f0318c217": [
+  "SWANSTATION-DEV.md",
   "android/app/build.gradle",
-  "android/app/src/main/AndroidManifest.xml",
   "android/app/src/main/java/com/armsx2/config/Ps1Settings.kt",
-  "android/app/src/main/java/com/armsx2/core/Ps1Config.kt",
+  "android/app/src/main/java/com/armsx2/config/Ps1SettingsStore.kt",
+  "android/app/src/main/java/com/armsx2/core/Ps1BiosProbe.java",
+  "android/app/src/main/java/com/armsx2/core/Ps1BiosSelection.java",
+  "android/app/src/main/java/com/armsx2/ui/bios/BiosManagerViewModel.kt",
+  "android/app/src/main/java/com/armsx2/ui/onboarding/OnboardingViewModel.kt",
   "android/app/src/main/java/com/armsx2/ui/settings/Ps1AdvancedTab.kt",
-  "android/app/src/main/java/com/armsx2/ui/settings/Ps1BiosTab.kt",
-  "android/app/src/main/java/com/nanodata/armsx/EmulatorActivity.java",
-  "frontend/android_jni.cpp",
+  "android/app/src/main/java/kr/co/iefriends/pcsx2/NativeApp.java",
   "frontend/config.c",
   "frontend/main.cpp",
-  "psx/bus.c",
-  "psx/cheats.c",
+  "native/swanstation/runtime.cpp",
   "psx/dev/bios.c",
-  "psx/dev/bios.h",
   "psx/dev/exp1.c",
   "psx/dev/exp1.h",
-  "psx/dev/mcd.c",
-  "psx/fastboot.c",
-  "psx/fastboot.h",
-  "psx/psx.c",
-  "psx/texrep.c"
+  "psx/psx.c"
  ],
- "github.com/ARMSX2/ARMSX2@d383b3636947565d9201f81e32178d0288623d8d": [
+ "github.com/ARMSX2/ARMSX2@c7517b9b3de811a92985c76a134b83c7368d0d4b": [
   ".github/workflows/build-all.yml",
   ".github/workflows/linux_build_qt.yml",
   "README.md",
@@ -198,6 +193,7 @@
   "pcsx2-qt/SetupWizardDialog.cpp",
   "pcsx2-qt/Translations.cpp",
   "pcsx2/Achievements.cpp",
+  "pcsx2/Arcade/ArcadeSetup.cpp",
   "pcsx2/CDVD/CDVD.cpp",
   "pcsx2/CMakeLists.txt",
   "pcsx2/Config.h",
@@ -208,6 +204,8 @@
   "pcsx2/GS/Renderers/Common/GSDevice.cpp",
   "pcsx2/GS/Renderers/DX11/GSDevice11.cpp",
   "pcsx2/GS/Renderers/DX12/GSDevice12.cpp",
+  "pcsx2/GS/Renderers/HW/GSTextureReplacements.cpp",
+  "pcsx2/GS/Renderers/HW/GSTextureUpscaler.cpp",
   "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp",
   "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp",
   "pcsx2/GameDatabase.cpp",
@@ -225,6 +223,7 @@
   "pcsx2/ps2/BiosTools.cpp",
   "platforms/android/app/build.gradle.kts",
   "platforms/android/app/src/main/cpp/native-lib.cpp",
+  "platforms/android/app/src/main/java/com/armsx2/arcade/Arcade.kt",
   "platforms/android/app/src/main/java/com/armsx2/arcade/ArcadeLibrary.kt",
   "platforms/android/app/src/main/java/kr/co/iefriends/pcsx2/MainActivity.java",
   "platforms/android/app/src/main/java/kr/co/iefriends/pcsx2/NativeApp.java",
@@ -1026,6 +1025,7 @@
   "pcsx2/GS/Renderers/Common/GSDevice.cpp",
   "pcsx2/GS/Renderers/DX11/GSDevice11.cpp",
   "pcsx2/GS/Renderers/DX12/GSDevice12.cpp",
+  "pcsx2/GS/Renderers/HW/GSTextureReplacements.cpp",
   "pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp",
   "pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp",
   "pcsx2/GameDatabase.cpp",
@@ -2979,9 +2979,10 @@
   "src/misc/support.cpp",
   "src/shell/autoexec.cpp"
  ],
- "github.com/doublegate/RustyNES@4e77905e045c0e971b53c5abee8d0a07a4b1bfdb": [
+ "github.com/doublegate/RustyNES@3d02b99dc84fb389c03fc6b1f986ffa658dda0dd": [
   "crates/rustynes-core/src/bus.rs",
   "crates/rustynes-core/src/nes.rs",
+  "crates/rustynes-gamedb/src/lib.rs",
   "crates/rustynes-libretro/src/lib.rs",
   "crates/rustynes-mappers/src/fds.rs"
  ],
@@ -3649,7 +3650,7 @@
   "android/app/src/main/java/com/izzy2lost/super3/Super3Activity.kt",
   "android/app/src/main/java/com/izzy2lost/super3/UserDataSync.kt"
  ],
- "github.com/izzy2lost/xemu@3ed53f6843ac41147287468d996dfa939b40ad00": [
+ "github.com/izzy2lost/xemu@e092175b9196438ee2712bf6f45398fe2970b5fe": [
   "android/app/build.gradle.kts",
   "android/app/src/main/AndroidManifest.xml",
   "android/app/src/main/cpp/CMakeLists.txt",
@@ -3658,6 +3659,7 @@
   "android/app/src/main/cpp/xemu_settings_android.cc",
   "android/app/src/main/java/com/izzy2lost/x1box/GameLibraryActivity.kt",
   "android/app/src/main/java/com/izzy2lost/x1box/GpuDriverHelper.kt",
+  "android/app/src/main/java/com/izzy2lost/x1box/HakuxLaunch.kt",
   "android/app/src/main/java/com/izzy2lost/x1box/LauncherActivity.kt",
   "android/app/src/main/java/com/izzy2lost/x1box/SettingsActivity.kt",
   "android/app/src/main/java/com/izzy2lost/x1box/SetupWizardActivity.kt",
@@ -3665,9 +3667,11 @@
   "android/app/src/main/java/com/izzy2lost/x1box/XboxHddFormatter.kt",
   "android/app/src/main/java/com/izzy2lost/x1box/XboxInsigniaHelper.kt",
   "android/app/src/main/res/values/strings.xml",
+  "android/hakux/core/native/kernel/ex.c",
+  "hw/xbox/chihiro/chihiro-firmware.h",
+  "hw/xbox/chihiro/chihiro.c",
   "hw/xbox/xbox.c",
-  "system/vl.c",
-  "thirdparty/SDL2/src/joystick/SDL_gamecontroller.c"
+  "system/vl.c"
  ],
  "github.com/jamsilva/chimerasnes@04c57c2902c25f36ae5a5d9c57aff851a772c868": [
   "source/bsx.c",
@@ -9607,7 +9611,7 @@
   "icarus/heuristics/super-famicom.cpp",
   "icarus/icarus.cpp"
  ],
- "gitlab.com/jengun/sdltrs@675d169d350e77b31d494e1efd0354abacc3c8e3": [
+ "gitlab.com/jengun/sdltrs@205ddfd78fd00b32b3f730453175dbd70782ce79": [
   "CMakeLists.txt",
   "README.md",
   "src/trs_cassette.c",
@@ -9693,7 +9697,7 @@
   "source/Engine.cpp",
   "source/Video.cpp"
  ],
- "gitlab.com/solarus-games/solarus@1c69f3d7ec133eaff28c22d756170eba69a520b0": [
+ "gitlab.com/solarus-games/solarus@49d1d4686f67ec81c86c90ca30279a4ce06b1729": [
   "cmake/AddDefines.cmake",
   "cmake/AddInstallDirs.cmake",
   "cmake/AddInstallTargets.cmake",
