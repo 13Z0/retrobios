@@ -3908,6 +3908,25 @@ class TheFolderScreenSaysWhatItOffers(unittest.TestCase):
                 self.assertEqual(rows[state.focus["folder"]].action, "browse")
 
 
+class NothingFoundIsSaid(unittest.TestCase):
+    """With nothing detected the first screen was the list of 18 setups,
+    with no line at 40x15 saying nothing was found, which the beginner's
+    page names."""
+
+    def test_at_every_size(self):
+        with mock.patch.object(install, "detect_platforms", return_value=[]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.object(install, "_mounted_cards", return_value=[]):
+            state, _effects = install.tui_start(_args(), "linux")
+        self.assertEqual(state.screen, "platforms")
+        for cols, rows in ((40, 12), (40, 15), (80, 24)):
+            with self.subTest(size=f"{cols}x{rows}"):
+                screen = " ".join(" ".join(install.tui_view(state, cols, rows)).split())
+                self.assertIn("Nothing was found here", screen)
+        page = (REPO_ROOT / "wiki" / "first-install.md").read_text(encoding="utf-8")
+        self.assertIn("Nothing was found here", page)
+
+
 class AFocusesNoSystemFolder(unittest.TestCase):
     """At / A went into bin/, and at a drive root holding $RECYCLE.BIN into
     the recycle bin, which Use this folder then took as the BIOS folder."""

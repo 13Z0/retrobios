@@ -12137,10 +12137,17 @@ def _view_platforms(state: TuiState, width: int, height: int) -> tuple:
     else:
         title = "Which setup?"
         before = ["Choose the setup that will use the BIOS files."]
+    pinned = list(state.refused)
+    if state.dest_given is None and not state.setups and len(state.stack) == 1:
+        # The first screen when nothing was found: at 40x15 its 18 rows
+        # left no line to say so, or what to do.
+        pinned.append("Nothing was found here: choose the setup that will use the "
+                      "BIOS files.")
+        before = []
     needle = state.filters.get("platforms", "")
     after = [f"No setup matches '{needle}'."] if len(rows) == 1 and needle else []
     after += [state.status] if state.status else []
-    return (title, _compose(state, width, height, before, rows, after, pinned=state.refused),
+    return (title, _compose(state, width, height, before, rows, after, pinned=pinned),
             ("A/Enter Choose", "B/Esc Back", "/ Filter", "? Help"))
 
 

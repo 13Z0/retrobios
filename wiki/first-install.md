@@ -134,7 +134,7 @@ The result says how to restore them.
 
 ### Nothing was found here.
 
-Choose **Another setup or folder**, then your setup and its folder.
+The screen lists every setup: choose yours, then its folder.
 
 ### Error: Python 3.8 or newer is required.
 
