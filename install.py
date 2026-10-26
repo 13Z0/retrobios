@@ -11347,8 +11347,21 @@ def _open_from_browser(state: TuiState) -> list[tuple]:
     state.browse_for = "from"
     _push(state, "browse")
     start = state.from_folders[-1].parent if state.from_folders else state.home
+    downloads = state.home / "Downloads"
+    if not state.from_folders and _is_dir(downloads) and any(
+            name.lower().endswith(".zip") for name in _listed(downloads)):
+        # A pack or a backup ZIP is most often there: 18 presses from the
+        # first screen reached it through HOME, past every mounted drive.
+        start = downloads
     _browse_to(state, _nearest_folder(start))
     return []
+
+
+def _listed(folder: Path) -> list[str]:
+    try:
+        return os.listdir(folder)
+    except OSError:
+        return []
 
 
 def _toggle_region(state: TuiState, name: str) -> None:

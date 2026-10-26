@@ -3962,6 +3962,25 @@ class TheHelpNamesKeysThatCome(unittest.TestCase):
         self.assertTrue(any("A, Start, Enter, Space, x  Choose" in line for line in lines))
 
 
+class CopyFromStartsInDownloads(unittest.TestCase):
+    """A ZIP in Downloads took 18 presses from the first screen: the copy
+    browser opened at HOME, under every mounted drive."""
+
+    def test_a_zip_in_downloads_opens_there(self):
+        home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, home, True)
+        (home / "Downloads").mkdir()
+        state = checked_state()
+        state.home = home
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            install._open_from_browser(state)
+            self.assertEqual(state.browse_dir, home)
+            state.stack.pop()
+            (home / "Downloads" / "PSX BIOS.zip").write_bytes(b"")
+            install._open_from_browser(state)
+        self.assertEqual(state.browse_dir, home / "Downloads")
+
+
 class NothingFoundIsSaid(unittest.TestCase):
     """With nothing detected the first screen was the list of 18 setups,
     with no line at 40x15 saying nothing was found, which the beginner's
