@@ -23,7 +23,7 @@ notes: |
   All boot ROMs are optional. SameBoy compiles open-source boot ROM
   replacements from BootROMs/*.asm and embeds them into the libretro
   binary (extern arrays dmg_boot, cgb_boot, agb_boot, sgb_boot,
-  sgb2_boot in libretro.c:129-130). These are SameBoy-authored
+  sgb2_boot in libretro/libretro.c:129-130). These are SameBoy-authored
   replacements, not Nintendo originals.
 
   The libretro port (boot_rom_load, libretro/libretro.c:513-589) tries to load
