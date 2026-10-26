@@ -2556,7 +2556,7 @@
   "core/windows/winmain.cpp",
   "shell/apple/emulator-osx/emulator-osx/osx-main.mm"
  ],
- "github.com/blueminder/supermodel-dojo@d409fe784b8328d798098708adc760900bcc6937": [
+ "github.com/blueminder/supermodel-dojo@113a48d567c5d49a40292df386fee4a0acaea486": [
   ".github/workflows/release.yml",
   "Assets/DIR.txt",
   "Config/Games.xml",
@@ -3630,7 +3630,7 @@
  "github.com/iyzsong/onscripter-libretro@ec4ff1842d498faaa844d570becf561d088deea0": [
   "libretro.cpp"
  ],
- "github.com/izzy2lost/Super3@b435c80a88fd496d4a9858be0681260e84342c85": [
+ "github.com/izzy2lost/Super3@c410f82f771b33094b8c1cdbf96ef7c74ec9cff1": [
   "Manual.txt",
   "README.md",
   "Src/GameLoader.cpp",
@@ -3644,6 +3644,7 @@
   "android/app/src/main/cpp/gles_presenter.cpp",
   "android/app/src/main/cpp/native-lib.cpp",
   "android/app/src/main/java/com/izzy2lost/super3/AssetInstaller.kt",
+  "android/app/src/main/java/com/izzy2lost/super3/ControlsMappingActivity.kt",
   "android/app/src/main/java/com/izzy2lost/super3/FlyerRepoSync.kt",
   "android/app/src/main/java/com/izzy2lost/super3/GameXml.kt",
   "android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt",
