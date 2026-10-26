@@ -1191,6 +1191,33 @@ class OfflineWithNothingFound(unittest.TestCase):
         self.assertIn("Use --platform and --dest", said)
 
 
+class TheDryRunWords(unittest.TestCase):
+    """The FAQ's dry run asked "Enter) install everything" before a run
+    that installs nothing, then counted 88 systems where the full screen
+    lists 66: a shared file made a group of its own."""
+
+    def test_the_question_says_nothing_is_written(self):
+        out = io.StringIO()
+        files = [{"dest": "a.bin", "size": 1, "systems": ["x"]}]
+        with mock.patch.object(install, "_ask", return_value=""), \
+                contextlib.redirect_stdout(out):
+            install._prompt_custom_selection("retroarch", files, [], None, "RetroArch",
+                                             dry_run=True)
+        self.assertNotIn("install everything", out.getvalue())
+        self.assertIn("nothing is written", out.getvalue())
+
+    def test_the_largest_systems_are_counted_as_systems(self):
+        files = [{"dest": f"{n}.bin", "size": n + 1, "systems": [f"s{n}"]}
+                 for n in range(12)]
+        files.append({"dest": "shared.bin", "size": 1, "systems": ["s0", "s1"]})
+        out = io.StringIO()
+        with mock.patch.object(install.shutil, "get_terminal_size",
+                               return_value=os.terminal_size((80, 10))), \
+                contextlib.redirect_stdout(out):
+            install._print_plan(files, Path("dest"), install.Terminal(io.StringIO()))
+        self.assertIn("12 systems in 13 groups, the largest first", out.getvalue())
+
+
 def _source_of(function) -> str:
     import inspect
 

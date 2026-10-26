@@ -5608,7 +5608,13 @@ def _print_plan(
             print(line)
     else:
         largest = sorted(by_system, key=lambda s: (-_bytes(by_system[s]), s))
-        print(f"  {_plural(len(largest), 'system')}, the largest first:")
+        # A file several systems share is a group of its own: "88 systems"
+        # were 66 systems, as the full screen counts them, and 22 groups.
+        systems = {name for entry in to_download for name in entry_systems(entry)}
+        groups = (f"{_plural(len(systems), 'system')} in {len(largest)} groups"
+                  if systems and len(systems) != len(largest)
+                  else _plural(len(largest), 'system'))
+        print(f"  {groups}, the largest first:")
         for system in largest[:PLAN_LARGEST_SYSTEMS]:
             print(f"  {term.bold(system)}  {_sized(by_system[system])}")
         if len(largest) > PLAN_LARGEST_SYSTEMS:
@@ -6486,7 +6492,7 @@ INSTALLED_ONLY = "installed"
 def _prompt_custom_selection(
     plat: str, files: list[dict], omitted: list[dict],
     installed: tuple[list[dict], list[dict]] | None = None,
-    name: str = "",
+    name: str = "", dry_run: bool = False,
 ) -> tuple[list[str], list[str], list[str]] | str | None:
     """Offer to narrow the install by system, core and region.
 
@@ -6496,7 +6502,9 @@ def _prompt_custom_selection(
     everything on its axis.
     """
     print(f"\n{name or display_name(plat)}: {_sized(files)}.")
-    print("  Enter) install everything")
+    # A dry run installs nothing: "install everything" was asked before it.
+    print("  Enter) list everything, nothing is written" if dry_run
+          else "  Enter) install everything")
     if installed is not None:
         print(f"  i) only what the installed cores read: {_sized(installed[0])}")
     print("  c) choose systems, cores and regions")
@@ -9610,7 +9618,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             )
             selection = _prompt_custom_selection(
                 plat_name, files, omitted_files, installed,
-                display_name(plat_name, manifest),
+                display_name(plat_name, manifest), args.dry_run,
             )
             if selection is None:
                 smaller = ("  Nothing downloaded. To install less, run the same command "
