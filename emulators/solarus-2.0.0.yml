@@ -3,8 +3,9 @@ type: standalone
 core_classification: game_engine
 source: "https://gitlab.com/solarus-games/solarus"
 upstream: "https://gitlab.com/solarus-games/solarus"
-profiled_date: "2026-10-20"
-source_commit: "1c69f3d7ec133eaff28c22d756170eba69a520b0"
+profiled_date: "2026-10-26"
+source_commit: "49d1d4686f67ec81c86c90ca30279a4ce06b1729"
+pin_frozen: "RetroBat, the only platform that ships it, builds this revision: the solarus2 package its emulator repository lists as 0.25.04.16 carries a libsolarus.dll that reports Solarus 2.0.0 (49d1d46), tag v2.0.0+cicd1. Later tags are not part of that build."
 core_version: "2.0.0"
 display_name: "Solarus Game Engine (2.0.0)"
 cores:
@@ -14,9 +15,10 @@ systems:
 mode: standalone
 
 notes: |
-  Solarus engine at tag v2.0.0, which RetroBat installs as solarus2 beside its
-  older solarus package. libsolarus.dll in that package reports 2.0.0 and its
-  gamecontrollerdb.txt is the one the v2.0.0 tree carries. emulatorlauncher
+  Solarus engine at tag v2.0.0+cicd1, which RetroBat installs as solarus2
+  beside its older solarus package. That tag adds only CI changes to v2.0.0.
+  libsolarus.dll in that package reports Solarus 2.0.0 (49d1d46) and its
+  gamecontrollerdb.txt is the one this tree carries. emulatorlauncher
   runs `solarus-run.exe -fullscreen=yes|no <rom>` from the package folder on a
   .solarus or .zip quest (emulatorLauncher Generators/Solarus.Generator.cs:20-48).
 
