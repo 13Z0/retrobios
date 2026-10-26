@@ -6,7 +6,7 @@
   "platform": "rocknix",
   "display_name": "ROCKNIX",
   "version": "1.0",
-  "generated": "2026-10-24T00:06:47Z",
+  "generated": "2026-10-24T02:09:46Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -22,9 +22,9 @@
   ],
   "standalone_copies": [],
   "total_files": 7341,
-  "total_size": 8270775666,
+  "total_size": 8270775690,
   "pack_files": 7343,
-  "pack_size": 8270775666,
+  "pack_size": 8270775690,
   "total_omitted": 114,
   "omitted_files": [
     {
@@ -22870,10 +22870,10 @@
     },
     {
       "dest": "mame2003-plus/hiscore.dat",
-      "sha1": "d41b1c32e9f5bee0cfca766a64f208dda081858b",
-      "sha256": "e69906f1807665119a7f3ff930618971b71a42621a062658b65f4bcbe3bca6f5",
-      "size": 131902,
-      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.d41b1c32",
+      "sha1": "b48347a133ab8f28b9875ab300fea2ffa2f37ebc",
+      "sha256": "f1b2b78fb847801b542c8c5b1e68c1fc064ba79301db29fbd2878e6bf6b377af",
+      "size": 131926,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.b48347a1",
       "cores": [
         "mame2003_plus"
       ],
@@ -61025,6 +61025,7 @@
       "repo_path": "bios/Arcade/Arcade/.variants/coh3002t.zip.db439f9b",
       "cores": [
         "mame",
+        "mame2003_plus",
         "mamearcade"
       ]
     },
@@ -61036,6 +61037,7 @@
       "repo_path": "bios/Arcade/MAME/coh1002t.zip",
       "cores": [
         "mame",
+        "mame2003_plus",
         "mamearcade"
       ]
     },

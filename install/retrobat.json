@@ -6,7 +6,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-24T00:06:47Z",
+  "generated": "2026-10-24T02:09:46Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -50683,7 +50683,8 @@
       "repo_path": "bios/Arcade/Arcade/.variants/coh3002t.zip.db439f9b",
       "cores": [
         "groovymame",
-        "mame"
+        "mame",
+        "mame2003_plus"
       ],
       "systems": [
         "3do",
@@ -50731,7 +50732,8 @@
       "repo_path": "bios/Arcade/MAME/coh1002t.zip",
       "cores": [
         "groovymame",
-        "mame"
+        "mame",
+        "mame2003_plus"
       ],
       "systems": [
         "3do",

@@ -6,7 +6,7 @@
   "platform": "lakka",
   "display_name": "Lakka",
   "version": "1.0",
-  "generated": "2026-10-24T00:06:47Z",
+  "generated": "2026-10-24T02:09:46Z",
   "base_destination": "system",
   "detect": [
     {
@@ -88565,6 +88565,7 @@
       "repo_path": "bios/Arcade/Arcade/.variants/coh3002t.zip.db439f9b",
       "cores": [
         "mame",
+        "mame2003_plus",
         "mamearcade"
       ],
       "systems": [
@@ -88584,6 +88585,7 @@
       "repo_path": "bios/Arcade/MAME/coh1002t.zip",
       "cores": [
         "mame",
+        "mame2003_plus",
         "mamearcade"
       ],
       "systems": [
