@@ -927,7 +927,7 @@
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
  To put them back: python3 install.py
- 1-4 of 8
+ 1-8 of 17
  Enter Exit  Up/Down Scroll
 === result 40x15
  RetroBIOS: Finished with errors
@@ -943,7 +943,7 @@
    --restore
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
- 1-5 of 8
+ 1-11 of 17
  Enter Exit  Up/Down Scroll
 === result 80x24
  RetroBIOS: Finished with errors

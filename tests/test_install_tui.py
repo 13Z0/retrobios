@@ -444,13 +444,12 @@ class Flow(unittest.TestCase):
         self.assertEqual(install.tui_rows(state)[state.focus["systems"]].action, "system")
         press(state, "n")
         self.assertEqual(state.ticked, set())
-        self.assertEqual(press(state, "enter"), [])
-        self.assertIn("No system is ticked", state.status)
         focus = next(i for i, row in enumerate(install.tui_rows(state))
                      if row.value == "nintendo-gba")
         state.focus["systems"] = focus
-        press(state, "right")
+        # Nothing ticked: Enter takes the system in focus alone.
         self.assertEqual(press(state, "enter"), [("run", "confirm")])
+        self.assertEqual(state.ticked, {"nintendo-gba"})
         self.assertEqual(state.screen, "confirm")
         self.assertIn("--system=nintendo-gba", install.tui_argv(state, "confirm", "py", "i.py"))
         self.assertIn("--dry-run", install.tui_argv(state, "confirm", "py", "i.py"))
@@ -946,6 +945,12 @@ def golden_states() -> dict:
 class Views(unittest.TestCase):
     """Every screen as text, at the sizes a handheld and a desktop show."""
 
+    def setUp(self):
+        # The card screen lists the cards mounted here: none, on every machine.
+        patcher = mock.patch.object(install, "_mounted_cards", return_value=[])
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def test_goldens(self):
         update = os.environ.get("RETROBIOS_UPDATE_GOLDENS") == "1"
         GOLDEN.mkdir(parents=True, exist_ok=True)
@@ -1121,19 +1126,20 @@ class PadRoutes(unittest.TestCase):
             self.assertIn(words, muxterm)
         self.assertNotIn("Start+Select", muxterm)
         # gptokeyb2 owns the pad inside muxterm, which keeps PgUp and PgDn
-        # for its scrollback: the gptokeyb buttons, and no page key.
+        # for its scrollback: the gptokeyb buttons, Left and Right to page.
         in_muxterm = help_text("gptokeyb_muxterm", "preview")
         for words in ("A, Start, Enter", "Select, then Start"):
             self.assertIn(words, in_muxterm)
         self.assertNotIn("L1/R1", in_muxterm)
         self.assertIn("L1/R1", help_text("gptokeyb", "preview"))
         # muxterm keeps PgUp and PgDn for its scrollback, and L1 and R1
-        # send nothing: no paging is offered there, on a list or a pager.
+        # send nothing: the D-pad's Left and Right page there instead.
         for screen in ("systems", "result", "plan"):
             with self.subTest(screen=screen):
                 text = help_text("muxterm", screen)
-                for words in ("L1", "R1", "PgUp", "PgDn", "Page"):
+                for words in ("L1", "R1", "PgUp", "PgDn"):
                     self.assertNotIn(words, text)
+        self.assertIn("D-pad Left/Right   Page", help_text("muxterm", "result"))
         miyoo = help_text("miyoo", "systems")
         for words in ("Start, Enter", "A, Space, Right/Left", "R2, Esc, Backspace",
                       "L2, Tab, o", "Sends no key here"):
@@ -1998,8 +2004,10 @@ class CopyFromAnOldCard(unittest.TestCase):
         self.recheck(state, [found("scph5500.bin", str(SYSTEM_DIR),
                                    "nested folder: bios/scph5500.bin")])
         text = " ".join(line.strip() for line in install.tui_view(state, 120, 40))
+        # tui_audit_4 P3-10.13: a fix copies, and the screen says the user's
+        # copy stays.
         self.assertIn("1 file is in the wrong place, it will be copied where the emulators "
-                      "read it.", text)
+                      "read it, your copy left as it is.", text)
         row = next(i for i, r in enumerate(install.tui_rows(state)) if r.action == "misplaced")
         state.focus["plan"] = row
         press(state, "enter")
@@ -2008,6 +2016,19 @@ class CopyFromAnOldCard(unittest.TestCase):
                       "\n".join(install.tui_view(state, 80, 24)))
         press(state, "esc")
         self.assertEqual(state.screen, "plan")
+
+    def test_the_result_says_the_misplaced_copies_stay(self):
+        state = checked_state()
+        state.stack.append("result")
+        state.code = 0
+        state.summary = {"event": "summary", "mode": "install", "installed": 2,
+                         "up_to_date": 0, "pending": 0, "failed": [], "skipped": [],
+                         "left_out": [], "kept": [], "interrupted": False}
+        state.local_dests = {"scph5500.bin": (str(SYSTEM_DIR), "nested folder: bios/a")}
+        state.finished = [("scph5500.bin", True, ""), ("gba_bios.bin", True, "")]
+        text = " ".join(" ".join(install.tui_outcome(state)[1]).split())
+        self.assertIn("1 file fixed from copies already in the BIOS folder, 1 downloaded. "
+                      "Your copies at the wrong place were left as they are.", text)
 
     def test_a_local_copy_is_no_download_speed(self):
         state = checked_state()
@@ -2762,6 +2783,341 @@ class TheSaveFolderHasARow(unittest.TestCase):
 
     def test_a_list_without_a_save_directory_has_no_row(self):
         self.assertNotIn("savedir", [row.action for row in install._option_rows(checked_state())])
+
+
+class ACardSystemNamedOnAComputer(unittest.TestCase):
+    """`--platform onion` on a PC wrote RetroArch's files into the PC's own
+    ~/.config/retroarch/system, which Onion never reads: the system's list
+    is RetroArch's, and so was the folder detection found for it."""
+
+    ONION = {".tmp_update/onionVersion/version.txt": "4.3.1\n"}
+
+    def card(self, files: dict) -> Path:
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        for name, text in files.items():
+            (root / name).parent.mkdir(parents=True, exist_ok=True)
+            (root / name).write_text(text, encoding="utf-8")
+        return root
+
+    def test_the_systems_that_run_from_a_card(self):
+        self.assertEqual(install.card_bound("onion", "retroarch"), ("Onion", "BIOS"))
+        self.assertEqual(install.card_bound("muOS", "retroarch"), ("muOS", "MUOS/bios"))
+        self.assertEqual(install.card_bound("spruceos", "retroarch"), ("spruceOS", "BIOS"))
+        self.assertEqual(install.card_bound("knulli", "knulli"), ("KNULLI", "bios"))
+        self.assertEqual(install.card_bound("nextui", "nextui"), ("NextUI", ""))
+        self.assertIsNone(install.card_bound("retroarch", "retroarch"))
+        self.assertIsNone(install.card_bound("batocera", "batocera"))
+
+    def test_without_questions_the_run_names_the_card_and_writes_nothing(self):
+        home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, home, True)
+        system = home / ".config" / "retroarch" / "system"
+        system.mkdir(parents=True)
+        (home / ".config" / "retroarch" / "retroarch.cfg").write_text(
+            f'system_directory = "{system}"\n', encoding="utf-8")
+        with FakeRepository() as repo:
+            proc = install_run("--platform", "onion", "--yes",
+                               env={**repo.env(), "HOME": str(home)})
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("Onion keeps its BIOS files on its SD card, not on this machine.",
+                      proc.stderr)
+        self.assertIn("--platform onion --dest /media/$USER/<card>", proc.stderr)
+        self.assertEqual(list(system.iterdir()), [])
+
+    def test_one_mounted_card_of_that_system_is_taken(self):
+        onion, other = self.card(self.ONION), self.card({"roms/a": ""})
+        with mock.patch.object(install, "_mounted_cards", return_value=[other, onion]), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            dest = install.card_install_dest("onion", "retroarch", interactive=False)
+        self.assertEqual(dest, onion / "BIOS")
+        self.assertIn(f"Onion card found at {onion}", out.getvalue())
+
+    def test_at_a_terminal_the_card_root_is_asked(self):
+        onion = self.card(self.ONION)
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "_ask", return_value=str(onion)) as ask, \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            dest = install.card_install_dest("onion", "retroarch", interactive=True)
+        self.assertEqual(dest, onion / "BIOS")
+        self.assertIn("Mount the card, then type its root folder.", out.getvalue())
+        ask.assert_called_once()
+        knulli = self.card({"roms/a": ""})
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "_ask", return_value=str(knulli)), \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(install.card_install_dest("knulli", "knulli", True),
+                             knulli / "bios")
+
+    def test_the_interface_opens_the_card_screen_with_the_cards_first(self):
+        blank = self.card({"roms/a": ""})
+        (blank / "BIOS").mkdir()
+        found = [("retroarch", SYSTEM_DIR)]
+        with mock.patch.object(install, "_mounted_cards", return_value=[blank]), \
+                mock.patch.object(install, "detect_platforms", return_value=found), \
+                mock.patch.object(install, "detect_frontends", return_value=[]):
+            state, effects = install.tui_start(_args(platform="onion"), "linux")
+            self.assertEqual((state.screen, effects), ("folder", []))
+            rows = install.tui_rows(state)
+            text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+            effects = install.tui_update(state, Key("enter"))
+        self.assertEqual([row.action for row in rows], ["card", "browse", "type"])
+        self.assertIn("Where is the SD card?", text)
+        self.assertIn("Onion keeps its BIOS files on its SD card", text)
+        self.assertEqual(effects, [("fetch", "retroarch")])
+        self.assertEqual(state.dest, blank / "BIOS")
+
+    def test_the_interface_takes_the_one_onion_card_mounted(self):
+        onion = self.card(self.ONION)
+        (onion / "BIOS").mkdir()
+        found = [("retroarch", SYSTEM_DIR)]
+        with mock.patch.object(install, "_mounted_cards", return_value=[onion]), \
+                mock.patch.object(install, "detect_platforms", return_value=found), \
+                mock.patch.object(install, "detect_frontends", return_value=[]):
+            state, effects = install.tui_start(_args(platform="onion"), "linux")
+        self.assertEqual(effects, [("fetch", "retroarch")])
+        self.assertEqual(state.dest, onion / "BIOS")
+
+    def test_on_the_device_its_own_folder_is_used(self):
+        device = Path("/mnt/SDCARD/BIOS")
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "detect_platforms",
+                                  return_value=[("retroarch", device)]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.dict(install._DETECTED_OS, {("retroarch", device): "Onion"}), \
+                mock.patch.object(install.Path, "exists", return_value=True):
+            state, effects = install.tui_start(_args(platform="onion"), "linux")
+        self.assertEqual(effects, [("fetch", "retroarch")])
+        self.assertEqual(state.dest, device)
+
+
+class TheSetupFilterKnowsDevices(unittest.TestCase):
+    """tui_audit_4 P3-10.5: the filter found nothing for steam deck, r36s,
+    trimui or retroid, and miyoo found RetroArch with muOS, JELOS... beside it."""
+
+    TYPED = {
+        "steam deck": {"retroarch", "batocera", "emudeck", "retrodeck"},
+        "r36s": {"retroarch", "rocknix"},
+        "rg35xx": {"retroarch", "rocknix", "knulli"},
+        "trimui": {"retroarch", "knulli", "minui", "nextui"},
+        "retroid": {"retroarch", "rocknix", "knulli"},
+        "miyoo": {"retroarch", "knulli", "minui", "myminui"},
+        "anbernic": {"retroarch", "rocknix", "amberelec", "knulli", "minui", "myminui"},
+        "odin": {"retroarch", "rocknix"},
+        "ayn": {"retroarch", "rocknix"},
+        "rp5": {"retroarch", "rocknix", "knulli"},
+        "rog ally": {"retroarch", "emudeck", "retrobat", "bizhawk"},
+        "onion": {"retroarch"},
+    }
+
+    def rows(self, needle: str) -> list:
+        state = fresh_state()
+        state.stack = ["platforms"]
+        state.filters["platforms"] = needle
+        return [row for row in install.tui_rows(state) if row.action == "platform"]
+
+    def test_each_device_finds_every_setup_it_runs(self):
+        for needle, setups in self.TYPED.items():
+            with self.subTest(needle=needle):
+                self.assertEqual({row.value for row in self.rows(needle)}, setups)
+
+    def test_the_right_column_names_what_matched(self):
+        retroarch = {row.value: row for row in self.rows("miyoo")}["retroarch"]
+        self.assertEqual(retroarch.right.split(", "),
+                         ["spruceOS", "Onion", "Allium", "Koriki", "MiyooCFW"])
+        deck = {row.value: row for row in self.rows("steam deck")}
+        self.assertEqual(deck["retroarch"].right, "Steam Deck")
+        self.assertIn("muOS", {row.value: row for row in self.rows("")}["retroarch"].right)
+
+    def test_the_handheld_lists_are_the_guides(self):
+        try:
+            import yaml
+        except ImportError:
+            self.skipTest("pyyaml is not installed")
+
+        guides = yaml.safe_load((REPO_ROOT / "platforms" / "_guides.yml").read_text())
+        for system in guides["handheld_guide"]["systems"]:
+            if system.get("devices"):
+                with self.subTest(system=system["name"]):
+                    self.assertEqual(install._SETUP_DEVICES[system["name"]],
+                                     tuple(str(name) for name in system["devices"]))
+
+
+class OneSystemInFewPresses(unittest.TestCase):
+    """tui_audit_4 P3-10.11: one system with a controller took 15 presses on
+    the fixture list, about 60 on muxterm, which has no page key."""
+
+    # The buttons each route sends, as the keys the interface reads.
+    PADS = {
+        "gptokeyb": {"A": "enter", "X": " ", "Start": "enter", "R1": "pgdn"},
+        "muxterm": {"A": "enter", "X": " ", "Start": "enter", "R1": "right"},
+    }
+
+    def long_list(self, pad: str) -> install.TuiState:
+        state = checked_state()
+        state.pad = pad
+        state.cols, state.rows = 40, 15
+        state.systems = [{"event": "system", "platform": "retroarch", "system": f"sys-{n:02d}",
+                          "name": f"System {n:02d}", "files": 1, "present": 0, "missing": 1,
+                          "wrong_hash": 0, "bytes_needed": 10} for n in range(66)]
+        state.ticked = {row["system"] for row in state.systems}
+        state.focus["plan"] = next(i for i, row in enumerate(install.tui_rows(state))
+                                   if row.action == "install")
+        return state
+
+    def press_button(self, state, pad: str, button: str) -> list:
+        name = self.PADS[pad].get(button, button)
+        return install.tui_update(state, Key("char", name) if len(name) == 1 else Key(name))
+
+    def go_to(self, state, pad: str, target: str, paging: bool) -> int:
+        """Presses from the focus to the target system, as a person does."""
+        count = 0
+        while True:
+            rows = install.tui_rows(state)
+            focus = state.focus.get("systems", 0)
+            index = next(i for i, row in enumerate(rows) if row.value == target)
+            if index == focus:
+                return count
+            page = max(1, state.rows - 6)
+            button = "R1" if paging and index - focus >= page else "down"
+            self.press_button(state, pad, button)
+            count += 1
+
+    def presses(self, pad: str, fast: bool) -> int:
+        """From the plan to the run that installs sys-45 alone, with the
+        setup's A before it."""
+        state = self.long_list(pad)
+        count = 1
+        for button in ("down", "A"):
+            self.press_button(state, pad, button)
+            count += 1
+        self.assertEqual(state.screen, "systems")
+        paging = pad != "muxterm" or fast
+        if fast:
+            self.assertEqual(install.tui_rows(state)[state.focus["systems"]].action, "none")
+            self.press_button(state, pad, "A")
+            count += 1
+            count += self.go_to(state, pad, "sys-45", paging)
+            effects = self.press_button(state, pad, "A")
+            count += 1
+        else:
+            state.focus["systems"] = 3
+            for button in ("up", "up", "A"):
+                self.press_button(state, pad, button)
+                count += 1
+            count += self.go_to(state, pad, "sys-45", paging)
+            self.press_button(state, pad, "X")
+            effects = self.press_button(state, pad, "Start")
+            count += 2
+        self.assertEqual(state.ticked, {"sys-45"})
+        self.assertEqual(effects, [("run", "confirm")])
+        # Install on the confirm screen, then Exit on the result.
+        return count + 2
+
+    def test_presses_before_and_after(self):
+        # The audit's path, A Down A Up Up A R1 x5 X Start A A. Before the
+        # fast path it took 17 presses here, 57 on muxterm (None kept the
+        # focus, and muxterm had no page key).
+        self.assertEqual(self.presses("gptokeyb", fast=False), 15)
+        self.assertEqual(self.presses("gptokeyb", fast=True), 12)
+        self.assertEqual(self.presses("muxterm", fast=False), 55)
+        self.assertEqual(self.presses("muxterm", fast=True), 12)
+
+    def test_a_on_a_system_with_none_ticked_takes_it_alone(self):
+        state = self.long_list("keys")
+        state.stack.append("systems")
+        state.ticked = set()
+        state.focus["systems"] = 5
+        text = install.tui_view(state, 80, 24)[-1]
+        self.assertIn("Enter Only this system", text)
+        focused = install.tui_rows(state)[5].value
+        self.assertEqual(press(state, "enter"), [("run", "confirm")])
+        self.assertEqual(state.ticked, {focused})
+
+    def test_enter_still_continues_with_the_ticks_as_they_are(self):
+        state = self.long_list("keys")
+        state.stack.append("systems")
+        state.focus["systems"] = 5
+        self.assertEqual(press(state, "enter"), [("run", "install")])
+        self.assertEqual(len(state.ticked), 66)
+
+    def test_left_and_right_page_inside_muxterm_only(self):
+        for pad in ("muxterm", "gptokeyb_muxterm", "gptokeyb"):
+            with self.subTest(pad=pad):
+                state = self.long_list(pad)
+                state.stack.append("systems")
+                state.focus["systems"] = 3
+                press(state, "right")
+                paged = pad != "gptokeyb"
+                self.assertEqual(state.focus["systems"] > 4, paged)
+                self.assertEqual(len(state.ticked), 66)
+                state.help = True
+                help_text = " ".join(install.tui_view(state, 80, 24))
+                self.assertEqual("D-pad Left/Right" in help_text, paged)
+
+    def test_a_short_list_opens_on_its_first_system(self):
+        state = checked_state()
+        state.focus["plan"] = next(i for i, row in enumerate(install.tui_rows(state))
+                                   if row.action == "systems")
+        press(state, "enter")
+        self.assertEqual(install.tui_rows(state)[state.focus["systems"]].action, "system")
+
+
+class DataFilesHaveASize(unittest.TestCase):
+    """tui_audit_4 P3-10.8: "8179 files to download, 6.6 GB, and 2636 data
+    files", the data files with no size."""
+
+    def test_the_plan_gives_the_data_files_size(self):
+        state = fresh_state()
+        state.stack = ["setup"]
+        with mock.patch.object(install.Path, "exists", return_value=True):
+            install.tui_update(state, Key("enter"))
+        install.tui_receive(state, ("manifest", "retroarch", MANIFEST))
+        check = {**CHECK, "data_missing": 2636}
+        data = {"event": "data", "platform": "retroarch", "files": 2636,
+                "bytes": 412 * 1024 ** 2}
+        for event in [*FILES, *SYSTEMS, check, data]:
+            install.tui_receive(state, ("event", state.run_id, event))
+        with mock.patch.object(install, "_tui_folder_facts", return_value={
+                "free": 50 * 1024 ** 3, "writable": True, "cores": []}):
+            install.tui_receive(state, ("ended", state.run_id, 1, []))
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("and 2636 data files (412.0 MB)", text)
+
+
+class ThePagerCountsLines(unittest.TestCase):
+    """tui_audit_4 P3-9.4: at 40x12 the result read "1-2 of 5" over eight
+    lines, counting paragraphs, and its last paragraph was cut."""
+
+    def result_state(self, cols: int, rows: int) -> install.TuiState:
+        state = checked_state()
+        state.stack.append("result")
+        state.code, state.summary = 0, {"installed": 3}
+        state.dest = Path("/media/" + "long-folder-name/" * 12)
+        state.cols, state.rows = cols, rows
+        return state
+
+    def test_the_last_line_is_reachable_at_every_size(self):
+        for cols, rows in (*SIZES, (50, 13), (60, 14)):
+            with self.subTest(size=f"{cols}x{rows}"):
+                state = self.result_state(cols, rows)
+                width = min(cols, install.TUI_MAX_WIDTH) - 2
+                wrapped = install._text_lines(install._pager_items(state), width)
+                press(state, "end")
+                screen = install.tui_view(state, cols, rows)
+                body = [line.rstrip() for line in screen[2:-1]]
+                self.assertIn(" " + str(wrapped[-1]).rstrip(), body)
+                if len(wrapped) > rows - 3:
+                    self.assertTrue(any(re.fullmatch(rf" \d+-{len(wrapped)} of {len(wrapped)}",
+                                                     line) for line in body), body)
+
+    def test_the_counter_moves_one_line_per_press(self):
+        state = self.result_state(40, 12)
+        first = [line for line in install.tui_view(state, 40, 12) if " of " in line][-1]
+        self.assertRegex(first, r"^ 1-8 of \d+")
+        press(state, "down")
+        second = [line for line in install.tui_view(state, 40, 12) if " of " in line][-1]
+        self.assertRegex(second, r"^ 2-9 of \d+")
 
 
 class OfflineInTheInterface(unittest.TestCase):
@@ -3743,8 +4099,9 @@ class EndToEnd(unittest.TestCase):
         term.wait("> Install")
         term.send(DOWN, "\r")
         term.wait("Choose systems")
-        # D-pad and A only: up to None, A, down to the second system, Right.
-        term.send(UP, UP, "\r", DOWN, DOWN, DOWN, RIGHT)
+        # D-pad and A only: up to None, A (on the first system), down to the
+        # second system, Right.
+        term.send(UP, UP, "\r", DOWN, RIGHT)
         screen = term.wait("1 of 2 systems")
         self.assertIn("> [x] sony-playstation", screen)
         term.send("\r")

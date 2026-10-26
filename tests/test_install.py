@@ -5167,6 +5167,8 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
             {"event": "declared", "platform": "retroarch", "files": 4, "present": 1,
              "missing": 2, "wrong_hash": 1, "bytes_needed": 245,
              "dests": ["a.bin", "b.bin", "c.bin", "d.bin"]},
+            # No data tree in this list.
+            {"event": "data", "platform": "retroarch", "files": 0, "bytes": 0},
         ]
 
     SKIPPED = [{"reason": "not_found", "label": "not found", "files": 1, "required": 1}]

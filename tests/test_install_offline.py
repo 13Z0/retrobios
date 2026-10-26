@@ -473,6 +473,29 @@ class FromPackInstallsOffline(Scratch):
         for rel, data in tree.items():
             self.assertEqual((self.dest / "dolphin-emu" / rel).read_bytes(), data)
 
+    def test_the_data_trees_say_what_they_weigh(self):
+        """tui_audit_4 P3-10.8: the plan read "and 2636 data files" with no
+        size. The data event carries the bytes check's data_missing counts."""
+        tree = {"Sys/GC/font.bin": b"font bytes", "Sys/Wii/setting.txt": b"setting"}
+        listed = manifest()
+        listed["data_directories"] = [{
+            "ref": "dolphin-sys", "dest": "dolphin-emu", "type": "zip",
+            "url": "https://example.invalid/dolphin.zip", "systems": ["nintendo-gba"],
+            "files": {rel: {"sha1": _sha1(data), "size": len(data)}
+                      for rel, data in tree.items()},
+        }]
+        self.list.write_text(json.dumps(listed))
+        self.place("dolphin-emu/Sys/GC/font.bin", tree["Sys/GC/font.bin"])
+        proc = self.run_installer("--check", "--events", "--manifest", str(self.list),
+                                  "--from-pack", str(self.pack))
+        events = [json.loads(line) for line in proc.stdout.splitlines()]
+        kinds = [event["event"] for event in events]
+        self.assertEqual(kinds.index("data"), kinds.index("declared") + 1)
+        data = events[kinds.index("data")]
+        self.assertEqual(data, {"event": "data", "platform": "retroarch", "files": 1,
+                                "bytes": len(tree["Sys/Wii/setting.txt"])})
+        self.assertEqual(events[kinds.index("check")]["data_missing"], 1)
+
     def test_a_cut_download_is_named(self):
         self.pack.write_bytes(self.pack.read_bytes()[:100])
         proc = self.run_installer("--from-pack", str(self.pack))

@@ -131,7 +131,8 @@ how many files are missing, how much they weigh, how many are in place and how
 much space is free, before anything is written.
 
 The other choices sit one press away. **Choose systems** ticks the consoles you
-play, with the total to download under the list. **Options** sets the
+play, with the total to download under the list. A long list opens on **None**:
+A there unticks every system, and A on a system then installs that one alone. **Options** sets the
 preferred regions, game data, the installed cores only, the cores, the parallel
 downloads, the folder and, for a list with files read from the frontend's save
 directory, that directory. Each row names the option it sets, and **Show the
@@ -1073,8 +1074,8 @@ Start pressed first also chooses the line in focus: hold Select first. A
 running install is then stopped the way B stops it, and the last screen says
 what it wrote. On muOS without PortMaster, muxterm reads the pad itself: Y
 ticks a system, Select shows its keyboard, and Menu quits. L1 and R1 do not
-page there: muxterm keeps PgUp and PgDn for its own scrollback, so a list
-moves with the D-pad.
+page there: muxterm keeps PgUp and PgDn for its own scrollback, so Left and
+Right on the D-pad page a list instead, as they do with gptokeyb in muxterm.
 
 Each launcher also sets `RETROBIOS_IDLE_EXIT` to 300: with no button pressed
 for 5 minutes since it opened, and no check or install running, the interface
@@ -1094,8 +1095,8 @@ Each launcher tells the interface which buttons reach it, in
 | Value | Input | Set by |
 |-------|-------|--------|
 | `gptokeyb` | gptokeyb or gptokeyb2 with `retrobios.gptk`, the table above | the PortMaster port and the Tools entry |
-| `gptokeyb_muxterm` | the same, inside muxterm, which keeps L1 and R1 for its scrollback: no button pages | the muOS app with PortMaster |
-| `muxterm` | muxterm's own keys: D-pad, Start as Enter, B as Backspace, Y as Space | the muOS app without PortMaster |
+| `gptokeyb_muxterm` | the same, inside muxterm, which keeps L1 and R1 for its scrollback: Left and Right page | the muOS app with PortMaster |
+| `muxterm` | muxterm's own keys: D-pad (Left and Right page), Start as Enter, B as Backspace, Y as Space | the muOS app without PortMaster |
 | `evmapy` | `RetroBIOS.sh.keys`, the same buttons as the table | the Batocera and Knulli port |
 | `miyoo` | buttons that are already keys: A as Space, Start as Enter, L1 and R1 as E and T, L2 as Tab, R2 as Backspace | no launcher yet |
 
@@ -1332,6 +1333,7 @@ other schemas under `api/v1/schemas/`.
 | `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id, and with `--system` only the systems named. Files with no system count under `other`. `name` is the platform's own name for it |
 | `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |
 | `declared` | `platform`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `dests` | Right after `check`, the same counts over the files the platform's own list names (`cores: null`), and their `dests` in the order of the `file` events. A setup that checks its own list reads its answer here, with or without `--declared-only` |
+| `data` | `platform`, `files`, `bytes` | Right after `declared`: the data-tree files to fetch (the `data_missing` of `check`) and the bytes they write once in place |
 | `found` | `platform`, `dest`, `folder`, `path`, `member`, `reason` | Each file to install that this machine already holds, after `check` and before anything is written, in `--check` and `--dry-run` too. `folder` is the `--from` folder as given, or the `bios_dir` of the check when the BIOS folder holds the file at another place, and then `reason` says where in words (`nested folder: ...` for a misplaced file, `the same file is at ...` for one the list installs there too). `path` is the file, and `member` the ZIP member holding the bytes when `path` is an archive, an empty string otherwise. Its copy is reported by a `downloaded` event |
 | `unreadable` | `platform`, `folder`, `path`, `member`, `reason` | Each file in a `--from` folder that could not be read and may be one the run still needs, right after the `found` events: its size is that of a file no copy was found for, or unknown (a folder that could not be listed, a ZIP that would not open). `member` names the ZIP member, or is empty. `reason` says why in words (`Permission denied`, `it is encrypted, a password is needed`) |
 | `saves` | `platform`, `files`, `folder` | After `detect` and before `checking`, when the list holds files read from the frontend's save directory and that directory is known: how many, and the `folder` they go to, where `<system>` and `<core>` stand for one folder per system or per core. When it is not known, the files are counted in the summary's `skipped` instead (`no_save_directory`) |
@@ -1343,7 +1345,7 @@ other schemas under `api/v1/schemas/`.
 | `app` | `system`, `folder`, `ok`, `reason`, `dests`, `written`, `kept` | After `summary`, with `--add-app` or a yes to its question: the RetroBIOS app on the card of `system` whose root is `folder`. `dests` lists the app's files below that root, `written` the ones this run wrote (empty when each was in place), `kept` the backup folders as in `summary`. `ok` is false, with `reason`, when the card takes no app (before anything is written, code 2), when the install did not finish, or when a file could not be fetched, verified or written (code 1) |
 | `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
 
-Schema 1 can gain a kind (`found` came with `--from`, `declared` with `--declared-only`, `unsearched` with the search that goes on past a closed folder, `app` with `--add-app`), never a key of an
+Schema 1 can gain a kind (`found` came with `--from`, `declared` with `--declared-only`, `unsearched` with the search that goes on past a closed folder, `app` with `--add-app`, `data` with the size of the data trees), never a key of an
 existing kind: a reader skips a kind it does not know. An option refused
 before the run starts (`install.py: error:`, code 2) writes
 no event at all. A program reads a missing `end` as that case, or as a
