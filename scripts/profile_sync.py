@@ -4783,6 +4783,9 @@ def _refresh_source_paths(args: argparse.Namespace) -> None:
     held, unread = sitesources.build_source_paths(
         profiles, [sitesources.TREE_CACHE], fetch=True
     )
+    held = sitesources.keep_unread(
+        held, unread, sitesources.read_record(sitesources.SOURCE_PATHS)
+    )
     sitesources.SOURCE_PATHS.parent.mkdir(parents=True, exist_ok=True)
     write_if_changed(
         str(sitesources.SOURCE_PATHS), json.dumps(held, indent=1, sort_keys=True) + "\n"

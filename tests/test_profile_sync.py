@@ -4667,6 +4667,19 @@ class AWriteRefreshesTheSourcePaths(unittest.TestCase):
             profile_sync._WRITTEN.clear()
 
 
+class AnUnreadTreeKeepsItsRecord(unittest.TestCase):
+    """sitesources --fetch, rate-limited by GitLab, dropped about twenty
+    trees it never read from source-paths.json."""
+
+    def test_unread_trees_carry_over(self):
+        import sitesources  # noqa: PLC0415
+
+        kept = sitesources.keep_unread(
+            {"a@1": ["x.c"]}, ["b@2", "c@3"], {"b@2": ["y.c"], "a@1": ["old.c"]}
+        )
+        self.assertEqual(kept, {"a@1": ["x.c"], "b@2": ["y.c"]})
+
+
 class FreshRefusesOffline(unittest.TestCase):
     def test_the_pair_is_refused(self):
         saved = sys.argv

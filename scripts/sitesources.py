@@ -313,6 +313,29 @@ def build_source_paths(
     return {key: sorted(paths) for key, paths in sorted(held.items())}, sorted(unread)
 
 
+def keep_unread(
+    held: dict[str, list[str]], unread: list[str], previous: dict[str, list[str]]
+) -> dict[str, list[str]]:
+    """Carry over what the last record held for the trees this run could not read.
+
+    A tree key names a pinned sha, so what it held then it holds now. A run
+    that GitLab rate-limited dropped about twenty trees it never read.
+    """
+    kept = dict(held)
+    for key in unread:
+        if key not in kept and key in previous:
+            kept[key] = previous[key]
+    return dict(sorted(kept.items()))
+
+
+def read_record(path: Path) -> dict[str, list[str]]:
+    """The record a previous run wrote, empty when there is none."""
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return {}
+
+
 def _commit_url(repo: upstream.Repo, pin: str) -> str:
     """Forge-specific browser URL for one commit."""
     base = f"https://{repo.host}/{repo.owner}/{repo.name}"
@@ -662,6 +685,7 @@ def main() -> int:
 
     profiles = load_emulator_profiles(args.emulators_dir, skip_aliases=False)
     held, unread = build_source_paths(profiles, cache_dirs, args.fetch)
+    held = keep_unread(held, unread, read_record(args.output))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     write_if_changed(str(args.output), json.dumps(held, indent=1, sort_keys=True) + "\n")
     print(f"{sum(map(len, held.values()))} paths held in {len(held)} trees, "
