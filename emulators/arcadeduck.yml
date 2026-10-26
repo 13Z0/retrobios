@@ -3,10 +3,10 @@ type: standalone
 core_classification: community_fork
 source: "https://github.com/StillJC/ArcadeDuck"
 upstream: "https://github.com/stenzek/duckstation"
-source_commit: "26caf9cd27915a331fa32dc174489383b308ecad"
-upstream_commit: "fbf93c3ae9668a1ccaec28630f5ad9cc9627cda6"
-profiled_date: "2026-10-20"
-core_version: "latest (26caf9c)"
+source_commit: "80cdb6da6b51d687192a6346efe4499b10fe4faf"
+upstream_commit: "526b4a128827ecaef037134095cd95f431b52d06"
+profiled_date: "2026-10-26"
+core_version: "0.6.0"
 display_name: "Arcade - Sony ZN-1, Namco System 11, Konami GV/GQ (ArcadeDuck)"
 cores:
   - arcadeduck
@@ -15,6 +15,7 @@ systems:
   - konami-gq
   - namco-system11
   - capcom-zn1
+  - capcom-zn2
   - videosystem-zn1
   - atlus-zn1
   - eighting-zn1
@@ -28,68 +29,76 @@ notes: |
   DuckStation fork that runs the PlayStation based arcade boards. RetroBat
   installs the "latest" release of StillJC/ArcadeDuck unchanged: its
   ArcadeDuck.exe and resources/arcadedb.yaml are byte for byte the release
-  archive arcadeduck-windows-x64-release.zip, built from 26caf9c.
+  archive arcadeduck-windows-x64-release.zip, release 0.6.0 built from 80cdb6d.
+  The release build strips the -dev suffix of the version the source carries.
+  ref: source src/scmversion/arcadeduck_version.h:12
 
-  A game is a MAME style non-merged set identified by its archive name alone
+  A game is a MAME style set identified by its archive name, .zip or .7z,
   through resources/arcadedb.yaml, read from the resources folder beside the
   executable. Without that file no archive is recognised and nothing boots.
-  ref: src/core/arcade/arcade_database.cpp:28, 1137-1154, 1319,
-       src/core/system.cpp:1599-1616
+  A clone reads the ROMs it lacks from the archives of its parents in the same
+  folder, so split and merged sets load as well as non-merged ones.
+  ref: source src/core/arcade/arcade_database.cpp:30, 1194-1211, 1391-1410,
+       source src/core/arcade/arcade_database.cpp:1459-1504,
+       source src/core/system.cpp:1622-1665
 
   Arcade boots skip the PlayStation BIOS scan: each board handler loads and
   checks its own BIOS. The PS1 BIOS search inherited from DuckStation only runs
   for a standard boot, which the RetroBat launcher never requests since it
   refuses anything but a .zip set.
-  ref: src/core/system.cpp:1772-1773, emulatorLauncher Generators/ArcadeDuck.Generator.cs:46-48
+  ref: source src/core/system.cpp:1824-1825, emulatorLauncher Generators/ArcadeDuck.Generator.cs:46-48
 
   Board firmware is read from the BIOS directory (EmuFolders::Bios, the
   [BIOS] SearchDirectory setting). RetroBat points it at the folder of the game
   when the firmware archive sits there, else at the RetroBat bios folder.
-  ref: src/core/settings.cpp:1791, src/core/arcade/arcade_machine_handler.cpp:140-141,
+  ref: source src/core/settings.cpp:1791, source src/core/arcade/arcade_machine_handler.cpp:152-153,
        emulatorLauncher Generators/ArcadeDuck.Generator.cs:104-128
 
-  Each member of a firmware archive is found by name, case insensitive, and
-  must match the size and CRC32 listed in arcadedb.yaml, then the SHA-1 when
-  one is listed. Any mismatch stops the boot.
-  ref: src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860,
-       src/core/arcade/systems/namco/system11/namco_system11.cpp:198-240
+  A member of a firmware archive is found by name, case insensitive, with the
+  size listed in arcadedb.yaml and its CRC32, or by size and CRC32 under any
+  name. Its data must then match the CRC32 and, when one is listed, the SHA-1.
+  Any mismatch stops the boot.
+  ref: source src/core/arcade/systems/sony/zn/sony_zn.cpp:929-936,
+       source src/core/arcade/systems/namco/system11/namco_system11.cpp:193-200,
+       source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444
 
   Konami GV uses a fixed archive name and member, hardcoded in bios.cpp rather
-  than read from the database. Konami GQ takes its BIOS member 420b03.27p from
-  the game archive itself, so no separate file is read for it.
-  ref: src/core/bios.cpp:169-184, 233-358, 360-410,
-       src/core/arcade/arcade_machine_handler.cpp:36-38, 76
+  than read from the database: konamigv.zip, else konamigv.7z, in the BIOS
+  directory. Konami GQ takes its BIOS member 420b03.27p from the game archive
+  or the archive of a parent, so no separate file is read for it.
+  ref: source src/core/bios.cpp:168-172, 221-263, 265-285,
+       source src/core/arcade/arcade_machine_handler.cpp:36-44, 82-88
 
-  arcadedb.yaml also declares coh3002c.zip (Capcom ZN-2), sys573.zip (Konami
-  System 573) and gq863.zip (Konami Twinkle), but no machine handler exists for
-  those boards at this revision, so their sets never get to the point of opening
-  a firmware archive.
-  ref: src/core/arcade/arcade_machine_handler.cpp:952-978
+  arcadedb.yaml also declares sys573.zip (Konami System 573) and gq863.zip
+  (Konami Twinkle), but no machine handler exists for those boards at this
+  revision, so their sets never get to the point of opening a firmware archive.
+  ref: source src/core/arcade/arcade_machine_handler.cpp:1032-1060
 
   Only the members a handler reads are listed under each archive: the 512 KiB
   main BIOS and the motherboard CAT702 security key for the ZN boards, c76.bin
   for Namco System 11. The uPD78081 MCU ROM of the ZN boards is undumped and
   emulated without it.
-  ref: src/core/arcade/systems/sony/zn/sony_zn.cpp:442
+  ref: source src/core/arcade/systems/sony/zn/sony_zn.cpp:454
 
 files:
   - name: "arcadedb.yaml"
     path: "resources/arcadedb.yaml"
     required: true
     bundled: true
-    size: 1723653
-    sha1: "002308e952d454a2efdfd6ebf5f5817f1d742637"
-    md5: "b65d86f7bdb0041b8891e064ff7933e4"
+    size: 1724290
+    sha1: "4156be079a54776c9c78c0255abda295b379121a"
+    md5: "813692f1264f8bd86ca2cb7a642c5793"
     description: "Arcade set, board and firmware database"
-    source_ref: "source src/core/arcade/arcade_database.cpp:28, 1137-1154, source src/arcadeduck-qt/qthost.cpp:1944-1951"
-    note: "Hashes are those of the copy in the release archive, written with CRLF line endings. The repository copy at 26caf9c holds the same text with LF endings."
+    source_ref: "source src/core/arcade/arcade_database.cpp:30, 1194-1211, source src/arcadeduck-qt/qthost.cpp:2039-2046"
+    note: "Hashes are those of the copy in the release archive, written with CRLF line endings. The repository copy at 80cdb6d holds the same text with LF endings."
 
   - name: "konamigv.zip"
     system: konami-gv
     required: true
     category: bios_zip
     description: "Konami GV BIOS"
-    source_ref: "source src/core/bios.cpp:169-176, 233-358, source src/core/arcade/arcade_machine_handler.cpp:36-38"
+    source_ref: "source src/core/bios.cpp:168-172, 221-263, source src/core/arcade/arcade_machine_handler.cpp:36-44"
+    note: "konamigv.7z holding the same member is read when konamigv.zip is absent."
     contents:
       - name: "999a01.7e"
         size: 524288
@@ -101,7 +110,7 @@ files:
     required: true
     category: bios_zip
     description: "Namco System 11 C76 firmware"
-    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:140-145, source src/core/arcade/systems/namco/system11/namco_system11.cpp:198-240, 548-556, source data/resources/arcadedb.yaml:69"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:152-157, source src/core/arcade/systems/namco/system11/namco_system11.cpp:193-200, 442-450, source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444, source data/resources/arcadedb.yaml:70"
     note: "c76.bin is the internal ROM of the C76 sound and I/O MCU."
     contents:
       - name: "c76.bin"
@@ -114,7 +123,7 @@ files:
     required: true
     category: bios_zip
     description: "Capcom ZN-1 (COH-1000C) BIOS"
-    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:227-233, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 2836-2844, source data/resources/arcadedb.yaml:110"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:239-245, source src/core/arcade/systems/sony/zn/sony_zn.cpp:929-936, 2928-2937, 2995-3003, source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444, source data/resources/arcadedb.yaml:111"
     note: "The handler always asks for BIOS variant j, the Japanese mask ROM m534002c-13.ic353. msm27c402zb.ic353, the e variant listed beside it, is never read."
     contents:
       - name: "m534002c-13.ic353"
@@ -126,12 +135,28 @@ files:
         crc32: "bb7ba033"
         sha1: "966f3aee5d00e1312c455f855915d621e6cb0672"
 
+  - name: "coh3002c.zip"
+    system: capcom-zn2
+    required: true
+    category: bios_zip
+    description: "Capcom ZN-2 (COH-3002C) BIOS"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:290-319, 1042-1043, source src/core/arcade/systems/sony/zn/sony_zn.cpp:929-936, 2924-2949, 2995-3003, source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444, source data/resources/arcadedb.yaml:144, 155-156"
+    contents:
+      - name: "m534002c-59.ic353"
+        size: 524288
+        crc32: "e860ea8b"
+        sha1: "66e7e1d4e426466b8f48a2ba055a91b475569504"
+      - name: "cp10.ic652"
+        size: 8
+        crc32: "7808fcef"
+        sha1: "3c3fb8227b05dace042dc1429b9f2355b1a15638"
+
   - name: "coh1002v.zip"
     system: videosystem-zn1
     required: true
     category: bios_zip
     description: "Video System ZN-1 (COH-1002V) BIOS"
-    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:300-303, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 2961-2969, source data/resources/arcadedb.yaml:294"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:380-383, source src/core/arcade/systems/sony/zn/sony_zn.cpp:929-936, 2928-2937, 3120-3128, source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444, source data/resources/arcadedb.yaml:295"
     contents:
       - name: "coh-1002v.ic353"
         size: 524288
@@ -147,7 +172,7 @@ files:
     required: true
     category: bios_zip
     description: "Atlus ZN-1 (COH-1001L) BIOS"
-    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:367-370, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3063, source data/resources/arcadedb.yaml:264"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:447-450, source src/core/arcade/systems/sony/zn/sony_zn.cpp:929-936, 2928-2937, 3222, source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444, source data/resources/arcadedb.yaml:265"
     contents:
       - name: "m534002c-17.ic353"
         size: 524288
@@ -163,7 +188,7 @@ files:
     required: true
     category: bios_zip
     description: "Eighting/Raizing ZN-1 (COH-1002E) BIOS"
-    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:451-454, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3219, 3352, source data/resources/arcadedb.yaml:324"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:531-534, source src/core/arcade/systems/sony/zn/sony_zn.cpp:929-936, 2928-2937, 3378, 3511, source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444, source data/resources/arcadedb.yaml:325"
     contents:
       - name: "m27c402cz-54.ic353"
         size: 524288
@@ -179,7 +204,7 @@ files:
     required: true
     category: bios_zip
     description: "Time Warner / Atari ZN-1 (COH-1000W) BIOS"
-    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:539-542, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3435, source data/resources/arcadedb.yaml:235"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:619-622, source src/core/arcade/systems/sony/zn/sony_zn.cpp:929-936, 2928-2937, 3594, source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444, source data/resources/arcadedb.yaml:236"
     contents:
       - name: "msm27c402zb.ic353"
         size: 524288
@@ -195,7 +220,7 @@ files:
     required: true
     category: bios_zip
     description: "Acclaim ZN-1 (COH-1000A) BIOS"
-    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:614-617, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3574, source data/resources/arcadedb.yaml:206"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:694-697, source src/core/arcade/systems/sony/zn/sony_zn.cpp:929-936, 2928-2937, 3733, source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444, source data/resources/arcadedb.yaml:207"
     contents:
       - name: "m534002c-15.ic353"
         size: 524288
@@ -211,7 +236,7 @@ files:
     required: true
     category: bios_zip
     description: "Tecmo TPS (COH-1002M) BIOS"
-    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:709-712, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3905, source data/resources/arcadedb.yaml:355"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:789-792, source src/core/arcade/systems/sony/zn/sony_zn.cpp:929-936, 2928-2937, 4064, source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444, source data/resources/arcadedb.yaml:356"
     contents:
       - name: "m534002c-61.ic353"
         size: 524288
@@ -227,7 +252,7 @@ files:
     required: true
     category: bios_zip
     description: "Taito FX-1 (COH-1000T) BIOS"
-    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:836-839, source src/core/arcade/systems/sony/zn/sony_zn.cpp:783-860, 2774-2783, 3687, 3795, source data/resources/arcadedb.yaml:175"
+    source_ref: "source src/core/arcade/arcade_machine_handler.cpp:916-919, source src/core/arcade/systems/sony/zn/sony_zn.cpp:929-936, 2928-2937, 3846, 3954, source src/core/arcade/arcade_rom_loader.cpp:258-293, 356-444, source data/resources/arcadedb.yaml:176"
     contents:
       - name: "m534002c-14.ic353"
         size: 524288
