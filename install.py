@@ -15,6 +15,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import bisect
 import codecs
 import concurrent.futures
 import contextlib
@@ -542,6 +543,10 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # kind of its own, since schema 1 never adds a key to the file event.
     "declared": ("platform", "files", "present", "missing", "wrong_hash",
                  "bytes_needed", "dests"),
+    # Right after declared: the files of the data trees to fetch (check's
+    # data_missing) and the bytes they write. A kind of its own, since
+    # schema 1 never adds a key to check.
+    "data": ("platform", "files", "bytes"),
     # A file to install that this machine already holds: misplaced in the
     # BIOS folder (folder is its bios_dir, reason says why in words) or in
     # a folder named with --from (reason empty). member names the ZIP member
@@ -641,7 +646,7 @@ def _os_name() -> str:
 def _emit_check(
     plat: str, manifest: dict, bios_path: Path, files: list[dict], up_to_date: list[dict],
     mismatched: list[dict], data_missing: int, not_installable: int,
-    chosen: list[str] | None = None,
+    chosen: list[str] | None = None, data_bytes: int = 0,
 ) -> None:
     """One event per file, per system and per platform after a check, then
     one for the files of the platform's own list.
@@ -704,6 +709,7 @@ def _emit_check(
         bytes_needed=sum(size for _d, size, state in own_states if state != "present"),
         dests=[dest for dest, _s, _state in own_states],
     )
+    EVENTS.emit("data", platform=plat, files=data_missing, bytes=data_bytes)
 
 
 def _declared_state(copy: dict, entry: dict, bios_path: Path) -> str:
@@ -9496,6 +9502,71 @@ def _check_card_root(plat: str, dest: Path) -> None:
               f"{display_name(plat)} file list was asked for.")
 
 
+def card_bound(named: str, plat: str) -> tuple[str, str] | None:
+    """(system name, BIOS folder below the card root) when what --platform
+    named runs from an SD card, else None.
+
+    `--platform onion` gets RetroArch's list, and on a computer that list's
+    default folder is the computer's own RetroArch: the files went there,
+    which Onion never reads. --platform retroarch names a list, not a card.
+    """
+    if plat in CARD_PLATFORMS:
+        return display_name(plat), ""
+    key = _name_key(named)
+    rule = next((rule for rule in _card_rules()
+                 if key and rule.manifest == plat and key == _name_key(rule.name)), None)
+    return (rule.name, rule.bios) if rule else None
+
+
+def mounted_cards_of(system: str, plat: str) -> list[Path]:
+    """The mounted cards whose own files say they run system."""
+    if plat in CARD_PLATFORMS:
+        return [mount for mount in _mounted_cards() if card_platform(mount) == plat]
+    return [mount for mount in _mounted_cards()
+            if any(rule.name == system for rule in _card_matches(mount))]
+
+
+def card_install_dest(named: str, plat: str, interactive: bool) -> Path:
+    """The folder for a card-bound system named without --dest, on a machine
+    that is not the device.
+
+    One mounted card that runs it is taken. At a terminal the card's root is
+    asked for, never this machine's own folder. Without questions the run
+    stops on the --dest that names the card.
+    """
+    system, below = card_bound(named, plat) or (display_name(plat), "")
+    cards = mounted_cards_of(system, plat)
+    if len(cards) == 1:
+        dest = cards[0] / below if below else cards[0]
+        print(f"  {system} card found at {cards[0]}: {display_name(plat)} files, in {dest}")
+        return dest
+    example = (f"--platform {named.strip() or plat} --dest /media/$USER/<card> "
+               "(Windows: --dest E:\\)")
+    if len(cards) > 1:
+        print(f"  {len(cards)} {system} cards are mounted: "
+              + ", ".join(str(card) for card in cards) + ".", file=sys.stderr)
+    if not interactive:
+        print(f"  {system} keeps its BIOS files on its SD card, not on this machine. "
+              f"Mount the card and name its root with --dest, for example: {example}",
+              file=sys.stderr)
+        sys.exit(1)
+    print(f"  {system} keeps its BIOS files on its SD card, not on this machine. "
+          "Mount the card, then type its root folder.")
+    raw = ""
+    while not raw:
+        raw = _ask("Card root (Ctrl+C to stop): ")
+    root = _typed_folder(raw)
+    if plat in CARD_PLATFORMS:
+        _check_card_root(plat, root)
+        return root
+    folder = card_dest(named, plat, root)[1]
+    if folder == root and below and not _ends_with(root, below):
+        # A KNULLI share or a ROCKNIX card read as a list's name: its
+        # folder below the root, as the device reads it.
+        return root / below
+    return folder
+
+
 def _platform_for_dest(os_type: str, dest: Path, interactive: bool) -> str:
     """The file list for a --dest given without --platform.
 
@@ -9617,7 +9688,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     elif args.platform:
         print("Detecting platform...")
         detected = detect_platforms(os_type)
-        matched = [(n, p) for n, p in detected if n == args.platform]
+        bound = card_bound(named, args.platform)
+        # A system that runs from its card is found only on the device:
+        # Onion named on a PC matched the PC's own RetroArch.
+        matched = [(n, p) for n, p in detected if n == args.platform
+                   and (bound is None or detected_os(n, p) == bound[0])]
         if matched:
             platforms = matched
         elif listing:
@@ -9625,17 +9700,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             # needed, and asking BizHawk's for one refused a question asked
             # before downloading BizHawk.
             platforms = [(args.platform, _default_dest(os_type, args.platform) or Path.cwd())]
-        elif args.platform in CARD_PLATFORMS:
+        elif bound is not None:
             # Its files go on its SD card, which is never this machine's
-            # own folder: the card's mount point is the user's to name.
-            print(
-                f"  {display_name(args.platform)} keeps its BIOS files on its SD card. "
-                f"Mount the card and name its root with --dest, for example: "
-                f"--platform {args.platform} --dest /media/$USER/<card> "
-                f"(Windows: --dest E:\\)",
-                file=sys.stderr,
-            )
-            sys.exit(1)
+            # own folder.
+            platforms = [(args.platform, card_install_dest(named, args.platform,
+                                                           interactive))]
         elif args.platform in PORTABLE_ONLY:
             # A portable emulator reads the folder beside its executable:
             # any default would be a folder it never opens.
@@ -10101,6 +10170,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 plat_name, manifest, bios_path, files, up_to_date, mismatched,
                 sum(len(state[1]) for _entry, state in data_states), len(omitted_files),
                 chosen=selection[0] if selection else None,
+                data_bytes=sum(meta.get("size", 0) for _entry, state in data_states
+                               for meta in state[1].values()),
             )
             emit_copies(plat_name, to_download, copies, bios_index, bios_path, files)
             emit_unreadable(plat_name, unread)
@@ -10673,6 +10744,11 @@ class TuiState:
         # A --dest given without --platform: the list asks whose files go there.
         self.dest_given: Path | None = None
         self.folder_default: Path | None = None
+        # (system, BIOS folder below the card root) when the setup asked for
+        # runs from an SD card: the folder screen offers the mounted cards.
+        self.card_bound: tuple[str, str] | None = None
+        # (width and text, lines) of the last pager wrapped.
+        self.pager_cache: tuple | None = None
         self.path_text: str = ""
         self.browse_dir: Path | None = None
         self.browse_rows: list = []
@@ -11074,13 +11150,20 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
     if screen == "platforms":
         needle = state.filters.get(screen, "")
         systems = _systems_reading()
-        return [_filter_row(state)] + [
-            TuiRow("platform", display_name(plat), ", ".join(systems.get(plat, [])), plat)
-            for plat in AVAILABLE_PLATFORMS
-            if _matches(" ".join([plat, display_name(plat), *systems.get(plat, [])]), needle)
-        ]
+        rows = [_filter_row(state)]
+        for plat in AVAILABLE_PLATFORMS:
+            named = _setup_matches(plat, systems.get(plat, []), needle)
+            if named is not None:
+                # The systems the filter named, those a device typed runs:
+                # "miyoo" on RetroArch read "muOS, JELOS, KOLOS...".
+                rows.append(TuiRow("platform", display_name(plat),
+                                   ", ".join(named or systems.get(plat, [])), plat))
+        return rows
     if screen == "folder":
         rows = [TuiRow("default", "Use this folder")] if state.folder_default else []
+        if _tui_card_bound(state):
+            rows += [TuiRow("card", f"{_mount_name(mount)} ({_card_what(mount)})", value=mount)
+                     for mount in _mounted_cards()]
         return rows + [TuiRow("browse", "Browse for a folder"), TuiRow("type", "Type a path")]
     if screen == "browse":
         return list(state.browse_rows)
@@ -11437,6 +11520,19 @@ def _mounted_cards() -> list[Path]:
     return found
 
 
+def _tui_card_bound(state: TuiState) -> tuple[str, str] | None:
+    """The card the chosen setup runs from, when it runs from one."""
+    if state.card_bound:
+        return state.card_bound
+    return card_bound(state.platform, state.platform) if state.platform in CARD_PLATFORMS else None
+
+
+def _card_what(mount: Path) -> str:
+    """What a mounted card is, as its own files say."""
+    system = card_system(mount)
+    return f"{system[2]} card" if system else "card or drive"
+
+
 def _browse_rows(folder: Path | None, zips: bool = False) -> tuple[list[TuiRow], str]:
     """A directory's rows for the browser, cards first, and what went wrong.
     With zips, the ZIP files too: a backup is often one archive."""
@@ -11447,9 +11543,7 @@ def _browse_rows(folder: Path | None, zips: bool = False) -> tuple[list[TuiRow],
     rows = [TuiRow("use", "Use this folder"), TuiRow("up", "..", value=folder.parent)]
     for card in _mounted_cards():
         if card != folder:
-            system = card_system(card)
-            what = f"{system[2]} card" if system else "card or drive"
-            rows.append(TuiRow("dir", f"{card} ({what})", value=card))
+            rows.append(TuiRow("dir", f"{card} ({_card_what(card)})", value=card))
     try:
         entries = list(os.scandir(folder))
     except OSError as exc:
@@ -11532,11 +11626,15 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         if state.dest_given is not None:
             return _choose(state, row.value, state.dest_given)
         state.platform = row.value
-        default = None if row.value in CARD_PLATFORMS else _default_dest(state.os_type, row.value)
+        state.card_bound = card_bound(row.value, row.value)
+        default = None if state.card_bound else _default_dest(state.os_type, row.value)
         return _open_folder_screen(state, default)
     if screen == "folder":
         if action == "default":
             return _choose(state, state.platform, state.folder_default)
+        if action == "card":
+            below = (_tui_card_bound(state) or ("", ""))[1]
+            return _choose(state, state.platform, row.value / below if below else row.value)
         if action == "browse":
             state.browse_for = "dest"
             _push(state, "browse")
@@ -11636,6 +11734,94 @@ def _systems_reading() -> dict[str, list[str]]:
                 and rule.name not in names.setdefault(rule.manifest, [])):
             names[rule.manifest].append(rule.name)
     return names
+
+
+# The devices people type in the setup filter instead of the setup they run,
+# beside the setups a first-party page says each one runs. Keys are platform
+# ids or the system names of _EMBEDDED_RULES, and a device that runs several
+# setups is under each. The handheld systems' lists are those of
+# platforms/_guides.yml (handheld_guide, each with its devices_source), and a
+# test holds the two equal.
+_SETUP_DEVICES: dict[str, tuple[str, ...]] = {
+    "ArkOS": ("RG353M", "RG353V", "RG503", "RGB30", "RK2023", "RG351MP", "RG351V", "R35S",
+              "RGB10"),
+    "muOS": ("RG35XX H", "RG35XX Plus", "RG35XX SP", "RG35XX 2024", "RG34XX H", "RG40XX H",
+             "RG40XX V", "RG28XX H", "RGCUBEXX", "TrimUI Brick", "TrimUI Smart Pro"),
+    "Onion": ("Miyoo Mini", "Miyoo Mini+"),
+    "spruceOS": ("Miyoo A30", "Miyoo Flip", "Miyoo Mini", "Miyoo Mini Plus",
+                 "Miyoo Mini Flip", "TrimUI Smart Pro", "TrimUI Brick",
+                 "Anbernic RG35XX Plus", "RG40XX H", "Powkiddy RGB30"),
+    "Allium": ("Miyoo Mini", "Miyoo Mini Plus", "Miyoo Mini Flip"),
+    "ArchR": ("R36S", "R33S", "R36S Soysauce", "Odroid Go Advance", "Odroid Go Super",
+              "RG351V", "RG351M", "GameForce Chi", "MagicX XU10", "Powkiddy RGB10",
+              "Powkiddy RGB10X", "K36"),
+    "CrossMix-OS": ("TrimUI Smart Pro",),
+    "dArkOS": ("Odroid Go Advance", "RGB10", "RG351MP", "G350"),
+    "KOLOS": ("RG353P", "RG353M", "RG353V", "RG353VS", "RG503", "Powkiddy RK2023", "RGB30",
+              "RGB10 Max 3"),
+    "Koriki": ("Miyoo Mini",),
+    "MiyooCFW": ("BittBoy", "Pocket Go", "PowKiddy Q90", "PowKiddy V90", "PowKiddy Q20 Mini",
+                 "Sup M3", "XYC Q8"),
+    "plumOS": ("MagicX XU20 V32",),
+    "RetroOZ": ("OGS", "OGA", "RGB10Max", "RGB10Max2"),
+    "UnofficialOS": ("R35S", "R36S", "RG351M", "RG351P", "RG351V", "RG353M", "RG353P",
+                     "RG353V", "RG503", "RG552", "RGB30", "RGB20 Pro", "Odroid Go Advance",
+                     "Odroid Go Super"),
+    # The Android tile of the handheld group (_guides.yml): goretroid.com
+    # "OS: Android 13" for the Retroid Pocket 5, ayntec.com "Android 15" for
+    # the AYN Odin 3. The guide runs RetroArch on Steam Deck (run: steamdeck)
+    # and on Windows, which the ROG Ally runs (rog.asus.com spec,
+    # "Windows 11 Home").
+    "retroarch": ("Steam Deck", "ROG Ally", "Android", "Retroid Pocket", "Retroid Pocket 5",
+                  "AYN Odin", "AYN Odin 3"),
+    "emudeck": ("Steam Deck", "ROG Ally"),
+    "retrodeck": ("Steam Deck",),
+    "retrobat": ("ROG Ally",),
+    "bizhawk": ("ROG Ally",),
+    # _guides.yml runs_on, each cited there.
+    "batocera": ("Steam Deck",),
+    "amberelec": ("Anbernic RG351", "RG552"),
+    "emuelec": ("Odroid Go",),
+    "minui": ("Anbernic", "Miyoo", "TrimUI"),
+    "nextui": ("TrimUI Brick", "TrimUI Smart Pro"),
+    "myminui": ("Anbernic", "Miyoo"),
+    # rocknix.org/devices, read 2026-10-26.
+    "rocknix": ("Anbernic RG351", "RG353", "RG503", "RG552", "RG 55G1", "RG ARC",
+                "RG35XX 2024", "RG35XX Plus", "RG35XX Pro", "RG35XX H", "RG35XX SP", "RG28XX",
+                "RG40XX V", "RG40XX H", "RG CubeXX", "RG34XX", "AYANEO Pocket", "Ayn Odin 2",
+                "Ayn Odin 3", "Ayn Thor", "GameForce Ace", "Odroid Go Advance",
+                "Odroid Go Super", "Odroid Go Ultra", "MagicX XU Mini M", "Mangmi Air X",
+                "Powkiddy RGB10", "RGB10X", "RK2023", "RGB20SX", "RGB20 Pro", "RGB30", "X35S",
+                "X35H", "X55", "XU10", "Retroid Pocket 5", "Retroid Pocket 6",
+                "Retroid Pocket Flip2", "Retroid Pocket Mini", "Retroid Pocket Nova", "R33S",
+                "R35S", "R36S", "K36"),
+    # knulli.org, read 2026-10-26.
+    "knulli": ("Anbernic RG-Arc-S", "RG28XX", "RG34XX", "RG35XX Original", "RG35XX Plus",
+               "RG35XX H", "RG35XX 2024", "RG35XX SP", "RG40XX H", "RG40XX V", "RGCubeXX",
+               "Retroid Pocket 5", "Retroid Pocket Flip 2", "Retroid Pocket Mini",
+               "Miyoo Flip", "Orange Pi Zero 2w", "Powkiddy RGB30", "X55", "TrimUI Brick",
+               "TrimUI Smart Pro", "BattleXP G350", "GKD Pixel 2"),
+}
+
+
+def _device_needle(needle: str) -> str:
+    """The filter text with a model's short form spelled out: owners write
+    RP5 for the Retroid Pocket 5, as the store names it."""
+    short = re.fullmatch(r"\s*rp\s*(\d+)\s*", needle, re.IGNORECASE)
+    return f"Retroid Pocket {short.group(1)}" if short else needle
+
+
+def _setup_matches(plat: str, systems: list[str], needle: str) -> list[str] | None:
+    """What the filter names for plat: its devices and systems that match,
+    [] when plat's own name does, None when nothing does. A device counts
+    for each setup it runs."""
+    if not needle or _matches(f"{plat} {display_name(plat)}", needle):
+        return []
+    needle = _device_needle(needle)
+    devices = [device for device in _SETUP_DEVICES.get(plat, ()) if _matches(device, needle)]
+    named = [system for system in systems
+             if _matches(" ".join([system, *_SETUP_DEVICES.get(system, ())]), needle)]
+    return devices + named or None
 
 
 def _platform_focus(state: TuiState, plat: str) -> int:
@@ -11833,18 +12019,11 @@ def _pager_key(state: TuiState, key: TuiKey) -> list[tuple]:
 
 
 def _pager_last(state: TuiState, items: list) -> int:
-    """The first item shown when the end of a pager is in view, found from
-    the end: only the last screenful is wrapped."""
-    width = min(state.cols, TUI_MAX_WIDTH) - 2
-    room = max(1, state.rows - 4)
-    used, index = 0, len(items)
-    while index > 0:
-        size = len(_text_lines([items[index - 1]], width))
-        if used + size > room:
-            break
-        used += size
-        index -= 1
-    return index
+    """The first line shown when the end of a pager is in view: the view's
+    own height (tui_view), less the line that counts."""
+    total = _pager_starts(state, items, min(state.cols, TUI_MAX_WIDTH) - 2)[-1]
+    height = state.rows - 3
+    return 0 if total <= height else max(0, total - max(1, height - 1))
 
 
 def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
@@ -12014,6 +12193,10 @@ def _take_event(state: TuiState, event: dict) -> None:
         state.done_saves = event
     elif kind == "found" and state.run == "install":
         state.local_dests[event["dest"]] = (event["folder"], event["reason"])
+    elif kind == "data" and state.run == "check" and state.check is not None:
+        state.check["data_bytes"] = event["bytes"]
+    elif kind == "data" and state.run in ("confirm", "preview") and state.dry is not None:
+        state.dry["data_bytes"] = event["bytes"]
     elif state.run == "check":
         if kind == "check":
             state.check = event
@@ -12284,24 +12467,46 @@ def _compose(
 def _pager(
     state: TuiState, width: int, height: int, items: list, lead: int = 0,
 ) -> list[TuiLine]:
-    """The items in view, from the first shown on, each wrapped alone: the
-    8,000 lines of a full preview were wrapped again at every key."""
-    first = max(0, min(state.focus.get(state.screen, 0), _pager_last(state, items)))
-    if len(items) <= height and first == 0:
-        lines = _text_lines(items, width)
-        if len(lines) <= height:
-            return lines
+    """The lines in view, scrolled line by line, the last one saying which
+    lines these are. The lead items (a count above a list) are not counted.
+
+    It scrolled by item and counted items: at 40x12 the result read
+    "1-2 of 5" over eight lines, its last paragraph cut, and a paragraph
+    longer than the screen could never be read to its end. Only the items
+    in view are wrapped: the 8,000 lines of a full preview were wrapped
+    again at every key.
+    """
+    starts = _pager_starts(state, items, width)
+    total = starts[-1]
+    if total <= height:
+        return _text_lines(items, width)
     room = max(1, height - 1)
+    first = max(0, min(state.focus.get(state.screen, 0), total - room))
+    index = bisect.bisect_right(starts, first) - 1
+    offset = first - starts[index]
     lines: list[TuiLine] = []
-    index = first
-    while index < len(items) and len(lines) < room:
+    while index < len(items) and starts[index] < first + room:
         lines += _text_lines([items[index]], width)
         index += 1
-    whole = index if len(lines) <= room else index - 1
-    lines = lines[:room]
-    start = max(1, first + 1 - lead)
-    return lines + [_styled(f"{start}-{max(start, whole - lead)} of {len(items) - lead}",
-                            "dim")]
+    skip = starts[lead] if lead else 0
+    start = max(1, first + 1 - skip)
+    end = max(start, first + room - skip)
+    return lines[offset:offset + room] + [_styled(f"{start}-{end} of {total - skip}", "dim")]
+
+
+def _pager_starts(state: TuiState, items: list, width: int) -> list[int]:
+    """The line each item starts on once wrapped at width, and the total
+    last, kept while the items stay the same. An item that fits is one line
+    without being wrapped."""
+    key = (width, [(str(item), getattr(item, "style", "")) for item in items])
+    if state.pager_cache is not None and state.pager_cache[0] == key:
+        return state.pager_cache[1]
+    starts = [0]
+    for item in items:
+        fits = getattr(item, "style", "") == "path" or cell_width(str(item)) <= width
+        starts.append(starts[-1] + (1 if fits else len(_text_lines([item], width))))
+    state.pager_cache = (key, starts)
+    return starts
 
 
 def _tui_misplaced(state: TuiState) -> list[dict]:
@@ -12369,11 +12574,15 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         headline = f"{_plural(fetch, 'file')} to download, {format_size(fetch_bytes)}"
     elif need:
         headline = f"{_plural(len(copied), 'file')} to copy from this machine"
+    # The data trees' size comes from their own event: "2636 data files"
+    # beside "6.6 GB" said nothing of what they weigh.
+    data_size = (f" ({format_size(check['data_bytes'])})" if data and "data_bytes" in check
+                 else "")
     if need:
         if data:
-            headline += f", and {_plural(data, 'data file')}"
+            headline += f", and {_plural(data, 'data file')}{data_size}"
     if not need:
-        headline = (f"{_plural(data, 'data file')} to fetch" if data
+        headline = (f"{_plural(data, 'data file')} to fetch{data_size}" if data
                     else "Everything is in place")
     wrong = check["wrong_hash"]
     offline_lines = (["Copy them from your old card or a folder, or run the installer "
@@ -12484,10 +12693,13 @@ def _view_platforms(state: TuiState, width: int, height: int) -> tuple:
 
 def _view_folder(state: TuiState, width: int, height: int) -> tuple:
     name = display_name(state.platform)
-    if state.platform in CARD_PLATFORMS:
+    bound = _tui_card_bound(state)
+    if bound:
         title = "Where is the SD card?"
-        before = [f"{name} keeps its BIOS files on its SD card. Choose the card's "
-                  "root folder, the one holding .system."]
+        before = [f"{bound[0]} keeps its BIOS files on its SD card. Choose the card's "
+                  "root folder"
+                  + (", the one holding .system." if state.platform in CARD_PLATFORMS
+                     else ".")]
     elif state.folder_default is not None:
         title = "Which folder?"
         before = [f"{name} usually reads its BIOS files from:", str(state.folder_default)]
@@ -13246,7 +13458,11 @@ def tui_start(
         state.stack = []
         return state, _choose(state, plat, Path(args.dest))
     if plat:
-        matched = [setup for setup in state.setups if setup[0] == plat]
+        bound = card_bound(args.platform, plat)
+        # A system that runs from its card is its card or the device, never
+        # this machine's own folder for the same list.
+        matched = [setup for setup in state.setups if setup[0] == plat
+                   and (bound is None or detected_os(setup[0], setup[1]) == bound[0])]
         if len(matched) == 1:
             state.stack = []
             return state, _choose(state, plat, matched[0][1])
@@ -13254,8 +13470,9 @@ def tui_start(
             state.setups = matched
             return state, []
         state.platform = plat
+        state.card_bound = bound
         state.stack = []
-        default = None if plat in CARD_PLATFORMS else _default_dest(os_type, plat)
+        default = None if bound else _default_dest(os_type, plat)
         return state, _open_folder_screen(state, default)
     if args.dest is not None:
         card = card_platform(Path(args.dest))

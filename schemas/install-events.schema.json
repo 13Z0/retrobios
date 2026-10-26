@@ -20,6 +20,7 @@
         "checking",
         "check",
         "declared",
+        "data",
         "found",
         "unreadable",
         "saves",
@@ -63,6 +64,9 @@
     },
     {
       "$ref": "#/$defs/declared"
+    },
+    {
+      "$ref": "#/$defs/data"
     },
     {
       "$ref": "#/$defs/found"
@@ -451,6 +455,32 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "files",
+        "bytes"
+      ],
+      "properties": {
+        "event": {
+          "const": "data"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
         }
       }
     },

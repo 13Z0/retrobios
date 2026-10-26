@@ -946,6 +946,12 @@ def golden_states() -> dict:
 class Views(unittest.TestCase):
     """Every screen as text, at the sizes a handheld and a desktop show."""
 
+    def setUp(self):
+        # The card screen lists the cards mounted here: none, on every machine.
+        patcher = mock.patch.object(install, "_mounted_cards", return_value=[])
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def test_goldens(self):
         update = os.environ.get("RETROBIOS_UPDATE_GOLDENS") == "1"
         GOLDEN.mkdir(parents=True, exist_ok=True)
@@ -2726,6 +2732,218 @@ class AuditRoundFour(unittest.TestCase):
         state.code = 0
         state.summary = {**summary, "mode": "install", "installed": 5}
         self.assertIn(line, install.tui_outcome(state)[1])
+
+
+class ACardSystemNamedOnAComputer(unittest.TestCase):
+    """`--platform onion` on a PC wrote RetroArch's files into the PC's own
+    ~/.config/retroarch/system, which Onion never reads: the system's list
+    is RetroArch's, and so was the folder detection found for it."""
+
+    ONION = {".tmp_update/onionVersion/version.txt": "4.3.1\n"}
+
+    def card(self, files: dict) -> Path:
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        for name, text in files.items():
+            (root / name).parent.mkdir(parents=True, exist_ok=True)
+            (root / name).write_text(text, encoding="utf-8")
+        return root
+
+    def test_the_systems_that_run_from_a_card(self):
+        self.assertEqual(install.card_bound("onion", "retroarch"), ("Onion", "BIOS"))
+        self.assertEqual(install.card_bound("muOS", "retroarch"), ("muOS", "MUOS/bios"))
+        self.assertEqual(install.card_bound("spruceos", "retroarch"), ("spruceOS", "BIOS"))
+        self.assertEqual(install.card_bound("knulli", "knulli"), ("KNULLI", "bios"))
+        self.assertEqual(install.card_bound("nextui", "nextui"), ("NextUI", ""))
+        self.assertIsNone(install.card_bound("retroarch", "retroarch"))
+        self.assertIsNone(install.card_bound("batocera", "batocera"))
+
+    def test_without_questions_the_run_names_the_card_and_writes_nothing(self):
+        home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, home, True)
+        system = home / ".config" / "retroarch" / "system"
+        system.mkdir(parents=True)
+        (home / ".config" / "retroarch" / "retroarch.cfg").write_text(
+            f'system_directory = "{system}"\n', encoding="utf-8")
+        with FakeRepository() as repo:
+            proc = install_run("--platform", "onion", "--yes",
+                               env={**repo.env(), "HOME": str(home)})
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("Onion keeps its BIOS files on its SD card, not on this machine.",
+                      proc.stderr)
+        self.assertIn("--platform onion --dest /media/$USER/<card>", proc.stderr)
+        self.assertEqual(list(system.iterdir()), [])
+
+    def test_one_mounted_card_of_that_system_is_taken(self):
+        onion, other = self.card(self.ONION), self.card({"roms/a": ""})
+        with mock.patch.object(install, "_mounted_cards", return_value=[other, onion]), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            dest = install.card_install_dest("onion", "retroarch", interactive=False)
+        self.assertEqual(dest, onion / "BIOS")
+        self.assertIn(f"Onion card found at {onion}", out.getvalue())
+
+    def test_at_a_terminal_the_card_root_is_asked(self):
+        onion = self.card(self.ONION)
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "_ask", return_value=str(onion)) as ask, \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            dest = install.card_install_dest("onion", "retroarch", interactive=True)
+        self.assertEqual(dest, onion / "BIOS")
+        self.assertIn("Mount the card, then type its root folder.", out.getvalue())
+        ask.assert_called_once()
+        knulli = self.card({"roms/a": ""})
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "_ask", return_value=str(knulli)), \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(install.card_install_dest("knulli", "knulli", True),
+                             knulli / "bios")
+
+    def test_the_interface_opens_the_card_screen_with_the_cards_first(self):
+        blank = self.card({"roms/a": ""})
+        (blank / "BIOS").mkdir()
+        found = [("retroarch", SYSTEM_DIR)]
+        with mock.patch.object(install, "_mounted_cards", return_value=[blank]), \
+                mock.patch.object(install, "detect_platforms", return_value=found), \
+                mock.patch.object(install, "detect_frontends", return_value=[]):
+            state, effects = install.tui_start(_args(platform="onion"), "linux")
+            self.assertEqual((state.screen, effects), ("folder", []))
+            rows = install.tui_rows(state)
+            text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+            effects = install.tui_update(state, Key("enter"))
+        self.assertEqual([row.action for row in rows], ["card", "browse", "type"])
+        self.assertIn("Where is the SD card?", text)
+        self.assertIn("Onion keeps its BIOS files on its SD card", text)
+        self.assertEqual(effects, [("fetch", "retroarch")])
+        self.assertEqual(state.dest, blank / "BIOS")
+
+    def test_the_interface_takes_the_one_onion_card_mounted(self):
+        onion = self.card(self.ONION)
+        (onion / "BIOS").mkdir()
+        found = [("retroarch", SYSTEM_DIR)]
+        with mock.patch.object(install, "_mounted_cards", return_value=[onion]), \
+                mock.patch.object(install, "detect_platforms", return_value=found), \
+                mock.patch.object(install, "detect_frontends", return_value=[]):
+            state, effects = install.tui_start(_args(platform="onion"), "linux")
+        self.assertEqual(effects, [("fetch", "retroarch")])
+        self.assertEqual(state.dest, onion / "BIOS")
+
+    def test_on_the_device_its_own_folder_is_used(self):
+        device = Path("/mnt/SDCARD/BIOS")
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "detect_platforms",
+                                  return_value=[("retroarch", device)]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.dict(install._DETECTED_OS, {("retroarch", device): "Onion"}), \
+                mock.patch.object(install.Path, "exists", return_value=True):
+            state, effects = install.tui_start(_args(platform="onion"), "linux")
+        self.assertEqual(effects, [("fetch", "retroarch")])
+        self.assertEqual(state.dest, device)
+
+
+class TheSetupFilterKnowsDevices(unittest.TestCase):
+    """tui_audit_4 P3-10.5: the filter found nothing for steam deck, r36s,
+    trimui or retroid, and miyoo found RetroArch with muOS, JELOS... beside it."""
+
+    TYPED = {
+        "steam deck": {"retroarch", "batocera", "emudeck", "retrodeck"},
+        "r36s": {"retroarch", "rocknix"},
+        "rg35xx": {"retroarch", "rocknix", "knulli"},
+        "trimui": {"retroarch", "knulli", "minui", "nextui"},
+        "retroid": {"retroarch", "rocknix", "knulli"},
+        "miyoo": {"retroarch", "knulli", "minui", "myminui"},
+        "anbernic": {"retroarch", "rocknix", "amberelec", "knulli", "minui", "myminui"},
+        "odin": {"retroarch", "rocknix"},
+        "ayn": {"retroarch", "rocknix"},
+        "rp5": {"retroarch", "rocknix", "knulli"},
+        "rog ally": {"retroarch", "emudeck", "retrobat", "bizhawk"},
+        "onion": {"retroarch"},
+    }
+
+    def rows(self, needle: str) -> list:
+        state = fresh_state()
+        state.stack = ["platforms"]
+        state.filters["platforms"] = needle
+        return [row for row in install.tui_rows(state) if row.action == "platform"]
+
+    def test_each_device_finds_every_setup_it_runs(self):
+        for needle, setups in self.TYPED.items():
+            with self.subTest(needle=needle):
+                self.assertEqual({row.value for row in self.rows(needle)}, setups)
+
+    def test_the_right_column_names_what_matched(self):
+        retroarch = {row.value: row for row in self.rows("miyoo")}["retroarch"]
+        self.assertEqual(retroarch.right.split(", "),
+                         ["spruceOS", "Onion", "Allium", "Koriki", "MiyooCFW"])
+        deck = {row.value: row for row in self.rows("steam deck")}
+        self.assertEqual(deck["retroarch"].right, "Steam Deck")
+        self.assertIn("muOS", {row.value: row for row in self.rows("")}["retroarch"].right)
+
+    def test_the_handheld_lists_are_the_guides(self):
+        import yaml
+
+        guides = yaml.safe_load((REPO_ROOT / "platforms" / "_guides.yml").read_text())
+        for system in guides["handheld_guide"]["systems"]:
+            if system.get("devices"):
+                with self.subTest(system=system["name"]):
+                    self.assertEqual(install._SETUP_DEVICES[system["name"]],
+                                     tuple(str(name) for name in system["devices"]))
+
+
+class DataFilesHaveASize(unittest.TestCase):
+    """tui_audit_4 P3-10.8: "8179 files to download, 6.6 GB, and 2636 data
+    files", the data files with no size."""
+
+    def test_the_plan_gives_the_data_files_size(self):
+        state = fresh_state()
+        state.stack = ["setup"]
+        with mock.patch.object(install.Path, "exists", return_value=True):
+            install.tui_update(state, Key("enter"))
+        install.tui_receive(state, ("manifest", "retroarch", MANIFEST))
+        check = {**CHECK, "data_missing": 2636}
+        data = {"event": "data", "platform": "retroarch", "files": 2636,
+                "bytes": 412 * 1024 ** 2}
+        for event in [*FILES, *SYSTEMS, check, data]:
+            install.tui_receive(state, ("event", state.run_id, event))
+        with mock.patch.object(install, "_tui_folder_facts", return_value={
+                "free": 50 * 1024 ** 3, "writable": True, "cores": []}):
+            install.tui_receive(state, ("ended", state.run_id, 1, []))
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("and 2636 data files (412.0 MB)", text)
+
+
+class ThePagerCountsLines(unittest.TestCase):
+    """tui_audit_4 P3-9.4: at 40x12 the result read "1-2 of 5" over eight
+    lines, counting paragraphs, and its last paragraph was cut."""
+
+    def result_state(self, cols: int, rows: int) -> install.TuiState:
+        state = checked_state()
+        state.stack.append("result")
+        state.code, state.summary = 0, {"installed": 3}
+        state.dest = Path("/media/" + "long-folder-name/" * 12)
+        state.cols, state.rows = cols, rows
+        return state
+
+    def test_the_last_line_is_reachable_at_every_size(self):
+        for cols, rows in (*SIZES, (50, 13), (60, 14)):
+            with self.subTest(size=f"{cols}x{rows}"):
+                state = self.result_state(cols, rows)
+                width = min(cols, install.TUI_MAX_WIDTH) - 2
+                wrapped = install._text_lines(install._pager_items(state), width)
+                press(state, "end")
+                screen = install.tui_view(state, cols, rows)
+                body = [line.rstrip() for line in screen[2:-1]]
+                self.assertIn(" " + str(wrapped[-1]).rstrip(), body)
+                if len(wrapped) > rows - 3:
+                    self.assertTrue(any(re.fullmatch(rf" \d+-{len(wrapped)} of {len(wrapped)}",
+                                                     line) for line in body), body)
+
+    def test_the_counter_moves_one_line_per_press(self):
+        state = self.result_state(40, 12)
+        first = [line for line in install.tui_view(state, 40, 12) if " of " in line][-1]
+        self.assertRegex(first, r"^ 1-8 of \d+")
+        press(state, "down")
+        second = [line for line in install.tui_view(state, 40, 12) if " of " in line][-1]
+        self.assertRegex(second, r"^ 2-9 of \d+")
 
 
 class OfflineInTheInterface(unittest.TestCase):
