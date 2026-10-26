@@ -3,10 +3,10 @@ type: standalone
 core_classification: enhanced_fork
 source: "https://github.com/DirtBagXon/hypseus-singe"
 upstream: "https://github.com/mirror/daphne-emu"
-source_commit: "cda87965fe0a031d027b2253c6715d37cca6b56a"
+source_commit: "a16e2521ee3233ef20c44e562008c47f4b4293df"
 upstream_commit: "cd214c6046365047704f8a0563928970b30444e6"
-profiled_date: "2026-08-08"
-core_version: "v3.0.0"
+profiled_date: "2026-10-27"
+core_version: "v3.0.2"
 display_name: "Arcade (Hypseus Singe)"
 cores:
   - hypseus-singe
@@ -26,58 +26,58 @@ notes: |
   Each Daphne game loads its own arcade ROM set. game::load_roms() walks the
   driver rom_def table and opens roms/<set>.zip, locating each member by name
   case-insensitively. A member missing from the archive falls back to a loose
-  file at roms/<set>/<member> (game.cpp:636-768). The set name is the rom_def
+  file at roms/<set>/<member> (src/game/game.cpp:636-768). The set name is the rom_def
   dir field when set, otherwise the driver shortgamename, so a variant can pull
   members out of another game's archive. roms/ resolves under -romdir when
   given, otherwise under the home directory, with the application directory as
-  fallback (homedir.cpp:97-108, 145-157).
+  fallback (src/io/homedir.cpp:97-108, 145-157).
 
   Member size is enforced: load_rom and load_compressed_rom only report success
-  when the byte count read equals rom_def.size (game.cpp:857, 906). CRC32 is
-  computed and compared but a mismatch only logs a warning (game.cpp:708-726),
+  when the byte count read equals rom_def.size (src/game/game.cpp:857, 906). CRC32 is
+  computed and compared but a mismatch only logs a warning (src/game/game.cpp:708-726),
   and a driver that passes crc32 0 skips the comparison entirely
-  (game.cpp:712-716). A member that cannot be read at all aborts startup with
-  "Could not load ROM images! You must supply these." (hypseus.cpp:205-260).
+  (src/game/game.cpp:712-716). A member that cannot be read at all aborts startup with
+  "Could not load ROM images! You must supply these." (src/hypseus.cpp:204-259).
   Hashing is per member, never over the archive.
 
   The Dragon's Lair Enhancement and Space Ace Enhancement sets carry an extra
   readme member checked by exact CRC32 through verify_required_file(). A
   missing or altered readme calls set_quitflag() and the game does not run
-  (game.cpp:773-837, lair.cpp:197-205, 261-275, 373-380).
+  (src/game/game.cpp:773-837, src/game/lair.cpp:197-205, 261-275, 373-380).
 
   Singe games are not covered by rom_def. The Lua script, framefile and video
   arrive with the content and are passed on the command line (-script, -zlua,
-  -framefile). singe_utils.cpp:35-42 only exposes the roms path to scripts.
+  -framefile). src/game/singe/singe_utils.cpp:35-42 only exposes the roms path to scripts.
 
   The emulator asset tree ships in the source distribution and packagers
   install it beside the binary (Batocera copies pics, fonts, sound and the
   doc .ini files to /usr/share/hypseus-singe). It is read from the working
   directory, not from a system directory:
-    pics/ - led0.bmp through led17.bmp (LED_RANGE, video.h:71), player1.bmp,
+    pics/ - led0.bmp through led17.bmp (LED_RANGE, src/video/video.h:71), player1.bmp,
       player2.bmp, lives.bmp, credits.bmp, time.bmp, ldp1450font.bmp, one of
       overlayleds1.bmp or overlayleds2.bmp, cadet.bmp, captain.bmp,
       spaceace.bmp, offcadet.bmp, offcaptain.bmp, offspaceace.bmp, oncadet.bmp,
       oncaptain.bmp, onspaceace.bmp, annunon.png, annunoff.png. load_bmps()
       returns false if any is absent and startup ends on "Video initialization
-      failed!" (video.cpp:1020-1074, hypseus.cpp:201). tqkeys.png is read for
-      the Thayer's Quest key overlay (video.cpp:632-635). A bezel directory,
+      failed!" (src/video/video.cpp:1069-1123, src/hypseus.cpp:200). tqkeys.png is read for
+      the Thayer's Quest key overlay (src/video/video.cpp:684-687). A bezel directory,
       default bezels/, takes precedence for the bmp and png entries.
     fonts/ - default.ttf plus daphne.ttf for legacy overlay and Singe games or
       digital.ttf otherwise. A font that fails to open calls set_quitflag()
-      (video.cpp:271-293, splash.cpp:45).
+      (src/video/video.cpp:292-314, src/video/splash.cpp:45).
     sound/ - the per-game wav samples named by each driver, plus grumble.wav
       loaded for every game. load_waves() failure fails sound::init() and
-      startup ends on "Sound initialization failed!" (sound.cpp:254-307,
-      sound.cpp:156-186, hypseus.cpp:202). Under -nosound the branch is
-      skipped and init returns true (sound.cpp:143, 193-196).
+      startup ends on "Sound initialization failed!" (src/sound/sound.cpp:234-287,
+      src/sound/sound.cpp:136-166, src/hypseus.cpp:201). Under -nosound the branch is
+      skipped and init returns true (src/sound/sound.cpp:123, 173-176).
     doc/ - hypinput.ini, or hypinput_gamepad.ini under -gamepad. An
-      unreadable file falls back to the compiled-in keymap (input.cpp:72,
-      340-350, 1879).
+      unreadable file falls back to the compiled-in keymap (src/io/input.cpp:74,
+      416-426, 1992).
 
-  midi/soundfont.sf2 ships in the tree but no code path reads it in v3.0.0.
+  midi/soundfont.sf2 ships in the tree but no code path reads it in v3.0.2.
   midi/SOUNDFONTS.txt records that the SDL3 migration dropped the environment
   variable convention the SDL2 build relied on. pics/ConsoleFont.bmp is
-  likewise unreferenced. starrider.cpp:99 keeps its ROM table in a
+  likewise unreferenced. src/game/starrider.cpp:99 keeps its ROM table in a
   commented-out load_roms, so the driver loads nothing.
 
 files:
@@ -87,7 +87,7 @@ files:
     required: false
     installed_on: [retrobat]
     note: "SDL gamepad mappings, read under -gamepad when present. Shipped in the Windows zip, not in the Linux AppImage tarball."
-    source_ref: "source src/io/input.cpp:981-996"
+    source_ref: "source src/io/input.cpp:1060-1075"
 
   - name: ace.zip
     system: arcade-laserdisc
@@ -646,7 +646,7 @@ files:
         crc32: "20fc79b7"
       - name: "readme11.txt"
         crc32: "4bf84551"
-        description: "verified by CRC32 at boot, lair.cpp:197"
+        description: "verified by CRC32 at boot, src/game/lair.cpp:197"
 
   - name: dle20.zip
     system: arcade-laserdisc
@@ -669,7 +669,7 @@ files:
         crc32: "4ae26073"
       - name: "readme20.txt"
         crc32: "51c50010"
-        description: "verified by CRC32 at boot, lair.cpp:261"
+        description: "verified by CRC32 at boot, src/game/lair.cpp:261"
 
   - name: dle21.zip
     system: arcade-laserdisc
@@ -689,7 +689,7 @@ files:
         crc32: "c14f36b3"
       - name: "readme21.txt"
         crc32: "a68f0d21"
-        description: "verified by CRC32 at boot, lair.cpp:268"
+        description: "verified by CRC32 at boot, src/game/lair.cpp:268"
 
   - name: esh.zip
     system: arcade-laserdisc
@@ -1429,7 +1429,7 @@ files:
         crc32: "8a536cb0"
       - name: "readme.txt"
         crc32: "ca4e20e6"
-        description: "verified by CRC32 at boot, lair.cpp:373"
+        description: "verified by CRC32 at boot, src/game/lair.cpp:373"
 
   - name: sdq.zip
     system: arcade-laserdisc
