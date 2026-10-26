@@ -854,7 +854,7 @@
   "src/cap32.cpp",
   "src/roms/builtin_roms.h"
  ],
- "github.com/LIJI32/SameBoy@26a56bd6a122a6318a456abd80558408742d5adf": [
+ "github.com/LIJI32/SameBoy@9bf7e0b4dffc20941e4dfadffc6899ae19463844": [
   "Core/gb.c",
   "Core/gb.h",
   "libretro/libretro.c"
@@ -2607,7 +2607,7 @@
  "github.com/celerizer/tamalibretro@ea8dd612eaab375a04f976149dc693cb5d208b27": [
   "main.c"
  ],
- "github.com/cemu-project/Cemu@5f10237e6fa49e356bb7e25209ab49e6481a784d": [
+ "github.com/cemu-project/Cemu@42876aa86d2b92f9c620a76959a792bf392b89d3": [
   "CMakeLists.txt",
   "bin/resources/sharedFonts/CafeCn.ttf",
   "bin/resources/sharedFonts/CafeKr.ttf",
@@ -9492,7 +9492,7 @@
   "libs/ymir-core/include/ymir/sys/memory_defs.hpp",
   "libs/ymir-core/src/ymir/db/ipl_db.cpp"
  ],
- "github.com/ymir-emu/Ymir@a2c69d8d19c07bc6ad673596545967a02f6a3e5a": [
+ "github.com/ymir-emu/Ymir@b471cff9652b99044a4c44a9dbcb1b537c9164ac": [
   ".github/workflows/build.yaml",
   "apps/ymir-sdl3/CMakeLists.txt",
   "apps/ymir-sdl3/src/app/app.cpp",
