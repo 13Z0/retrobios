@@ -438,7 +438,7 @@ class MisplacedInTheBiosFolder(Scratch):
         for name, data in PAYLOAD.items():
             self.place(f"system/{name}", data)
         out = self.check()
-        self.assertIn("4 of these files are in the BIOS folder at the wrong place: a run "
+        self.assertIn("4 of these files are in the BIOS folder in the wrong place: a run "
                       "without --check copies them where the cores open them, and leaves "
                       "your copies as they are.", out)
         self.assertFalse((self.dest / "scph5501.bin").exists())

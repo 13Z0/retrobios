@@ -736,7 +736,7 @@ class TheInstallerWritesThem(unittest.TestCase):
             b"keys below the save directory",
         )
         self.assertFalse((app / "system" / "Azahar").exists())
-        self.assertIn("read from RetroArch's save directory go to", proc.stdout)
+        self.assertIn("read from RetroArch's save directory goes to", proc.stdout)
 
     def test_where_save_dir_points(self):
         repo = _Repository(self, self.FILES)

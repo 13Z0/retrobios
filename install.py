@@ -4220,7 +4220,7 @@ def place_save_entries(
         if place.by_core:
             where += f"{os.sep}<core>"
         print(f"  {_plural(len(saved), 'file')} read from {display}'s save directory "
-              f"go to {where}")
+              f"{'goes' if len(saved) == 1 else 'go'} to {where}")
         EVENTS.emit("saves", platform=str(manifest.get("platform", "")),
                     files=len(saved), folder=where)
         return files, []
@@ -6512,7 +6512,7 @@ INSTALLED_ONLY = "installed"
 def _prompt_custom_selection(
     plat: str, files: list[dict], omitted: list[dict],
     installed: tuple[list[dict], list[dict]] | None = None,
-    name: str = "", dry_run: bool = False,
+    name: str = "", dry_run: bool = False, data_trees: list[dict] | None = None,
 ) -> tuple[list[str], list[str], list[str]] | str | None:
     """Offer to narrow the install by system, core and region.
 
@@ -6521,7 +6521,15 @@ def _prompt_custom_selection(
     installed read) holds, or the three choices. Each empty list keeps
     everything on its axis.
     """
-    print(f"\n{name or display_name(plat)}: {_sized(files)}.")
+    trees = data_trees or []
+    data = sum(len(entry.get("files") or {}) for entry in trees)
+    data_size = sum(meta.get("size", 0) for entry in trees
+                    for meta in (entry.get("files") or {}).values())
+    print(f"\n{name or display_name(plat)}: {_sized(files)}"
+          + (f", and {_plural(data, 'data file')} ({format_size(data_size)})" if data else "")
+          + ".")
+    if _offline_only():
+        print("  --offline: only the files found on this machine are installed.")
     # A dry run installs nothing: "install everything" was asked before it.
     print("  Enter) list everything, nothing is written" if dry_run
           else "  Enter) install everything")
@@ -8234,7 +8242,7 @@ def _check_copy_lines(
     if fixed:
         verb = "is" if fixed == 1 else "are"
         them = "it" if fixed == 1 else "them"
-        lines.append(f"  {fixed} of these files {verb} in the BIOS folder at the wrong place: "
+        lines.append(f"  {fixed} of these files {verb} in the BIOS folder in the wrong place: "
                      f"a run without --check copies {them} where the cores open {them}, and "
                      f"leaves your {'copy' if fixed == 1 else 'copies'} as "
                      f"{'it is' if fixed == 1 else 'they are'}.")
@@ -10189,6 +10197,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             selection = _prompt_custom_selection(
                 plat_name, files, omitted_files, installed,
                 display_name(plat_name, manifest), args.dry_run,
+                manifest.get("data_directories") or [],
             )
             if selection is None:
                 smaller = ("  Nothing downloaded. To install less, run the same command "
@@ -10387,9 +10396,23 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             continue
 
         if to_download:
-            dl_size = sum(f.get("size", 0) for f in to_download)
             fetched = [f for f in to_download if id(f) not in copies]
+            if interactive and not args.yes and _offline_only() and fetched:
+                # The screen offers no Install for these: the question asked
+                # to download 6.6 GB that --offline never fetches.
+                print(f"\n  {_plural(len(fetched), 'file')} "
+                      f"{'needs' if len(fetched) == 1 else 'need'} the internet, which "
+                      "--offline does not use. Copy them from your old card or a folder "
+                      "(--from), or run the installer again with a pack (--from-pack) or "
+                      "without --offline.")
+                files_pending += len(fetched)
+                to_download = [f for f in to_download if id(f) in copies]
+                fetched = []
+            dl_size = sum(f.get("size", 0) for f in to_download)
             fetch_size = _bytes(fetched)
+            if not to_download:
+                total_up_to_date += len(up_to_date)
+                continue
             if (
                 interactive
                 and not args.yes
@@ -10818,6 +10841,21 @@ def _split_word(word: str, room: int) -> list[str]:
     return pieces + [word] if word else pieces
 
 
+_UNIT = re.compile(r"(B|KB|MB|GB)\b")
+
+
+def _glued_words(text: str) -> list[str]:
+    """The words of text, a size kept with its unit: "5.1" / "KB" was
+    broken across two lines of a 40-column headline."""
+    words: list[str] = []
+    for word in text.split():
+        if words and _UNIT.match(word) and re.fullmatch(r"\(?\d+(\.\d+)?", words[-1]):
+            words[-1] += f" {word}"
+        else:
+            words.append(word)
+    return words
+
+
 def _wrap(text: str, width: int, indent: str = "  ") -> list[str]:
     """Lines of at most width cells, the ones after the first indented."""
     if cell_width(text) <= width:
@@ -10825,7 +10863,7 @@ def _wrap(text: str, width: int, indent: str = "  ") -> list[str]:
     lead = text[:len(text) - len(text.lstrip(" "))]
     lines: list[str] = []
     line = ""
-    for word in text.split():
+    for word in _glued_words(text):
         for piece in _split_word(word, width - len(lead + indent)):
             prefix = lead + indent if lines else lead
             longer = f"{line} {piece}" if line else piece
@@ -10884,7 +10922,9 @@ class TuiState:
         self.status: str = ""
         self.cols: int = 80
         self.rows: int = 24
-        self.now: float = 0.0
+        # A check started before the loop's first tick counted the
+        # machine's uptime.
+        self.now: float = time.monotonic()
         # (platform, folder, label) for each setup found here.
         self.setups: list = []
         self.notes: list = []
@@ -10964,6 +11004,9 @@ class TuiState:
         self.must_confirm: bool = False
         # Choices, each one an option of the command line.
         self.ticked: set = set()
+        # The ticks the systems list opened with: Back with none ticked
+        # brings them back, nothing having been chosen.
+        self.ticked_before: set | None = None
         self.cli_systems: list = []
         self.regions: list = []
         self.cli_regions: list = []
@@ -11375,6 +11418,9 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
     if screen == "confirm":
         if state.running or state.dry is None:
             return []
+        if _offline_only() and not _dry_copies(state):
+            # The plan's rule: Install would only fail every file.
+            return [TuiRow("back", "Back")]
         return [TuiRow("install", "Install"), TuiRow("back", "Back")]
     if screen == "error":
         rows = ([TuiRow("retry", "Try again")]
@@ -11427,6 +11473,13 @@ def _plan_copies(state: TuiState, check: dict) -> list[str]:
     local = {event["dest"] for event in state.found} if check is state.check else set()
     sizes = {event["dest"] for event in state.files}
     return [dest for dest in local if dest in sizes]
+
+
+def _dry_copies(state: TuiState) -> list[str]:
+    """The files the confirm or preview run would install that this
+    machine holds."""
+    local = {event["dest"] for event in state.found}
+    return [event["dest"] for event in state.dry_files if event["dest"] in local]
 
 
 def _short_of_space(state: TuiState, check: dict) -> bool:
@@ -11566,6 +11619,10 @@ def _back(state: TuiState) -> list[tuple]:
         state.stack.append("quit")
         state.focus["quit"] = 0
         return effects
+    if state.screen == "systems" and not state.ticked and state.ticked_before:
+        # Enter on None, then Esc: the plan kept its headline over an
+        # Install the run refused.
+        state.ticked = set(state.ticked_before)
     state.stack.pop()
     if state.screen == "checking" and not state.running:
         # Stay after Esc on a check started from the command line: a
@@ -11995,6 +12052,8 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             return _open_from_browser(state)
         if action in ("misplaced", "unreadable"):
             return _push(state, action)
+        if action == "systems":
+            state.ticked_before = set(state.ticked)
         if action == "systems" and len(state.systems) > TUI_LONG_LIST:
             # On None: picking one system of 66 began with Up, Up, A.
             return _push(state, action, 1)
@@ -12687,6 +12746,9 @@ def _route_hint(state: TuiState, parts: tuple) -> tuple:
         named.append(key + sep + what)
     if state.pad == "muxterm" and state.screen == "path":
         named.append("Select Keyboard")
+    if state.pad == "miyoo" and state.screen in _CHECKLISTS:
+        tick = [entry for entry in named if entry.startswith("A ")]
+        named = named[:1] + tick + [entry for entry in named[1:] if entry not in tick]
     return tuple(named)
 
 
@@ -12724,6 +12786,7 @@ _ROW_VERBS = {
     "jobs": "Change", "retry": "Try again", "back": "Back", "stay": "Stay",
     "fromcard": "Choose", "from": "Add a folder", "misplaced": "Show", "zip": "Copy from it",
     "unreadable": "Show", "exit": "Exit", "addapp": "Put it on the card",
+    "cardsystem": "Choose", "rescan": "Look again",
 }
 
 
@@ -12955,15 +13018,18 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         lines.append("You cannot write to this folder: choose another one.")
     counts = (f"{check['present']} in place, {check['missing']} missing, "
               f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
+    lines.append(counts)
     if copied and fetch:
         # 47 to download above 49 missing and 1 wrong copy: the 3 found on
-        # this machine are the difference, said where the sum is read.
-        counts += (f": {len(copied)} of them {'is' if len(copied) == 1 else 'are'} "
-                   f"copied from this machine, {fetch} downloaded")
-    lines.append(counts)
-    saves = (state.saves if check is state.check
+        # this machine are the difference, on a line of its own ("0 wrong
+        # copies: 2 of them" read as two of the zero).
+        lines.append(f"{need} to install: {len(copied)} copied from this machine, {fetch} "
+                     + ("from the pack" if LOCAL.pack is not None else "downloaded"))
+    after_counts = len(lines)
+    saves =(state.saves if check is state.check
              else state.dry_saves if check is state.dry else None)
-    lines += [_styled(line, "path") for line in _saves_lines(state, saves)]
+    saves_lines = _saves_lines(state, saves)
+    lines += [_styled(line, "path" if index else "") for index, line in enumerate(saves_lines)]
     found_in = _retroarch_config_at(dest) if dest is not None else None
     if found_in:
         lines.append(_styled(f"Named by {_short_path(Path(found_in[0]), state.home)}", "path"))
@@ -12980,7 +13046,7 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
                      f"{'one' if wrong == 1 else 'ones'} kept in a backup folder.")
     misplaced = _tui_misplaced(state) if check is state.check else []
     if misplaced:
-        lines.insert(3, f"{_plural(len(misplaced), 'file')} "
+        lines.insert(after_counts, f"{_plural(len(misplaced), 'file')} "
                      f"{'is' if len(misplaced) == 1 else 'are'} in the wrong place, "
                      f"{'it' if len(misplaced) == 1 else 'they'} will be copied where the "
                      "emulators read "
@@ -13003,7 +13069,7 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         lines += _unavailable_lines(state)
     if check is state.check:
         lines += _unplaced_lines(state.check_summary, state,
-                                 "Choose it in Options, Save folder.")
+                                 "Choose it in Options, Save folder (--save-dir).")
     return lines[:2] + offline_lines + lines[2:]
 
 
@@ -13015,13 +13081,16 @@ def _saves_lines(state: TuiState, saves: dict | None) -> list[str]:
         return []
     name = display_name(state.platform) if state.platform else "the frontend"
     count = saves["files"]
+    # The folder alone is cut in the middle: cut with the sentence, it
+    # lost "directory goes to" even at 80 columns.
     return [f"{_plural(count, 'file')} read from {name}'s save directory "
-            f"{'goes' if count == 1 else 'go'} to "
-            f"{_short_path(Path(saves['folder']), state.home)}"]
+            f"{'goes' if count == 1 else 'go'} to:",
+            _short_path(Path(saves['folder']), state.home)]
 
 
 def _unplaced_lines(summary: dict | None, state: TuiState,
-                    remedy: str = "Name it with --save-dir.") -> list[str]:
+                    remedy: str = "Choose it in Options, Save folder (--save-dir), "
+                    "next time.") -> list[str]:
     """The files read from the frontend's save directory that the run left
     out, that directory being unknown: said, never silent."""
     count = sum(group.get("files", 0) for group in (summary or {}).get("skipped") or []
@@ -13244,8 +13313,7 @@ def _view_systems(state: TuiState, width: int, height: int) -> tuple:
         footer.insert(0, OTHER_HELP)
     elif "shared" in focused.right:
         count = _shared_needed(state)[focused.value][0]
-        footer.insert(0, f"{count} of these files are shared with other systems, "
-                      "counted once in the total.")
+        footer.insert(0, f"+{count} shared: counted once")
     needle = state.filters.get("systems", "")
     after = [f"No system matches '{needle}'."] if len(rows) == 3 and needle else []
     if state.status:
@@ -13301,7 +13369,9 @@ _STATE_WORDS = {"missing": "missing", "wrong_hash": "wrong copy"}
 def _pager_items(state: TuiState) -> list:
     """The text of a screen that scrolls, the same for its view and its keys."""
     if state.screen == "misplaced":
-        return [f"{event['dest']}: {event['reason']}" for event in _tui_misplaced(state)]
+        return ["They are copied where the emulators read them. Your copies stay where "
+                "they are.", ""] + [f"{event['dest']}: {event['reason']}"
+                                    for event in _tui_misplaced(state)]
     if state.screen == "unreadable":
         return [f"{event['path']}" + (f", {event['member']}" if event["member"] else "")
                 + f": {event['reason']}" for event in state.unreadable]
@@ -13338,7 +13408,7 @@ def _view_unreadable(state: TuiState, width: int, height: int) -> tuple:
 
 
 def _view_misplaced(state: TuiState, width: int, height: int) -> tuple:
-    return ("Files in the wrong place", _pager(state, width, height, _pager_items(state)),
+    return ("Files in the wrong place", _pager(state, width, height, _pager_items(state), 2),
             ("A/Enter Back", "Up/Down Scroll"))
 
 
@@ -13451,7 +13521,8 @@ def _tui_sources(state: TuiState, installed: int, failed: int) -> str:
             name = _last_name(folder)
             folders[name] = folders.get(name, 0) + 1
     copied = fixed + sum(folders.values())
-    return sources_line(list(folders.items()), fixed, max(0, installed - copied), failed)
+    return sources_line(list(folders.items()), fixed, max(0, installed - copied), failed,
+                        "from the pack" if LOCAL.pack is not None else "downloaded")
 
 
 def _unavailable(state: TuiState) -> tuple[list[dict], int]:
@@ -13551,7 +13622,7 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     ok = {dest for dest, good, _why in state.finished if good}
     if any(reason and dest in ok for dest, (_folder, reason) in state.local_dests.items()):
         # A fix copies: the misplaced files are the user's, never moved.
-        lines.append("Your copies at the wrong place were left as they are.")
+        lines.append("Your copies in the wrong place were left as they are.")
     lines.append(f"BIOS folder: {state.dest}")
     if installed + up_to_date:
         lines += _saves_lines(state, state.done_saves)
@@ -13716,7 +13787,8 @@ def _help_lines(state: TuiState) -> list[tuple[str, str]]:
     keys = [(names["move"], "Move")]
     if len(tui_rows(state)) > TUI_LONG_LIST or screen in _PAGERS:
         keys += [*([(names["page"], "Page")] if names["page"] else []),
-                 ("Home/End, g/G", "First, last")]
+                 *([("Home/End, g/G", "First, last")] if state.pad in ("both", "keys")
+                   else [])]
     primary = _primary(state) or _TUI_VIEWS[screen](state, 80, 24)[2][0]
     ok = names["ok"]
     if state.pad == "miyoo" and screen in _CHECKLISTS:
@@ -13755,6 +13827,9 @@ def _primary(state: TuiState) -> str | None:
     verb = _ROW_VERBS.get(row.action)
     if state.screen == "systems" and row.action == "system" and not state.ticked:
         verb = "Only this system"
+    if state.screen == "systems" and row.action == "none" and not state.ticked:
+        # Nothing left to untick: A goes to the first system.
+        verb = "First system"
     return f"A/Enter {verb}" if verb else None
 
 

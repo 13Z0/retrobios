@@ -2044,7 +2044,7 @@ class CopyFromAnOldCard(unittest.TestCase):
         state.finished = [("scph5500.bin", True, ""), ("gba_bios.bin", True, "")]
         text = " ".join(" ".join(install.tui_outcome(state)[1]).split())
         self.assertIn("1 file fixed from copies already in the BIOS folder, 1 downloaded. "
-                      "Your copies at the wrong place were left as they are.", text)
+                      "Your copies in the wrong place were left as they are.", text)
 
     def test_a_local_copy_is_no_download_speed(self):
         state = checked_state()
@@ -2432,7 +2432,7 @@ class AuditRoundThree(unittest.TestCase):
         self.assertEqual(rows[three].right, "1 file, 100 B + 2 shared")
         state.focus["systems"] = three
         text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
-        self.assertIn("2 of these files are shared with other systems, counted once", text)
+        self.assertIn("+2 shared: counted once", text)
         # The line mode counts the same files apart.
         self.assertIn("and 2 files, 500 B shared with other systems", install._system_sized([
             {"dest": "panafz1.bin", "size": 100, "systems": ["3do"]},
@@ -2767,11 +2767,12 @@ class AuditRoundFour(unittest.TestCase):
         plan = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
         # The plan names the row that sets it, the result the option a
         # command carries.
-        self.assertIn(line + "Choose it in Options, Save folder.", plan)
+        self.assertIn(line + "Choose it in Options, Save folder (--save-dir).", plan)
         state.stack.append("result")
         state.code = 0
         state.summary = {**summary, "mode": "install", "installed": 5}
-        self.assertIn(line + "Name it with --save-dir.", install.tui_outcome(state)[1])
+        self.assertIn(line + "Choose it in Options, Save folder (--save-dir), next time.",
+                      install.tui_outcome(state)[1])
 
 
 class TheSaveFolderHasARow(unittest.TestCase):
@@ -3441,6 +3442,162 @@ class OfflineInTheInterface(unittest.TestCase):
         self.assertIn("--offline", install.tui_command(state))
 
 
+class AuditFive(unittest.TestCase):
+    """tui_audit_5 P2-1, P2-2 and its P3 points."""
+
+    def long_list(self) -> install.TuiState:
+        state = OneSystemInFewPresses().long_list("keys")
+        state.cols, state.rows = 80, 24
+        return state
+
+    def test_back_from_none_keeps_the_ticks_it_opened_with(self):
+        state = self.long_list()
+        everything = set(state.ticked)
+        press(state, "down", "enter")
+        self.assertEqual(install.tui_rows(state)[state.focus["systems"]].action, "none")
+        press(state, "enter")
+        self.assertEqual(state.ticked, set())
+        press(state, "up", "up")
+        self.assertEqual(install._primary(state), "A/Enter First system")
+        press(state, "esc")
+        self.assertEqual(state.screen, "plan")
+        self.assertEqual(state.ticked, everything)
+        text = " ".join(install.tui_view(state, 80, 24))
+        self.assertNotIn("No system is ticked", text)
+
+    def test_back_after_a_choice_keeps_the_choice(self):
+        state = self.long_list()
+        press(state, "down", "enter", "enter")
+        press(state, " ")
+        chosen = set(state.ticked)
+        press(state, "esc")
+        self.assertEqual((state.screen, state.ticked), ("plan", chosen))
+
+    def test_confirm_offline_with_nothing_on_hand_has_no_install(self):
+        state = checked_state()
+        state.stack.append("confirm")
+        state.dry = dict(CHECK)
+        state.dry_files = [dict(event, state="missing") for event in FILES]
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            rows = [row.action for row in install.tui_rows(state)]
+            text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+            self.assertEqual(rows, ["back"])
+            self.assertIn("Copy them from your old card or a folder", text)
+            state.found = [{"event": "found", "platform": "retroarch",
+                            "dest": FILES[0]["dest"], "folder": "/media/old",
+                            "path": "/media/old/x", "member": "", "reason": ""}]
+            self.assertEqual(install.tui_rows(state)[0].action, "install")
+
+    def test_the_checking_clock_starts_at_zero(self):
+        state = install.TuiState()
+        self.assertLess(abs(state.now - time.monotonic()), 5)
+
+    def test_a_pack_installs_from_the_pack(self):
+        state = checked_state()
+        state.found = [{"event": "found", "platform": "retroarch", "dest": FILES[0]["dest"],
+                        "folder": "/media/old", "path": "/media/old/x", "member": "",
+                        "reason": "misplaced"}]
+        with mock.patch.object(install.LOCAL, "pack", mock.Mock()):
+            text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+            self.assertIn("1 copied from this machine,", text)
+            self.assertIn("from the pack", text)
+            self.assertNotIn("downloaded", text)
+            self.assertNotIn("of them", text)
+            state.finished = [(FILES[0]["dest"], True, ""), (FILES[1]["dest"], True, "")]
+            state.local_dests = {FILES[0]["dest"]: ("/media/old", "misplaced")}
+            self.assertIn("1 from the pack", install._tui_sources(state, 2, 0))
+
+    def test_the_wrong_place_screen_says_the_copies_stay(self):
+        state = checked_state()
+        state.stack.append("misplaced")
+        self.assertEqual(install._pager_items(state)[0],
+                         "They are copied where the emulators read them. Your copies stay "
+                         "where they are.")
+
+    def test_the_save_folder_is_a_line_of_its_own(self):
+        state = checked_state()
+        saves = {"files": 1, "folder": str(HOME / ".config" / "retroarch" / "saves" / "<core>")}
+        lines = install._saves_lines(state, saves)
+        self.assertEqual(lines, ["1 file read from RetroArch's save directory goes to:",
+                                 "~/.config/retroarch/saves/<core>"])
+
+    def test_the_shared_note_is_one_line(self):
+        state = self.long_list()
+        state.cols, state.rows = 40, 12
+        state.files = [{"event": "file", "dest": "mame.zip", "size": 10,
+                        "systems": ["sys-00", "sys-01"]}]
+        state.stack.append("systems")
+        state.focus["systems"] = 3
+        lines = install.tui_view(state, 40, 12)
+        self.assertIn(" +1 shared: counted once", lines)
+
+    def test_the_save_folder_remedy_is_the_same_on_both_screens(self):
+        summary = {"skipped": [{"reason": "no_save_directory", "files": 1}]}
+        state = checked_state()
+        lines = install._unplaced_lines(summary, state)
+        self.assertIn("Options, Save folder (--save-dir)", lines[0])
+
+    def test_a_size_keeps_its_unit(self):
+        for width in range(20, 45):
+            for line in install._wrap("2 files to install from the pack, 5.1 KB", width):
+                self.assertNotEqual(line.strip(), "KB")
+
+    def test_the_miyoo_bar_names_the_tick(self):
+        state = self.long_list()
+        state.pad = "miyoo"
+        press(state, "down", "enter")
+        state.ticked = set()
+        state.focus["systems"] = 3
+        bar = install.tui_view(state, 40, 15)[-1]
+        self.assertIn("A Tick", bar)
+        self.assertTrue(bar.strip().startswith("Start Only this system"))
+
+    def test_muxterm_help_names_no_home_key(self):
+        state = self.long_list()
+        state.pad = "muxterm"
+        press(state, "down", "enter")
+        keys = [key for key, _what in install._help_lines(state)]
+        self.assertNotIn("Home/End, g/G", keys)
+        state.pad = "keys"
+        self.assertIn("Home/End, g/G", [key for key, _what in install._help_lines(state)])
+
+
+class LineModeOffline(unittest.TestCase):
+    """tui_audit_5 P2-3 and P3-8.4: the line mode under --offline asked to
+    download, and said nothing of the data files."""
+
+    def test_nothing_is_offered_that_cannot_come(self):
+        with FakeRepository() as repo:
+            env = {**repo.env(), "TERM": "xterm", install.OFFLINE_VARIABLE: "1"}
+            term = Pty(["--plain", "--manifest", str(repo.root / "install" / "retroarch.json"),
+                        "--dest", str(repo.dest), "--offline"], env)
+            term.wait("q) quit")
+            term.send("\r")
+            term.close()
+            out = term.raw.decode("utf-8", "replace")
+        self.assertIn("--offline: only the files found on this machine are installed.", out)
+        self.assertIn("5 files need the internet, which --offline does not use.", out)
+        self.assertNotIn("Downloading", out)
+        self.assertNotIn("failed", out.lower().replace("not failed", ""))
+
+    def test_the_data_files_are_counted_before_the_question(self):
+        files = [{"dest": "a.bin", "size": 1024}]
+        trees = [{"ref": "t", "files": {"x": {"size": 2048}, "y": {"size": 2048}}}]
+        with mock.patch.object(install, "_ask", return_value=""), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            install._prompt_custom_selection("retroarch", files, [], data_trees=trees)
+        self.assertIn("RetroArch: 1 file, 1.0 KB, and 2 data files (4.0 KB).", out.getvalue())
+
+    def test_one_save_file_goes(self):
+        files = [{"dest": "keys.txt", "root": "save", "size": 1}]
+        place = install.SavePlace(Path("/saves"), False)
+        with mock.patch.object(install, "save_directory_for", return_value=place), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            install.place_save_entries(files, Path("/bios"), {}, None, "RetroArch")
+        self.assertIn("1 file read from RetroArch's save directory goes to /saves",
+                      out.getvalue())
+
+
 class NarrowSystemNames(unittest.TestCase):
     """At 40 columns the size column took half the line: Game Boy, Game Boy
     Advance and Game Boy Color all read "Nintendo Gam"."""
@@ -3554,7 +3711,7 @@ class TheSaveFolderLineFollowsTheChoice(unittest.TestCase):
 
     SAVES = {"event": "saves", "platform": "retroarch", "files": 1,
              "folder": "/home/user/MySaves/<core>"}
-    LINE = "1 file read from RetroArch's save directory goes to ~/MySaves/<core>"
+    LINE = "1 file read from RetroArch's save directory goes to: ~/MySaves/<core>"
 
     def said(self, lines) -> str:
         return " ".join(" ".join(lines).split())
@@ -4356,11 +4513,11 @@ class EndToEnd(unittest.TestCase):
                     self.assertIn("6 files to download", screen)
                     # The second folder the run writes to, named before
                     # anything is written, and again on the result.
-                    self.assertIn("1 file read from RetroArch's save directory goes to "
-                                  "~/MySaves", screen)
+                    self.assertIn("1 file read from RetroArch's save directory goes to:\n"
+                                  " ~/MySaves", screen)
                     term.send("\r")
                     screen = term.wait("6 files installed.")
-                    self.assertIn("save directory goes to ~/MySaves", screen)
+                    self.assertIn("save directory goes to:\n ~/MySaves", screen)
                     term.send("\r")
                     self.assertEqual(term.close(), 0)
                 results.append(written(repo, saves))
@@ -4741,7 +4898,7 @@ class ThePlanNumbersAddUp(unittest.TestCase):
         state.found = [found("scph5500.bin", str(SYSTEM_DIR), "one folder too deep")]
         screen = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
         self.assertIn("3 files to download", screen)
-        self.assertIn("1 in place, 3 missing, 1 wrong copy: 1 of them is copied from this "
+        self.assertIn("1 in place, 3 missing, 1 wrong copy 4 to install: 1 copied from this "
                       "machine, 3 downloaded", screen)
 
 
