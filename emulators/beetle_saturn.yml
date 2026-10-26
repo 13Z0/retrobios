@@ -5,7 +5,7 @@ core: mednafen_saturn_libretro
 source: "https://github.com/libretro/beetle-saturn-libretro"
 upstream: "https://mednafen.github.io/"
 profiled_date: "2026-10-05"
-source_commit: "d0d841784845da0278a9a49554cc4cc01597ee2c"
+source_commit: "2ce77e20a956dc9a67b8d3d527f477b984310feb"
 core_version: "v1.32.1"
 display_name: "Sega - Saturn (Beetle Saturn)"
 cores:

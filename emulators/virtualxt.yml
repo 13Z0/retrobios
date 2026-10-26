@@ -4,7 +4,7 @@ core_classification: pure_libretro
 source: "https://codeberg.org/virtualxt/virtualxt"
 upstream: "https://codeberg.org/virtualxt/virtualxt"
 profiled_date: "2026-10-17"
-source_commit: "ed177f5fb4f54d099bc217281930265ae1de9eca"
+source_commit: "a400adb0abf242c2fecbe926618338a00dc557c5"
 core_version: "3.1.0"
 display_name: "VirtualXT"
 cores: [virtualxt]

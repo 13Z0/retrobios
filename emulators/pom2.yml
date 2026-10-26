@@ -4,7 +4,7 @@ core_classification: other
 source: "https://github.com/habib256/pom2"
 upstream: "https://github.com/habib256/pom2"
 profiled_date: "2026-10-23"
-source_commit: "37dbb9d885ec8771f9383959cb1a2ded9950ec31"
+source_commit: "886390a806714a57f0431f0ce8ef9527b4805620"
 core_version: "0.9.8"
 display_name: "Apple - Apple II (POM2)"
 cores:
@@ -114,7 +114,7 @@ notes: |
   Removal have loaded (src/FloppySoundDevice.cpp:196-232). An .aiff name is
   retried as .wav (src/FloppySoundDevice.cpp:173-194). The packaging
   manifest keeps the directory out of release packages
-  (packaging/bundle.manifest:91-94).
+  (packaging/bundle.manifest:92-95).
 
   The nine takes come from Contents/Resources/ of Virtual ][.app in
   VirtualII.dmg, the free download on virtualii.com (Virtual ][ 13.3).
@@ -651,7 +651,7 @@ files:
     sha256: "42c1ae66c6bec932669239599eb8989a5364752d56fa5c8997bb23d8dfc0b657"
     sha1: "fa94ecc2aa23f336f7da9e18bc8f4a6cfbb4ea60"
     validation: [size, sha256]
-    source_ref: "src/SlotCardFactory.cpp:352-387, src/LironCard.cpp:62-86, src/SmartPortCard.cpp:99-116, src/RomCatalog.h:100-104, src/RomFetch.cpp:215-218"
+    source_ref: "src/SlotCardFactory.cpp:352-387, src/LironCard.cpp:62-86, src/SmartPortCard.cpp:102-119, src/RomCatalog.h:100-104, src/RomFetch.cpp:215-218"
     note: "The Liron card refuses to plug without it. The SmartPort 3.5 card loads it on machines with physical slots and otherwise presents a synthetic identity."
   - name: "341-0358-A.bin"
     path: "roms/341-0358-A.bin"

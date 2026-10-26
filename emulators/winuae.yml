@@ -2,7 +2,7 @@ emulator: WinUAE
 type: standalone
 core_classification: other
 source: "https://github.com/tonioni/WinUAE"
-source_commit: "b5944088b805e518e7978ba821dca299cd1bae83"
+source_commit: "15110cf6606d1188800ea7ad86bf1cbd9c688741"
 profiled_date: "2026-10-20"
 core_version: "6.1.0 beta 19"
 display_name: "Commodore - Amiga (WinUAE)"
@@ -42,8 +42,8 @@ notes: |
   modules of the extended ROMs: cdstrap, cd.device and cdfs.library in the
   CD32 ROM, cdtv.device, cdfs.library and cdstrap in the CDTV ROM. The CD32
   and CDTV Kickstarts carry none. The CD32 quickstart model and the base
-  CDTV model have no floppy drive (cfgfile.cpp:9374-9378, 9404-9405), and
-  both ask for the extended ROM (cfgfile.cpp:9389-9394, 9413-9422), so
+  CDTV model have no floppy drive (cfgfile.cpp:9394-9398, 9424-9425), and
+  both ask for the extended ROM (cfgfile.cpp:9409-9414, 9433-9442), so
   without it no CD is read or booted.
 
   CDTV and A600/A1200 internal devices are enabled with :ENABLED, which needs

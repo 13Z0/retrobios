@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/diasurgical/DevilutionX"
 upstream: ~
 profiled_date: "2026-10-04"
-source_commit: "0706e014d6a12ec8178a81fba549a68bd559f247"
+source_commit: "9d4871587e1a8d9606f97a43d85e939b82f77900"
 core_version: "1.6.0-dev"
 display_name: "Diablo (DevilutionX)"
 cores: [devilutionx]

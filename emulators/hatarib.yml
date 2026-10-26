@@ -5,7 +5,7 @@ source: "https://github.com/bbbradsmith/hatariB"
 upstream: "https://github.com/hatari/hatari"
 profiled_date: "2026-09-17"
 source_commit: "5f05733fc21903dce7d978bd0d7aae445ffe1185"
-upstream_commit: "7dd6a196cde1b1f9a55cd09cfbecb6edcb1bb000"
+upstream_commit: "23bc3060ebf0da348cc842e358c102ba88002b56"
 core_version: "1.1 unstable preview"
 display_name: "Atari - ST/STE/TT/Falcon (hatariB)"
 cores:

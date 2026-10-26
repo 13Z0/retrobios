@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/ruffle-rs/ruffle"
 upstream: "https://github.com/ruffle-rs/ruffle"
 profiled_date: "2026-09-17"
-source_commit: "045db00b393aed22a462d29cb6c25efa26be90a0"
+source_commit: "fe6cfc545405b888ebb478ce1c211d63147ca49b"
 core_version: "0.7.1"
 display_name: "Adobe Flash (Ruffle)"
 cores:

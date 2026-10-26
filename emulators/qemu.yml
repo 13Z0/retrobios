@@ -5,7 +5,7 @@ source: "https://github.com/io12/qemu-libretro"
 upstream: "https://github.com/qemu/qemu"
 profiled_date: "2026-03-25"
 source_commit: "aaba4471880587540314f82419d920431d55b769"
-upstream_commit: "b6c4b7e86dec12d07f5cac65265b986d38ee9002"
+upstream_commit: "d73149283205645625bfa9fe029cfb68e4c4a9ae"
 core_version: "0.1.0"
 display_name: "QEMU"
 cores: [qemu]

@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/etlegacy/etlegacy"
 upstream: "https://github.com/etlegacy/etlegacy"
 profiled_date: "2026-10-04"
-source_commit: "518815d6c7d95f4a6f26e2262f6e3dc82a15ea24"
+source_commit: "add16a92f4b10c2955136e3ab7868bfc9bff8fad"
 core_version: "2.86.2+git"
 display_name: "ET: Legacy"
 cores: [etlegacy]

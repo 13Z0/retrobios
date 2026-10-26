@@ -4,8 +4,8 @@ core_classification: community_fork
 source: "https://github.com/audetto/AppleWin"
 upstream: "https://github.com/AppleWin/AppleWin"
 profiled_date: "2026-03-23"
-source_commit: "a1e20c0362f392dc25f1a3b218d2f84d4f1a25da"
-upstream_commit: "35366c56439701b58ce9efd4039118e26d725c44"
+source_commit: "0a89db3d593a74d04590b902fb7206723591f445"
+upstream_commit: "1f3cadb88d1158c139d2e3a7b864d91836856948"
 core_version: "1.31.0.1"
 display_name: "Apple II (AppleWin)"
 cores:

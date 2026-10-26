@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/drhelius/Geargrafx"
 upstream: "https://github.com/drhelius/Geargrafx"
 profiled_date: "2026-10-04"
-source_commit: "57c257dda25f441fff3c63a63bbc4ba7cbb713e3"
+source_commit: "7c447b0bd46b6085abdf1d685b49480f4a295c17"
 core_version: "1.8.4"
 display_name: "NEC - PC Engine / SuperGrafx / CD (Geargrafx)"
 cores:
@@ -20,63 +20,63 @@ notes: |
   Ignacio Sanchez (drhelius). HuCard games run without any external file.
 
   CD-ROM content (cue, chd, mmi) needs a System Card image from the frontend
-  system directory. load_bios() in platforms/libretro/libretro.cpp:721-762
+  system directory. load_bios() in platforms/libretro/libretro.cpp:761-802
   picks the file name from the core option geargrafx_cdrom_bios
-  (platforms/libretro/libretro.cpp:1605-1628): System Card 1 loads
+  (platforms/libretro/libretro.cpp:1645-1668): System Card 1 loads
   syscard1.pce, System Card 2 loads syscard2.pce, System Card 3 (the default)
   and Force Game Express load syscard3.pce. The older values Auto and Game
   Express are still accepted and map to the same. The path is
-  "{system_directory}/{name}" (platforms/libretro/libretro.cpp:748). When the
+  "{system_directory}/{name}" (platforms/libretro/libretro.cpp:788). When the
   card is missing the core posts "CD-ROM BIOS not found" and continues
-  (platforms/libretro/libretro.cpp:749-758). gexpress.pce is then always
-  attempted from the same directory (platforms/libretro/libretro.cpp:760-761).
+  (platforms/libretro/libretro.cpp:789-798). gexpress.pce is then always
+  attempted from the same directory (platforms/libretro/libretro.cpp:800-801).
   load_bios() runs from retro_load_game() for CD content only
-  (platforms/libretro/libretro.cpp:520-521) and again on retro_reset() when a
-  CD is loaded (platforms/libretro/libretro.cpp:357-358). With the libretro
+  (platforms/libretro/libretro.cpp:525-526) and again on retro_reset() when a
+  CD is loaded (platforms/libretro/libretro.cpp:362-363). With the libretro
   VFS the file goes through load_bios_file() into LoadBiosFromBuffer(),
-  otherwise through Media::LoadBios() (platforms/libretro/libretro.cpp:684-719,
-  src/media.cpp:457-500).
+  otherwise through Media::LoadBios() (platforms/libretro/libretro.cpp:724-759,
+  src/media.cpp:526-569).
 
-  Media::LoadBiosData() (src/media.cpp:671-714) strips a 512-byte header when
+  Media::LoadBiosData() (src/media.cpp:740-783) strips a 512-byte header when
   the size is the expected size plus 512, then rejects any image whose size
   is not GG_BIOS_SYSCARD_SIZE (0x40000) or GG_BIOS_GAME_EXPRESS_SIZE (0x8000)
-  (src/defines.h:51-52). CRC32 is computed over the accepted image.
-  GatherBIOSInfoFromDB() (src/media.cpp:1052-1086) looks the CRC up in
+  (src/defines.h:53-54). CRC32 is computed over the accepted image.
+  GatherBIOSInfoFromDB() (src/media.cpp:1121-1155) looks the CRC up in
   k_game_database entries flagged GG_GAMEDB_BIOS_SYSCARD or
   GG_GAMEDB_BIOS_GAME_EXPRESS (src/game_db.h:48-56). An unknown CRC marks the
   image "Unknown" and invalid but it is still used.
 
   For CD content the ROM banks map onto the System Card buffer, or onto the
   Game Express buffer when the disc is a Game Express title
-  (src/media.cpp:1119-1128). A Game Express disc is detected by its CRC in
-  game_db.h (GG_GAMEDB_GAME_EXPRESS, src/media.cpp:1018-1022), named by the
-  card field of an MMI image (src/media.cpp:846-848) or forced by the option
-  (src/media.cpp:860-864). With no card loaded the buffer is zeros and the CD
+  (src/media.cpp:1188-1197). A Game Express disc is detected by its CRC in
+  game_db.h (GG_GAMEDB_GAME_EXPRESS, src/media.cpp:1087-1091), named by the
+  card field of an MMI image (src/media.cpp:915-917) or forced by the option
+  (src/media.cpp:929-933). With no card loaded the buffer is zeros and the CD
   does not boot. Arcade Card titles are also detected from game_db.h and run
   on the selected System Card.
 
   MMI content is a LaserActive LD-ROM2 image. retro_load_game() also calls
-  load_pac_bios() for it (platforms/libretro/libretro.cpp:523-524), which
+  load_pac_bios() for it (platforms/libretro/libretro.cpp:528-529), which
   reads the NEC PAC firmware from the system directory according to the core
-  option geargrafx_laseractive_region (platforms/libretro/libretro.cpp:1640-1651):
+  option geargrafx_laseractive_region (platforms/libretro/libretro.cpp:1680-1691):
   Japan loads pac-n1.bin and falls back to pce-lp1.bin, US loads pac-n10.bin,
   Auto (the default) loads both regions
-  (platforms/libretro/libretro.cpp:787-809). Media::LoadPacBiosData()
-  (src/media.cpp:579-641) accepts 0x80000 bytes (GG_BIOS_LASERACTIVE_SIZE,
-  src/defines.h:53), with or without a 512-byte header, and compares the
+  (platforms/libretro/libretro.cpp:827-849). Media::LoadPacBiosData()
+  (src/media.cpp:648-710) accepts 0x80000 bytes (GG_BIOS_LASERACTIVE_SIZE,
+  src/defines.h:55), with or without a 512-byte header, and compares the
   CRC32 with the values hardcoded for the region. An unknown CRC is logged
-  and the image is still used. SelectPacBios() (src/media.cpp:643-669) follows
+  and the image is still used. SelectPacBios() (src/media.cpp:712-738) follows
   the option, then the regionCode of the MMI image, then whichever region is
   loaded. An MMI image that names no card maps the PAC firmware
-  (src/media.cpp:1119-1128), and one that names a card uses the System Card or
+  (src/media.cpp:1188-1197), and one that names a card uses the System Card or
   Game Express buffer. retro_load_game() fails when the firmware the MMI
-  image needs is not loaded (platforms/libretro/libretro.cpp:546-561).
+  image needs is not loaded (platforms/libretro/libretro.cpp:551-566).
 
   Backup RAM is exposed through RETRO_MEMORY_SAVE_RAM
-  (platforms/libretro/libretro.cpp:644-652) and saved by the frontend. A
+  (platforms/libretro/libretro.cpp:650-658) and saved by the frontend. A
   connected Memory Base 128 is persisted by the core itself as
   geargrafx_mb128.sav in the frontend save directory
-  (platforms/libretro/libretro.cpp:811-891). Both are state the core writes,
+  (platforms/libretro/libretro.cpp:851-931). Both are state the core writes,
   not files a user obtains.
 
 files:
@@ -87,7 +87,7 @@ files:
     required: true
     crc32: ["6d9a73ef", "0ecea1f3", "2b5b75fe"]
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:726, platforms/libretro/libretro.cpp:738-743, platforms/libretro/libretro.cpp:748-758, src/media.cpp:671-714, src/defines.h:51, src/game_db.h:51-52, src/game_db.h:54"
+    source_ref: "platforms/libretro/libretro.cpp:766, platforms/libretro/libretro.cpp:778-783, platforms/libretro/libretro.cpp:788-798, src/media.cpp:740-783, src/defines.h:53, src/game_db.h:51-52, src/game_db.h:54"
     note: >
       Loaded for the default option value System Card 3 and for Force Game
       Express. game_db.h accepts three images under this name: Japan
@@ -102,7 +102,7 @@ files:
     required: false
     crc32: ["52520bc6", "283b74e0", "ff2a5ec3"]
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:725, platforms/libretro/libretro.cpp:735-736, src/media.cpp:671-714, src/defines.h:51, src/game_db.h:49-50, src/game_db.h:53"
+    source_ref: "platforms/libretro/libretro.cpp:765, platforms/libretro/libretro.cpp:775-776, src/media.cpp:740-783, src/defines.h:53, src/game_db.h:49-50, src/game_db.h:53"
     note: >
       Loaded when geargrafx_cdrom_bios is System Card 2. game_db.h accepts
       v2.0 Japan (CRC32 52520BC6), v2.1 Japan (CRC32 283B74E0) and USA
@@ -115,7 +115,7 @@ files:
     crc32: "3F9F95A4"
     required: false
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:724, platforms/libretro/libretro.cpp:732-733, src/media.cpp:671-714, src/defines.h:51, src/game_db.h:48"
+    source_ref: "platforms/libretro/libretro.cpp:764, platforms/libretro/libretro.cpp:772-773, src/media.cpp:740-783, src/defines.h:53, src/game_db.h:48"
     note: "Loaded when geargrafx_cdrom_bios is System Card 1."
 
   - name: "gexpress.pce"
@@ -125,7 +125,7 @@ files:
     required: false
     crc32: ["51a12d90", "16aaf05a"]
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:727, platforms/libretro/libretro.cpp:760-761, src/media.cpp:671-714, src/media.cpp:846-848, src/media.cpp:860-864, src/media.cpp:1018-1022, src/defines.h:52, src/game_db.h:55-56"
+    source_ref: "platforms/libretro/libretro.cpp:767, platforms/libretro/libretro.cpp:800-801, src/media.cpp:740-783, src/media.cpp:915-917, src/media.cpp:929-933, src/media.cpp:1087-1091, src/defines.h:54, src/game_db.h:55-56"
     note: >
       Always attempted after the System Card, used for discs flagged
       GG_GAMEDB_GAME_EXPRESS in game_db.h, for MMI images whose card is
@@ -143,7 +143,7 @@ files:
     region: [japan]
     required: true
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:509, platforms/libretro/libretro.cpp:523-524, platforms/libretro/libretro.cpp:792-796, platforms/libretro/libretro.cpp:546-561, src/media.cpp:579-641, src/defines.h:53"
+    source_ref: "platforms/libretro/libretro.cpp:514, platforms/libretro/libretro.cpp:528-529, platforms/libretro/libretro.cpp:832-836, platforms/libretro/libretro.cpp:551-566, src/media.cpp:648-710, src/defines.h:55"
     note: >
       Japanese PAC firmware, read for MMI content when
       geargrafx_laseractive_region is Auto or Japan. The Japanese slot
@@ -157,7 +157,7 @@ files:
     region: [japan]
     required: false
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:797-801, src/media.cpp:579-641, src/defines.h:53"
+    source_ref: "platforms/libretro/libretro.cpp:837-841, src/media.cpp:648-710, src/defines.h:55"
     note: "Read only when pac-n1.bin did not load."
 
   - name: "pac-n10.bin"
@@ -168,7 +168,7 @@ files:
     region: [north-america]
     required: true
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:509, platforms/libretro/libretro.cpp:523-524, platforms/libretro/libretro.cpp:804-808, platforms/libretro/libretro.cpp:546-561, src/media.cpp:579-641, src/defines.h:53"
+    source_ref: "platforms/libretro/libretro.cpp:514, platforms/libretro/libretro.cpp:528-529, platforms/libretro/libretro.cpp:844-848, platforms/libretro/libretro.cpp:551-566, src/media.cpp:648-710, src/defines.h:55"
     note: >
       US PAC firmware, read for MMI content when
       geargrafx_laseractive_region is Auto or US.

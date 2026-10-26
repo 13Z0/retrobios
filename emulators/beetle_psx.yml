@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://github.com/libretro/beetle-psx-libretro"
 upstream: "https://mednafen.github.io/"
 profiled_date: "2026-03-29"
-source_commit: "9bcc75d0a3e8310a273afb8fac1409224ff42c29"
+source_commit: "7fea57a541abb39b8c5035b6261c3e70962d221b"
 core_version: "v0.9.44.1"
 display_name: "Sony - PlayStation (Beetle PSX)"
 cores: [beetle_psx, mednafen_psx, mednafen_psx_hw, "beetle-psx"]
@@ -13,18 +13,18 @@ notes: >
   Region-based BIOS selection: the core picks JP/NA/EU firmware based on disc region.
   SHA1 validated with warning on mismatch (does not block loading).
   SHA1 and alternate filenames sourced from MAME (mame src/mame/sony/psx.cpp).
-  The lists and the checksum search live in libretro.c:541-595,603-695.
+  The lists and the checksum search live in libretro.c:622-676,684-776.
   Override option allows using PSP, PS3, or OpenBIOS as region-free alternative.
   Embedded OpenBIOS (512KB) compiled into the binary serves as HLE fallback when no BIOS found.
   "Skip BIOS" option patches BIOS ROM but causes compatibility issues.
   Upstream Mednafen loads the same 3 region BIOS. Override BIOS and HLE fallback are libretro additions.
   Two BIOS geometries are accepted: the stock 512 KB kernel and the 1 MB SCPH-5903 part,
-  selected by file size at load time (libretro.c:3386-3400). A 1 MB image switches Video CD
-  from HLE to daughterboard emulation (libretro.c:6515). Reached through the BIOS path
+  selected by file size at load time (libretro.c:3467-3481). A 1 MB image switches Video CD
+  from HLE to daughterboard emulation (libretro.c:6758). Reached through the BIOS path
   override only: the region name lists carry no SCPH-5903 entry, and the firmware scan
-  compares against the region SHA1, so a 1 MB file never matches there (libretro.c:578-586).
+  compares against the region SHA1, so a 1 MB file never matches there (libretro.c:659-667).
   Mednafen rejects a BIOS that is not 524288 bytes (mednafen psx.cpp:1777), and the
-  fork keeps that geometry as BIOS_SIZE_STD (libretro.c:1219), so this geometry is
+  fork keeps that geometry as BIOS_SIZE_STD (libretro.c:1300), so this geometry is
   libretro only.
 
 files:
@@ -40,19 +40,19 @@ files:
     md5: "8dd7d5296a650fac7319bce665a6a53c"
     validation: [sha1]
     mode: both
-    source_ref: "libretro.c:687-695"
+    source_ref: "libretro.c:768-776"
     aliases: ["SCPH5500.bin", "SCPH-5500.bin"]
 
   - name: "scph5903.bin"
     description: "SCPH-5903 (System ROM Version 2.2 12/04/95 J), Video CD daughterboard"
     required: false
-    note: "No code path opens this name: the Japanese name list and the SHA-1 scan look for scph5500.bin (libretro.c:687-695, 579-583). Copied as scph5500.bin it loads with a SHA-1 warning (libretro.c:773-780) and enables the Video CD daughterboard."
+    note: "No code path opens this name: the Japanese name list and the SHA-1 scan look for scph5500.bin (libretro.c:768-776, 660-664). Copied as scph5500.bin it loads with a SHA-1 warning (libretro.c:854-861) and enables the Video CD daughterboard."
     size: 1048576
     sha1: "15c94da3cc5a38a582429575af4198c487fe893c"
     md5: "81328b966e6dcf7ea1e32e55e1c104bb"
     validation: [size, sha1]
     mode: libretro
-    source_ref: "libretro.c:697-704, libretro.c:3386-3400, libretro.c:3419-3421, libretro.c:6515"
+    source_ref: "libretro.c:778-785, libretro.c:3467-3481, libretro.c:3500-3502, libretro.c:6758"
 
   # -- Region: North America (REGION_NA) --
 
@@ -66,8 +66,8 @@ files:
     md5: "490f666e1afb15b7362b406ed1cea246"
     validation: [sha1]
     mode: both
-    note: "Picked for REGION_NA: a SYSTEM.CNF serial whose third letter is U (SCUS, SLUS), a licence string naming America, and content whose region cannot be read while the region option stays on auto (libretro.c:2355-2357, 2198, 2249-2254, 3171-3185, 4436)."
-    source_ref: "libretro.c:706-724"
+    note: "Picked for REGION_NA: a SYSTEM.CNF serial whose third letter is U (SCUS, SLUS), a licence string naming America, and content whose region cannot be read while the region option stays on auto (libretro.c:2436-2438, 2279, 2330-2335, 3252-3266, 4517)."
+    source_ref: "libretro.c:787-805"
     aliases:
       - "SCPH5501.bin"
       - "SCPH-5501.bin"
@@ -90,7 +90,7 @@ files:
     md5: "32736f17079d0b2b7024407c39bd3050"
     validation: [sha1]
     mode: both
-    source_ref: "libretro.c:726-740"
+    source_ref: "libretro.c:807-821"
     aliases:
       - "SCPH5502.bin"
       - "SCPH-5502.bin"
@@ -108,7 +108,7 @@ files:
     md5: "c53ca5908936d412331790f4426c6c33"
     validation: [sha1]
     mode: libretro
-    source_ref: "libretro.c:616-622"
+    source_ref: "libretro.c:697-703"
     aliases: ["PSXONPSP660.bin"]
     note: "override_bios=1. Tried as psxonpsp660.bin, PSXONPSP660.bin, then PSXONPSP660.BIN. Falls back to region BIOS if not found."
 
@@ -119,7 +119,7 @@ files:
     md5: "81bbe60ba7a3d1cea1d48c14cbcc647b"
     validation: [sha1]
     mode: libretro
-    source_ref: "libretro.c:624-630"
+    source_ref: "libretro.c:705-711"
     aliases: ["PS1_ROM.bin"]
     note: "override_bios=2. Tried as ps1_rom.bin, PS1_ROM.bin, then PS1_ROM.BIN. Falls back to region BIOS if not found."
 
@@ -128,6 +128,6 @@ files:
     required: false
     size: 524288
     mode: libretro
-    source_ref: "libretro.c:632-638"
+    source_ref: "libretro.c:713-719"
     aliases: ["OPENBIOS.bin"]
-    note: "override_bios=3. No SHA1 validation. Falls back to region BIOS if not found. Also embedded in binary as HLE fallback (libretro.c:2447-2449)."
+    note: "override_bios=3. No SHA1 validation. Falls back to region BIOS if not found. Also embedded in binary as HLE fallback (libretro.c:2528-2530)."

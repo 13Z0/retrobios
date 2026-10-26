@@ -3,7 +3,7 @@ type: standalone
 source: "https://github.com/TomHarte/CLK"
 upstream: "https://github.com/TomHarte/CLK"
 profiled_date: "2026-03-26"
-source_commit: "0f49993b4d0992ebba1fad5032d96637f3a84d1f"
+source_commit: "ab20398aa990ecf2fb24034b7e11b55f0a6b60c7"
 core_version: "2026-07-28"
 display_name: "Clock Signal"
 cores: [clk]

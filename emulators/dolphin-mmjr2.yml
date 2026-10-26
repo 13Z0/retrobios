@@ -5,7 +5,7 @@ source: "https://github.com/nachoverdon/Dolphin-MMJR2"
 upstream: "https://github.com/dolphin-emu/dolphin"
 profiled_date: "2026-08-11"
 source_commit: "4d0fdb8eea616320e967408cf5547c72a95196f3"
-upstream_commit: "e1d35f666cc35f6ead55d32ea2679df44d04da72"
+upstream_commit: "3eb30c7620b4475b2e0404228ba0d2b238a132f1"
 core_version: "2.0-18025"
 display_name: "Nintendo - GameCube / Wii (Dolphin MMJR2)"
 cores:

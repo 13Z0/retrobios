@@ -5,7 +5,7 @@ source: "https://github.com/stenzek/duckstation"
 upstream: "https://github.com/stenzek/duckstation"
 logo: "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/images/duck.png"
 profiled_date: "2026-03-23"
-source_commit: "fbf93c3ae9668a1ccaec28630f5ad9cc9627cda6"
+source_commit: "526b4a128827ecaef037134095cd95f431b52d06"
 core_version: "v0.1-12070"
 display_name: "Sony - PlayStation (DuckStation)"
 cores: [duckstation, "Duckstation", "duckstation-sa"]
@@ -42,19 +42,19 @@ notes: |
 
   The console region picks the image, Auto by default. NTSC-U answers the
   licence string `Sony Computer Entertainment Amer  ica` (two spaces, as
-  src/core/system.cpp:972 spells it), a SCUS or SLUS
+  src/core/system.cpp:973 spells it), a SCUS or SLUS
   executable, and every disc whose region the detector cannot read
   (DiscRegion::Other, NonPS1), so a disc of any other market boots an NTSC-U image.
-  ref: src/core/system.cpp:663-675, 939-1008, 1738-1739, 1755
+  ref: src/core/system.cpp:664-676, 940-1009, 1739-1740, 1756
   ref: src/core/bios.cpp:397-436 (FindBIOSImageInDirectory keeps a region match)
-  ref: src/core/settings.h:605 (DEFAULT_CONSOLE_REGION = Auto)
+  ref: src/core/settings.h:608 (DEFAULT_CONSOLE_REGION = Auto)
 
   ImageInfo gained a version and an expected_filename field after the previous
   profiling pass. Neither takes part in identification: expected_filename is read
   only by the two settings screens, which fall back to the real filename when it
   is null.
   ref: src/core/bios.h:41-43 (field declarations)
-  ref: src/duckstation-qt/biossettingswidget.cpp:153, src/core/fullscreenui_settings.cpp:3317
+  ref: src/duckstation-qt/biossettingswidget.cpp:153, src/core/fullscreenui_settings.cpp:3322
   Lower priority = preferred. PS2 deprioritized (>= 100) for dynamic fast boot.
   Late PAL deprioritized (>= 150) due to additional regional checks.
   OpenBIOS detected by signature at offset 0x78, not by hash.
@@ -63,7 +63,7 @@ notes: |
   Standalone: BIOS dir = EmuFolders::Bios, bios/ under the data root unless
   BIOS/SearchDirectory names another folder.
   ref: src/core/bios.cpp:378,383
-  ref: src/core/settings.cpp:2982,3015
+  ref: src/core/settings.cpp:2987,3020
   Libretro: BIOS dir = RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY (flat).
   The libretro core was removed by the author (license change to non-commercial).
   The .info file and buildbot builds still exist from community forks.

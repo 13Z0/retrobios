@@ -3,7 +3,7 @@ type: standalone
 source: "https://github.com/ares-emulator/ares"
 upstream: "https://github.com/ares-emulator/ares"
 profiled_date: "2026-10-23"
-source_commit: "c76aaffa6e69778baf9a66d1da04298ac2ed7d1d"
+source_commit: "a774671dc005ceff8ae400b62f097c1cac0cbf4b"
 core_version: "v148"
 display_name: "ares"
 cores: [ares, "ares-sa"]
@@ -377,8 +377,8 @@ files:
     sha256: "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef"
     validation: [sha256]
     description: "PlayStation BIOS (US)"
-    note: "Picked for NTSC-U, set by both America licence strings and for an executable. A disc with no recognised licence offers NTSC-U and PAL, and the Boot/Prefer setting picks (mia/medium/playstation.cpp:66-73, 92, desktop-ui/emulator/playstation.cpp:85-92, desktop-ui/emulator/emulator.cpp:86-104)."
-    source_ref: "desktop-ui/emulator/playstation.cpp:18, desktop-ui/emulator/playstation.cpp:85-92, mia/medium/playstation.cpp:65-73"
+    note: "Picked for NTSC-U, set by both America licence strings and for an executable. A disc with no recognised licence offers NTSC-U and PAL, and the Boot/Prefer setting picks (mia/medium/playstation.cpp:68-75, 92, desktop-ui/emulator/playstation.cpp:94-101, desktop-ui/emulator/emulator.cpp:86-104)."
+    source_ref: "desktop-ui/emulator/playstation.cpp:21, desktop-ui/emulator/playstation.cpp:94-101, mia/medium/playstation.cpp:67-75"
 
   - name: scph5500.bin
     system: sony-playstation
@@ -387,7 +387,7 @@ files:
     sha256: "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb"
     validation: [sha256]
     description: "PlayStation BIOS (Japan)"
-    source_ref: "desktop-ui/emulator/playstation.cpp:19, desktop-ui/emulator/playstation.cpp:85-92, mia/medium/playstation.cpp:65-73"
+    source_ref: "desktop-ui/emulator/playstation.cpp:22, desktop-ui/emulator/playstation.cpp:94-101, mia/medium/playstation.cpp:67-75"
 
   - name: scph5502.bin
     system: sony-playstation
@@ -396,7 +396,7 @@ files:
     sha256: "1faaa18fa820a0225e488d9f086296b8e6c46df739666093987ff7d8fd352c09"
     validation: [sha256]
     description: "PlayStation BIOS (Europe)"
-    source_ref: "desktop-ui/emulator/playstation.cpp:20, desktop-ui/emulator/playstation.cpp:85-92, mia/medium/playstation.cpp:65-73"
+    source_ref: "desktop-ui/emulator/playstation.cpp:23, desktop-ui/emulator/playstation.cpp:94-101, mia/medium/playstation.cpp:67-75"
 
   # --- Saturn ---
   - name: saturn_bios_U.bin

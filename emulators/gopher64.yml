@@ -4,7 +4,7 @@ core_classification: other
 source: "https://github.com/gopher64/gopher64"
 upstream: "https://github.com/gopher64/gopher64"
 profiled_date: "2026-10-23"
-source_commit: "e7bdf8b5be924576730f5cdaf3b8b209839e1bdd"
+source_commit: "87385e77432cd278ac8588c7ed3d5014fc0d6bab"
 core_version: "v1.1.42"
 display_name: "Nintendo - Nintendo 64 (gopher64)"
 cores:
@@ -61,7 +61,7 @@ notes: |
   Compiled-in data: the cheat database (src/cheats.rs:31), the No-Intro
   Nintendo 64 export that names entries in the ROM browser
   (src/ui/gui.rs:695-697), the RobotoMono face handed to SDL_ttf from memory
-  (src/ui/video.rs:128, src/ui/input_profile.rs:99), the parallel-rdp SPIR-V
+  (src/ui/video.rs:132, src/ui/input_profile.rs:99), the parallel-rdp SPIR-V
   modules (parallel-rdp/spirv.hpp and parallel-rdp/spirv_crt.hpp, used at
   parallel-rdp/interface.cpp:4-5,638) and the Slint translations bundled at
   build time (build.rs:11).

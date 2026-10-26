@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/TheXTech/TheXTech"
 upstream: "https://github.com/TheXTech/TheXTech"
 profiled_date: "2026-10-04"
-source_commit: "3ad66cb1896ea9f255e8104862e4e17c2e8a8ded"
+source_commit: "df191fa3bc3a0dc22c4fbdb32218bf68932cff7d"
 display_name: "TheXTech"
 cores: []
 systems: [smbx]
@@ -134,7 +134,7 @@ files:
     category: game_data
     path: "TheXTech/sound/"
     required: false
-    source_ref: "src/sound.cpp:1319"
+    source_ref: "src/sound.cpp:1320"
     note: "SFX directory, files named by sounds.ini. Game runs without sounds."
 
   - name: "music/"
@@ -142,21 +142,21 @@ files:
     category: game_data
     path: "TheXTech/music/"
     required: false
-    source_ref: "src/sound.cpp:1318"
+    source_ref: "src/sound.cpp:1319"
     note: "Music tracks, files named by music.ini."
 
   - name: "sounds.ini"
     category: game_data
     path: "TheXTech/sounds.ini"
     required: false
-    source_ref: "src/sound.cpp:1322, 1348-1354, 1363"
+    source_ref: "src/sound.cpp:1323, src/sound.cpp:1349-1355, src/sound.cpp:1364"
     note: "SFX index. A message box reports its absence and the game runs without SFX."
 
   - name: "music.ini"
     category: game_data
     path: "TheXTech/music.ini"
     required: false
-    source_ref: "src/sound.cpp:1321, 1341-1347, 1356"
+    source_ref: "src/sound.cpp:1322, src/sound.cpp:1342-1348, src/sound.cpp:1357"
     note: "Music index. A message box reports its absence and the game runs without default music."
 
   - name: "editor.ini"

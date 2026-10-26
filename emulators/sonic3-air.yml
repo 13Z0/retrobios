@@ -3,7 +3,7 @@ type: standalone
 core_classification: game_engine
 source: "https://github.com/Eukaryot/sonic3air"
 upstream: "https://github.com/Eukaryot/sonic3air"
-source_commit: "87fed5407217c4552086dedf73b33de8816a78da"
+source_commit: "b0063dfb4b3e69d710e131ab83507cdf8c41910f"
 profiled_date: "2026-10-04"
 display_name: "Sonic 3 - Angel Island Revisited"
 cores: [sonic3air]

@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/ikemen-engine/Ikemen-GO"
 upstream: "https://github.com/ikemen-engine/Ikemen-GO"
 profiled_date: "2026-10-04"
-source_commit: "ee4791bcd5e2f4bcb16ef9d584e001fb4a7eedfc"
+source_commit: "e9bfe1125dea88769b265e57bcfaefdb22fa4322"
 core_version: ~
 display_name: "Ikemen GO"
 cores: [ikemen]
@@ -111,7 +111,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:14, src/compiler.go:8595-8608"
+    source_ref: "src/resources/defaultConfig.ini:14, src/compiler.go:8621-8634"
 
   - name: "common.const"
     path: "ikemen/data/common.const"
@@ -129,7 +129,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8773-8780"
+    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8799-8806"
 
   - name: "action.zss"
     path: "ikemen/data/action.zss"
@@ -138,7 +138,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8773-8780"
+    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8799-8806"
 
   - name: "demo.zss"
     path: "ikemen/data/demo.zss"
@@ -147,7 +147,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8773-8780"
+    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8799-8806"
 
   - name: "dizzy.zss"
     path: "ikemen/data/dizzy.zss"
@@ -156,7 +156,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8773-8780"
+    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8799-8806"
 
   - name: "guardbreak.zss"
     path: "ikemen/data/guardbreak.zss"
@@ -165,7 +165,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8773-8780"
+    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8799-8806"
 
   - name: "score.zss"
     path: "ikemen/data/score.zss"
@@ -174,7 +174,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8773-8780"
+    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8799-8806"
 
   - name: "system.zss"
     path: "ikemen/data/system.zss"
@@ -183,7 +183,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8773-8780"
+    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8799-8806"
 
   - name: "tag.zss"
     path: "ikemen/data/tag.zss"
@@ -192,7 +192,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8773-8780"
+    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8799-8806"
 
   - name: "training.zss"
     path: "ikemen/data/training.zss"
@@ -201,7 +201,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8773-8780"
+    source_ref: "src/resources/defaultConfig.ini:18, src/compiler.go:8799-8806"
 
   - name: "common1.cns.zss"
     path: "ikemen/data/common1.cns.zss"
@@ -210,7 +210,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/compiler.go:7155-7169, src/compiler.go:8766-8771"
+    source_ref: "src/compiler.go:7181-7195, src/compiler.go:8792-8797"
     note: >
       A character names its common state file in stcommon. When that file is
       not found, stateCompile retries with the .zss suffix, so a character
@@ -245,7 +245,7 @@ files:
     required: false
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultMotif.ini:75, src/motif.go:2593-2609"
+    source_ref: "src/resources/defaultMotif.ini:75, src/motif.go:2597-2613"
     note: "A motif font that fails to load is logged and replaced by an empty font."
 
   - name: "default-3x5.sff"
@@ -265,7 +265,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultConfig.ini:99, src/motif.go:2627-2659, src/script.go:4263-4266"
+    source_ref: "src/resources/defaultConfig.ini:99, src/motif.go:2631-2663, src/script.go:4263-4266"
     note: >
       Held by the Ikemen-GO-Screenpack repository and copied into release
       packages. main.lua calls loadMotif at startup, which raises a Lua error
@@ -302,7 +302,7 @@ files:
     required: false
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/motif.go:72-85, src/motif.go:2475-2487, src/motif.go:2594-2621, src/storyboard.go:561-620"
+    source_ref: "src/motif.go:72-85, src/motif.go:2479-2491, src/motif.go:2598-2625, src/storyboard.go:561-620"
     note: >
       Files named by system.def and searched beside it first. A sprite file
       or font that fails to load is logged and replaced by an empty one.
@@ -314,7 +314,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/motif.go:81, external/script/main.lua:1522, external/script/main.lua:43-50"
+    source_ref: "src/motif.go:81, external/script/main.lua:1585, external/script/main.lua:43-50"
     note: "main.lua reads the file at startup and raises an error when it cannot be opened."
 
   - name: "fight.def"
@@ -384,7 +384,7 @@ files:
     required: false
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultMotif.ini:69, src/motif.go:73, src/motif.go:2578-2590"
+    source_ref: "src/resources/defaultMotif.ini:69, src/motif.go:73, src/motif.go:2582-2594"
     note: "Named by the snd key of the motif. A load failure is logged and an empty sound set is used."
 
   - name: "glyphs.sff"
@@ -394,7 +394,7 @@ files:
     required: false
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/resources/defaultMotif.ini:97, src/motif.go:84, src/motif.go:2490-2503"
+    source_ref: "src/resources/defaultMotif.ini:97, src/motif.go:84, src/motif.go:2494-2507"
     note: "A load failure is logged and an empty sprite set is used."
 
   - name: "font/"
@@ -405,7 +405,7 @@ files:
     required: false
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/motif.go:64, src/motif.go:2594-2621, src/fightscreen.go:5017, src/storyboard.go:620, src/font.go:415"
+    source_ref: "src/motif.go:64, src/motif.go:2598-2625, src/fightscreen.go:5017, src/storyboard.go:620, src/font.go:415"
     note: "font/ is the default directory of every font lookup."
 
   - name: "video/"
@@ -452,7 +452,7 @@ files:
     required: false
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/system.go:5602, src/resources/defaultConfig.ini:181, external/script/main.lua:1770-1774"
+    source_ref: "src/system.go:5602, src/resources/defaultConfig.ini:181, external/script/main.lua:1809-1813"
     note: >
       Debug.StartStage defaults to stages/stage0-720.def, the stage added
       when select.def lists none.

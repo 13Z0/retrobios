@@ -5,7 +5,7 @@ source: "https://github.com/Rakashazi/emu-ex-plus-alpha"
 upstream: "https://github.com/VICE-Team/svn-mirror"
 profiled_date: "2026-08-11"
 source_commit: "1c12fac5ce49badaadff2e2f210dcc30b89f4943"
-upstream_commit: "2e2a43e0c4803203446a0ea41980bd86f61d2e1f"
+upstream_commit: "6ad9f0c47031965d8ee77f2458d7850287f0a137"
 core_version: "1.5.85"
 display_name: "Commodore - C64 (C64.emu)"
 mode: standalone

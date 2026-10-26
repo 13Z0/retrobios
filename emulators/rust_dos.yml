@@ -4,8 +4,8 @@ core_classification: official_port
 source: "https://git.libretro.com/libretro/rust-dos"
 upstream: "https://github.com/dividebysandwich/rust-dos"
 profiled_date: "2026-10-04"
-source_commit: "da88cd314d422289c1080e30251062181e325372"
-upstream_commit: "da88cd314d422289c1080e30251062181e325372"
+source_commit: "b45946b8d996f1a7fecbdc0f5aa6d4420087d4ea"
+upstream_commit: "b45946b8d996f1a7fecbdc0f5aa6d4420087d4ea"
 core_version: "1.7.5"
 display_name: "DOS (Rust-DOS)"
 cores:
@@ -98,7 +98,7 @@ files:
       the label is this entry's. Read only when the display adapter is the
       Vérité and its RISC is emulated. A file of another length is refused
       with a warning, and the RISC then runs on the emulator's own ROM image.
-    source_ref: "upstream src/config/parse.rs:151-158, src/bus/verite.rs:45-71, src/verite/lle/loader.rs:25, src/verite/mod.rs:328-344"
+    source_ref: "upstream src/config/parse.rs:155-162, src/bus/verite.rs:45-71, src/verite/lle/loader.rs:25, src/verite/mod.rs:328-344"
 
   # Sound Canvas ROM sets. The code names no file: each entry is labelled
   # sc55-roms/<set name>/<location>, the folder the built-in download

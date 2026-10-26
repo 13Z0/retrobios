@@ -6,7 +6,7 @@ upstream: "https://github.com/dolphin-emu/dolphin"
 logo: "https://raw.githubusercontent.com/dolphin-emu/dolphin/master/Data/dolphin-emu.svg"
 profiled_date: "2026-03-23"
 source_commit: "3aac3f052f733f8df2f1616843a4d2e14002ed11"
-upstream_commit: "e1d35f666cc35f6ead55d32ea2679df44d04da72"
+upstream_commit: "0d93fc035539f25790deca638d06ee3b3b45ee64"
 core_version: "Git"
 display_name: "Nintendo - GameCube / Wii (Dolphin)"
 library_name: "dolphin-emu"
@@ -18,7 +18,7 @@ systems: [nintendo-gamecube, nintendo-wii, sega-triforce]
 data_root:
   android:
     path: "Android/data/org.dolphinemu.dolphinemu/files"
-    source_ref: "upstream Source/Android/app/src/main/java/org/dolphinemu/dolphinemu/utils/DirectoryInitialization.kt:88-119, 320-324, upstream Source/Android/app/build.gradle.kts:39, upstream Source/Android/jni/MainAndroid.cpp:360-364"
+    source_ref: "upstream Source/Android/app/src/main/java/org/dolphinemu/dolphinemu/utils/DirectoryInitialization.kt:88-119, 320-324, upstream Source/Android/app/build.gradle.kts:39, upstream Source/Android/jni/MainAndroid.cpp:354-358"
     note: "/sdcard/dolphin-emu when that folder exists, storage access is legacy and the files folder is empty"
   windows:
     path: "%APPDATA%/Dolphin Emulator"

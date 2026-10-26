@@ -7,7 +7,7 @@ upstream: "https://git.eden-emu.dev/eden-emu/eden"
 # Codeberg copy is what keeps this profile checkable.
 source_mirror: "https://codeberg.org/eden-emu/eden"
 profiled_date: "2026-03-26"
-source_commit: "989768aa46720e3fcab9e2111e3ddd70819c382b"
+source_commit: "26a03d2473787abf3223b2d0e65b291eee00c1e1"
 core_version: "0.1.1"
 display_name: "Eden (Nintendo Switch)"
 cores:

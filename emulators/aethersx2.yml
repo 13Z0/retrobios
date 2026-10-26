@@ -6,7 +6,7 @@ source: "https://github.com/Trixarian/AetherSX2"
 upstream: "https://github.com/PCSX2/pcsx2"
 profiled_date: "2026-08-11"
 source_commit: "1d1f795dfc70e38da67724c7298779260f513889"
-upstream_commit: "5675313c6db3390fdc38f75a658ddfc68498103e"
+upstream_commit: "f0523f8acb1d3a765ee73b74cffec63093569199"
 core_version: "1.5-3939"
 display_name: "Sony - PlayStation 2 (AetherSX2)"
 cores:

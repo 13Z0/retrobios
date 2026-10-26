@@ -5,7 +5,7 @@ source: "https://github.com/libretro/mame2003-plus-libretro"
 upstream: "https://www.mamedev.org"
 logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/MAMElogo.svg"
 profiled_date: "2026-03-24"
-source_commit: "03fc843ad835d6569bf322a4f915545ab5ae9b8e"
+source_commit: "993403d0332946b8aa6abab56fbd9864498790a1"
 core_version: "2003-Plus"
 display_name: "Arcade (MAME 2003-Plus)"
 mame_version: "0.78 (plus backports)"
@@ -79,7 +79,7 @@ files:
     sha1: "b48347a133ab8f28b9875ab300fea2ffa2f37ebc"
     md5: "f870afb431df16526e28cd9029b9d949"
     size: 131926
-    source_ref: "src/hiscore.c:15,102-116,248, src/cpuexec.c:345-347"
+    source_ref: "src/hiscore.c:15, 102-116, 248, src/cpuexec.c:396-398"
     note: >-
       high score definitions, compiled into binary and spawned on first run.
       metadata/hiscore.dat of the core repository. The compiled copy
@@ -115,7 +115,7 @@ files:
   # Artwork the core repository ships in metadata/artwork. artwork_load_artwork_file
   # opens <driver>.art inside artwork/<driver>.zip, walking the clone chain, when
   # the Display Artwork core option keeps its enabled default.
-  # ref: src/artwork.c:2242-2258, src/fileio.c:246-248, src/mame2003/core_options.c:226-239
+  # ref: src/artwork.c:2323-2339, src/fileio.c:246-248, src/mame2003/core_options.c:238-251
 
   - name: "blueshrk.zip"
     path: "mame2003-plus/artwork/blueshrk.zip"
@@ -126,7 +126,7 @@ files:
     sha1: "4317f301d6e4117dfde42b33dfaf73a2b25f43c1"
     md5: "4659968035d462be471fdfb46b604696"
     description: "Blue Shark backdrop"
-    source_ref: "src/artwork.c:2242-2258, src/fileio.c:246-248"
+    source_ref: "src/artwork.c:2323-2339, src/fileio.c:246-248"
     note: >
       metadata/artwork of the core repository at source_commit. The core zip
       carries the library alone.
@@ -140,7 +140,7 @@ files:
     sha1: "c6d6579ffe0f709ff7861747ba17cb2931dce1b5"
     md5: "e284ec87c3d7978628c78d8031b7dd98"
     description: "Discs of Tron backdrop"
-    source_ref: "src/artwork.c:2242-2258, src/fileio.c:246-248"
+    source_ref: "src/artwork.c:2323-2339, src/fileio.c:246-248"
 
   - name: "frogs.zip"
     path: "mame2003-plus/artwork/frogs.zip"
@@ -151,7 +151,7 @@ files:
     sha1: "cdff29398e76b92d93825d96c0f9cae5bb6b3400"
     md5: "e30e8ef4631596e25466523b97fee19f"
     description: "Frogs backdrop"
-    source_ref: "src/artwork.c:2242-2258, src/fileio.c:246-248"
+    source_ref: "src/artwork.c:2323-2339, src/fileio.c:246-248"
 
   - name: "invaders.zip"
     path: "mame2003-plus/artwork/invaders.zip"
@@ -162,7 +162,7 @@ files:
     sha1: "4b18db526ca907707fd888385d907a7a585935d0"
     md5: "23d65ad40ac1f2121fe35fe0c7893721"
     description: "Space Invaders moon backdrop"
-    source_ref: "src/artwork.c:2242-2258, src/fileio.c:246-248"
+    source_ref: "src/artwork.c:2323-2339, src/fileio.c:246-248"
 
   - name: "omegrace.zip"
     path: "mame2003-plus/artwork/omegrace.zip"
@@ -173,7 +173,7 @@ files:
     sha1: "1ca22afdfefcfa5943742e988c45c1fc0e1124bd"
     md5: "255155cf3f9912c92be8f813e8112a54"
     description: "Omega Race backdrop"
-    source_ref: "src/artwork.c:2242-2258, src/fileio.c:246-248"
+    source_ref: "src/artwork.c:2323-2339, src/fileio.c:246-248"
 
   - name: "skydiver.zip"
     path: "mame2003-plus/artwork/skydiver.zip"
@@ -184,7 +184,7 @@ files:
     sha1: "a0548e37e76a21fb37005cff944319ee63f93d1e"
     md5: "95e05db7f8fa208daafd7b0d32041db8"
     description: "Sky Diver backdrop, cloud overlay and lamp artwork"
-    source_ref: "src/artwork.c:2242-2258, src/fileio.c:246-248"
+    source_ref: "src/artwork.c:2323-2339, src/fileio.c:246-248"
 
   - name: "solarq.zip"
     path: "mame2003-plus/artwork/solarq.zip"
@@ -195,7 +195,7 @@ files:
     sha1: "ff532cee1de69668b0c68238aff0c16813640476"
     md5: "b4b70db555dfb48b91a067eea747c771"
     description: "Solar Quest backdrop"
-    source_ref: "src/artwork.c:2242-2258, src/fileio.c:246-248"
+    source_ref: "src/artwork.c:2323-2339, src/fileio.c:246-248"
 
   - name: "warrior.zip"
     path: "mame2003-plus/artwork/warrior.zip"
@@ -206,7 +206,7 @@ files:
     sha1: "57f89bbac39d8071e45c87f97e9b918f31d21994"
     md5: "29fe11717016182d446ca6af56a08f75"
     description: "Warrior backdrop"
-    source_ref: "src/artwork.c:2242-2258, src/fileio.c:246-248"
+    source_ref: "src/artwork.c:2323-2339, src/fileio.c:246-248"
 
   # ---------------------------------------------------------
   # SNK Neo Geo MVS/AES (neogeo.zip)

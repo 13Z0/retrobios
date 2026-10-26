@@ -5,7 +5,7 @@ source: "https://github.com/nikita36078/J2ME-Loader"
 upstream: "https://github.com/nikita36078/J2ME-Loader"
 author: "Nikita Shakarun"
 profiled_date: "2026-10-23"
-source_commit: "c1aff868a674ea0c9fd9d565dfb4819987ee447f"
+source_commit: "76383ebf348b5d477256fc884dfc55f053b45a86"
 core_version: "1.8.2"
 display_name: "Mobile - J2ME (J2ME Loader)"
 cores:
@@ -25,7 +25,7 @@ notes: |
   all delegate to one renderer in ru.woesss.j2me.micro3d.
   A fork of NaikSoftware/J2meLoader with an independent history: the 2016
   ancestor carries no assets directory and none of the loading code cited below.
-  ref: app/src/main/java/ru/woesss/j2me/installer/AppInstaller.java:292,
+  ref: app/src/main/java/ru/woesss/j2me/installer/AppInstaller.java:291,
        app/src/main/java/javax/microedition/shell/AppClassLoader.java:38
 
   The working directory holds converted/, configs/, templates/, data/, fs/c and

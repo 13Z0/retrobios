@@ -4,7 +4,7 @@ core_classification: other
 source: "https://github.com/zelurker/raine"
 upstream: "https://github.com/zelurker/raine"
 profiled_date: "2026-10-20"
-source_commit: "e85285188e6f719fc25de1236a2ee63fee7e3f17"
+source_commit: "d44fbd7c9e9275d58e60c7361187c940ec1c320f"
 core_version: "0.97.5"
 display_name: "Arcade (RAINE)"
 mode: standalone
@@ -208,7 +208,7 @@ files:
     note: >-
       Added to SDL when present, followed by config/userdb.txt. The RetroBat
       package carries a different revision of this file.
-    source_ref: "source/sdl/control.c:2396-2405"
+    source_ref: "source/sdl/control.c:2405-2414"
 
   - name: "dkongm.dx2"
     path: "emudx/dkongm.dx2"

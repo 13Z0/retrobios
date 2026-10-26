@@ -5,7 +5,7 @@ source: "https://github.com/linappleii/linapple"
 upstream: "https://github.com/AppleWin/AppleWin"
 profiled_date: "2026-10-20"
 source_commit: "86bee1c2b59bd4706185ceddddaf383b3416726f"
-upstream_commit: "35366c56439701b58ce9efd4039118e26d725c44"
+upstream_commit: "9970ef6b668a7cf057ce6d82f100dde6a751f4d3"
 core_version: "3.0.0"
 display_name: "Apple - Apple II (LinApple)"
 cores:

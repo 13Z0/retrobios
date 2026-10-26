@@ -4,7 +4,7 @@ core_classification: pure_libretro
 source: "https://github.com/AloysHF/PlaydiaEmu"
 upstream: "https://github.com/AloysHF/PlaydiaEmu"
 profiled_date: "2026-10-23"
-source_commit: "e1cc2e132781d2b81d4df762f6ec7dde7a4ebc75"
+source_commit: "b1b990e7f28d6baa58d5fcde9faa155990ee8f3f"
 core_version: "0.1.0"
 display_name: "Bandai - Playdia (PlaydiaEmu)"
 cores:

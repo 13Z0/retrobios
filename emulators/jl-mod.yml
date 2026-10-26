@@ -6,7 +6,7 @@ upstream: "https://github.com/nikita36078/J2ME-Loader"
 author: "Yury Kharchenko"
 profiled_date: "2026-08-11"
 source_commit: "f723a190c0bdb44b31c3bc0ead6f8665c7ea517d"
-upstream_commit: "c1aff868a674ea0c9fd9d565dfb4819987ee447f"
+upstream_commit: "76383ebf348b5d477256fc884dfc55f053b45a86"
 core_version: "0.87.1"
 display_name: "Mobile - J2ME (JL-Mod)"
 cores:

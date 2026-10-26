@@ -4,7 +4,7 @@ core_classification: other
 source: "https://github.com/jsgroth/jgenesis"
 upstream: "https://github.com/jsgroth/jgenesis"
 profiled_date: "2026-08-08"
-source_commit: "8e0b993e90d77a77475df6574e24c08c0dd288ae"
+source_commit: "0a00c47ba7a16bd6e77ef7e0b6c8fab2fc603cba"
 core_version: "0.14.1"
 display_name: "Multi-System (jgenesis)"
 cores:

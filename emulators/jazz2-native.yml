@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/deathkiller/jazz2-native"
 upstream: "https://github.com/deathkiller/jazz2-native"
 profiled_date: "2026-10-04"
-source_commit: "893c5200d75da7e9b5f8e9a932da4e744ae63ee3"
+source_commit: "27931b28c5bdfff2d82816d5f2bc2d5e45ced909"
 core_version: "3.9.0"
 display_name: "Jazz Jackrabbit 2 (Jazz² Resurrection)"
 cores: [jazz2]
@@ -174,7 +174,7 @@ files:
     path: "jazz2/Source/Plus.j2d"
     standalone_path: "Source/Plus.j2d"
     required: false
-    source_ref: "Sources/Jazz2/Compatibility/AssetConverter.cpp:271-316, 512-515, Sources/Jazz2/Compatibility/JJ2Level.cpp:1045"
+    source_ref: "Sources/Jazz2/Compatibility/AssetConverter.cpp:271-316, 512-515, Sources/Jazz2/Compatibility/JJ2Level.cpp:1072"
     note: "Data file of a JJ2+ installation. Read once a converted level names one of its TextureBG.<n> textures. Without it a texture is made up for that layer."
 
   # Episode descriptors (.j2e) and level files (.j2l) are optional per
@@ -323,7 +323,7 @@ files:
   # Tilesets. Only those a converted level names are converted. The name
   # is read from the level, lowercased and looked up in Source/ without
   # regard to case.
-  # ref: Sources/Jazz2/Compatibility/JJ2Level.cpp:143, 791-794,
+  # ref: Sources/Jazz2/Compatibility/JJ2Level.cpp:153, 818-821,
   #      Sources/Jazz2/Compatibility/AssetConverter.cpp:684, 771-792
 
   - name: "labrat1n.j2t"
@@ -332,7 +332,7 @@ files:
     path: "jazz2/Source/labrat1n.j2t"
     standalone_path: "Source/labrat1n.j2t"
     required: false
-    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:143, Sources/Jazz2/Compatibility/JJ2Level.cpp:791-794, Sources/Jazz2/Compatibility/AssetConverter.cpp:684, 771-792"
+    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:153, Sources/Jazz2/Compatibility/JJ2Level.cpp:818-821, Sources/Jazz2/Compatibility/AssetConverter.cpp:684, 771-792"
     note: "Tileset named by share1.j2l, sharect2.j2l and sharetrs.j2l."
 
   - name: "psych2.j2t"
@@ -341,7 +341,7 @@ files:
     path: "jazz2/Source/psych2.j2t"
     standalone_path: "Source/psych2.j2t"
     required: false
-    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:143, Sources/Jazz2/Compatibility/JJ2Level.cpp:791-794, Sources/Jazz2/Compatibility/AssetConverter.cpp:684, 771-792"
+    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:153, Sources/Jazz2/Compatibility/JJ2Level.cpp:818-821, Sources/Jazz2/Compatibility/AssetConverter.cpp:684, 771-792"
     note: "Tileset named by share2.j2l."
 
   - name: "diam2.j2t"
@@ -350,7 +350,7 @@ files:
     path: "jazz2/Source/diam2.j2t"
     standalone_path: "Source/diam2.j2t"
     required: false
-    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:143, Sources/Jazz2/Compatibility/JJ2Level.cpp:791-794, Sources/Jazz2/Compatibility/AssetConverter.cpp:684, 771-792"
+    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:153, Sources/Jazz2/Compatibility/JJ2Level.cpp:818-821, Sources/Jazz2/Compatibility/AssetConverter.cpp:684, 771-792"
     note: "Tileset named by share3.j2l and sharectf.j2l."
 
   # Music, read from the user Content/Music/, then Content/Music/, then Source/
@@ -403,7 +403,7 @@ files:
 
   # Level music. The name is read from the level, lowercased and given
   # the .j2b extension when it has none.
-  # ref: Sources/Jazz2/Compatibility/JJ2Level.cpp:147, 801-807
+  # ref: Sources/Jazz2/Compatibility/JJ2Level.cpp:157, 828-834
 
   - name: "labrat.j2b"
     category: game_data
@@ -411,7 +411,7 @@ files:
     path: "jazz2/Source/labrat.j2b"
     standalone_path: "Source/labrat.j2b"
     required: false
-    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:147, Sources/Jazz2/Compatibility/JJ2Level.cpp:801-807, Sources/Jazz2/LevelHandler.cpp:700-706, Sources/Jazz2/ContentResolver.cpp:3215-3225"
+    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:157, Sources/Jazz2/Compatibility/JJ2Level.cpp:828-834, Sources/Jazz2/LevelHandler.cpp:700-706, Sources/Jazz2/ContentResolver.cpp:3215-3225"
     note: "Music named by share1.j2l, sharect2.j2l and sharetrs.j2l."
 
   - name: "funkyg.j2b"
@@ -420,7 +420,7 @@ files:
     path: "jazz2/Source/funkyg.j2b"
     standalone_path: "Source/funkyg.j2b"
     required: false
-    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:147, Sources/Jazz2/Compatibility/JJ2Level.cpp:801-807, Sources/Jazz2/LevelHandler.cpp:700-706, Sources/Jazz2/ContentResolver.cpp:3215-3225"
+    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:157, Sources/Jazz2/Compatibility/JJ2Level.cpp:828-834, Sources/Jazz2/LevelHandler.cpp:700-706, Sources/Jazz2/ContentResolver.cpp:3215-3225"
     note: "Music named by share2.j2l."
 
   - name: "diamond.j2b"
@@ -429,7 +429,7 @@ files:
     path: "jazz2/Source/diamond.j2b"
     standalone_path: "Source/diamond.j2b"
     required: false
-    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:147, Sources/Jazz2/Compatibility/JJ2Level.cpp:801-807, Sources/Jazz2/LevelHandler.cpp:700-706, Sources/Jazz2/ContentResolver.cpp:3215-3225"
+    source_ref: "Sources/Jazz2/Compatibility/JJ2Level.cpp:157, Sources/Jazz2/Compatibility/JJ2Level.cpp:828-834, Sources/Jazz2/LevelHandler.cpp:700-706, Sources/Jazz2/ContentResolver.cpp:3215-3225"
     note: "Music named by share3.j2l and sharectf.j2l."
 
   - name: "boss2.j2b"

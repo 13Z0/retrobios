@@ -3,7 +3,7 @@ type: standalone + libretro
 core_classification: official_port
 source: "https://github.com/stella-emu/stella"
 profiled_date: "2026-10-21"
-source_commit: "2c3d7023e9136f75c789803b44f119d8749dc104"
+source_commit: "289a40f1b63022b8bbe5b722061c660009d5de2c"
 core_version: "8.0_pre"
 display_name: "Atari - 2600 (Stella)"
 library_name: "Stella"

@@ -3,7 +3,7 @@ type: standalone
 source: "https://github.com/shadps4-emu/shadPS4"
 upstream: "https://github.com/shadps4-emu/shadPS4"
 profiled_date: "2026-03-26"
-source_commit: "91e6afa69b0a64b0afaa0281b80f8fbb0cd88136"
+source_commit: "f6181d0631d45782d2722eb98cbf3b73867eb9d6"
 core_version: "pre-release 2026-08-08"
 display_name: "shadPS4 (PlayStation 4)"
 cores:
@@ -204,25 +204,25 @@ files:
     hle_fallback: true
     path: "shadps4/sys_modules/libSceRudp.sprx"
     description: "PS4 reliable UDP library"
-    source_ref: "src/core/libraries/sysmodule/sysmodule_internal.cpp:243"
+    source_ref: "src/core/libraries/sysmodule/sysmodule_internal.cpp:244"
 
   - name: "libSceWkFontConfig.sprx"
     required: false
     path: "shadps4/sys_modules/libSceWkFontConfig.sprx"
     description: "PS4 WebKit font configuration"
     note: "No HLE implementation. The module is stubbed when absent."
-    source_ref: "src/core/libraries/sysmodule/sysmodule_internal.cpp:244"
+    source_ref: "src/core/libraries/sysmodule/sysmodule_internal.cpp:245"
 
   - name: "libSceSystemGesture.sprx"
     required: false
     hle_fallback: true
     path: "shadps4/sys_modules/libSceSystemGesture.sprx"
     description: "PS4 system gesture recognition"
-    source_ref: "src/core/libraries/sysmodule/sysmodule_internal.cpp:249"
+    source_ref: "src/core/libraries/sysmodule/sysmodule_internal.cpp:250"
 
   - name: "libSceXml.sprx"
     required: false
     path: "shadps4/sys_modules/libSceXml.sprx"
     description: "PS4 XML parser"
     note: "No HLE implementation. The module is stubbed when absent."
-    source_ref: "src/core/libraries/sysmodule/sysmodule_internal.cpp:250"
+    source_ref: "src/core/libraries/sysmodule/sysmodule_internal.cpp:251"

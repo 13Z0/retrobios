@@ -3,7 +3,7 @@ type: standalone
 source: "https://github.com/openMSX/openMSX"
 upstream: "https://github.com/openMSX/openMSX"
 profiled_date: "2026-03-26"
-source_commit: "705ebf1aad7035467f7c065f48a01361aec307c8"
+source_commit: "a557de7b37bc48420b63ec10e7ede953babad4f9"
 core_version: "21.0"
 display_name: "MSX / ColecoVision / Spectravideo (openMSX)"
 cores:

@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/drhelius/Gearcoleco"
 upstream: "https://github.com/drhelius/Gearcoleco"
 profiled_date: "2026-09-17"
-source_commit: "23d0ec288cbe595c420001dd347560c29efa9937"
+source_commit: "be1a3716d2db312c1add1639753258e365f2dfd4"
 core_version: "1.7.4-24-g23d0ec2"
 display_name: "Coleco - ColecoVision / ADAM (Gearcoleco)"
 cores:

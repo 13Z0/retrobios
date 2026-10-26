@@ -5,7 +5,7 @@ source: "https://github.com/libretro/same_cdi"
 upstream: "https://github.com/mamedev/mame"
 profiled_date: "2026-03-25"
 source_commit: "ff9bb99a50d518aef6d2add1c49b7c44447e3e78"
-upstream_commit: "578dd9f9b7416ad57b1b92374ecf9dd4fa07fb92"
+upstream_commit: "39eb9e44c394df9aec8186f2d2ef7517ace232e1"
 core_version: "Git"
 display_name: "Philips - CDi (SAME CDi)"
 cores: [same_cdi]
