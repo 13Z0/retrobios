@@ -4599,6 +4599,35 @@ class TestRateLimitEndsOneProfile(unittest.TestCase):
         self.assertEqual(by_name["after"]["needs_review"], 1)
 
 
+class AWriteRefreshesTheSourcePaths(unittest.TestCase):
+    """Each bump left website/src/data/source-paths.json behind its pins and
+    the site's freshness test red until someone ran sitesources by hand."""
+
+    def _args(self, **kw):
+        base = {"dry_run": False, "offline": False, "emulators_dir": "emulators"}
+        return argparse.Namespace(**{**base, **kw})
+
+    def test_only_a_real_online_write_refreshes(self):
+        from unittest import mock  # noqa: PLC0415
+
+        import sitesources  # noqa: PLC0415
+
+        with mock.patch.object(sitesources, "build_source_paths", return_value=({}, [])) as built, \
+                mock.patch.dict(os.environ, {"RETROBIOS_OFFLINE": ""}), \
+                mock.patch.object(profile_sync, "load_emulator_profiles", return_value={}), \
+                mock.patch("common.write_if_changed") as written, \
+                contextlib.redirect_stderr(io.StringIO()):
+            profile_sync._WRITTEN.clear()
+            profile_sync._refresh_source_paths(self._args())
+            self.assertFalse(built.called)
+            profile_sync._WRITTEN.add("x")
+            profile_sync._refresh_source_paths(self._args(dry_run=True))
+            self.assertFalse(built.called)
+            profile_sync._refresh_source_paths(self._args())
+            self.assertTrue(built.called and written.called)
+            profile_sync._WRITTEN.clear()
+
+
 class FreshRefusesOffline(unittest.TestCase):
     def test_the_pair_is_refused(self):
         saved = sys.argv

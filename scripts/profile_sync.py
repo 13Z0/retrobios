@@ -4275,6 +4275,7 @@ def _apply_writes(
                     file=sys.stderr,
                 )
                 return
+            _WRITTEN.add(name)
         for message in messages:
             print(message)
 
@@ -4663,16 +4664,20 @@ def main() -> None:
             if not profile_path.is_file():
                 continue
             try:
+                before = profile_path.read_bytes()
                 for line in realign_prose(
                     profile_path, args.cache_dir, args.offline, args.dry_run
                 ):
                     print(f"{name}: {line}")
+                if profile_path.read_bytes() != before:
+                    _WRITTEN.add(name)
             except upstream.UpstreamError as exc:
                 print(f"{name}: {exc}", file=sys.stderr)
                 failed.add(name)
             except YamlWriteError as exc:
                 print(f"{name}: write refused: {exc}", file=sys.stderr)
                 failed.add(name)
+        _refresh_source_paths(args)
         if failed:
             raise SystemExit(1)
         return
@@ -4710,10 +4715,44 @@ def main() -> None:
         if not args.changed_only or report.needs_review() or report.name in failed
     ]
     _emit(args, selected, reports, shown)
+    _refresh_source_paths(args)
     if failed or (args.strict and any(
         report.needs_review() or report.uncheckable() for report in reports
     )):
         raise SystemExit(1)
+
+
+# Profiles this run wrote. Their new pins name trees the site's record of
+# cited source paths does not hold yet.
+_WRITTEN: set[str] = set()
+
+
+def _refresh_source_paths(args: argparse.Namespace) -> None:
+    """Rebuild the site's record of cited source paths after a write.
+
+    Each bump left website/src/data/source-paths.json behind its pins, and
+    the site's freshness test stayed red until someone ran sitesources.py
+    --fetch by hand. A run that writes nothing, or makes no request, leaves
+    it alone.
+    """
+    if not _WRITTEN or args.dry_run or args.offline or os.environ.get("RETROBIOS_OFFLINE"):
+        return
+    import sitesources  # noqa: PLC0415
+    from common import write_if_changed  # noqa: PLC0415
+
+    profiles = load_emulator_profiles(args.emulators_dir, skip_aliases=False)
+    held, unread = sitesources.build_source_paths(
+        profiles, [sitesources.TREE_CACHE], fetch=True
+    )
+    sitesources.SOURCE_PATHS.parent.mkdir(parents=True, exist_ok=True)
+    write_if_changed(
+        str(sitesources.SOURCE_PATHS), json.dumps(held, indent=1, sort_keys=True) + "\n"
+    )
+    print(
+        f"source paths: {sum(map(len, held.values()))} in {len(held)} trees, "
+        f"{len(unread)} trees not cached: {sitesources.SOURCE_PATHS}",
+        file=sys.stderr,
+    )
 
 
 def _build_full_report(
