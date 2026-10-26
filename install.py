@@ -12044,8 +12044,14 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     ]
     if state.facts.get("writable") is False:
         lines.append("You cannot write to this folder: choose another one.")
-    lines.append(f"{check['present']} in place, {check['missing']} missing, "
-                 f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
+    counts = (f"{check['present']} in place, {check['missing']} missing, "
+              f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
+    if copied and fetch:
+        # 47 to download above 49 missing and 1 wrong copy: the 3 found on
+        # this machine are the difference, said where the sum is read.
+        counts += (f": {len(copied)} of them {'is' if len(copied) == 1 else 'are'} "
+                   f"copied from this machine, {fetch} downloaded")
+    lines.append(counts)
     saves = (state.saves if check is state.check
              else state.dry_saves if check is state.dry else None)
     lines += [_styled(line, "path") for line in _saves_lines(state, saves)]

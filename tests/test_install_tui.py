@@ -3908,6 +3908,19 @@ class TheFolderScreenSaysWhatItOffers(unittest.TestCase):
                 self.assertEqual(rows[state.focus["folder"]].action, "browse")
 
 
+class ThePlanNumbersAddUp(unittest.TestCase):
+    """"47 files to download" sat above "49 missing, 1 wrong copy": the 3
+    found on this machine were the difference, left to the reader."""
+
+    def test_the_copied_files_are_the_difference(self):
+        state = checked_state()
+        state.found = [found("scph5500.bin", str(SYSTEM_DIR), "one folder too deep")]
+        screen = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("3 files to download", screen)
+        self.assertIn("1 in place, 3 missing, 1 wrong copy: 1 of them is copied from this "
+                      "machine, 3 downloaded", screen)
+
+
 class NothingFoundIsSaid(unittest.TestCase):
     """With nothing detected the first screen was the list of 18 setups,
     with no line at 40x15 saying nothing was found, which the beginner's
