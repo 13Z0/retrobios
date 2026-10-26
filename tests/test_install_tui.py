@@ -447,7 +447,7 @@ class Flow(unittest.TestCase):
         self.assertEqual(press(state, "enter"), [])
         self.assertIn("No system is ticked", state.status)
         focus = next(i for i, row in enumerate(install.tui_rows(state))
-                     if row.value == "epoch-scv")
+                     if row.value == "nintendo-gba")
         state.focus["systems"] = focus
         press(state, "right")
         self.assertEqual(press(state, "enter"), [("run", "confirm")])
@@ -1513,7 +1513,7 @@ class AuditRoundTwo(unittest.TestCase):
         state = self.systems()
         press(state, "n")
         state.focus["systems"] = next(i for i, row in enumerate(install.tui_rows(state))
-                                      if row.value == "epoch-scv")
+                                      if row.value == "nintendo-gba")
         press(state, "right")
         self.assertEqual(state.ticked, {"nintendo-gba"})
         press(state, "/", "p", "l", "a", "y")
@@ -3768,7 +3768,7 @@ class EndToEnd(unittest.TestCase):
         self.env[install.TUI_IDLE_ENV] = "1"
         term = self.start()
         term.wait("Where do you play?")
-        self.assertEqual(term.close(), 0)
+        self.assertEqual(term.close(), 130)
         self.assertIn("No button pressed, closing.", term.after())
         # A key pressed, the screen stays: the person is there.
         term = self.start()
@@ -3789,7 +3789,7 @@ class EndToEnd(unittest.TestCase):
         self.env[install.TUI_IDLE_ENV] = "1"
         term = self.start("--platform", "retroarch", "--dest", str(repo.dest))
         term.wait("> Install")
-        self.assertEqual(term.close(), 0)
+        self.assertEqual(term.close(), 130)
         self.assertIn("No button pressed, closing.", term.after())
         self.assertEqual(repo.installed(), [])
 
