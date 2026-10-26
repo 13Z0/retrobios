@@ -3,9 +3,9 @@ type: libretro
 core_classification: community_fork
 source: "https://github.com/beudbeud/libretro-stv"
 upstream: "https://mednafen.github.io/"
-profiled_date: "2026-10-17"
-source_commit: "4e899aa2951a4714f82523d2d0f00c98599fd574"
-core_version: "v1.8.0"
+profiled_date: "2026-10-27"
+source_commit: "e65713478870dd494afd5c0bcd852fc76c383f14"
+core_version: "v1.8.3"
 display_name: "Sega - ST-V (Mednafen STV)"
 cores:
   - "mednafen_stv"
@@ -35,12 +35,12 @@ notes: |
   ss.bios_sanity on, the default, a file named like one of the five
   Saturn BIOS images must match its SHA-256. The ST-V images are not in
   that table and only the size check applies
-  (ref: mednafen/ss/ss.cpp:1586-1633, 2646).
+  (ref: mednafen/ss/ss.cpp:1586-1633, 2647).
 
   Saturn games that need the KoF 95 or Ultraman ROM cartridge, and the
   Action Replay 4M Plus cart type, open their ROM from the firmware
   directory under the default names below
-  (ref: mednafen/ss/ss.cpp:1421-1423, 1477-1485, 2639-2641).
+  (ref: mednafen/ss/ss.cpp:1421-1423, 1477-1485, 2640-2642).
 
 files:
   - name: "epr-20091.ic8"
@@ -110,17 +110,17 @@ files:
     system: "sega-saturn"
     required: false
     description: "The King of Fighters '95 ROM cartridge"
-    source_ref: "mednafen/ss/ss.cpp:1421, mednafen/ss/ss.cpp:1477-1485, mednafen/ss/ss.cpp:2639"
+    source_ref: "mednafen/ss/ss.cpp:1421, mednafen/ss/ss.cpp:1477-1485, mednafen/ss/ss.cpp:2640"
     note: "Opened only for the game that needs the cart, and that game does not start without it."
   - name: "mpr-19367-mx.ic1"
     system: "sega-saturn"
     required: false
     description: "Ultraman ROM cartridge"
-    source_ref: "mednafen/ss/ss.cpp:1422, mednafen/ss/ss.cpp:1477-1485, mednafen/ss/ss.cpp:2640"
+    source_ref: "mednafen/ss/ss.cpp:1422, mednafen/ss/ss.cpp:1477-1485, mednafen/ss/ss.cpp:2641"
     note: "Opened only for the game that needs the cart, and that game does not start without it."
   - name: "satar4mp.bin"
     system: "sega-saturn"
     required: false
     description: "Action Replay 4M Plus firmware"
-    source_ref: "mednafen/ss/ss.cpp:1423, mednafen/ss/ss.cpp:1477-1485, mednafen/ss/ss.cpp:2641"
+    source_ref: "mednafen/ss/ss.cpp:1423, mednafen/ss/ss.cpp:1477-1485, mednafen/ss/ss.cpp:2642"
     note: "Opened only when the Action Replay 4M Plus cart type is selected."
