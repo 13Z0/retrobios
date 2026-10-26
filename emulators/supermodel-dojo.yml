@@ -4,11 +4,11 @@ core_classification: enhanced_fork
 source: "https://github.com/blueminder/supermodel-dojo"
 upstream: "https://github.com/trzy/Supermodel"
 author: "blueminder"
-profiled_date: "2026-08-12"
-source_commit: "d409fe784b8328d798098708adc760900bcc6937"
+profiled_date: "2026-10-27"
+source_commit: "113a48d567c5d49a40292df386fee4a0acaea486"
 upstream_commit: "98fcbff223e23b1530c8f899aca2fc4fd5663ab4"
 upstream_frozen: "The dojo branch merged trzy/Supermodel at this commit through merge ab1ecae. Later upstream commits are not in the port."
-core_version: "v0.3a-20261022-git-d409fe7"
+core_version: "v0.3a-20261024-git-113a48d"
 display_name: "Sega - Model 3 (Supermodel Dojo)"
 verification: existence
 cores:
@@ -41,7 +41,7 @@ notes: |
   netplay, replay and release changes. The two repositories are not linked on
   GitHub, so the pin is read from the merge itself, whose second parent 98fcbff
   resolves in both trees.
-  ref: README.md:3-20, Src/OSD/SDL/Main.cpp:2565-2597
+  ref: README.md:3-20, Src/OSD/SDL/Main.cpp:2659-2691
 
   Windows and macOS return relative names, Config/, Assets/, NVRAM/, Saves/,
   Replays/, ROMs/, resolved against the working directory, which is where the
@@ -55,7 +55,7 @@ notes: |
   <set>.zip.
   ref: Src/OSD/Windows/FileSystemPath.cpp:28-60, Src/OSD/OSX/FileSystemPath.cpp:28-58,
        Src/OSD/Unix/FileSystemPath.cpp:63-77, 130-141, 144-198, Src/Dojo/Replay.cpp:28-31,
-       Src/OSD/SDL/Main.cpp:1796, es-de resources/systems/windows/es_systems.xml:171
+       Src/OSD/SDL/Main.cpp:1885, es-de resources/systems/windows/es_systems.xml:171
 
   ROM sets are MAME format per game archives identified by the CRC32 values in
   Games.xml, 64 sets at this revision. A parent set holds the ROMs a regional
@@ -71,24 +71,24 @@ notes: |
   is optional, a synthetic image is built when it is absent, and that image takes
   the logo model from Assets/ when both 3dlogo files are there.
   ref: Config/Games.xml:1404-1428, Src/Pro1000/Pro1000.cpp:2128-2160,
-       Src/OSD/SDL/Main.cpp:2737-2740
+       Src/OSD/SDL/Main.cpp:2831-2834
 
   The emulator writes and reads back its own Supermodel.ini, generated from the
   built in Dojo defaults whenever it is absent, plus NVRAM/<game>.nv,
   Saves/<game>.st<slot> and Replays/<game>_<timestamp>.supr with a .st0 sidecar
   when the session starts from a save state.
-  ref: Src/OSD/SDL/Main.cpp:1677-1697, 2568, 724-752, 786-809,
+  ref: Src/OSD/SDL/Main.cpp:1766-1786, 2662, 724-752, 786-809,
        Src/OSD/DojoConfigFile.h:31, Src/Dojo/Replay.cpp:23-51
 
   Two reads take a path the user chooses and have no fixed name: the MP3 tracks
   named inside Music.xml, and external GLSL vertex and fragment shaders for the
   legacy 3D engine, whose config keys are empty by default so the built in shader
   source is compiled instead.
-  ref: Src/Sound/MPEG/MpegAudio.cpp:71-86, Src/OSD/SDL/Main.cpp:1800-1801,
+  ref: Src/Sound/MPEG/MpegAudio.cpp:71-86, Src/OSD/SDL/Main.cpp:1889-1890,
        Src/Graphics/Shader.cpp:100-106
 
   The v0.3a-<date>-git-<rev> releases are built from the dojo branch and named
-  Supermodel Dojo. The archive of 2026-10-22 ships the supermodel binary,
+  Supermodel Dojo. The archive of 2026-10-24 ships the supermodel binary,
   Assets/, Config/Games.xml, Config/Music.xml and empty NVRAM/, ROMs/ and Saves/
   folders, plus wnaspi32.dll on Windows, the ASPI bridge that lets Pro-1000 host
   programs reach the emulated machine. A build stamps its version from the commit
@@ -112,7 +112,7 @@ files:
     bundled: true
     description: "ROM set definitions"
     note: "Parsed at startup into the game database. Every ROM region, file name and CRC32 the loader matches against comes from here, so an unreadable file leaves no set to resolve and the launch returns before the emulator is built. The path is a config key, so -game-xml-file moves it."
-    source_ref: "source Src/OSD/SDL/Main.cpp:126, Src/OSD/SDL/Main.cpp:1789, Src/OSD/SDL/Main.cpp:2280, Src/OSD/SDL/Main.cpp:2663-2674, source Src/GameLoader.cpp:601-611, Src/GameLoader.cpp:1066-1069, source Src/OSD/Windows/FileSystemPath.cpp:28-32"
+    source_ref: "source Src/OSD/SDL/Main.cpp:126, Src/OSD/SDL/Main.cpp:1878, Src/OSD/SDL/Main.cpp:2369, Src/OSD/SDL/Main.cpp:2757-2768, source Src/GameLoader.cpp:601-611, Src/GameLoader.cpp:1066-1069, source Src/OSD/Windows/FileSystemPath.cpp:28-32"
 
   - name: p1crosshair.bmp
     path: "Assets/p1crosshair.bmp"
@@ -121,7 +121,7 @@ files:
     bundled: true
     description: "Player 1 light gun crosshair texture"
     note: "Both bitmaps are read on every launch whatever CrosshairStyle holds, since the load runs before the style decides anything, and a null surface aborts startup ahead of the Model 3 object. 32 bit BMP with alpha, sides a multiple of 2."
-    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:34-51, source Src/OSD/SDL/Main.cpp:2723-2729, source Assets/DIR.txt"
+    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:34-51, source Src/OSD/SDL/Main.cpp:2817-2823, source Assets/DIR.txt"
 
   - name: p2crosshair.bmp
     path: "Assets/p2crosshair.bmp"
@@ -130,15 +130,15 @@ files:
     bundled: true
     description: "Player 2 light gun crosshair texture"
     note: "Read in the same call as the player 1 bitmap and equally fatal when it fails to load."
-    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:35, 49-51, source Src/OSD/SDL/Main.cpp:2723-2729"
+    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:35, 49-51, source Src/OSD/SDL/Main.cpp:2817-2823"
 
   - name: Music.xml
     path: "Config/Music.xml"
     required: false
     bundled: true
     description: "Custom MPEG music track map"
-    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when the file is absent. Maps an MPEG ROM offset to an MP3 the user supplies. Shipped in the v0.3a-20261022-git-d409fe7 archives, the Windows zip with CRLF line endings (sha1 4c556c3a848ef61205a53a9a73ba5e46970d445f)."
-    source_ref: "source Src/OSD/SDL/Main.cpp:127, Src/OSD/SDL/Main.cpp:989, source Src/Sound/MPEG/MpegAudio.cpp:88-108"
+    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when the file is absent. Maps an MPEG ROM offset to an MP3 the user supplies. Shipped in the v0.3a-20261024-git-113a48d archives, the Windows zip with CRLF line endings (sha1 4c556c3a848ef61205a53a9a73ba5e46970d445f)."
+    source_ref: "source Src/OSD/SDL/Main.cpp:127, Src/OSD/SDL/Main.cpp:1077, source Src/Sound/MPEG/MpegAudio.cpp:88-108"
 
   - name: "pro1000.zip"
     required: true
