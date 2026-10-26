@@ -4599,6 +4599,18 @@ class TestRateLimitEndsOneProfile(unittest.TestCase):
         self.assertEqual(by_name["after"]["needs_review"], 1)
 
 
+class FreshRefusesOffline(unittest.TestCase):
+    def test_the_pair_is_refused(self):
+        saved = sys.argv
+        try:
+            sys.argv = ["profile_sync.py", "--all", "--fresh", "--offline"]
+            with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as caught:
+                profile_sync.main()
+        finally:
+            sys.argv = saved
+        self.assertEqual(caught.exception.code, 1)
+
+
 class TestOutputModesApplyTheirFlags(unittest.TestCase):
     """--changed-only narrows --json too. Extras are refused off the text report."""
 

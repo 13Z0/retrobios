@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://gitlab.com/jengun/sdltrs"
 upstream: "http://sdltrs.sourceforge.net"
 profiled_date: "2026-10-23"
-source_commit: "57c90cc6393da6c2e5d565ddfbb0c80449fc6ed2"
+source_commit: "675d169d350e77b31d494e1efd0354abacc3c8e3"
 core_version: "1.2.35"
 display_name: "Tandy - TRS-80 (SDL2TRS)"
 cores:
@@ -25,14 +25,14 @@ notes: |
   Three ROM slots exist, one per model family, and trs_rom_init picks one from
   trs_model. Model I takes romfile1, Model III and Model 4 share romfile3, and
   Model 4P takes romfile4p (src/trs_cmd_rom.c:868-894). The defaults are level2.rom,
-  model3.rom and model4p.rom, each prefixed by ROM_PATH (src/trs_options.c:864-866).
+  model3.rom and model4p.rom, each prefixed by ROM_PATH (src/trs_options.c:867-869).
   ROM_PATH is a build define left empty unless a packager sets it
   (src/trs_options.c:53-54, CMakeLists.txt:42), so a stock build resolves the names
   against the working directory.
 
   -rom, -r and -romfile write to the slot of the model selected at the moment
-  they are parsed (src/trs_options.c:597-607). Options are applied in command-line
-  order after the config file has been read (src/trs_options.c:984-1004), so -m has
+  they are parsed (src/trs_options.c:600-610). Options are applied in command-line
+  order after the config file has been read (src/trs_options.c:993-1013), so -m has
   to come first to redirect them, and a model key in the config file otherwise
   decides. -rom1, -rom3 and -rom4p address a slot directly. The GUI ROM browser
   filters on .bin, .hex, .iii and .rom (src/trs_sdl_gui.h:63, src/trs_sdl_gui.c:2595-2601).
@@ -63,9 +63,9 @@ files:
     description: "TRS-80 Model I ROM"
     required: true
     max_size: 18432
-    source_ref: "src/trs_options.c:81 (romfile1), src/trs_options.c:864 (default name), src/trs_cmd_rom.c:871-884 (trs_model 1)"
+    source_ref: "src/trs_options.c:81 (romfile1), src/trs_options.c:867 (default name), src/trs_cmd_rom.c:871-884 (trs_model 1)"
     note: >
-      Model I is the model a stock configuration selects (src/trs_options.c:891), so
+      Model I is the model a stock configuration selects (src/trs_options.c:900), so
       this is the slot an unconfigured run reads. Without it the machine runs the
       compiled-in diagnostic stub and nothing else. max_size is the shared ROM
       buffer ceiling: a longer file is truncated, never rejected, and only the
@@ -75,7 +75,7 @@ files:
     description: "TRS-80 Model III and Model 4 ROM"
     required: true
     max_size: 18432
-    source_ref: "src/trs_options.c:82 (romfile3), src/trs_options.c:865 (default name), src/trs_cmd_rom.c:885-889 (trs_model 3 and 4)"
+    source_ref: "src/trs_options.c:82 (romfile3), src/trs_options.c:868 (default name), src/trs_cmd_rom.c:885-889 (trs_model 3 and 4)"
     note: >
       Serves Model III and Model 4 alike. The stub text spells out that Model 4
       mode needs a Model 3 image (src/trs_cmd_rom.c:110-115). This is the one slot
@@ -89,7 +89,7 @@ files:
     description: "TRS-80 Model 4P boot ROM"
     required: false
     max_size: 18432
-    source_ref: "src/trs_options.c:83 (romfile4p), src/trs_options.c:866 (default name), src/trs_cmd_rom.c:890-893 (trs_model 5)"
+    source_ref: "src/trs_options.c:83 (romfile4p), src/trs_options.c:869 (default name), src/trs_cmd_rom.c:890-893 (trs_model 5)"
     note: >
       Optional because the compiled-in replacement is a working boot ROM rather
       than a stub. html/index.html states the free ROM boots only Model 4
@@ -202,7 +202,7 @@ analysis:
         note: "Reads 0x0000-0x2FFF only. -speedup lnw sets the 4 MHz clock and the low 16 KB banking."
 
   character_generators:
-    source_ref: "src/trs_chars.c:12 (trs_char_data), src/trs_options.c:404-436 (charset names), src/trs_sdl_interface.c:1903-1908"
+    source_ref: "src/trs_chars.c:12 (trs_char_data), src/trs_options.c:404-436 (charset names), src/trs_sdl_interface.c:1904-1909"
     note: >
       Every character set is a compiled-in bitmap table selected by -charset1,
       -charset3 and -charset4. The tree holds no external font file and reads
@@ -250,24 +250,24 @@ analysis:
     note: "Named on the command line, in the config file or in a disk set, with no fixed filename"
     entries:
       - what: "floppy images in drives 0-7, JV1, JV3 and DMK"
-        source_ref: "src/trs_options.c:584-586, src/trs_disk.c:775-913"
+        source_ref: "src/trs_options.c:587-589, src/trs_disk.c:775-913"
       - what: "hard drive images, units 0-3"
-        source_ref: "src/trs_options.c:587-589, src/trs_hard.c:312-320, src/trs_hard.c:569-654"
+        source_ref: "src/trs_options.c:590-592, src/trs_hard.c:312-320, src/trs_hard.c:569-654"
       - what: "cassette images, .cas, .cpt and .wav"
-        source_ref: "src/trs_options.c:581-583, src/trs_cassette.c:522-557"
+        source_ref: "src/trs_options.c:584-586, src/trs_cassette.c:522-557"
       - what: "stringy floppy wafers in drives 0-7, .esf"
-        source_ref: "src/trs_options.c:590-592, src/trs_stringy.c:276-317, src/trs_stringy.c:342-350"
+        source_ref: "src/trs_options.c:593-595, src/trs_stringy.c:276-317, src/trs_stringy.c:342-350"
       - what: "disk set, a plain list of the paths above"
-        source_ref: "src/trs_options.c:593-596, src/trs_disk.c:3753-3787"
+        source_ref: "src/trs_options.c:596-599, src/trs_disk.c:3753-3787"
       - what: "CMD program loaded straight into memory, from a bare argument"
-        source_ref: "src/trs_options.c:978-979, src/trs_cmd_rom.c:845-866"
+        source_ref: "src/trs_options.c:987-988, src/trs_cmd_rom.c:845-866"
       - what: "serial port tty, defaulting to /dev/ttyS0 on Linux"
         source_ref: "src/trs_uart.c:54-56, src/trs_uart.c:144-202"
 
   generated_files:
     written_and_read_back:
       - filename: ".sdltrs.t8c"
-        source_ref: "src/trs_options.c:903-916, src/trs_options.c:1010-1013"
+        source_ref: "src/trs_options.c:912-925, src/trs_options.c:1019-1022"
         note: "Configuration, written to the home directory on first run when none is found."
       - filename: "<name>.t8s"
         source_ref: "src/trs_state_save.c:38-66, src/trs_state_save.c:68-113"
