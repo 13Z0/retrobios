@@ -40,6 +40,8 @@ notes: |
   replay recording and a training mode. The Dojo 7 releases are tagged on the
   dojo branch, which carries flyinghead/flycast up to f13d7ad of 2024-05-11
   with the Dojo commits on top. The master branch is the older Dojo 6 line.
+  EmuELEC builds a fixed commit of that Dojo 6 line, d0e47e5 (6.53+)
+  (EmuELEC packages/sx05re/emulators/flycast-dojo/package.mk:5).
   The build names itself with git describe, so the version string is the tag.
   ref: .github/workflows/build-and-release.yml:4-6, .github/workflows/build-and-release.yml:27
 
