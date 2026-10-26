@@ -3,9 +3,9 @@ type: libretro
 core_classification: official_port
 source: "https://github.com/doublegate/RustyNES"
 upstream: "https://github.com/doublegate/RustyNES"
-profiled_date: "2026-09-03"
-source_commit: "4e77905e045c0e971b53c5abee8d0a07a4b1bfdb"
-core_version: "2.6.12"
+profiled_date: "2026-10-26"
+source_commit: "3d02b99dc84fb389c03fc6b1f986ffa658dda0dd"
+core_version: "3.5.0"
 display_name: "Nintendo - NES / Famicom (RustyNES)"
 cores:
   - rustynes
@@ -18,20 +18,25 @@ notes: |
   The libretro core is the crates/rustynes-libretro crate of the same
   repository, built from the main branch
   (crates/rustynes-libretro/Makefile, .gitlab-ci.yml). The crate pulls
-  rustynes-core with default features off, so the HD pack loader is not
-  compiled into the core and nothing else is read from disk.
+  rustynes-core with default features off and does not link the
+  rustynes-hdpack crate, so no HD pack is read. The game database it links
+  is compiled in (crates/rustynes-gamedb/src/lib.rs:41), and its
+  game_db_user.txt overlay is read only once a host sets its directory,
+  which the libretro crate never does (crates/rustynes-gamedb/src/lib.rs:356-366).
 
-  Cartridge content needs no external file. A .fds disk image goes to
-  Nes::from_disk, which needs the Famicom Disk System BIOS: the core joins
-  disksys.rom to the frontend system directory and reads the whole file
-  (crates/rustynes-libretro/src/lib.rs:921-938). A missing file, or a
-  frontend without a system directory, makes retro_load_game fail with an
-  error. Fds::new rejects a BIOS that is not exactly 8192 bytes
-  (crates/rustynes-mappers/src/fds.rs:1351-1357). No hash is checked. The
+  Cartridge content needs no external file. Content is a Famicom Disk System
+  image when its path ends in .fds or its bytes open with the fwNES header or
+  the *NINTENDO-HVC* side marker (crates/rustynes-libretro/src/lib.rs:2225-2244).
+  Such an image goes to Nes::from_disk, which needs the Famicom Disk System
+  BIOS: the core joins disksys.rom to the frontend system directory and reads
+  the whole file (crates/rustynes-libretro/src/lib.rs:1380-1396). A missing
+  file, or a frontend without a system directory, makes retro_load_game fail
+  with an error. Fds::new rejects a BIOS that is not exactly 8192 bytes
+  (crates/rustynes-mappers/src/fds.rs:1368-1374). No hash is checked. The
   FDS device maps the BIOS and boots from its reset vector.
 
   The version comes from the workspace Cargo.toml. The .info in
-  libretro-core-info says v2.3.5 and the copy in the repository v2.6.12.
+  libretro-core-info says v3.4.0 and the copy in the repository v3.5.0.
   The md5 in the .info notes is not enforced by the code.
 
 files:
@@ -41,5 +46,5 @@ files:
     required: true
     size: 8192
     validation: [size]
-    source_ref: "crates/rustynes-libretro/src/lib.rs:921-945, crates/rustynes-core/src/nes.rs:356-358, crates/rustynes-core/src/bus.rs:1015-1021, crates/rustynes-mappers/src/fds.rs:121, crates/rustynes-mappers/src/fds.rs:1351-1357"
-    note: "Read only when the content extension is .fds. Any other size fails the load."
+    source_ref: "crates/rustynes-libretro/src/lib.rs:1380-1396, crates/rustynes-core/src/nes.rs:538-540, crates/rustynes-core/src/bus.rs:1103-1108, crates/rustynes-mappers/src/fds.rs:121, crates/rustynes-mappers/src/fds.rs:1368-1374"
+    note: "Read only when the content is a Famicom Disk System image, by extension or signature. Any other size fails the load."
