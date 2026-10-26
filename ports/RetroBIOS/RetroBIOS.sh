@@ -60,6 +60,8 @@ if [ -e "${RB_ARK_MARKER:-/usr/share/plymouth/themes/text.plymouth}" ]; then
   RB_BIOS_DEST=$(awk -F'"' '/^system_directory *=/ { print $2; exit }' \
     "${RB_RETROARCH_CFG:-/home/ark/.config/retroarch/retroarch.cfg}" 2>/dev/null)
   RB_BIOS_DEST="${RB_BIOS_DEST:-/$directory/bios}"
+  # The font ArkOS's own tools put back on leaving (dArkOS_Tools/Wifi.sh).
+  RB_FONT_DEFAULT="Lat7-Terminus20x10"
 fi
 # shellcheck source=../shared/tui.txt
 source "$GAMEDIR/tui.txt"

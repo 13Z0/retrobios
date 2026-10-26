@@ -133,7 +133,8 @@ much space is free, before anything is written.
 The other choices sit one press away. **Choose systems** ticks the consoles you
 play, with the total to download under the list. **Options** sets the
 preferred regions, game data, the installed cores only, the cores, the parallel
-downloads and the folder. Each row names the option it sets, and **Show the
+downloads, the folder and, for a list with files read from the frontend's save
+directory, that directory. Each row names the option it sets, and **Show the
 command line** gives the same choice as one command for a script. **Preview the
 file list** shows what would be downloaded and writes nothing. **Copy the BIOS
 files from your old card or a folder** opens the folder browser, mounted cards
@@ -1077,9 +1078,15 @@ moves with the D-pad.
 
 Each launcher also sets `RETROBIOS_IDLE_EXIT` to 300: with no button pressed
 for 5 minutes since it opened, and no check or install running, the interface
-closes by itself. A pad the
-system has no mapping for sends nothing, and would otherwise leave the
-console stuck on the interface with no way out.
+closes by itself. A pad the system has no mapping for sends nothing, and would
+otherwise leave the console stuck on the interface with no way out. It closes
+with `RetroBIOS: No button pressed, closing.` and exit status 130, as a quit
+before the install. Closed on an error or a result screen, it prints that
+screen's words after the line and exits with its code (1 for `No internet:
+offline mode`), so the launcher can tell an error from a close with nothing to
+report. The time counts from the end of the last check, so a launcher that
+names the platform, whose interface moves on to the plan by itself, closes the
+same way. Any launcher can set it to another number of seconds.
 
 Each launcher tells the interface which buttons reach it, in
 `RETROBIOS_PAD`, so the hints can name them:
@@ -1093,19 +1100,10 @@ Each launcher tells the interface which buttons reach it, in
 | `miyoo` | buttons that are already keys: A as Space, Start as Enter, L1 and R1 as E and T, L2 as Tab, R2 as Backspace | no launcher yet |
 
 A launcher with no mapper at all (a keyboard) leaves it unset.
-A launcher can also set `RETROBIOS_IDLE_EXIT` to a number of seconds: when
-no button has reached the interface since it opened, and nothing has run for
-that long, it closes with `RetroBIOS: No button pressed, closing.` and exit status 0.
-Closed on an error or a result screen, it prints that screen's words after
-the line and exits with its code (1 for `No internet: offline mode`), so
-the launcher can tell an error from a close with nothing to report.
-The time counts from the end of the last check, so a launcher that names the
-platform, whose interface moves on to the plan by itself, closes the same way.
-A mapper that never opened the pad would otherwise hold the device on that
-screen. On a Miyoo, B,
-X, Y and Select are Left Ctrl, Shift, Alt and Right Ctrl: pressed alone, a
-modifier sends nothing to a terminal, so the interface goes back with R2
-instead, and the bottom line says so.
+
+On a Miyoo, B, X, Y and Select are Left Ctrl, Shift, Alt and Right Ctrl:
+pressed alone, a modifier sends nothing to a terminal, so the interface goes
+back with R2 instead, and the bottom line says so.
 
 **Without Wi-Fi.** On a computer, download the BIOS pack that serves your
 system (every part, for a pack in parts): RetroArch's on muOS, ArkOS,
@@ -1286,7 +1284,7 @@ fields, the installer refuses to narrow rather than install everything.
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
-| `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
+| `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question, or the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`) before an install. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
 The full screen ended by SIGTERM (Start+Select on a handheld) before any
@@ -1327,7 +1325,7 @@ other schemas under `api/v1/schemas/`.
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `unsearched` | `folder`, `reason`, `message` | Before `detect`, once for each folder the search for setups could not look in, this user being refused it. What it would hold counts as absent, and the other places are still searched: `detect` then lists what they hold, and an empty `platforms` after an `unsearched` line means nothing was found where the installer could look. `reason` says why in words (`Permission denied`), `message` says it in a sentence |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). `message` says it in words |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). The platform named with `--platform` is found nowhere and no folder can be assumed for it: a card system with no card named, a portable emulator, or no usual folder on this system or one set aside behind a folder this user cannot open (`stage` is `detect`, `reason` `not_found`). `message` says it in words |
 | `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
 | `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
@@ -1380,7 +1378,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
 | `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `gptokeyb_muxterm`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
-| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 0, or with the code of the error or result screen it closed on |
+| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 130, or with the code of the error or result screen it closed on |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong

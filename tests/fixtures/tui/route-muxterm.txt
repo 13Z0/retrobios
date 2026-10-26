@@ -381,7 +381,7 @@
 
  RetroArch: ~/.config/retroarch/system
 
- File list: 5 files.
+ File list received.
  Reading the files already in the
    folder... 0:04
 
@@ -394,7 +394,7 @@
 
  RetroArch: ~/.config/retroarch/system
 
- File list: 5 files.
+ File list received.
  Reading the files already in the
    folder... 0:04
 
@@ -410,7 +410,7 @@
 
  RetroArch: ~/.config/retroarch/system
 
- File list: 5 files.
+ File list received.
  Reading the files already in the folder... 0:04
 
 
@@ -450,8 +450,8 @@
  BIOS folder: ~/.co.../retroarch/system
  1 in place, 3 missing, 1 wrong copy
  Free space: 50.0 GB
- They are replaced, and the old copies
-   are kept in a backup folder.
+ The 1 wrong copy is replaced, the old
+   one kept in a backup folder.
 
  > Install
    Choose systems
@@ -466,7 +466,7 @@
  BIOS folder: ~/.config/retroarch/system
  1 in place, 3 missing, 1 wrong copy
  Free space: 50.0 GB
- They are replaced, and the old copies are kept in a backup folder.
+ The 1 wrong copy is replaced, the old one kept in a backup folder.
 
  > Install
    Choose systems
@@ -865,6 +865,8 @@
 === confirm 40x12
  RetroBIOS: Confirm
 
+ Counted again for your choices.
+   Nothing is written before Install.
  1 file to download, 16.0 KB
  BIOS folder: ~/.co.../retroarch/system
  0 in place, 1 missing, 0 wrong copies
@@ -872,12 +874,12 @@
 
  > Install
    Back
-
-
  Start Install  B Back
 === confirm 40x15
  RetroBIOS: Confirm
 
+ Counted again for your choices.
+   Nothing is written before Install.
  1 file to download, 16.0 KB
  BIOS folder: ~/.co.../retroarch/system
  0 in place, 1 missing, 0 wrong copies
@@ -885,8 +887,6 @@
 
  > Install
    Back
-
-
 
 
 
@@ -894,6 +894,7 @@
 === confirm 80x24
  RetroBIOS: Confirm
 
+ Counted again for your choices. Nothing is written before Install.
  1 file to download, 16.0 KB
  BIOS folder: ~/.config/retroarch/system
  0 in place, 1 missing, 0 wrong copies
@@ -901,7 +902,6 @@
 
  > Install
    Back
-
 
 
 
@@ -1142,7 +1142,7 @@
  q, Ctrl-C          Quit
  Select             Keyboard on or off
  Menu               Close the terminal
- ?, F1              This help
+
 
  Any key closes this help
 === help 40x15
@@ -1155,10 +1155,10 @@
  q, Ctrl-C          Quit
  Select             Keyboard on or off
  Menu               Close the terminal
- ?, F1              This help
 
  BIOS folder:
    /home/user/.config/retroarch/system
+
 
  Any key closes this help
 === help 80x24
@@ -1171,9 +1171,9 @@
  q, Ctrl-C          Quit
  Select             Keyboard on or off
  Menu               Close the terminal
- ?, F1              This help
 
  BIOS folder: /home/user/.config/retroarch/system
+
 
 
 

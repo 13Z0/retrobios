@@ -309,6 +309,28 @@ class TheArchives(unittest.TestCase):
                     self.assertEqual(top, [])
                     self.assertIn("RetroBIOS/retrobios.gptk", names)
 
+    def test_the_muos_icon_is_the_glyph_its_header_names(self):
+        """muOS reads glyph/<ICON>.png in the application's folder, and the
+        muxapp named an icon it did not carry."""
+        header = (REPO_ROOT / "ports" / "muos" / "mux_launch.sh").read_text()
+        icon = re.search(r"^# ICON: (\S+)$", header, re.MULTILINE).group(1)
+        name = build_port.MUOS_APP
+        with zipfile.ZipFile(build_port.build_archive(name, self.out / name)) as zf:
+            data = zf.read(f"RetroBIOS/glyph/{icon}.png")
+        self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
+
+    def test_no_tools_support_file_is_a_menu_entry(self):
+        """EmulationStation lists a folder only when it holds a file of the
+        system's extension (.sh for Tools and Ports): batocera-emulationstation
+        and EmulationStation-fcamod SystemData.cpp drop a folder with none.
+        The support folders must keep none, or each shows up in the menu."""
+        for name in (build_port.TOOLS_ZIP, build_port.PORT_ZIP, build_port.BATOCERA_ZIP):
+            with self.subTest(archive=name):
+                with zipfile.ZipFile(build_port.build_archive(name, self.out / name)) as zf:
+                    inside = [n for n in zf.namelist()
+                              if "/" in n and n.lower().endswith(".sh")]
+                self.assertEqual(inside, [])
+
     def test_each_carries_the_pinned_installer(self):
         pinned = build_port.pinned_installer_sha256()
         for name, (_script, folder) in self.LAYOUT.items():
@@ -1334,13 +1356,15 @@ class ThePortMasterPort(unittest.TestCase):
         device.assert_console_restored()
 
     def test_the_font_is_put_back_without_setfont_o(self):
-        """busybox setfont has no -O: the font is changed only when the
-        Lat7-Terminus20x10 ArkOS tools restore exists, and that one is put
+        """busybox setfont has no -O: on ArkOS the font is changed only when
+        the Lat7-Terminus20x10 its tools restore exists, and that one is put
         back."""
         device = self.device(FAKE_NO_SAVE="1")
         fonts = device.env["RB_FONTS"]
         (Path(fonts) / "Lat7-Terminus20x10.psf.gz").write_bytes(b"")
-        device.run(["bash", self.script])
+        marker = device.root / "text.plymouth"
+        marker.write_text("")
+        device.run(["bash", self.script], RB_ARK_MARKER=str(marker))
         chosen = f"{fonts}/Lat7-TerminusBold22x11.psf.gz"
         saved = str(self.gamedir / "run" / "font.psf")
         self.assertEqual(device.tools(), [
@@ -1348,6 +1372,14 @@ class ThePortMasterPort(unittest.TestCase):
             f"setfont -C {device.console} {chosen}",
             f"setfont -C {device.console} {fonts}/Lat7-Terminus20x10.psf.gz",
         ])
+
+    def test_elsewhere_a_font_that_cannot_be_saved_is_left(self):
+        """Lat7-Terminus20x10 is ArkOS's font: put back on another device,
+        it left the console in a font it never had."""
+        device = self.device(FAKE_NO_SAVE="1")
+        (Path(device.env["RB_FONTS"]) / "Lat7-Terminus20x10.psf.gz").write_bytes(b"")
+        device.run(["bash", self.script])
+        self.assertEqual(len([t for t in device.tools() if t.startswith("setfont")]), 1)
 
     def test_without_the_fallback_font_the_font_is_left(self):
         device = self.device(FAKE_NO_SAVE="1")

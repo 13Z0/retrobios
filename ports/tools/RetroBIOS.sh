@@ -40,6 +40,8 @@ if [ -d "$ROOT/opt/system" ] && [ -d "$ROOT/opt/inttools" ]; then
   fi
   RB_ROUTES="vt"
   RB_CONSOLE="${RB_CONSOLE:-/dev/tty1}"
+  # The font ArkOS's own tools put back on leaving (dArkOS_Tools/Wifi.sh).
+  RB_FONT_DEFAULT="Lat7-Terminus20x10"
   RB_PACK_PATH="$RB_DIR:$HERE:/roms:/roms2"
   # The second card is /roms2, and "Switch to SD2 for Roms" moves RetroArch's
   # system folder there (dArkOS scripts/Switch to SD2 for Roms.sh:91-92): the

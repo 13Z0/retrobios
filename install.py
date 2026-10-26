@@ -521,7 +521,8 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # stage: manifest (reason: network, not_found, invalid, clock for a
     # refused certificate under a clock set in the past, or no_ca for no
     # trusted certificates on the machine) or detect (reason: conflict, two
-    # systems found on one machine) or from (a folder named with --from,
+    # systems found on one machine, or not_found, the platform named with
+    # --platform found nowhere and no folder to assume) or from (a folder named with --from,
     # reason: not_found, not_a_folder, unreadable, or system for the root
     # of the system and /proc, /sys, /dev).
     "error": ("stage", "reason", "platform", "message"),
@@ -1975,7 +1976,8 @@ def _note_refused(path: Path, exc: OSError) -> None:
     retroarch.cfg was readable, and the run fell back to a folder it does
     not read.
     """
-    if not getattr(_SETUP_SEARCH, "active", False) or not isinstance(exc, PermissionError):
+    if (not getattr(_SETUP_SEARCH, "active", False) or getattr(_SETUP_SEARCH, "quiet", False)
+            or not isinstance(exc, PermissionError)):
         return
     refused = closed_folder(path) or (path, exc.strerror or str(exc))
     if refused in _DETECTION_REFUSED:
@@ -3451,6 +3453,9 @@ def _fetch_json(
     _network_allowed(label)
     timeout = LIST_TIMEOUT if timeout is None else timeout
     for attempt in range(1, attempts + 1):
+        # The tries this failure gets: "(2/3)" then "after 2 attempts" for
+        # a server gone silent, asked once more only.
+        tries = attempts
         try:
             with urllib.request.urlopen(url, timeout=timeout) as resp:
                 return _read_limited_json(resp, limit, label)
@@ -3470,9 +3475,11 @@ def _fetch_json(
                 exc.attempts = attempt  # type: ignore[union-attr]
                 raise
             delay = _retry_delay(attempt, None)
+            if _stalled(exc):
+                tries = min(attempts, STALLED_ATTEMPTS)
         # Said, or three 30-second attempts read as a frozen program.
         print(f"  The {label} did not arrive ({problem}), trying again "
-              f"({attempt + 1}/{attempts}) in {delay:.0f} s.", file=sys.stderr)
+              f"({attempt + 1}/{tries}) in {delay:.0f} s.", file=sys.stderr)
         time.sleep(delay)
     raise AssertionError("unreachable")
 
@@ -4088,8 +4095,15 @@ def _retroarch_config_for(bios_path: Path) -> tuple[Path, Path] | None:
     if found is not None or _CONFIGS_READ:
         return found
     _CONFIGS_READ.append(True)
-    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-        detect_platforms(_INVOCATION.os_type or detect_os())
+    # Silent, the unsearched event too: this run searched for no setup, and
+    # the event came after detect, the line it stands for never shown.
+    _SETUP_SEARCH.quiet = True
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()):
+            detect_platforms(_INVOCATION.os_type or detect_os())
+    finally:
+        _SETUP_SEARCH.quiet = False
     return _retroarch_config_at(bios_path)
 
 
@@ -4311,7 +4325,17 @@ def closed_folder(path: Path) -> tuple[Path, str] | None:
         except OSError as exc:
             if exc.errno in (errno.ENOENT, errno.ENOTDIR):
                 return None
-            return folder.parent, exc.strerror or str(exc)
+            why = exc.strerror or str(exc)
+            if exc.errno == errno.ELOOP:
+                # The link that loops, not the open folder holding it.
+                return folder, why
+            real = Path(os.path.realpath(folder))
+            if real != folder:
+                # ~/Emulation linked into a closed card: the closed folder
+                # is under the link's target, and naming the link's
+                # parent told the user they cannot open their own HOME.
+                return closed_folder(real) or (real.parent, why)
+            return folder.parent, why
     return probe, failure.strerror or str(failure)
 
 
@@ -5590,7 +5614,13 @@ def _print_plan(
             print(line)
     else:
         largest = sorted(by_system, key=lambda s: (-_bytes(by_system[s]), s))
-        print(f"  {_plural(len(largest), 'system')}, the largest first:")
+        # A file several systems share is a group of its own: "88 systems"
+        # were 66 systems, as the full screen counts them, and 22 groups.
+        systems = {name for entry in to_download for name in entry_systems(entry)}
+        groups = (f"{_plural(len(systems), 'system')} in {len(largest)} groups"
+                  if systems and len(systems) != len(largest)
+                  else _plural(len(largest), 'system'))
+        print(f"  {groups}, the largest first:")
         for system in largest[:PLAN_LARGEST_SYSTEMS]:
             print(f"  {term.bold(system)}  {_sized(by_system[system])}")
         if len(largest) > PLAN_LARGEST_SYSTEMS:
@@ -5998,6 +6028,11 @@ def _install_standalone_folders(
     False when this machine has none, the run then going on to the platform
     question or hint.
     """
+    if offline_requested():
+        # Their folders are named by file lists this run cannot fetch: the
+        # first refusal ended an --offline run that asked nothing of EmuDeck
+        # on "No file list for emudeck".
+        return False
     manifests = []
     for plat in STANDALONE_SOURCES:
         manifests.append(fetch_manifest(plat))
@@ -6243,6 +6278,8 @@ def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
     while not raw:
         raw = _ask(
             f"BIOS directory [{default_dest}]: " if default_dest
+            else "BIOS directory (no default, a folder above could not be opened): "
+            if _default_set_aside(os_type, plat)
             else "BIOS directory (no default on this system): "
         )
         if default_dest is not None:
@@ -6284,19 +6321,30 @@ def _default_dest(os_type: str, platform_name: str) -> Path | None:
     path on Windows resolved to the root of the current drive: 8.7 GB under
     C:\\userdata\\bios, reported done.
     """
-    if os_type == "android" and platform_name == "retroarch":
-        default = _android_storage_root() / "RetroArch" / "system"
-    elif platform_name in PORTABLE_ONLY or (os_type == "windows" and platform_name
-                                            not in _os_default_dests(os_type)):
-        return None
-    else:
-        default = (_os_default_dests(os_type).get(platform_name)
-                   or (None if platform_name == "retrobat" else DEFAULT_DESTS.get(platform_name)))
+    default = _built_in_dest(os_type, platform_name)
     if default is not None and _refused_near(default):
         # The Flatpak's own folder at 000 hid the retroarch.cfg naming
         # ~/Games/bios, and 6.6 GB were offered to a folder it does not read.
         return None
     return default
+
+
+def _built_in_dest(os_type: str, platform_name: str) -> Path | None:
+    """The platform's usual folder on this OS, whatever detection met."""
+    if os_type == "android" and platform_name == "retroarch":
+        return _android_storage_root() / "RetroArch" / "system"
+    if platform_name in PORTABLE_ONLY or (os_type == "windows" and platform_name
+                                          not in _os_default_dests(os_type)):
+        return None
+    return (_os_default_dests(os_type).get(platform_name)
+            or (None if platform_name == "retrobat" else DEFAULT_DESTS.get(platform_name)))
+
+
+def _default_set_aside(os_type: str, platform_name: str) -> bool:
+    """Whether the platform's usual folder was set aside because detection
+    met a closed folder, as against having none on this OS."""
+    return (_default_dest(os_type, platform_name) is None
+            and _built_in_dest(os_type, platform_name) is not None)
 
 
 def _refused_near(default: Path) -> bool:
@@ -6450,7 +6498,7 @@ INSTALLED_ONLY = "installed"
 def _prompt_custom_selection(
     plat: str, files: list[dict], omitted: list[dict],
     installed: tuple[list[dict], list[dict]] | None = None,
-    name: str = "",
+    name: str = "", dry_run: bool = False,
 ) -> tuple[list[str], list[str], list[str]] | str | None:
     """Offer to narrow the install by system, core and region.
 
@@ -6460,7 +6508,9 @@ def _prompt_custom_selection(
     everything on its axis.
     """
     print(f"\n{name or display_name(plat)}: {_sized(files)}.")
-    print("  Enter) install everything")
+    # A dry run installs nothing: "install everything" was asked before it.
+    print("  Enter) list everything, nothing is written" if dry_run
+          else "  Enter) install everything")
     if installed is not None:
         print(f"  i) only what the installed cores read: {_sized(installed[0])}")
     print("  c) choose systems, cores and regions")
@@ -9283,8 +9333,9 @@ def _open_from_folders(folders: list[Path]) -> None:
                     other_drives=[str(drive) for drive in index.other_drives])
 
 
-def _refuse_closed(dest: Path, named: str) -> None:
-    """End the run, with its name, on a folder above dest this user cannot open."""
+def _refuse_closed(dest: Path, named: str, then: str = "") -> None:
+    """End the run, with its name, on a folder above dest this user cannot
+    open. then is a line said after the error, which it continues."""
     closed = closed_folder(dest)
     if closed is None:
         return
@@ -9293,6 +9344,8 @@ def _refuse_closed(dest: Path, named: str) -> None:
     print(f"Error: {screen_text(message)}. Give this user access to it, run as "
           f"its owner, or choose another folder than the one {named}.",
           file=sys.stderr)
+    if then:
+        print(f"  {then}", file=sys.stderr)
     sys.exit(1)
 
 
@@ -9628,6 +9681,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         elif args.platform in CARD_PLATFORMS:
             # Its files go on its SD card, which is never this machine's
             # own folder: the card's mount point is the user's to name.
+            EVENTS.emit("error", stage="detect", reason="not_found", platform=args.platform,
+                        message=f"{display_name(args.platform)} keeps its BIOS files on "
+                        "its SD card, and no card was named with --dest")
             print(
                 f"  {display_name(args.platform)} keeps its BIOS files on its SD card. "
                 f"Mount the card and name its root with --dest, for example: "
@@ -9639,6 +9695,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         elif args.platform in PORTABLE_ONLY:
             # A portable emulator reads the folder beside its executable:
             # any default would be a folder it never opens.
+            EVENTS.emit("error", stage="detect", reason="not_found", platform=args.platform,
+                        message=f"Platform '{args.platform}' not found. "
+                        f"{PORTABLE_ONLY[args.platform]}")
             print(
                 f"  Platform '{args.platform}' not found. {PORTABLE_ONLY[args.platform]} "
                 f"Name it with --dest, for example: --platform {args.platform} "
@@ -9650,11 +9709,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             default_dest = _default_dest(os_type, args.platform)
             if default_dest is None:
                 where = ("where this user can look, and its default folder may not be "
-                         "the one it reads" if _DETECTION_REFUSED
+                         "the one it reads" if _default_set_aside(os_type, args.platform)
                          else "and no folder on this system is one it reads")
+                message = f"Platform '{args.platform}' not found {where}"
+                EVENTS.emit("error", stage="detect", reason="not_found",
+                            platform=args.platform, message=message)
                 print(
-                    f"  Platform '{args.platform}' not found {where}. Name it with "
-                    f"--dest, for example: --platform {args.platform} --dest <its BIOS folder>",
+                    f"  {message}. Name it with --dest, for example: "
+                    f"--platform {args.platform} --dest <its BIOS folder>",
                     file=sys.stderr,
                 )
                 sys.exit(1)
@@ -9737,13 +9799,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # A system_directory under /root read from retroarch.cfg, run without
         # sudo: the case probe raised PermissionError before any line.
         for name, path in platforms:
-            if closed_folder(path) is not None and len(platforms) > 1:
-                print("  Nothing was installed. Name one platform with --platform "
-                      "to install it alone.", file=sys.stderr)
-            _refuse_closed(path, (
-                f"taken as {display_name(name)}'s default, {display_name(name)} "
-                "not being found here" if path in assumed_dests
-                else "detected here") + " (name another with --dest)")
+            found_in = _retroarch_config_at(path)
+            named = (f"used by default, since {display_name(name)} was not found"
+                     if path in assumed_dests
+                     else f"{found_in[0]} names" if found_in else "detected here")
+            _refuse_closed(path, f"{named} (name another with --dest)",
+                           "Nothing was installed. Name one platform with --platform "
+                           "to install it alone." if len(platforms) > 1 else "")
 
     total_downloaded = 0
     total_up_to_date = 0
@@ -9968,7 +10030,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             )
             selection = _prompt_custom_selection(
                 plat_name, files, omitted_files, installed,
-                display_name(plat_name, manifest),
+                display_name(plat_name, manifest), args.dry_run,
             )
             if selection is None:
                 smaller = ("  Nothing downloaded. To install less, run the same command "
@@ -10673,6 +10735,11 @@ class TuiState:
         # A --dest given without --platform: the list asks whose files go there.
         self.dest_given: Path | None = None
         self.folder_default: Path | None = None
+        # What folder_default is, for the words above it: "usual" (the
+        # platform's built-in folder), "found" (the one detected here),
+        # "chosen" (the run's folder, from Change folder) or "closed" (the
+        # one chosen could not be opened, none is offered).
+        self.folder_kind: str = "usual"
         self.path_text: str = ""
         self.browse_dir: Path | None = None
         self.browse_rows: list = []
@@ -11190,12 +11257,13 @@ def _system_rows(state: TuiState) -> list[TuiRow]:
             right = f"{_plural(need, 'file')}, {format_size(row['bytes_needed'])}"
             narrow = (format_size(row["bytes_needed"]),)
         elif not own:
+            # Two spellings of shared, never cut: "+ 28 sh." and ", shared"
+            # sat beside "+ 1689 shared" on one 40-column screen.
             right = f"{_plural(need, 'file')}, {format_size(size)}, all shared"
-            narrow = (f"{format_size(size)}, shared", format_size(size))
+            narrow = (f"{format_size(size)}, all shared", format_size(size))
         else:
             right = f"{_plural(own, 'file')}, {format_size(own_size)} + {count} shared"
-            narrow = (f"{format_size(own_size)} + {count} shared",
-                      f"{format_size(own_size)} + {count} sh.", format_size(own_size))
+            narrow = (f"{format_size(own_size)} + {count} shared", format_size(own_size))
         rows.append(TuiRow("system", f"{box} {label}", right, row["system"],
                            "" if need else "dim", narrow))
     return rows
@@ -11248,6 +11316,10 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
         chosen = f"{len(state.cores)} chosen" if state.cores else "all"
         rows.append(TuiRow("cores", f"Cores: {chosen}", "--core"))
     copied = ", ".join(str(folder) for folder in state.from_folders) or "none"
+    if manifest.get("save_directory"):
+        # The interface said "Name it with --save-dir" and had no row for it.
+        rows.append(TuiRow("savedir", f"Save folder: {_save_folder_words(state)}",
+                           "--save-dir", style="path"))
     rows += [
         TuiRow("jobs", f"Parallel downloads: {state.jobs}", "--jobs"),
         TuiRow("folder", f"BIOS folder: {_short_path(state.dest, state.home)}", "--dest",
@@ -11259,6 +11331,21 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
         TuiRow("command", "Show the command line"),
     ]
     return rows
+
+
+def _save_dir_given(state: TuiState) -> Path | None:
+    return next((Path(value) for flag, value in state.passthrough
+                 if flag == "--save-dir" and value), None)
+
+
+def _save_folder_words(state: TuiState) -> str:
+    """The frontend's save directory as the Options row shows it."""
+    given = _save_dir_given(state)
+    if given is not None:
+        return _short_path(given, state.home)
+    if state.saves and state.saves.get("folder"):
+        return _short_path(Path(state.saves["folder"]), state.home)
+    return "not known"
 
 
 def _push(state: TuiState, screen: str, focus: int = 0) -> list[tuple]:
@@ -11371,7 +11458,7 @@ def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
         # The folder found here is the one the frontend reads: the built-in
         # default beside it is one it does not, offered as "reads its BIOS
         # files from" and filled with Enter.
-        state.folder_default = None
+        state.folder_default, state.folder_kind = None, "closed"
         return _push(state, "folder")
     card = card_system(dest)
     if card and card[0] == plat and card[1] != dest:
@@ -11396,9 +11483,14 @@ def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
     return _start_check(state)
 
 
-def _open_folder_screen(state: TuiState, default: Path | None) -> list[tuple]:
-    state.folder_default = default
-    return _push(state, "folder")
+def _open_folder_screen(state: TuiState, default: Path | None,
+                        kind: str = "usual") -> list[tuple]:
+    state.folder_default, state.folder_kind = default, kind
+    refused = kind == "chosen" and (state.facts.get("writable") is False
+                                    or _short_of_space(state, state.check or {}))
+    # A folder just refused as full or read-only: Browse, not Use this
+    # folder, is under A, or A, A came back to the same warning.
+    return _push(state, "folder", 1 if refused and default is not None else 0)
 
 
 def _mount_name(mount: Path) -> str:
@@ -11463,6 +11555,33 @@ def _browse_rows(folder: Path | None, zips: bool = False) -> tuple[list[TuiRow],
     return rows, ""
 
 
+# The folders of a system root that hold no one's files: A went into
+# /bin from /, the first name in order.
+_POSIX_ROOT_SYSTEM = frozenset((
+    "bin", "boot", "dev", "efi", "etc", "lib", "lib32", "lib64", "libx32", "lost+found",
+    "proc", "root", "run", "sbin", "snap", "srv", "sys", "tmp", "usr", "var",
+))
+# FILE_ATTRIBUTE_HIDDEN and FILE_ATTRIBUTE_SYSTEM: Explorer shows neither.
+_WINDOWS_HIDDEN = 0x2 | 0x4
+
+
+def _os_folder(path: Path, folder: Path) -> bool:
+    """A folder of the system, not one a person keeps files in: the
+    recycle bin and restore points of a Windows drive ($RECYCLE.BIN, System
+    Volume Information, hidden by Explorer), and /bin, /etc, /usr and the
+    like at the root of a Unix system."""
+    name = path.name
+    if name.startswith(("$", ".")) or name.casefold() == "system volume information":
+        return True
+    try:
+        attributes = getattr(os.stat(path, follow_symlinks=False), "st_file_attributes", 0)
+    except OSError:
+        attributes = 0
+    if attributes & _WINDOWS_HIDDEN:
+        return True
+    return folder == Path("/") and name in _POSIX_ROOT_SYSTEM
+
+
 def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = None) -> None:
     state.browse_dir = folder
     state.browse_rows, state.status = _browse_rows(folder, state.browse_for == "from")
@@ -11477,7 +11596,7 @@ def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = No
         focus = next((index for index, row in enumerate(state.browse_rows)
                       if row.action == "dir" and isinstance(row.value, Path)
                       and row.label == f"{row.value.name}/"
-                      and not row.value.name.startswith(".")), 0)
+                      and not _os_folder(row.value, folder)), 0)
         if not focus and not state.status:
             state.status = ("This is your home folder: no setup reads its BIOS files "
                             "here. Go back to type a path." if folder == state.home
@@ -11532,8 +11651,15 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         if state.dest_given is not None:
             return _choose(state, row.value, state.dest_given)
         state.platform = row.value
-        default = None if row.value in CARD_PLATFORMS else _default_dest(state.os_type, row.value)
-        return _open_folder_screen(state, default)
+        if row.value in CARD_PLATFORMS:
+            return _open_folder_screen(state, None)
+        # The folder detected here before the built-in one: the built-in
+        # default was offered as where RetroArch reads, when the
+        # retroarch.cfg found here names another.
+        found = next((path for plat, path, _label in state.setups if plat == row.value), None)
+        if found is not None:
+            return _open_folder_screen(state, found, "found")
+        return _open_folder_screen(state, _default_dest(state.os_type, row.value))
     if screen == "folder":
         if action == "default":
             return _choose(state, state.platform, state.folder_default)
@@ -11546,6 +11672,12 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         state.path_selected = bool(state.path_text)
         return _push(state, "path")
     if screen == "browse":
+        if action == "use" and state.browse_for == "save":
+            state.passthrough = [flag for flag in state.passthrough
+                                 if flag[0] != "--save-dir"]
+            state.passthrough.append(("--save-dir", str(state.browse_dir)))
+            state.browse_for = "dest"
+            return _start_check(state)
         if action in ("use", "zip") and state.browse_for == "from":
             chosen = state.browse_dir if action == "use" else row.value
             if chosen not in state.from_folders:
@@ -11582,7 +11714,7 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         if action == "quit":
             return tui_quit(state)
         if action == "folder":
-            return _open_folder_screen(state, state.dest)
+            return _open_folder_screen(state, state.dest, "chosen")
         if action == "fromcard":
             return _open_from_browser(state)
         if action in ("misplaced", "unreadable"):
@@ -11660,7 +11792,7 @@ def _option(state: TuiState, action: str, step: int) -> list[tuple]:
     elif action in ("regions", "command"):
         return _push(state, action)
     elif action == "folder":
-        return _open_folder_screen(state, state.dest)
+        return _open_folder_screen(state, state.dest, "chosen")
     elif action == "from" and step < 0:
         # Said, and the screen stays: Back to the plan counts again.
         if state.from_folders:
@@ -11668,6 +11800,10 @@ def _option(state: TuiState, action: str, step: int) -> list[tuple]:
             state.status = f"No longer copying from {_last_name(str(removed))}."
     elif action == "from":
         return _open_from_browser(state)
+    elif action == "savedir":
+        state.browse_for = "save"
+        _push(state, "browse")
+        _browse_to(state, _nearest_folder(_save_dir_given(state) or state.home))
     elif action == "preview":
         _push(state, "preview")
         return _start_run(state, "preview")
@@ -11679,8 +11815,21 @@ def _open_from_browser(state: TuiState) -> list[tuple]:
     state.browse_for = "from"
     _push(state, "browse")
     start = state.from_folders[-1].parent if state.from_folders else state.home
+    downloads = state.home / "Downloads"
+    if not state.from_folders and _is_dir(downloads) and any(
+            name.lower().endswith(".zip") for name in _listed(downloads)):
+        # A pack or a backup ZIP is most often there: 18 presses from the
+        # first screen reached it through HOME, past every mounted drive.
+        start = downloads
     _browse_to(state, _nearest_folder(start))
     return []
+
+
+def _listed(folder: Path) -> list[str]:
+    try:
+        return os.listdir(folder)
+    except OSError:
+        return []
 
 
 def _toggle_region(state: TuiState, name: str) -> None:
@@ -12328,7 +12477,10 @@ def _scan_lines(state: TuiState) -> list[str]:
                   for drive in scan["other_drives"]]
     if state.unreadable:
         count = len(state.unreadable)
-        lines.append(f"{_plural(count, 'file')} on your old card could not be read.")
+        # Named as it was given: "your old card" was said of a folder.
+        where = ", ".join(_last_name(folder) for folder in
+                          dict.fromkeys(event["folder"] for event in state.unreadable))
+        lines.append(f"{_plural(count, 'file')} in {where} could not be read.")
     return lines
 
 
@@ -12387,8 +12539,14 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     ]
     if state.facts.get("writable") is False:
         lines.append("You cannot write to this folder: choose another one.")
-    lines.append(f"{check['present']} in place, {check['missing']} missing, "
-                 f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
+    counts = (f"{check['present']} in place, {check['missing']} missing, "
+              f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
+    if copied and fetch:
+        # 47 to download above 49 missing and 1 wrong copy: the 3 found on
+        # this machine are the difference, said where the sum is read.
+        counts += (f": {len(copied)} of them {'is' if len(copied) == 1 else 'are'} "
+                   f"copied from this machine, {fetch} downloaded")
+    lines.append(counts)
     saves = (state.saves if check is state.check
              else state.dry_saves if check is state.dry else None)
     lines += [_styled(line, "path") for line in _saves_lines(state, saves)]
@@ -12402,7 +12560,10 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
             lines.append(f"Not enough free space: {format_size(check['bytes_needed'])} "
                          "needed. Free some, or choose another folder.")
     if wrong:
-        lines.append("They are replaced, and the old copies are kept in a backup folder.")
+        # With its subject: "They are replaced" sat lines under the count.
+        lines.append(f"The {wrong} wrong {'copy' if wrong == 1 else 'copies'} "
+                     f"{'is' if wrong == 1 else 'are'} replaced, the old "
+                     f"{'one' if wrong == 1 else 'ones'} kept in a backup folder.")
     misplaced = _tui_misplaced(state) if check is state.check else []
     if misplaced:
         lines.insert(3, f"{_plural(len(misplaced), 'file')} "
@@ -12425,7 +12586,8 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     if check.get("not_installable"):
         lines += _unavailable_lines(state)
     if check is state.check:
-        lines += _unplaced_lines(state.check_summary, state)
+        lines += _unplaced_lines(state.check_summary, state,
+                                 "Choose it in Options, Save folder.")
     return lines[:2] + offline_lines + lines[2:]
 
 
@@ -12442,7 +12604,8 @@ def _saves_lines(state: TuiState, saves: dict | None) -> list[str]:
             f"{_short_path(Path(saves['folder']), state.home)}"]
 
 
-def _unplaced_lines(summary: dict | None, state: TuiState) -> list[str]:
+def _unplaced_lines(summary: dict | None, state: TuiState,
+                    remedy: str = "Name it with --save-dir.") -> list[str]:
     """The files read from the frontend's save directory that the run left
     out, that directory being unknown: said, never silent."""
     count = sum(group.get("files", 0) for group in (summary or {}).get("skipped") or []
@@ -12451,7 +12614,7 @@ def _unplaced_lines(summary: dict | None, state: TuiState) -> list[str]:
         return []
     name = display_name(state.platform) if state.platform else "the frontend"
     return [f"{_plural(count, 'file')} read from {name}'s save directory left out: "
-            "its place is not known. Name it with --save-dir."]
+            f"its place is not known. {remedy}"]
 
 
 def _view_setup(state: TuiState, width: int, height: int) -> tuple:
@@ -12475,10 +12638,17 @@ def _view_platforms(state: TuiState, width: int, height: int) -> tuple:
     else:
         title = "Which setup?"
         before = ["Choose the setup that will use the BIOS files."]
+    pinned = list(state.refused)
+    if state.dest_given is None and not state.setups and len(state.stack) == 1:
+        # The first screen when nothing was found: at 40x15 its 18 rows
+        # left no line to say so, or what to do.
+        pinned.append("Nothing was found here: choose the setup that will use the "
+                      "BIOS files.")
+        before = []
     needle = state.filters.get("platforms", "")
     after = [f"No setup matches '{needle}'."] if len(rows) == 1 and needle else []
     after += [state.status] if state.status else []
-    return (title, _compose(state, width, height, before, rows, after, pinned=state.refused),
+    return (title, _compose(state, width, height, before, rows, after, pinned=pinned),
             ("A/Enter Choose", "B/Esc Back", "/ Filter", "? Help"))
 
 
@@ -12490,7 +12660,13 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
                   "root folder, the one holding .system."]
     elif state.folder_default is not None:
         title = "Which folder?"
-        before = [f"{name} usually reads its BIOS files from:", str(state.folder_default)]
+        lead = {"found": f"{name} reads its BIOS files from:",
+                "chosen": f"The BIOS folder chosen for {name}:"}.get(
+                    state.folder_kind, f"{name} usually reads its BIOS files from:")
+        before = [lead, str(state.folder_default)]
+    elif state.folder_kind == "closed":
+        title = "Which folder?"
+        before = [f"Choose another folder for {name}: browse for it or type it."]
     else:
         title = "Which folder?"
         before = [f"No usual {name} folder here: browse for it or type it."]
@@ -12506,7 +12682,11 @@ def _view_browse(state: TuiState, width: int, height: int) -> tuple:
     if state.browse_for == "from":
         after.insert(0, "Choose the old card, a backup folder or a ZIP: its BIOS files "
                      "are copied, each one checked, nothing on it is changed.")
-    return ("Copy from" if state.browse_for == "from" else "Browse for a folder",
+    elif state.browse_for == "save":
+        after.insert(0, f"Choose {display_name(state.platform)}'s save directory: some "
+                     "cores read files there.")
+    return ("Copy from" if state.browse_for == "from"
+            else "Save folder" if state.browse_for == "save" else "Browse for a folder",
             _compose(state, width, height, [where], tui_rows(state), after),
             ("A/Enter Open", "B/Esc Back", "? Help"))
 
@@ -12548,8 +12728,9 @@ def _view_checking(state: TuiState, width: int, height: int) -> tuple:
     if state.manifest is None:
         lines.append(f"Getting the file list... {elapsed}")
     else:
-        files = len(state.manifest.get("files", []))
-        lines += [f"File list: {_plural(files, 'file')}.", _reading_line(state, elapsed)]
+        # Not its count: the check counts the files it checks, which the
+        # plan then gives (8179 after "File list: 8169 files").
+        lines += ["File list received.", _reading_line(state, elapsed)]
     return ("Checking", _compose(state, width, height, lines, []),
             ("Ctrl-C Quit", "B/Esc Back"))
 
@@ -12604,6 +12785,7 @@ def _ticked_files(state: TuiState) -> list[dict]:
 
 def _view_systems(state: TuiState, width: int, height: int) -> tuple:
     rows = tui_rows(state)
+    whole_rows = rows
     if width < 60:
         # The name first: the size alone stays beside it, the count is in
         # the total below.
@@ -12621,6 +12803,14 @@ def _view_systems(state: TuiState, width: int, height: int) -> tuple:
               f"{format_size(sum(e['size'] for e in chosen))}"
               + (" before your options" if _counts_predate_options(state) else "")]
     focused = rows[min(state.focus.get("systems", 0), len(rows) - 1)]
+    drawn = str(_row_line(focused, True, width))
+    if focused.action == "system" and not (
+            f"> {focused.label}" in drawn
+            and any(form and drawn.endswith(form) for form in (focused.right, *focused.narrow))):
+        # A long name kept whole leaves no room for its size, and a name
+        # longer than the screen is cut: both are spelled out below.
+        whole = whole_rows[min(state.focus.get("systems", 0), len(whole_rows) - 1)]
+        footer.insert(0, f"{whole.label[4:]}: {whole.right}")
     if focused.value == OTHER_SYSTEMS:
         footer.insert(0, OTHER_HELP)
     elif "shared" in focused.right:
@@ -12732,7 +12922,11 @@ def _view_confirm(state: TuiState, width: int, height: int) -> tuple:
     if state.running or state.dry is None:
         lines: list = ["Counting the files for these choices..."]
     else:
-        lines = _plan_lines(state.dry, state.dest, state)
+        # Why this screen: the numbers above are counted again for the
+        # systems and options chosen, the last look before anything is
+        # written.
+        lines = ["Counted again for your choices. Nothing is written before Install.",
+                 *_plan_lines(state.dry, state.dest, state)]
     return ("Confirm", _compose(state, width, height, lines, tui_rows(state)),
             ("A/Enter Install", "B/Esc Back", "? Help"))
 
@@ -12860,14 +13054,30 @@ def _unavailable_lines(state: TuiState) -> list[str]:
     rows = {row["system"]: row for row in state.systems}
 
     def system(name: str) -> str:
-        return _tui_system_label(rows.get(name) or {"system": name}, titles)
+        label = _tui_system_label(rows.get(name) or {"system": name}, titles)
+        # An id no title names (jazz-jackrabbit-2) read as a raw key.
+        return label.replace("-", " ").title() if label == name else label
 
-    names = [f"{entry['dest']} ({system(entry['system'])})" if entry.get("system")
-             else entry["dest"] for entry in needed[:3]]
-    more = f" and {len(needed) - 3} more" if len(needed) > 3 else ""
-    return [f"Not available here, and needed to start "
-            f"{'its emulator' if len(needed) == 1 else 'their emulators'}: "
-            f"{', '.join(names)}{more}. Your own copy goes in the BIOS folder."]
+    def named(entries: list[dict]) -> str:
+        names = [f"{entry['dest']} ({system(entry['system'])})" if entry.get("system")
+                 else entry["dest"] for entry in entries[:3]]
+        more = f" and {len(entries) - 3} more" if len(entries) > 3 else ""
+        return f"{', '.join(names)}{more}"
+
+    # A game's own data is not firmware: on every RetroArch plan the one
+    # alarm named Jazz Jackrabbit 2's Anims.j2a, read as a broken install.
+    games = [entry for entry in needed if entry.get("category") == GAME_DATA]
+    firmware = [entry for entry in needed if entry.get("category") != GAME_DATA]
+    lines = []
+    if firmware:
+        lines.append(f"Not available here, and needed to start "
+                     f"{'its emulator' if len(firmware) == 1 else 'their emulators'}: "
+                     f"{named(firmware)}. Your own copy goes in the BIOS folder.")
+    if games:
+        lines.append(f"Game data not available here, read by "
+                     f"{'its game' if len(games) == 1 else 'their games'}: "
+                     f"{named(games)}. Copy it from your own copy of the game.")
+    return lines
 
 
 def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
@@ -13064,7 +13274,7 @@ def _help_lines(state: TuiState) -> list[tuple[str, str]]:
     if screen == "installing":
         return [(names["stop"], "Stop: what is done stays done"),
                 *([(names["kill"], "Stop")] if names["kill"] else []),
-                *_route_extras(state), ("?, F1", "This help")]
+                *_route_extras(state), *_help_key(state)]
     if screen == "path":
         return [(names["enter"], "Use this folder"), ("Backspace", "Delete a character"),
                 ("Ctrl-U", "Clear"), (names["esc"], "Back"), ("Ctrl-C", "Quit"),
@@ -13092,8 +13302,14 @@ def _help_lines(state: TuiState) -> list[tuple[str, str]]:
         keys.append((names["options"], "Options"))
     back = "Quit" if len(state.stack) == 1 else "Back"
     keys += [(names["back"], back), ("q, Ctrl-C", "Quit"), *kill, *_route_extras(state),
-             ("?, F1", "This help")]
+             *_help_key(state)]
     return keys
+
+
+def _help_key(state: TuiState) -> list[tuple[str, str]]:
+    """? and F1, named only where a keyboard may send them: no pad route
+    maps a button to either."""
+    return [("?, F1", "This help")] if state.pad in ("both", "keys") else []
 
 
 def _primary(state: TuiState) -> str | None:
@@ -13109,7 +13325,10 @@ def _primary(state: TuiState) -> str | None:
 def _view_help(state: TuiState, width: int, height: int) -> tuple:
     keys = _help_lines(state)
     column = min(22, max(cell_width(key) for key, _what in keys) + 2)
-    lines = [f"{_pad(key, column)}{what}" for key, what in keys]
+    # Two spaces at least: a key as wide as the column touched its text
+    # ("Select Keyboard on or off" on muxterm).
+    lines = [f"{_pad(key, column)}{what}" if cell_width(key) <= column - 2
+             else f"{key}  {what}" for key, what in keys]
     if state.screen in ("setup", "plan", "browse", "folder") and state.dest is not None:
         lines += ["", f"BIOS folder: {state.dest}"]
     return ("Keys", _compose(state, width, height, lines, []), ("Any key closes this help",))
@@ -13615,12 +13834,14 @@ def tui_farewell(state: TuiState) -> list[str]:
 
 def tui_idle_code(state: TuiState) -> int:
     """The exit code of an idle close: an error's or a result's on those
-    screens, so a launcher tells them from a close with nothing to say."""
+    screens, so a launcher tells them from a close with nothing to say.
+    Elsewhere nothing was installed, and 0 said it all was: 130, as a quit
+    before the install."""
     if state.screen == "error":
         return state.error_code
     if state.screen == "result" and state.code is not None:
         return state.code
-    return 0
+    return 130
 
 
 def _farewell_lines(state: TuiState) -> list[str]:

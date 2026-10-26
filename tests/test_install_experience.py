@@ -8,6 +8,7 @@ honours Retry-After, and large files that resume where they stopped.
 from __future__ import annotations
 
 import contextlib
+import errno
 import hashlib
 import http.server
 import io
@@ -979,6 +980,248 @@ class WindowsMandatoryLock(unittest.TestCase):
                 mock.patch.object(install, "_read_only_file", return_value=False):
             _dest, ok, reason = install._download_one(dict(ENTRY), Path(tmp))
         self.assertEqual((ok, reason), (False, install.NOT_WRITABLE))
+
+
+@unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                 "a folder without search permission is POSIX")
+class AClosedFolderBehindALink(unittest.TestCase):
+    """~/Emulation linked into a card at 000: the line named the link's
+    parent, telling the user they cannot open their own HOME. A link
+    that loops was named by its open parent."""
+
+    def setUp(self):
+        self.base = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.base, True)
+        self.home = self.base / "home"
+        self.home.mkdir()
+        self.card = self.base / "card"
+        (self.card / "Emulation" / "bios").mkdir(parents=True)
+
+    def closed(self, path: Path):
+        os.chmod(self.card, 0o000)
+        try:
+            return install.closed_folder(path)
+        finally:
+            os.chmod(self.card, 0o755)
+
+    def test_a_link_into_the_closed_folder_names_that_folder(self):
+        (self.home / "Emulation").symlink_to(self.card / "Emulation")
+        self.assertEqual(self.closed(self.home / "Emulation" / "bios"),
+                         (self.card, "Permission denied"))
+
+    def test_a_link_to_the_closed_folder_itself_names_it(self):
+        (self.home / "Emulation").symlink_to(self.card)
+        self.assertEqual(self.closed(self.home / "Emulation" / "Emulation" / "bios"),
+                         (self.card, "Permission denied"))
+
+    def test_a_loop_names_the_link(self):
+        loop = self.base / "loop"
+        loop.symlink_to("loop")
+        folder, why = install.closed_folder(loop / "system")
+        self.assertEqual(folder, loop)
+        self.assertEqual(why, os.strerror(errno.ELOOP))
+
+
+@unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                 "a folder without search permission is POSIX")
+class TheQuietConfigReadSaysNothing(unittest.TestCase):
+    """With --dest the run searches for no setup, and the configs read for
+    the save directory wrote an unsearched event after detect, for a line
+    the human output never showed."""
+
+    def test_no_event_and_no_line(self):
+        base = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, base, True)
+        closed = base / "home" / ".config" / "EmuDeck"
+        closed.mkdir(parents=True)
+        os.chmod(closed, 0o000)
+        self.addCleanup(os.chmod, closed, 0o755)
+        emitted = []
+        install._DETECTION_REFUSED.clear()
+        self.addCleanup(install._DETECTION_REFUSED.clear)
+        with mock.patch.dict(os.environ, {"HOME": str(base / "home"),
+                                          "XDG_CONFIG_HOME": str(base / "home" / ".config")}), \
+                mock.patch.object(install, "_CONFIGS_READ", []), \
+                mock.patch.object(install, "_RETROARCH_CONFIGS", {}), \
+                mock.patch.object(install.EVENTS, "emit",
+                                  lambda kind, **fields: emitted.append(kind)), \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            install._retroarch_config_for(base / "bios")
+        self.assertNotIn("unsearched", emitted)
+        self.assertEqual(err.getvalue(), "")
+        self.assertEqual(install._DETECTION_REFUSED, [])
+
+
+@unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                 "a folder without search permission is POSIX")
+class NotFoundWithAClosedFolder(unittest.TestCase):
+    """The not-found line spoke of a default set aside for RetroBat on
+    Linux, which has none, as soon as any folder was closed, and the exit
+    wrote no error event."""
+
+    def run_named(self, platform: str, closed_home: bool) -> tuple:
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            closed = home / ".config" / "EmuDeck"
+            closed.mkdir(parents=True)
+            env = {**repo.env(), "HOME": str(home), "RETROBIOS_OS": "linux"}
+            if closed_home:
+                os.chmod(closed, 0o000)
+            try:
+                proc = subprocess.run(
+                    [sys.executable, str(REPO_ROOT / "install.py"), "--platform", platform,
+                     "--dry-run", "--no-input", "--events"],
+                    env=env, capture_output=True, text=True, timeout=60,
+                    stdin=subprocess.DEVNULL)
+            finally:
+                os.chmod(closed, 0o755)
+        events = [json.loads(line) for line in proc.stdout.splitlines()]
+        return proc, events
+
+    def test_a_platform_with_no_folder_here_says_so(self):
+        for closed_home in (False, True):
+            with self.subTest(closed=closed_home):
+                proc, events = self.run_named("retrobat", closed_home)
+                self.assertEqual(proc.returncode, 1, proc.stderr)
+                said = " ".join(proc.stderr.split())
+                self.assertIn("no folder on this system is one it reads", said)
+                self.assertNotIn("its default folder may not be", said)
+                [error] = [e for e in events if e["event"] == "error"]
+                self.assertEqual((error["stage"], error["reason"], error["platform"]),
+                                 ("detect", "not_found", "retrobat"))
+
+    def test_a_default_set_aside_says_so(self):
+        proc, events = self.run_named("retroarch", True)
+        self.assertEqual(proc.returncode, 1, proc.stderr)
+        self.assertIn("its default folder may not be the one it reads",
+                      " ".join(proc.stderr.split()))
+        self.assertEqual([e["reason"] for e in events if e["event"] == "error"],
+                         ["not_found"])
+
+    def test_a_card_system_and_a_portable_one_write_the_event(self):
+        for platform in ("minui", "bizhawk"):
+            with self.subTest(platform=platform):
+                proc, events = self.run_named(platform, False)
+                self.assertEqual(proc.returncode, 1, proc.stderr)
+                self.assertEqual([(e["stage"], e["reason"]) for e in events
+                                  if e["event"] == "error"], [("detect", "not_found")])
+
+    def test_the_manual_prompt_says_why_there_is_no_default(self):
+        home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, home, True)
+        asked = []
+        install._DETECTION_REFUSED[:] = [(home / ".config" / "EmuDeck", "Permission denied")]
+        self.addCleanup(install._DETECTION_REFUSED.clear)
+        with mock.patch.dict(os.environ, {"HOME": str(home)}), \
+                mock.patch.object(install, "_choose_platform", return_value="retroarch"), \
+                mock.patch.object(install, "_ask",
+                                  lambda prompt: asked.append(prompt) or str(home / "b")):
+            install._prompt_manual_platform("linux")
+        self.assertEqual(len(asked), 1)
+        self.assertNotIn("no default on this system", asked[0])
+        self.assertIn("could not be opened", asked[0])
+
+
+@unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                 "a folder without search permission is POSIX")
+class ADetectedClosedFolderSaysWhereItCameFrom(unittest.TestCase):
+    """The refusal said "the one detected here" for a folder retroarch.cfg
+    names, and with two setups found the line saying nothing was installed
+    came above the error it continues."""
+
+    def run_detected(self, emudeck: bool) -> subprocess.CompletedProcess:
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            lock = repo.root / "lock"
+            cfg = home / ".config" / "retroarch" / "retroarch.cfg"
+            cfg.parent.mkdir(parents=True)
+            (lock / "system").mkdir(parents=True)
+            cfg.write_text(f'system_directory = "{lock / "system"}"\n')
+            if emudeck:
+                (home / "Emulation" / "bios").mkdir(parents=True)
+            env = {**repo.env(), "HOME": str(home), "XDG_CONFIG_HOME": str(home / ".config"),
+                   "RETROBIOS_OS": "linux"}
+            os.chmod(lock, 0o000)
+            try:
+                proc = subprocess.run(
+                    [sys.executable, str(REPO_ROOT / "install.py"), "--check", "--no-input"],
+                    env=env, capture_output=True, text=True, timeout=60,
+                    stdin=subprocess.DEVNULL)
+            finally:
+                os.chmod(lock, 0o755)
+        self.cfg = cfg
+        return proc
+
+    def test_the_config_is_named(self):
+        proc = self.run_detected(False)
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        said = " ".join(proc.stderr.split())
+        self.assertIn(f"than the one {self.cfg} names (name another with --dest)", said)
+
+    def test_nothing_installed_comes_after_the_error(self):
+        proc = self.run_detected(True)
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        error = proc.stderr.index("Error: ")
+        self.assertGreater(proc.stderr.index("Nothing was installed."), error, proc.stderr)
+
+    def test_an_assumed_default_reads_plainly(self):
+        self.assertIn("used by default, since {display_name(name)} was not found",
+                      _source_of(install._install))
+
+
+class OfflineWithNothingFound(unittest.TestCase):
+    """An --offline run on a machine with nothing installed ended on "No
+    file list for emudeck", a platform nobody asked about: the standalone
+    folders are named by file lists that run cannot fetch."""
+
+    def test_the_hint_is_given_and_no_other_platform_named(self):
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            home.mkdir()
+            env = {**repo.env(), "HOME": str(home), "XDG_CONFIG_HOME": str(home / ".config"),
+                   "RETROBIOS_OS": "linux"}
+            proc = subprocess.run(
+                [sys.executable, str(REPO_ROOT / "install.py"), "--offline", "--check",
+                 "--no-input"],
+                env=env, capture_output=True, text=True, timeout=60,
+                stdin=subprocess.DEVNULL)
+        said = proc.stdout + proc.stderr
+        self.assertEqual(proc.returncode, 1, said)
+        self.assertNotIn("emudeck", said.lower())
+        self.assertIn("Use --platform and --dest", said)
+
+
+class TheDryRunWords(unittest.TestCase):
+    """The FAQ's dry run asked "Enter) install everything" before a run
+    that installs nothing, then counted 88 systems where the full screen
+    lists 66: a shared file made a group of its own."""
+
+    def test_the_question_says_nothing_is_written(self):
+        out = io.StringIO()
+        files = [{"dest": "a.bin", "size": 1, "systems": ["x"]}]
+        with mock.patch.object(install, "_ask", return_value=""), \
+                contextlib.redirect_stdout(out):
+            install._prompt_custom_selection("retroarch", files, [], None, "RetroArch",
+                                             dry_run=True)
+        self.assertNotIn("install everything", out.getvalue())
+        self.assertIn("nothing is written", out.getvalue())
+
+    def test_the_largest_systems_are_counted_as_systems(self):
+        files = [{"dest": f"{n}.bin", "size": n + 1, "systems": [f"s{n}"]}
+                 for n in range(12)]
+        files.append({"dest": "shared.bin", "size": 1, "systems": ["s0", "s1"]})
+        out = io.StringIO()
+        with mock.patch.object(install.shutil, "get_terminal_size",
+                               return_value=os.terminal_size((80, 10))), \
+                contextlib.redirect_stdout(out):
+            install._print_plan(files, Path("dest"), install.Terminal(io.StringIO()))
+        self.assertIn("12 systems in 13 groups, the largest first", out.getvalue())
+
+
+def _source_of(function) -> str:
+    import inspect
+
+    return " ".join(inspect.getsource(function).split())
 
 
 if __name__ == "__main__":

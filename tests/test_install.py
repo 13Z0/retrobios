@@ -2411,6 +2411,10 @@ class ASilentServerIsBounded(unittest.TestCase):
         self.assertLess(elapsed, 5)
         self.assertEqual(len(held), install.STALLED_ATTEMPTS)
         self.assertIn(f"after {install.STALLED_ATTEMPTS} attempts", err.getvalue())
+        # The retry line counts the tries this failure gets: "(2/3)" promised
+        # a third that never came.
+        self.assertIn(f"(2/{install.STALLED_ATTEMPTS})", err.getvalue())
+        self.assertNotIn(f"/{install.MAX_RETRIES})", err.getvalue())
         # A download keeps its own, longer wait between chunks.
         self.assertGreater(install.LIST_TIMEOUT, 1)
 

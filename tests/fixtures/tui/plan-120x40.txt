@@ -4,7 +4,7 @@
  BIOS folder: ~/.config/retroarch/system
  1 in place, 3 missing, 1 wrong copy
  Free space: 50.0 GB
- They are replaced, and the old copies are kept in a backup folder.
+ The 1 wrong copy is replaced, the old one kept in a backup folder.
 
  > Install
    Choose systems

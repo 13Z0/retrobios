@@ -30,6 +30,9 @@
 #   RB_BIOS_DEST   the one of them the firmware reads, never offered as the
 #                  other card
 #   RB_FALLBACK    1 when the launcher has screens of its own to fall back to
+#   RB_FONT_DEFAULT  the console font the firmware itself puts back, by
+#                  name (ArkOS: Lat7-Terminus20x10), for a setfont that
+#                  cannot save the one in place. Unset, the font is kept.
 #   RB_PAD         the input route, exported to the interface as
 #                  RETROBIOS_PAD: gptokeyb (retrobios.gptk, the default when
 #                  RB_MAPPER is set), muxterm (muxterm's own keys), evmapy
@@ -493,8 +496,9 @@ rb_route_ready() {
 # The largest Terminus font that keeps 56 columns and 20 rows, the way
 # dArkOS's own tools pick one per screen (Lat7-Terminus16 on 480x320,
 # TerminusBold22x11 on 640x480, 32x16 on 1024x768). Only changed when the
-# font in place can be put back: saved with setfont -O, or the
-# Lat7-Terminus20x10 ArkOS tools restore.
+# font in place can be put back: saved with setfont -O, or RB_FONT_DEFAULT,
+# the one the firmware's own tools restore. A fixed fallback gave a device
+# whose default differs another font after the run.
 rb_font_set() {
   command -v setfont >/dev/null 2>&1 || return 0
   local size width height spec fh fw name file="" fallback
@@ -524,7 +528,8 @@ rb_font_set() {
     RB_FONT_BACK="$RB_STATE/font.psf"
     return 0
   fi
-  fallback="$RB_FONTS/Lat7-Terminus20x10.psf.gz"
+  [ -n "${RB_FONT_DEFAULT:-}" ] || return 0
+  fallback="$RB_FONTS/$RB_FONT_DEFAULT.psf.gz"
   if [ -f "$fallback" ] && $ESUDO setfont -C "$RB_TTY" "$file" >> "$RB_LOG" 2>&1; then
     RB_FONT_BACK="$fallback"
   fi

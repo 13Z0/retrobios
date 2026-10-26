@@ -2535,7 +2535,8 @@ class AuditRoundThree(unittest.TestCase):
         text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
         self.assertIn("Read the first 200,000 files of E:\\.", text)
         self.assertIn("E:\\D is another drive: add it to copy from it too.", text)
-        self.assertIn("2 files on your old card could not be read.", text)
+        # The folder by its name: "your old card" was said of any folder.
+        self.assertIn("2 files in E:\\ could not be read.", text)
         rows = install.tui_rows(state)
         state.focus["plan"] = next(i for i, row in enumerate(rows) if row.action == "unreadable")
         press(state, "enter")
@@ -2642,10 +2643,11 @@ class IdleExit(unittest.TestCase):
         self.assertEqual(farewell[:2], ["RetroBIOS: No button pressed, closing.",
                                         "RetroBIOS: Finished with errors"])
 
-    def test_any_other_screen_closes_with_0(self):
+    def test_any_other_screen_closes_as_a_quit(self):
+        """0 read as "everything asked for is installed" with nothing done."""
         state = fresh_state()
         state.stack = ["setup"]
-        self.assertEqual(self.idle_close(state), 0)
+        self.assertEqual(self.idle_close(state), 130)
 
     def idle_close(self, state: install.TuiState) -> int:
         """run_tui on state, no key ever pressed, closed by the idle timer."""
@@ -2719,13 +2721,47 @@ class AuditRoundFour(unittest.TestCase):
                 "free": 50 * 1024 ** 3, "writable": True, "cores": []}):
             install.tui_receive(state, ("ended", state.run_id, 1, []))
         line = ("2 files read from RetroArch's save directory left out: its place is "
-                "not known. Name it with --save-dir.")
+                "not known. ")
         plan = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
-        self.assertIn(line, plan)
+        # The plan names the row that sets it, the result the option a
+        # command carries.
+        self.assertIn(line + "Choose it in Options, Save folder.", plan)
         state.stack.append("result")
         state.code = 0
         state.summary = {**summary, "mode": "install", "installed": 5}
-        self.assertIn(line, install.tui_outcome(state)[1])
+        self.assertIn(line + "Name it with --save-dir.", install.tui_outcome(state)[1])
+
+
+class TheSaveFolderHasARow(unittest.TestCase):
+    """A card on a PC left the save-directory files out and named
+    --save-dir, which Options had no row for: the interface user had to
+    leave it and type a command."""
+
+    def state(self) -> install.TuiState:
+        state = checked_state()
+        state.manifest = {**MANIFEST, "save_directory": {"folder": "saves", "by_core": True}}
+        return state
+
+    def test_options_list_it_and_the_browser_sets_it(self):
+        state = self.state()
+        rows = install._option_rows(state)
+        [row] = [row for row in rows if row.action == "savedir"]
+        self.assertEqual((row.label, row.right), ("Save folder: not known", "--save-dir"))
+        saves = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, saves, True)
+        state.stack = ["setup", "plan", "options"]
+        install._option(state, "savedir", 0)
+        self.assertEqual(state.screen, "browse")
+        self.assertIn("save directory", " ".join(" ".join(install.tui_view(state, 120, 40))
+                                                 .split()))
+        install._browse_to(state, saves)
+        effects = install._activate(state, install.TuiRow("use", "Use this folder"))
+        self.assertIn(("--save-dir", str(saves)), install.tui_flags(state))
+        self.assertTrue(any(effect[0] == "run" for effect in effects), effects)
+        self.assertEqual(install._save_folder_words(state), str(saves))
+
+    def test_a_list_without_a_save_directory_has_no_row(self):
+        self.assertNotIn("savedir", [row.action for row in install._option_rows(checked_state())])
 
 
 class OfflineInTheInterface(unittest.TestCase):
@@ -2806,6 +2842,35 @@ class NarrowSystemNames(unittest.TestCase):
         # Wide, the full form stays.
         self.assertIn("3 files, 30.0 MB + 27 shared",
                       "\n".join(install.tui_view(state, 120, 40)))
+
+    def test_one_spelling_of_shared_and_the_focused_size_below(self):
+        """At 40 columns the shared part read "+ 1689 shared", "+ 28 sh.",
+        ", shared" and ", all shared" on one screen, and a long name kept
+        whole lost its size."""
+        state = checked_state()
+        names = {"epoch-scv": "Epoch Super Cassette Vision", "sega-dc": "Sega Dreamcast",
+                 "snk-ng": "SNK Neo Geo"}
+        state.manifest = {**state.manifest, "system_titles": names}
+        state.systems = [
+            {"event": "system", "platform": "retroarch", "system": system, "name": system,
+             "files": count, "present": 0, "missing": count, "wrong_hash": 0,
+             "bytes_needed": count * 1024}
+            for system, count in (("epoch-scv", 30), ("sega-dc", 1690), ("snk-ng", 3))]
+        state.files = [{"event": "file", "platform": "retroarch", "dest": f"s{n}.bin",
+                        "systems": ["sega-dc", "snk-ng"], "size": 1024, "state": "missing"}
+                       for n in range(3)]
+        state.ticked = set(names)
+        state.stack.append("systems")
+        spellings = set()
+        for cols in (40, 46, 52, 80):
+            text = "\n".join(install.tui_view(state, cols, 15))
+            spellings |= set(re.findall(r"\+ \d+ sh\w*\.?|, (?:all )?shared", text))
+        self.assertLessEqual(spellings, {"+ 3 shared", ", all shared"}, spellings)
+        state.focus["systems"] = next(
+            index for index, row in enumerate(install.tui_rows(state))
+            if row.value == "epoch-scv")
+        text = " ".join(" ".join(install.tui_view(state, 40, 15)).split())
+        self.assertIn("Epoch Super Cassette Vision: 30 files, 30.0 KB", text)
 
 
 class Crash(unittest.TestCase):
@@ -3896,7 +3961,7 @@ class EndToEnd(unittest.TestCase):
         self.env[install.TUI_IDLE_ENV] = "1"
         term = self.start()
         term.wait("Where do you play?")
-        self.assertEqual(term.close(), 0)
+        self.assertEqual(term.close(), 130)
         self.assertIn("No button pressed, closing.", term.after())
         # A key pressed, the screen stays: the person is there.
         term = self.start()
@@ -3917,7 +3982,7 @@ class EndToEnd(unittest.TestCase):
         self.env[install.TUI_IDLE_ENV] = "1"
         term = self.start("--platform", "retroarch", "--dest", str(repo.dest))
         term.wait("> Install")
-        self.assertEqual(term.close(), 0)
+        self.assertEqual(term.close(), 130)
         self.assertIn("No button pressed, closing.", term.after())
         self.assertEqual(repo.installed(), [])
 
@@ -3974,6 +4039,205 @@ class EndToEnd(unittest.TestCase):
         term.send("q\r")
         term.close()
         self.assertNotIn(b"\x1b", term.raw)
+
+
+class TheFolderScreenSaysWhatItOffers(unittest.TestCase):
+    """The folder screen said "usually reads its BIOS files from" for any
+    folder it offered: the folder named with --dest, reached by Change
+    folder, and the built-in default while the retroarch.cfg found here
+    names another. A closed folder found here opened on "No usual
+    RetroArch folder here" under the setup that listed it."""
+
+    def said(self, state: install.TuiState) -> str:
+        return " ".join(" ".join(install.tui_view(state, 200, 40)).split())
+
+    def test_change_folder_names_the_chosen_folder(self):
+        state = checked_state()
+        state.stack = ["setup", "plan"]
+        mine = Path("/home/user/typed/mybios")
+        state.dest = mine
+        install._activate(state, install.TuiRow("folder", "Change folder"))
+        self.assertEqual(state.screen, "folder")
+        screen = self.said(state)
+        self.assertNotIn("usually reads", screen)
+        self.assertIn(f"The BIOS folder chosen for RetroArch: {mine}", screen)
+
+    def test_another_setup_offers_the_folder_found_here(self):
+        state = fresh_state()
+        found = Path("/home/user/Games/bios")
+        state.setups = [("retroarch", found, "RetroArch")]
+        state.stack = ["setup", "platforms"]
+        install._activate(state, install.TuiRow("platform", "RetroArch", value="retroarch"))
+        self.assertEqual(state.folder_default, found)
+        self.assertIn(f"RetroArch reads its BIOS files from: {found}", self.said(state))
+
+    def test_with_none_found_the_usual_folder_is_offered(self):
+        state = fresh_state()
+        state.setups = []
+        state.stack = ["setup", "platforms"]
+        install._activate(state, install.TuiRow("platform", "RetroArch", value="retroarch"))
+        self.assertIn("RetroArch usually reads its BIOS files from:", self.said(state))
+
+    def test_a_closed_folder_found_here_asks_for_another(self):
+        state = fresh_state()
+        state.stack = ["setup"]
+        with mock.patch.object(install, "closed_folder",
+                               return_value=(Path("/home/user/lock"), "Permission denied")):
+            install.tui_update(state, Key("enter"))
+        self.assertEqual(state.screen, "folder")
+        screen = self.said(state)
+        self.assertNotIn("No usual RetroArch folder here", screen)
+        self.assertIn("Choose another folder for RetroArch", screen)
+
+    def test_a_refused_folder_puts_browse_under_a(self):
+        for facts in ({"free": 10, "writable": True, "cores": []},
+                      {"free": 50 * 1024 ** 3, "writable": False, "cores": []}):
+            with self.subTest(facts=facts):
+                state = checked_state(facts)
+                self.assertEqual(install.tui_rows(state)[0].action, "folder")
+                install.tui_update(state, Key("enter"))
+                self.assertEqual(state.screen, "folder")
+                rows = install.tui_rows(state)
+                self.assertEqual(rows[state.focus["folder"]].action, "browse")
+
+
+class ThePlanNumbersAddUp(unittest.TestCase):
+    """"47 files to download" sat above "49 missing, 1 wrong copy": the 3
+    found on this machine were the difference, left to the reader."""
+
+    def test_the_copied_files_are_the_difference(self):
+        state = checked_state()
+        state.found = [found("scph5500.bin", str(SYSTEM_DIR), "one folder too deep")]
+        screen = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("3 files to download", screen)
+        self.assertIn("1 in place, 3 missing, 1 wrong copy: 1 of them is copied from this "
+                      "machine, 3 downloaded", screen)
+
+
+class GameDataIsNoFirmwareAlarm(unittest.TestCase):
+    """Every RetroArch plan named jazz2/Source/Anims.j2a (jazz-jackrabbit-2)
+    as the file needed to start an emulator: a game's data, under a raw id."""
+
+    def test_game_data_has_its_own_line(self):
+        state = checked_state()
+        state.systems = []
+        state.manifest = {**MANIFEST, "omitted_files": [
+            {"dest": "jazz2/Source/Anims.j2a", "system": "jazz-jackrabbit-2",
+             "required": True, "category": "game_data"},
+            {"dest": "missing.bin", "system": "sony-playstation", "required": True}]}
+        lines = install._unavailable_lines(state)
+        self.assertEqual(len(lines), 2, lines)
+        self.assertIn("needed to start its emulator: missing.bin", lines[0])
+        self.assertNotIn("Anims.j2a", lines[0])
+        self.assertIn("Game data not available here", lines[1])
+        self.assertIn("Anims.j2a (Jazz Jackrabbit 2)", lines[1])
+
+
+class TheHelpNamesKeysThatCome(unittest.TestCase):
+    """Every route's help listed "?, F1  This help", which no pad sends, and
+    a key as wide as the column touched its text."""
+
+    def test_pad_routes_name_no_help_key(self):
+        for pad in ROUTES:
+            with self.subTest(route=pad):
+                state = checked_state()
+                state.pad = pad
+                keys = [key for key, _what in install._help_lines(state)]
+                self.assertEqual("?, F1" in keys, pad == "keys")
+
+    def test_a_wide_key_keeps_two_spaces(self):
+        state = checked_state()
+        state.help = True
+        with mock.patch.object(install, "_help_lines",
+                               return_value=[("A, Start, Enter, Space, x", "Choose"),
+                                             ("q", "Quit")]):
+            lines = install._view_help(state, 80, 24)[1]
+        self.assertTrue(any("A, Start, Enter, Space, x  Choose" in line for line in lines))
+
+
+class CopyFromStartsInDownloads(unittest.TestCase):
+    """A ZIP in Downloads took 18 presses from the first screen: the copy
+    browser opened at HOME, under every mounted drive."""
+
+    def test_a_zip_in_downloads_opens_there(self):
+        home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, home, True)
+        (home / "Downloads").mkdir()
+        state = checked_state()
+        state.home = home
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            install._open_from_browser(state)
+            self.assertEqual(state.browse_dir, home)
+            state.stack.pop()
+            (home / "Downloads" / "PSX BIOS.zip").write_bytes(b"")
+            install._open_from_browser(state)
+        self.assertEqual(state.browse_dir, home / "Downloads")
+
+
+class NothingFoundIsSaid(unittest.TestCase):
+    """With nothing detected the first screen was the list of 18 setups,
+    with no line at 40x15 saying nothing was found, which the beginner's
+    page names."""
+
+    def test_at_every_size(self):
+        with mock.patch.object(install, "detect_platforms", return_value=[]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.object(install, "_mounted_cards", return_value=[]):
+            state, _effects = install.tui_start(_args(), "linux")
+        self.assertEqual(state.screen, "platforms")
+        for cols, rows in ((40, 12), (40, 15), (80, 24)):
+            with self.subTest(size=f"{cols}x{rows}"):
+                screen = " ".join(" ".join(install.tui_view(state, cols, rows)).split())
+                self.assertIn("Nothing was found here", screen)
+        page = (REPO_ROOT / "wiki" / "first-install.md").read_text(encoding="utf-8")
+        self.assertIn("Nothing was found here", page)
+
+
+class AFocusesNoSystemFolder(unittest.TestCase):
+    """At / A went into bin/, and at a drive root holding $RECYCLE.BIN into
+    the recycle bin, which Use this folder then took as the BIOS folder."""
+
+    def setUp(self):
+        self.home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.home, True)
+        self.state = install.TuiState(os_type="linux", home=self.home)
+        self.state.platform = "retroarch"
+        self.state.stack = ["folder", "browse"]
+
+    def focused(self) -> install.TuiRow:
+        return self.state.browse_rows[self.state.focus["browse"]]
+
+    def test_the_recycle_bin_and_restore_points_are_passed_over(self):
+        for name in ("$RECYCLE.BIN", "System Volume Information", "Games"):
+            (self.home / name).mkdir()
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            install._browse_to(self.state, self.home)
+        self.assertEqual(self.focused().label, "Games/")
+
+    def test_explorer_hidden_folders_are_passed_over(self):
+        for name in ("Boot", "Games"):
+            (self.home / name).mkdir()
+        real_stat = os.stat
+
+        def stat(path, *args, **kwargs):
+            result = real_stat(path, *args, **kwargs)
+            hidden = 0x2 | 0x4 if Path(path).name == "Boot" else 0
+            return types.SimpleNamespace(st_file_attributes=hidden, st_mode=result.st_mode)
+
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install.os, "stat", stat):
+            install._browse_to(self.state, self.home)
+        self.assertEqual(self.focused().label, "Games/")
+
+    def test_at_the_root_no_system_folder_is_focused(self):
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            install._browse_to(self.state, Path("/"))
+        row = self.focused()
+        if row.action == "dir":
+            self.assertNotIn(row.value.name, install._POSIX_ROOT_SYSTEM)
+        names = {r.value.name for r in self.state.browse_rows if r.action == "dir"}
+        if "bin" in names and names - install._POSIX_ROOT_SYSTEM - {""}:
+            self.assertEqual(row.action, "dir")
 
 
 if __name__ == "__main__":
