@@ -8522,7 +8522,7 @@
   "app/src/main/java/com/sbro/emucorex/ui/cheats/CheatManagerScreen.kt",
   "app/src/main/java/com/sbro/emucorex/ui/gamedb/GameDbCatalogRepository.kt"
  ],
- "github.com/scummvm/scummvm@6f7b060d3f940c9dec1a33172a2c4273f86cce69": [
+ "github.com/scummvm/scummvm@21955df19b580dad2807ec55f573b5f348690a81": [
   "Makefile.common",
   "audio/softsynth/fluidsynth.cpp",
   "audio/softsynth/mt32.cpp",
@@ -8537,6 +8537,7 @@
   "backends/vkeybd/virtual-keyboard.cpp",
   "base/commandLine.cpp",
   "base/main.cpp",
+  "common/engine_data.cpp",
   "common/str-enc.cpp",
   "common/translation.cpp",
   "configure",
@@ -8576,7 +8577,6 @@
   "engines/tony/tony.cpp",
   "engines/toon/toon.cpp",
   "engines/ultima/nuvie/nuvie.cpp",
-  "engines/ultima/shared/engine/data_archive.cpp",
   "engines/ultima/ultima4/ultima4.cpp",
   "engines/ultima/ultima8/ultima8.cpp",
   "engines/wintermute/base/base_file_manager.cpp",

@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/scummvm/scummvm"
 logo: "https://raw.githubusercontent.com/scummvm/scummvm/master/icons/scummvm.svg"
 profiled_date: "2026-10-24"
-source_commit: "6f7b060d3f940c9dec1a33172a2c4273f86cce69"
+source_commit: "21955df19b580dad2807ec55f573b5f348690a81"
 core_version: "2026.4.1git"
 display_name: "ScummVM (SDL2)"
 mode: standalone
@@ -94,6 +94,15 @@ files:
     required: false
     source_ref: "audio/softsynth/mt32.cpp:298-301, audio/softsynth/mt32.cpp:581-584"
     note: "Roland MT-32 PCM sample ROM."
+
+
+  # Japanese Macintosh fonts, not shipped with ScummVM.
+
+  - name: "japanesemacfonts.dat"
+    path: "japanesemacfonts.dat"
+    required: false
+    source_ref: "graphics/macgui/macfontmanager.cpp:199-204, graphics/macgui/macfontmanager.cpp:303-344, graphics/macgui/macfontmanager.cpp:503-507"
+    note: "Zip of TrueType fonts, each registered under its name without the .ttf extension, read when the Mac GUI runs in Japanese or a Japanese font is requested, in builds with FreeType. devtools/create_japanesemacfonts.sh builds it from Osaka.ttf and OsakaMono.ttf of the Mac OS X Lion installer. Without it the Japanese fonts are not loaded and a warning is printed."
 
 
   # GUI themes and launcher data.
@@ -527,7 +536,7 @@ files:
     size: 15981464
     sha1: "e049932518390257f4d49b1691cad229e6060079"
     md5: "e359fb7f14c4cb072b6e9300a23a6d62"
-    source_ref: "engines/ultima/shared/engine/data_archive.cpp:84-90, engines/ultima/ultima4/ultima4.cpp:128, engines/ultima/nuvie/nuvie.cpp:99"
+    source_ref: "common/engine_data.cpp:273-279, engines/ultima/ultima4/ultima4.cpp:128, engines/ultima/nuvie/nuvie.cpp:99"
     note: "Ultima engines (Ultima I, IV, VI and the Nuvie games)."
 
 
