@@ -3,9 +3,9 @@ type: standalone
 core_classification: game_engine
 source: "https://github.com/cxong/cdogs-sdl"
 upstream: "https://github.com/cxong/cdogs-sdl"
-profiled_date: "2026-10-04"
-source_commit: "57782a74ae245d868487094d201d0e56e94a9390"
-core_version: "2.4.0"
+profiled_date: "2026-10-27"
+source_commit: "c70d1feaf9d89cf80e23265b256d9a364848e6ea"
+core_version: "2.5.0"
 display_name: "C-Dogs"
 cores: [cdogs, cdogs-sdl]
 systems: []
@@ -26,7 +26,7 @@ notes: |
 
   What the engine reads there:
     data/: the JSON class definitions and name lists loaded by main(),
-      src/cdogs.c:226-245, and the two controller databases,
+      src/cdogs.c:227-247, and the two controller databases,
       src/cdogs/joystick.c:43-54
     data/.wolf3d/: campaign templates used when a Wolfenstein 3D, Spear of
       Destiny or Super 3D Noah's Ark installation is found,
@@ -35,7 +35,7 @@ notes: |
       src/cdogs/pic_manager.c:247-254, plus the font and the window icon
     missions/ and dogfights/: campaigns, src/cdogs/campaigns.c:203-211
     music/: six track directories, src/cdogs/music.c:45-50
-    sounds/: samples, src/cdogs.c:213
+    sounds/: samples, src/cdogs.c:214
     doc/CREDITS: src/credits.c:47
 
 files:
@@ -46,7 +46,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/cdogs.c:228, src/cdogs/ammo.c:77-84"
+    source_ref: "src/cdogs.c:229, src/cdogs/ammo.c:77-84"
 
   - name: "bullets.json"
     path: "cdogs/data/bullets.json"
@@ -55,7 +55,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/cdogs.c:230-232, src/cdogs/weapon_class.c:739-746"
+    source_ref: "src/cdogs.c:232-234, src/cdogs/weapon_class.c:739-746"
 
   - name: "guns.json"
     path: "cdogs/data/guns.json"
@@ -64,7 +64,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/cdogs.c:230-232, src/cdogs/weapon_class.c:757-763"
+    source_ref: "src/cdogs.c:232-234, src/cdogs/weapon_class.c:757-763"
 
   - name: "character_classes.json"
     path: "cdogs/data/character_classes.json"
@@ -73,7 +73,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/cdogs.c:234-235, src/cdogs/character_class.c:353-360"
+    source_ref: "src/cdogs.c:236-237, src/cdogs/character_class.c:362-369"
 
   - name: "map_objects.json"
     path: "cdogs/data/map_objects.json"
@@ -82,7 +82,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/cdogs.c:244-245, src/cdogs/map_object.c:231-238"
+    source_ref: "src/cdogs.c:246-247, src/cdogs/map_object.c:231-238"
 
   - name: "particles.json"
     path: "cdogs/data/particles.json"
@@ -91,7 +91,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/cdogs.c:226, src/cdogs/particle.c:61-64"
+    source_ref: "src/cdogs.c:227, src/cdogs/particle_class.c:54-61"
 
   - name: "pickups.json"
     path: "cdogs/data/pickups.json"
@@ -100,7 +100,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/cdogs.c:241-242, src/cdogs/pickup_class.c:246-252"
+    source_ref: "src/cdogs.c:243-244, src/cdogs/pickup_class.c:246-252"
 
   - name: "prefixes.txt"
     path: "cdogs/data/prefixes.txt"
@@ -109,7 +109,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/prep.c:324-327, src/namegen.c:44-59"
+    source_ref: "src/prep.c:325-328, src/namegen.c:44-59"
     note: "LoadFile reads the stream without checking that fopen succeeded."
 
   - name: "suffixes.txt"
@@ -119,7 +119,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/prep.c:325-327, src/namegen.c:44-59"
+    source_ref: "src/prep.c:326-328, src/namegen.c:44-59"
     note: "LoadFile reads the stream without checking that fopen succeeded."
 
   - name: "suffixnames.txt"
@@ -129,7 +129,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/prep.c:326-327, src/namegen.c:44-59"
+    source_ref: "src/prep.c:327-328, src/namegen.c:44-59"
     note: "LoadFile reads the stream without checking that fopen succeeded."
 
   - name: "gamecontrollerdb.txt"
@@ -186,7 +186,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/cdogs.c:186, src/cdogs/grafx.c:156, src/cdogs/font.c:54-60"
+    source_ref: "src/cdogs.c:186, src/cdogs/grafx.c:157, src/cdogs/font.c:54-60"
 
   - name: "font.json"
     path: "cdogs/graphics/font.json"
@@ -195,7 +195,7 @@ files:
     required: true
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/cdogs.c:186, src/cdogs/grafx.c:156, src/cdogs/font_utils.c:35-41"
+    source_ref: "src/cdogs.c:186, src/cdogs/grafx.c:157, src/cdogs/font_utils.c:35-41"
 
   - name: "cdogs_icon.bmp"
     path: "cdogs/graphics/cdogs_icon.bmp"
@@ -248,7 +248,7 @@ files:
     required: false
     bundled: true
     not_bundled_on: [batocera]
-    source_ref: "src/cdogs.c:213, src/cdogs/sounds.c:187-198, src/cdogs/sounds.c:199-244"
+    source_ref: "src/cdogs.c:214, src/cdogs/sounds.c:187-198, src/cdogs/sounds.c:199-244"
     note: "SoundLoadDir walks the directory and loads every .ogg, .wav and .mp3."
 
   - name: "CREDITS"
