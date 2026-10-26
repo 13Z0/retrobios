@@ -1334,13 +1334,15 @@ class ThePortMasterPort(unittest.TestCase):
         device.assert_console_restored()
 
     def test_the_font_is_put_back_without_setfont_o(self):
-        """busybox setfont has no -O: the font is changed only when the
-        Lat7-Terminus20x10 ArkOS tools restore exists, and that one is put
+        """busybox setfont has no -O: on ArkOS the font is changed only when
+        the Lat7-Terminus20x10 its tools restore exists, and that one is put
         back."""
         device = self.device(FAKE_NO_SAVE="1")
         fonts = device.env["RB_FONTS"]
         (Path(fonts) / "Lat7-Terminus20x10.psf.gz").write_bytes(b"")
-        device.run(["bash", self.script])
+        marker = device.root / "text.plymouth"
+        marker.write_text("")
+        device.run(["bash", self.script], RB_ARK_MARKER=str(marker))
         chosen = f"{fonts}/Lat7-TerminusBold22x11.psf.gz"
         saved = str(self.gamedir / "run" / "font.psf")
         self.assertEqual(device.tools(), [
@@ -1348,6 +1350,14 @@ class ThePortMasterPort(unittest.TestCase):
             f"setfont -C {device.console} {chosen}",
             f"setfont -C {device.console} {fonts}/Lat7-Terminus20x10.psf.gz",
         ])
+
+    def test_elsewhere_a_font_that_cannot_be_saved_is_left(self):
+        """Lat7-Terminus20x10 is ArkOS's font: put back on another device,
+        it left the console in a font it never had."""
+        device = self.device(FAKE_NO_SAVE="1")
+        (Path(device.env["RB_FONTS"]) / "Lat7-Terminus20x10.psf.gz").write_bytes(b"")
+        device.run(["bash", self.script])
+        self.assertEqual(len([t for t in device.tools() if t.startswith("setfont")]), 1)
 
     def test_without_the_fallback_font_the_font_is_left(self):
         device = self.device(FAKE_NO_SAVE="1")
