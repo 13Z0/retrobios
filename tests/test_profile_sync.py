@@ -1840,6 +1840,15 @@ class TestDeclaredDeadUpstream(TestBuildReport):
         self.assertIn("withdrawn, HTTP 451", report.skipped)
         self.assertEqual(report.needs_review(), 0)
 
+    def test_any_refusal_of_a_declared_dead_forge_agrees(self):
+        # citron's taken domain now resolves and fails TLS.
+        def tls(*a, **k):
+            raise profile_sync.upstream.UpstreamError("TLSV1_UNRECOGNIZED_NAME")
+
+        profile_sync.upstream.resolve_head = tls
+        report = build_report("test", self._profile_with("domain taken"), self.dir)
+        self.assertIn("declared", report.skipped)
+
     def test_a_declaration_the_forge_contradicts_is_reported(self):
         """The forge answered: the declaration has outlived its truth."""
         self.files[("pinsha", "a.c")] = ["hit"]
