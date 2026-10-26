@@ -667,7 +667,7 @@
   "src/patch/vibractrl/group/vibractrl.dll.map",
   "src/scripts/aq_crash_fix.lua"
  ],
- "github.com/EKA2L1/EKA2L1@cd7041f58192899d7f2c3c29444487b0d6fefe0b": [
+ "github.com/EKA2L1/EKA2L1@d55da28f59d56d0cd1f49d9e9780047960d973e5": [
   ".gitmodules",
   "CMakeLists.txt",
   "README.md",

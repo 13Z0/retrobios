@@ -7,7 +7,7 @@ source:
 upstream: "https://github.com/EKA2L1/EKA2L1"
 profiled_date: "2026-09-17"
 source_commit:
-  standalone: "cd7041f58192899d7f2c3c29444487b0d6fefe0b"
+  standalone: "d55da28f59d56d0cd1f49d9e9780047960d973e5"
   libretro: "e39ccac46e631be7470b4f420fb8eebed9c24eca"
 upstream_commit:
   libretro: "11f5b6cd141c0884a130ee45743f1f5e17bb1783"
@@ -285,8 +285,8 @@ files:
     source_ref: "src/emu/kernel/src/libmanager.cpp:526-543, src/patch/commdb/group/commdb.dll.map:1-7"
 
   - name: ecam.dll.map
-    size: 1446
-    sha1: 2ca7c3aba7872b92596cf567ad31a82b74d195e9
+    size: 10152
+    sha1: 4d6adbe38278a7bc8d92a989571b6b2950376d9f
     standalone_path: patch/ecam.dll.map
     mode: standalone
     required: false
@@ -303,6 +303,16 @@ files:
     bundled: true
     description: "Patched ecam.dll, EKA2 versions"
     source_ref: "src/emu/kernel/src/libmanager.cpp:545-561, src/emu/kernel/src/libmanager.cpp:591-595, src/patch/ecam/group/ecam.dll.map:1-4"
+
+  - name: ecam_v81a.dll
+    size: 15648
+    sha1: f58ff2dba055fd8e4544dc0ab8cf636fe4fa7c6e
+    standalone_path: patch/ecam_v81a.dll
+    mode: standalone
+    required: false
+    bundled: true
+    description: "Patched ecam.dll for Symbian 8.1a"
+    source_ref: "src/emu/kernel/src/libmanager.cpp:526-543, src/patch/ecam/group/ecam.dll.map:190-193"
 
   - name: goommonitor_general.dll
     size: 925
@@ -326,7 +336,7 @@ files:
 
   - name: mediaclientaudio.dll.map
     size: 48796
-    sha1: 5a3b9bfec3b993c1a2ab0be94cb8b720965ebdc4
+    sha1: 2d732f89f1738559e3557b471725362c571906f9
     standalone_path: patch/mediaclientaudio.dll.map
     mode: standalone
     required: false
@@ -335,8 +345,8 @@ files:
     source_ref: "src/emu/kernel/src/libmanager.cpp:416-420, src/emu/kernel/src/libmanager.cpp:510-561, src/patch/CMakeLists.txt:11"
 
   - name: mediaclientaudio_general.dll
-    size: 14869
-    sha1: eaa7d4a5247de7f0aa42fa397090496370c10769
+    size: 14893
+    sha1: c0055b430294b938934ae48d85cc9c73bda435e1
     standalone_path: patch/mediaclientaudio_general.dll
     mode: standalone
     required: false
@@ -345,8 +355,8 @@ files:
     source_ref: "src/emu/kernel/src/libmanager.cpp:545-561, src/emu/kernel/src/libmanager.cpp:591-595, src/patch/mediaclientaudio/group/mediaclientaudio.dll.map:1-4"
 
   - name: mediaclientaudio_v81a.dll
-    size: 24288
-    sha1: 6f208d82cfd594595ad92cea1e87a60703c61534
+    size: 24424
+    sha1: 4bf5305b64984ad8de186959b17c77cbdd1294c4
     standalone_path: patch/mediaclientaudio_v81a.dll
     mode: standalone
     required: false
@@ -405,8 +415,8 @@ files:
     source_ref: "src/emu/kernel/src/libmanager.cpp:416-420, src/emu/kernel/src/libmanager.cpp:510-561, src/patch/CMakeLists.txt:13"
 
   - name: mediaclientvideo_v100.dll
-    size: 8717
-    sha1: 2e7d9c591f48e44b5210ed36e37764751039c6a5
+    size: 10232
+    sha1: c968cbbbaa955c6d47ffca312853018b2b2a8f7f
     standalone_path: patch/mediaclientvideo_v100.dll
     mode: standalone
     required: false
@@ -415,8 +425,8 @@ files:
     source_ref: "src/emu/kernel/src/libmanager.cpp:526-543, src/patch/mediaclientvideo/group/mediaclientvideo.dll.map:1, src/patch/mediaclientvideo/group/mediaclientvideo.dll.map:168, src/patch/mediaclientvideo/group/mediaclientvideo.dll.map:335, src/patch/mediaclientvideo/group/mediaclientvideo.dll.map:502"
 
   - name: mediaclientvideo_v81a.dll
-    size: 11016
-    sha1: ba22882292d655294a6f9fff1b2059f426030137
+    size: 12800
+    sha1: 5a026862591251994feba372707cfc0ad620dd54
     standalone_path: patch/mediaclientvideo_v81a.dll
     mode: standalone
     required: false
