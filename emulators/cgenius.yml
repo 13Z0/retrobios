@@ -3,9 +3,9 @@ type: standalone
 core_classification: game_engine
 source: "https://gitlab.com/Dringgstein/Commander-Genius"
 upstream: "https://gitlab.com/Dringgstein/Commander-Genius"
-profiled_date: "2026-10-04"
-source_commit: "bee4fcbd235b9d3d804a50cc6ecaccbbe89490f7"
-core_version: "v3.6.3"
+profiled_date: "2026-10-27"
+source_commit: "58a3c4fd0782fa2a087e38a039599b2ecf69ccc9"
+core_version: "v3.6.4"
 display_name: "Commander Genius"
 cores: [cgenius, "CGeniusExe"]
 systems: [commander-keen]
