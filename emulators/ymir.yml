@@ -7,10 +7,10 @@ source:
 upstream: "https://github.com/ymir-emu/Ymir"
 profiled_date: "2026-10-21"
 source_commit:
-  standalone: "73d320b7f9e5550c255a28b7c066a447bdec3460"
+  standalone: "a2c69d8d19c07bc6ad673596545967a02f6a3e5a"
   libretro: "8174cbbeea4070654841cdd4604361b3eee8fdd1"
 core_version:
-  standalone: "v0.4.1-2-g73d320b7"
+  standalone: "v0.4.1-77-ga2c69d8d"
   libretro: "libretro branch"
 display_name: "Sega - Saturn (Ymir)"
 cores:
@@ -22,15 +22,15 @@ systems:
 data_root:
   windows:
     path: "%APPDATA%/StrikerX3/Ymir"
-    source_ref: "apps/ymir-sdl3/src/app/profile.cpp:29-34, apps/ymir-sdl3/src/app/app.cpp:342-437, apps/ymir-sdl3/CMakeLists.txt:641-642"
+    source_ref: "apps/ymir-sdl3/src/app/profile.cpp:29-34, apps/ymir-sdl3/src/app/app.cpp:342-437, apps/ymir-sdl3/CMakeLists.txt:647-648"
     note: "Portable profile: the current directory, then the folder of the executable, when it holds Ymir.toml. The first launch asks between the two. -p names a folder, -u forces this one"
   macos:
     path: "~/Library/Application Support/StrikerX3/Ymir"
-    source_ref: "apps/ymir-sdl3/src/app/profile.cpp:29-34, apps/ymir-sdl3/src/app/app.cpp:342-437, apps/ymir-sdl3/CMakeLists.txt:641-642"
+    source_ref: "apps/ymir-sdl3/src/app/profile.cpp:29-34, apps/ymir-sdl3/src/app/app.cpp:342-437, apps/ymir-sdl3/CMakeLists.txt:647-648"
     note: "Portable profile: the folder of the executable when it holds Ymir.toml. The first launch asks between the two. -p names a folder, -u forces this one"
   linux:
     path: "$XDG_DATA_HOME/StrikerX3/Ymir, else ~/.local/share/StrikerX3/Ymir"
-    source_ref: "apps/ymir-sdl3/src/app/profile.cpp:29-34, apps/ymir-sdl3/src/app/app.cpp:342-437, apps/ymir-sdl3/CMakeLists.txt:641-642"
+    source_ref: "apps/ymir-sdl3/src/app/profile.cpp:29-34, apps/ymir-sdl3/src/app/app.cpp:342-437, apps/ymir-sdl3/CMakeLists.txt:647-648"
     note: "Portable profile: the current directory, then the folder of the executable, when it holds Ymir.toml. The first launch asks between the two. -p names a folder, -u forces this one. Always this folder under Flatpak"
 
 notes: |
