@@ -12051,7 +12051,10 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
             lines.append(f"Not enough free space: {format_size(check['bytes_needed'])} "
                          "needed. Free some, or choose another folder.")
     if wrong:
-        lines.append("They are replaced, and the old copies are kept in a backup folder.")
+        # With its subject: "They are replaced" sat lines under the count.
+        lines.append(f"The {wrong} wrong {'copy' if wrong == 1 else 'copies'} "
+                     f"{'is' if wrong == 1 else 'are'} replaced, the old "
+                     f"{'one' if wrong == 1 else 'ones'} kept in a backup folder.")
     misplaced = _tui_misplaced(state) if check is state.check else []
     if misplaced:
         lines.insert(3, f"{_plural(len(misplaced), 'file')} "
@@ -12403,7 +12406,11 @@ def _view_confirm(state: TuiState, width: int, height: int) -> tuple:
     if state.running or state.dry is None:
         lines: list = ["Counting the files for these choices..."]
     else:
-        lines = _plan_lines(state.dry, state.dest, state)
+        # Why this screen: the numbers above are counted again for the
+        # systems and options chosen, the last look before anything is
+        # written.
+        lines = ["Counted again for your choices. Nothing is written before Install.",
+                 *_plan_lines(state.dry, state.dest, state)]
     return ("Confirm", _compose(state, width, height, lines, tui_rows(state)),
             ("A/Enter Install", "B/Esc Back", "? Help"))
 

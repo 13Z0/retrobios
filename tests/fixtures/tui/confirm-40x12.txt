@@ -1,5 +1,7 @@
  RetroBIOS: Confirm
 
+ Counted again for your choices.
+   Nothing is written before Install.
  1 file to download, 16.0 KB
  BIOS folder: ~/.co.../retroarch/system
  0 in place, 1 missing, 0 wrong copies
@@ -7,6 +9,4 @@
 
  > Install
    Back
-
-
  A/Enter Install  B/Esc Back  ? Help
