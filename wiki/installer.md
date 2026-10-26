@@ -132,7 +132,8 @@ much space is free, before anything is written.
 
 The other choices sit one press away. **Choose systems** ticks the consoles you
 play, with the total to download under the list. A long list opens on **None**:
-A there unticks every system, and A on a system then installs that one alone. **Options** sets the
+A or Enter there unticks every system, and A on a system then installs that one alone. Back
+with nothing ticked keeps the ticks the list opened with. **Options** sets the
 preferred regions, game data, the installed cores only, the cores, the parallel
 downloads, the folder and, for a list with files read from the frontend's save
 directory, that directory. Each row names the option it sets, and **Show the
@@ -144,7 +145,7 @@ files that folder holds and how many are left to download. After an install
 on a muOS, KNULLI or ROCKNIX card, the result offers **Put RetroBIOS on this
 card (update from the console later)**, and **Options** has the same row
 ([On a handheld](#on-a-handheld-the-retrobios-port)). Files the BIOS
-folder holds at the wrong place are counted on the plan, and **Show the files
+folder holds in the wrong place are counted on the plan, and **Show the files
 in the wrong place** lists each one with its reason. Back on the plan
 after a change of options, the folder is checked again, so its numbers are the
 exact ones for the new choice. Ticked systems get their exact count before the
@@ -155,7 +156,7 @@ install starts.
 | Move | Up and Down, `k` and `j` | D-pad Up and Down |
 | Page | PgUp and PgDn | L1 and R1 |
 | First, last | Home and End, `g` and `G` | |
-| Continue, open, choose | Enter, Space | A, Start |
+| Continue, open, choose | Enter, and Space outside a list of ticks | A, Start |
 | Tick, untick | Space, Right, Left | X, D-pad Right and Left |
 | Back | Esc, Backspace | B, Select |
 | Options | `o`, Tab | Y |
@@ -903,8 +904,8 @@ When a platform named with `--platform` is not found on the machine, the
 destination falls back to the directory its detection looks for:
 `/userdata/bios` for Batocera, `/recalbox/share/bios` for Recalbox,
 `/storage/system` for Lakka, `~/retrodeck` for RetroDECK, `~/Emulation/bios`
-for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms/bios` for ROCKNIX,
-`/userdata/bios` for KNULLI, `/storage/roms` for AmberELEC and EmuELEC, `/media/fat/games` for MiSTer,
+for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms` for AmberELEC and
+EmuELEC, `/media/fat/games` for MiSTer,
 `~/RetroPie/BIOS` for RetroPie, `/romm/library/bios` for RomM,
 `C:\RetroBat\bios` for RetroBat, and RetroArch's own default system
 directory for RetroArch. BizHawk has no such folder: it reads `Firmware`
@@ -912,8 +913,15 @@ beside its executable wherever the archive was extracted, so a forced
 `--platform bizhawk` that finds no install stops and asks for `--dest`. MinUI,
 NextUI and MyMinUI keep their files on the SD card. Run on the device, the
 installer finds the card root. From a computer the card is mounted on, a
-forced `--platform minui` stops and asks for the card's root as `--dest`, and a `--dest` that is a folder inside such a
-card (its `Bios/`) is refused with the root to name instead. On Android a forced `--platform retroarch` falls back to
+forced `--platform minui` uses the one MinUI card mounted. Otherwise the screen
+opens **Where is the SD card?**, which lists only the cards of that system and
+offers **Look again**, and `--plain` asks `Card root`, listing the mounted
+drives by number. A root that does not exist is asked again, and so is a
+folder without the card's own files for MinUI, NextUI, MyMinUI, Onion, muOS
+and spruceOS. Without questions (`--no-input`) the run stops with a `--dest`
+example. The same holds for Onion, muOS, spruceOS, KNULLI and ROCKNIX, also
+when chosen from the setup list or its filter. A `--dest` that is a folder
+inside such a card (its `Bios/`) is refused with the root to name instead. On Android a forced `--platform retroarch` falls back to
 `<shared storage>/RetroArch/system` instead, a home directory there belonging
 to Termux rather than to the frontend. Pass `--dest` to say where instead of
 relying on that. When detection met a folder this user cannot open, under the

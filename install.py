@@ -2617,11 +2617,12 @@ def did_you_mean(
     return f"{listing} lists all {len(known)}."
 
 
-def normalize_platform(name: str) -> str:
+def normalize_platform(name: str, say: bool = True) -> str:
     """Return the canonical platform id for user-supplied input.
 
     The site writes MiSTer FPGA and RetroArch: letters and digits decide,
-    as they do for verify.py and generate_pack.py.
+    as they do for verify.py and generate_pack.py. say is False where the
+    name is read again later, which says it once.
     """
     key = _name_key(name)
     for plat in AVAILABLE_PLATFORMS:
@@ -2631,8 +2632,9 @@ def normalize_platform(name: str) -> str:
     # refused: a system named there stands for the list it gets.
     for rule in _EMBEDDED_RULES:
         if key and rule.manifest and key == _name_key(rule.name):
-            print(f"  {rule.name} gets the {display_name(rule.manifest)} file list: "
-                  f"--platform {rule.manifest}.")
+            if say:
+                print(f"  {rule.name} gets the {display_name(rule.manifest)} file list: "
+                      f"--platform {rule.manifest}.")
             return rule.manifest
     print(f"Unknown platform '{name.strip()}'. "
           + did_you_mean([name], list(AVAILABLE_PLATFORMS), "--list-platforms"),
@@ -4218,7 +4220,7 @@ def place_save_entries(
         if place.by_core:
             where += f"{os.sep}<core>"
         print(f"  {_plural(len(saved), 'file')} read from {display}'s save directory "
-              f"go to {where}")
+              f"{'goes' if len(saved) == 1 else 'go'} to {where}")
         EVENTS.emit("saves", platform=str(manifest.get("platform", "")),
                     files=len(saved), folder=where)
         return files, []
@@ -5401,7 +5403,7 @@ def _report_outcome(
             print(f"  ... and {len(failures) - 10} more")
     if declined and not downloaded and not errors and not interrupted:
         print(f"\nNothing installed: {_plural(declined, 'file')} not downloaded, "
-              "as answered.")
+              + ("which --offline does not do." if _offline_only() else "as answered."))
         print(f"{_plural(up_to_date, 'file')} already up to date at {_locations(paths)}.")
         return
     kept = _kept_lines()
@@ -6275,10 +6277,16 @@ def _choose_platform(title: str, default: str = "") -> str:
               "or q to quit.")
 
 
-def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
-    """Ask for a platform and a BIOS directory when nothing was detected."""
+def _prompt_manual_platform(os_type: str, ask: bool = True) -> list[tuple[str, Path]]:
+    """Ask for a platform and a BIOS directory when nothing was detected.
+
+    A system that runs from its card gets the card's root asked for, as
+    --platform rocknix does: /storage/roms/bios was offered on a PC.
+    """
     plat = _choose_platform("No supported platform found here. Choose the one to "
                             "install for:", "retroarch")
+    if card_bound(plat, plat) is not None:
+        return [(plat, card_install_dest(plat, plat, True, ask))]
     default_dest = _default_dest(os_type, plat)
     raw = ""
     while not raw:
@@ -6504,7 +6512,7 @@ INSTALLED_ONLY = "installed"
 def _prompt_custom_selection(
     plat: str, files: list[dict], omitted: list[dict],
     installed: tuple[list[dict], list[dict]] | None = None,
-    name: str = "", dry_run: bool = False,
+    name: str = "", dry_run: bool = False, data_trees: list[dict] | None = None,
 ) -> tuple[list[str], list[str], list[str]] | str | None:
     """Offer to narrow the install by system, core and region.
 
@@ -6513,7 +6521,15 @@ def _prompt_custom_selection(
     installed read) holds, or the three choices. Each empty list keeps
     everything on its axis.
     """
-    print(f"\n{name or display_name(plat)}: {_sized(files)}.")
+    trees = data_trees or []
+    data = sum(len(entry.get("files") or {}) for entry in trees)
+    data_size = sum(meta.get("size", 0) for entry in trees
+                    for meta in (entry.get("files") or {}).values())
+    print(f"\n{name or display_name(plat)}: {_sized(files)}"
+          + (f", and {_plural(data, 'data file')} ({format_size(data_size)})" if data else "")
+          + ".")
+    if _offline_only():
+        print("  --offline: only the files found on this machine are installed.")
     # A dry run installs nothing: "install everything" was asked before it.
     print("  Enter) list everything, nothing is written" if dry_run
           else "  Enter) install everything")
@@ -8226,7 +8242,7 @@ def _check_copy_lines(
     if fixed:
         verb = "is" if fixed == 1 else "are"
         them = "it" if fixed == 1 else "them"
-        lines.append(f"  {fixed} of these files {verb} in the BIOS folder at the wrong place: "
+        lines.append(f"  {fixed} of these files {verb} in the BIOS folder in the wrong place: "
                      f"a run without --check copies {them} where the cores open {them}, and "
                      f"leaves your {'copy' if fixed == 1 else 'copies'} as "
                      f"{'it is' if fixed == 1 else 'they are'}.")
@@ -9257,7 +9273,7 @@ def _open_local_sources(args: argparse.Namespace) -> None:
           + (f", {parts} parts" if parts > 1 or _PART_FILE.match(pack.files[0].name) else ""))
     spelled = pack.platforms()
     if args.platform is not None:
-        plat = normalize_platform(args.platform)
+        plat = normalize_platform(args.platform, say=False)
         if spelled and plat not in spelled:
             print(f"Error: {pack.name} is a pack for "
                   f"{' and '.join(display_name(n) for n in spelled)}, not "
@@ -9495,18 +9511,31 @@ def _ends_with(path: Path, relative: str) -> bool:
     return len(parts) >= len(tail) and parts[len(parts) - len(tail):] == tail
 
 
-def card_dest(named: str, plat: str, dest: Path) -> tuple[str, Path]:
-    """The file list and folder for a --dest that names a handheld's card.
+class CardChoice(NamedTuple):
+    """Where the files of a folder named for a card go, and what is said: a
+    note, or why the folder is not the card of the system named."""
+
+    plat: str
+    folder: Path
+    note: str = ""
+    refused: str = ""
+    # The system's folder below its card, and the file that names the card.
+    below: str = ""
+    marker: str = ""
+
+
+def card_choice(named: str, plat: str, dest: Path) -> CardChoice:
+    """The file list and folder for a folder that may be a handheld's card.
 
     The card's root is where the user points, its BIOS folder is below it:
     `--platform muos --dest /media/me/SD1` wrote to the root, which muOS
-    never reads. A system named on the command line whose card this is not
-    is refused with the folder it reads.
+    never reads. A system named whose card this is not is refused with the
+    folder it reads.
     """
     found = card_system(dest)
     if found and (not plat or found[0] == plat) and found[1] != dest:
-        print(f"  {found[2]} card: {display_name(found[0])} files, in {found[1]}")
-        return found[0], found[1]
+        return CardChoice(found[0], found[1],
+                          f"{found[2]} card: {display_name(found[0])} files, in {found[1]}")
     # Only a system named by its own name: --platform retroarch or knulli
     # says which list, not which card.
     key = _name_key(named)
@@ -9516,23 +9545,48 @@ def card_dest(named: str, plat: str, dest: Path) -> tuple[str, Path]:
     if rule is None or found:
         if len({(match.manifest, match.bios) for match in matched}) > 1:
             names = " and ".join(sorted({match.name for match in matched}))
-            print(f"  {screen_text(str(dest))} holds the files of {names}: installing into "
-                  "it as named. Name the card's BIOS folder with --dest to write there.")
-        return plat, dest
+            return CardChoice(plat, dest, f"{screen_text(str(dest))} holds the files of "
+                              f"{names}: installing into it as named. Name the card's BIOS "
+                              "folder with --dest to write there.")
+        return CardChoice(plat, dest)
     # Its folder on the card, or one its device reads (/run/muos/storage/bios).
     own = {device.bios for device in _EMBEDDED_RULES if device.name == rule.name}
     if dest.as_posix() in own or _ends_with(dest, rule.bios):
-        return plat, dest
+        return CardChoice(plat, dest)
     if any(match.name == rule.name for match in matched):
         # A card two systems claim, the one named among them.
-        print(f"  {rule.name} card: {display_name(plat)} files, in {dest / rule.bios}")
-        return plat, dest / rule.bios
+        return CardChoice(plat, dest / rule.bios, f"{rule.name} card: {display_name(plat)} "
+                          f"files, in {dest / rule.bios}")
     marker = rule.values[0].split("/")[0]
-    print(f"Error: {dest} is not a {rule.name} card: it holds no {marker}. "
-          f"{rule.name} reads its BIOS files from {rule.bios} on its card: name the card's "
-          f"root (the folder holding {marker}) or that folder: --dest <card>/{rule.bios}",
-          file=sys.stderr)
-    sys.exit(1)
+    return CardChoice(plat, dest, refused=f"{dest} is not a {rule.name} card: it holds no "
+                      f"{marker}. {rule.name} reads its BIOS files from {rule.bios} on its "
+                      "card", below=rule.bios, marker=marker)
+
+
+def card_dest(named: str, plat: str, dest: Path) -> tuple[str, Path]:
+    """The file list and folder for a --dest that names a handheld's card,
+    the run ended on a folder that is not the card of the system named."""
+    choice = card_choice(named, plat, dest)
+    if choice.refused:
+        print(f"Error: {choice.refused}: name the card's root (the folder holding "
+              f"{choice.marker}) or that folder: --dest <card>/{choice.below}",
+              file=sys.stderr)
+        sys.exit(1)
+    if choice.note:
+        print(f"  {choice.note}")
+    return choice.plat, choice.folder
+
+
+def card_root_above(dest: Path) -> tuple[str, Path] | None:
+    """(platform, root) of the MinUI-family card dest is inside, when dest is
+    a folder below its root and not the root."""
+    if card_platform(dest) is not None:
+        return None
+    for parent in list(dest.absolute().parents)[:2]:
+        holder = card_platform(parent)
+        if holder:
+            return holder, parent
+    return None
 
 
 def _check_card_root(plat: str, dest: Path) -> None:
@@ -9541,16 +9595,13 @@ def _check_card_root(plat: str, dest: Path) -> None:
     The file list writes Bios/<TAG>/ below --dest: given the card's Bios
     folder, every file would land in Bios/Bios/<TAG>/, which no core reads.
     """
+    above = card_root_above(dest)
+    if above:
+        print(f"Error: {dest} is inside a {display_name(above[0])} card. "
+              f"Name the card's root: --dest {above[1]}", file=sys.stderr)
+        sys.exit(1)
     found = card_platform(dest)
-    if found is None:
-        for parent in list(dest.absolute().parents)[:2]:
-            holder = card_platform(parent)
-            if holder:
-                print(f"Error: {dest} is inside a {display_name(holder)} card. "
-                      f"Name the card's root: --dest {parent}", file=sys.stderr)
-                sys.exit(1)
-        return
-    if found != plat:
+    if found is not None and found != plat:
         print(f"  Note: this card holds {display_name(found)} ({CARD_MARKER}), and the "
               f"{display_name(plat)} file list was asked for.")
 
@@ -9579,13 +9630,50 @@ def mounted_cards_of(system: str, plat: str) -> list[Path]:
             if any(rule.name == system for rule in _card_matches(mount))]
 
 
-def card_install_dest(named: str, plat: str, interactive: bool) -> Path:
+def card_root_folder(named: str, plat: str, root: Path) -> CardChoice:
+    """The BIOS folder for a root chosen as the card of a card-bound system,
+    or why root is not that card.
+
+    A typed root was taken as it was: a typo four folders deep was created
+    and filled, a menu answer (8) became a relative card, and a folder that
+    was no Onion card ended the run. Each is refused here, with its reason,
+    for the question to be asked again.
+    """
+    system, below = card_bound(named, plat) or (display_name(plat), "")
+    # The card is mounted, its BIOS folder may not be made yet.
+    card = (root.parents[len(PurePosixPath(below).parts) - 1]
+            if below and _ends_with(root, below) else root)
+    if not _is_dir(card):
+        return CardChoice(plat, root, refused=f"{card} does not exist, or is not a folder")
+    if plat in CARD_PLATFORMS:
+        above = card_root_above(root)
+        if above:
+            return CardChoice(plat, root, refused=f"{root} is inside a "
+                              f"{display_name(above[0])} card, whose root is {above[1]}")
+        found = card_platform(root)
+        if found is None:
+            return CardChoice(plat, root, refused=f"{root} holds no {CARD_MARKER}: it is "
+                              f"not a {system} card")
+        note = ("" if found == plat else f"Note: this card holds {display_name(found)} "
+                f"({CARD_MARKER}), and the {display_name(plat)} file list was asked for.")
+        return CardChoice(plat, root, note)
+    choice = card_choice(named, plat, root)
+    if choice.refused or choice.folder != root or not below or _ends_with(root, below):
+        return choice
+    # A KNULLI share or a ROCKNIX card read as a list's name: its folder
+    # below the root, as the device reads it.
+    return choice._replace(folder=root / below)
+
+
+def card_install_dest(named: str, plat: str, interactive: bool, ask: bool = True) -> Path:
     """The folder for a card-bound system named without --dest, on a machine
     that is not the device.
 
     One mounted card that runs it is taken. At a terminal the card's root is
-    asked for, never this machine's own folder. Without questions the run
-    stops on the --dest that names the card.
+    asked for, never this machine's own folder, and asked again until it is
+    that card. Without questions the run stops on the --dest that names the
+    card. ask is whether creating several missing folders is asked first,
+    as it is for --dest.
     """
     system, below = card_bound(named, plat) or (display_name(plat), "")
     cards = mounted_cards_of(system, plat)
@@ -9606,21 +9694,27 @@ def card_install_dest(named: str, plat: str, interactive: bool) -> Path:
               f"Mount the card and name its root with --dest, for example: {example}",
               file=sys.stderr)
         sys.exit(1)
+    # The drives the interface lists, each with what its own files say.
+    mounts = _mounted_cards()
     print(f"  {system} keeps its BIOS files on its SD card, not on this machine. "
-          "Mount the card, then type its root folder.")
-    raw = ""
-    while not raw:
+          "Mount the card, then type its root folder"
+          + (" or its number:" if mounts else "."))
+    for index, mount in enumerate(mounts, 1):
+        print(f"    {index}) {mount} ({_card_what(mount)})")
+    while True:
         raw = _ask("Card root (Ctrl+C to stop): ")
-    root = _typed_folder(raw)
-    if plat in CARD_PLATFORMS:
-        _check_card_root(plat, root)
-        return root
-    folder = card_dest(named, plat, root)[1]
-    if folder == root and below and not _ends_with(root, below):
-        # A KNULLI share or a ROCKNIX card read as a list's name: its
-        # folder below the root, as the device reads it.
-        return root / below
-    return folder
+        if not raw:
+            continue
+        root = (mounts[int(raw) - 1] if raw.isdigit() and 1 <= int(raw) <= len(mounts)
+                else _typed_folder(raw))
+        choice = card_root_folder(named, plat, root)
+        if choice.refused:
+            print(f"  {choice.refused}. Type the root of the {system} card.")
+            continue
+        if choice.note:
+            print(f"  {choice.note}")
+        _missing_dest(choice.folder, ask, "typed")
+        return choice.folder
 
 
 def _platform_for_dest(os_type: str, dest: Path, interactive: bool) -> str:
@@ -9759,8 +9853,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         elif bound is not None:
             # Its files go on its SD card, which is never this machine's
             # own folder.
-            platforms = [(args.platform, card_install_dest(named, args.platform,
-                                                           interactive))]
+            platforms = [(args.platform, card_install_dest(
+                named, args.platform, interactive,
+                not (args.check or args.dry_run or args.yes)))]
         elif args.platform in PORTABLE_ONLY:
             # A portable emulator reads the folder beside its executable:
             # any default would be a folder it never opens.
@@ -9828,9 +9923,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 for line in _manual_usage_hint(os_type, asked):
                     print(line)
                 sys.exit(1)
-            platforms = _prompt_manual_platform(os_type)
+            platforms = _prompt_manual_platform(
+                os_type, not (args.check or args.dry_run or args.yes))
             plat, typed = platforms[0]
-            if typed != _default_dest(os_type, plat):
+            # A card's root was asked for, and its folders checked, there.
+            if typed != _default_dest(os_type, plat) and card_bound(plat, plat) is None:
                 _missing_dest(typed, not (args.check or args.dry_run or args.yes),
                               "typed")
         else:
@@ -10100,6 +10197,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             selection = _prompt_custom_selection(
                 plat_name, files, omitted_files, installed,
                 display_name(plat_name, manifest), args.dry_run,
+                manifest.get("data_directories") or [],
             )
             if selection is None:
                 smaller = ("  Nothing downloaded. To install less, run the same command "
@@ -10298,9 +10396,25 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             continue
 
         if to_download:
-            dl_size = sum(f.get("size", 0) for f in to_download)
             fetched = [f for f in to_download if id(f) not in copies]
+            if interactive and not args.yes and _offline_only() and fetched:
+                # The screen offers no Install for these: the question asked
+                # to download 6.6 GB that --offline never fetches.
+                print(f"\n  {_plural(len(fetched), 'file')} "
+                      f"{'needs' if len(fetched) == 1 else 'need'} the internet, which "
+                      "--offline does not use. Copy them from your old card or a folder "
+                      "(--from), or run the installer again with a pack (--from-pack) or "
+                      "without --offline.")
+                # Not done: the summary says they were not downloaded.
+                files_pending += len(fetched)
+                total_declined += len(fetched)
+                to_download = [f for f in to_download if id(f) in copies]
+                fetched = []
+            dl_size = sum(f.get("size", 0) for f in to_download)
             fetch_size = _bytes(fetched)
+            if not to_download:
+                total_up_to_date += len(up_to_date)
+                continue
             if (
                 interactive
                 and not args.yes
@@ -10729,6 +10843,21 @@ def _split_word(word: str, room: int) -> list[str]:
     return pieces + [word] if word else pieces
 
 
+_UNIT = re.compile(r"(B|KB|MB|GB)\b")
+
+
+def _glued_words(text: str) -> list[str]:
+    """The words of text, a size kept with its unit: "5.1" / "KB" was
+    broken across two lines of a 40-column headline."""
+    words: list[str] = []
+    for word in text.split():
+        if words and _UNIT.match(word) and re.fullmatch(r"\(?\d+(\.\d+)?", words[-1]):
+            words[-1] += f" {word}"
+        else:
+            words.append(word)
+    return words
+
+
 def _wrap(text: str, width: int, indent: str = "  ") -> list[str]:
     """Lines of at most width cells, the ones after the first indented."""
     if cell_width(text) <= width:
@@ -10736,7 +10865,7 @@ def _wrap(text: str, width: int, indent: str = "  ") -> list[str]:
     lead = text[:len(text) - len(text.lstrip(" "))]
     lines: list[str] = []
     line = ""
-    for word in text.split():
+    for word in _glued_words(text):
         for piece in _split_word(word, width - len(lead + indent)):
             prefix = lead + indent if lines else lead
             longer = f"{line} {piece}" if line else piece
@@ -10795,7 +10924,9 @@ class TuiState:
         self.status: str = ""
         self.cols: int = 80
         self.rows: int = 24
-        self.now: float = 0.0
+        # A check started before the loop's first tick counted the
+        # machine's uptime.
+        self.now: float = time.monotonic()
         # (platform, folder, label) for each setup found here.
         self.setups: list = []
         self.notes: list = []
@@ -10814,6 +10945,8 @@ class TuiState:
         # (system, BIOS folder below the card root) when the setup asked for
         # runs from an SD card: the folder screen offers the mounted cards.
         self.card_bound: tuple[str, str] | None = None
+        # The mounted cards of that system, as last looked for.
+        self.cards: list | None = None
         # (width and text, lines) of the last pager wrapped.
         self.pager_cache: tuple | None = None
         self.path_text: str = ""
@@ -10873,6 +11006,9 @@ class TuiState:
         self.must_confirm: bool = False
         # Choices, each one an option of the command line.
         self.ticked: set = set()
+        # The ticks the systems list opened with: Back with none ticked
+        # brings them back, nothing having been chosen.
+        self.ticked_before: set | None = None
         self.cli_systems: list = []
         self.regions: list = []
         self.cli_regions: list = []
@@ -11220,18 +11356,41 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
         rows = [_filter_row(state)]
         for plat in AVAILABLE_PLATFORMS:
             named = _setup_matches(plat, systems.get(plat, []), needle)
-            if named is not None:
+            if named is None:
+                continue
+            # A system that runs from its SD card, named or run by a device
+            # typed, is a row of its own that asks for the card: "onion" on
+            # RetroArch's row led to this computer's RetroArch folder.
+            cards = [name for name in named
+                     if name in systems.get(plat, []) and card_bound(name, plat)]
+            others = [name for name in named if name not in cards]
+            if not named or others:
                 # The systems the filter named, those a device typed runs:
                 # "miyoo" on RetroArch read "muOS, JELOS, KOLOS...".
                 rows.append(TuiRow("platform", display_name(plat),
-                                   ", ".join(named or systems.get(plat, [])), plat))
+                                   ", ".join(others or systems.get(plat, [])), plat))
+            for name in cards:
+                devices = [device for device in _SETUP_DEVICES.get(name, ())
+                           if _matches(device, _device_needle(needle))]
+                rows.append(TuiRow("cardsystem", f"{name}, SD card", ", ".join(devices)
+                                   or f"{display_name(plat)} files", (plat, name)))
         return rows
     if screen == "folder":
         rows = [TuiRow("default", "Use this folder")] if state.folder_default else []
-        if _tui_card_bound(state):
-            rows += [TuiRow("card", f"{_mount_name(mount)} ({_card_what(mount)})", value=mount)
-                     for mount in _mounted_cards()]
-        return rows + [TuiRow("browse", "Browse for a folder"), TuiRow("type", "Type a path")]
+        bound = _tui_card_bound(state)
+        if not bound:
+            return rows + [TuiRow("browse", "Browse for a folder"),
+                           TuiRow("type", "Type a path")]
+        # Only the cards whose own files say they run the system: A on the
+        # first mount wrote Onion's layout on a muOS card.
+        mounts = (state.cards if state.cards is not None
+                  else mounted_cards_of(bound[0], state.platform))
+        cards = [TuiRow("card", f"{_mount_name(mount)} ({_card_what(mount)})", value=mount)
+                 for mount in mounts]
+        rows += cards + [TuiRow("browse", "Browse for a folder"), TuiRow("type", "Type a path")]
+        # On the device itself its folder is found, and no card is looked for.
+        here = state.folder_default is not None and state.folder_kind == "found"
+        return rows + ([] if cards or here else [TuiRow("rescan", "Look again")])
     if screen == "browse":
         return list(state.browse_rows)
     if screen == "create":
@@ -11261,6 +11420,9 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
     if screen == "confirm":
         if state.running or state.dry is None:
             return []
+        if _offline_only() and not _dry_copies(state):
+            # The plan's rule: Install would only fail every file.
+            return [TuiRow("back", "Back")]
         return [TuiRow("install", "Install"), TuiRow("back", "Back")]
     if screen == "error":
         rows = ([TuiRow("retry", "Try again")]
@@ -11313,6 +11475,13 @@ def _plan_copies(state: TuiState, check: dict) -> list[str]:
     local = {event["dest"] for event in state.found} if check is state.check else set()
     sizes = {event["dest"] for event in state.files}
     return [dest for dest in local if dest in sizes]
+
+
+def _dry_copies(state: TuiState) -> list[str]:
+    """The files the confirm or preview run would install that this
+    machine holds."""
+    local = {event["dest"] for event in state.found}
+    return [event["dest"] for event in state.dry_files if event["dest"] in local]
 
 
 def _short_of_space(state: TuiState, check: dict) -> bool:
@@ -11452,6 +11621,10 @@ def _back(state: TuiState) -> list[tuple]:
         state.stack.append("quit")
         state.focus["quit"] = 0
         return effects
+    if state.screen == "systems" and not state.ticked and state.ticked_before:
+        # Enter on None, then Esc: the plan kept its headline over an
+        # Install the run refused.
+        state.ticked = set(state.ticked_before)
     state.stack.pop()
     if state.screen == "checking" and not state.running:
         # Stay after Esc on a check started from the command line: a
@@ -11566,9 +11739,54 @@ def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
     return _start_check(state)
 
 
+def _card_folder(state: TuiState, folder: Path) -> CardChoice | None:
+    """What a folder chosen for a setup that runs from its SD card resolves
+    to, as a card root typed in line mode does: None when no card is asked
+    for, or when the folder is inside a MinUI card, whose root _choose
+    offers."""
+    bound = _tui_card_bound(state)
+    if bound is None or (state.platform in CARD_PLATFORMS and card_root_above(folder)):
+        return None
+    return card_root_folder(bound[0], state.platform, folder)
+
+
+def _card_refusal(state: TuiState, folder: Path) -> str:
+    """Why folder is not the card the chosen setup runs from, or ""."""
+    choice = _card_folder(state, folder)
+    if choice is None or not choice.refused:
+        return ""
+    return f"{choice.refused}. Choose the root of the {_tui_card_bound(state)[0]} card."
+
+
+def _choose_card(state: TuiState, folder: Path) -> list[tuple]:
+    """_choose for a folder picked on the folder, browse or path screen, or
+    given with --dest: for a setup that runs from its SD card, the card's
+    own BIOS folder, and a folder that is not its card refused in words."""
+    choice = _card_folder(state, folder)
+    if choice is None:
+        return _choose(state, state.platform, folder)
+    if choice.refused:
+        state.status = _card_refusal(state, folder)
+        if state.stack and state.screen in ("folder", "browse", "path", "platforms"):
+            return []
+        state.folder_default, state.folder_kind = None, "usual"
+        return _push(state, "folder")
+    card = card_system(folder)
+    if card and card[1] == choice.folder:
+        # Titled as the same card found by itself: "Onion (RetroArch files)".
+        _DETECTED_OS.setdefault((choice.plat, choice.folder), card[2])
+    return _choose(state, choice.plat, choice.folder)
+
+
 def _open_folder_screen(state: TuiState, default: Path | None,
                         kind: str = "usual") -> list[tuple]:
     state.folder_default, state.folder_kind = default, kind
+    # The cards are looked for when the screen opens and on Look again: a
+    # card inserted meanwhile moved the rows under the focus.
+    state.cards = None
+    bound = _tui_card_bound(state)
+    if bound:
+        state.cards = mounted_cards_of(bound[0], state.platform)
     refused = kind == "chosen" and (state.facts.get("writable") is False
                                     or _short_of_space(state, state.check or {}))
     # A folder just refused as full or read-only: Browse, not Use this
@@ -11577,7 +11795,11 @@ def _open_folder_screen(state: TuiState, default: Path | None,
 
 
 def _mount_name(mount: Path) -> str:
-    """How a person names a mounted card: E:\\ on Windows, its label elsewhere."""
+    """How a person names a mounted card: E:\\ on Windows, its label elsewhere.
+    Under WSL /mnt/d is the Windows D: drive, which "d" did not say."""
+    if (_WSL["active"] and mount.parent == Path(_WSL["root"]) and len(mount.name) == 1
+            and mount.name.isalpha()):
+        return f"{mount.name.upper()}:"
     return mount.name or str(mount)
 
 
@@ -11740,14 +11962,22 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         if action == "another":
             return _push(state, "platforms", _platform_focus(state, "retroarch"))
         plat, path, _label = state.setups[row.value]
+        # A setup found here is its folder: a card looked at and backed
+        # out of described the RetroArch chosen next as that card.
+        state.card_bound = None
         return _choose(state, plat, path)
     if screen == "platforms":
+        plat, system = row.value if action == "cardsystem" else (row.value, row.value)
+        state.platform = plat
+        state.card_bound = card_bound(system, plat)
         if state.dest_given is not None:
-            return _choose(state, row.value, state.dest_given)
-        state.platform = row.value
-        state.card_bound = card_bound(row.value, row.value)
+            return _choose_card(state, state.dest_given)
         if state.card_bound:
-            return _open_folder_screen(state, None)
+            # On the device itself, the folder detection found there: a
+            # KNULLI was asked for its own card.
+            found = next((path for name, path, _label in state.setups if name == plat
+                          and detected_os(name, path) == state.card_bound[0]), None)
+            return _open_folder_screen(state, found, "found" if found else "usual")
         # The folder detected here before the built-in one: the built-in
         # default was offered as where RetroArch reads, when the
         # retroarch.cfg found here names another.
@@ -11758,9 +11988,16 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
     if screen == "folder":
         if action == "default":
             return _choose(state, state.platform, state.folder_default)
-        if action == "card":
-            below = (_tui_card_bound(state) or ("", ""))[1]
-            return _choose(state, state.platform, row.value / below if below else row.value)
+        if action in ("card", "rescan"):
+            if action == "rescan":
+                state.cards = mounted_cards_of(_tui_card_bound(state)[0], state.platform)
+                cards = [index for index, item in enumerate(tui_rows(state))
+                         if item.action == "card"]
+                state.focus["folder"] = cards[0] if cards else state.focus.get("folder", 0)
+                state.status = ("" if cards else f"Still no {_tui_card_bound(state)[0]} card "
+                                "is mounted.")
+                return []
+            return _choose_card(state, row.value)
         if action == "browse":
             state.browse_for = "dest"
             _push(state, "browse")
@@ -11784,7 +12021,7 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             # The check runs again with it: the plan then says what it holds.
             return _start_check(state)
         if action == "use":
-            return _choose(state, state.platform, state.browse_dir)
+            return _choose_card(state, state.browse_dir)
         if action == "up" and state.browse_dir is not None:
             if row.value == state.browse_dir:
                 _browse_to(state, None if os.name == "nt" else state.browse_dir)
@@ -11817,6 +12054,8 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             return _open_from_browser(state)
         if action in ("misplaced", "unreadable"):
             return _push(state, action)
+        if action == "systems":
+            state.ticked_before = set(state.ticked)
         if action == "systems" and len(state.systems) > TUI_LONG_LIST:
             # On None: picking one system of 66 began with Up, Up, A.
             return _push(state, action, 1)
@@ -12147,8 +12386,12 @@ def _path_key(state: TuiState, key: TuiKey) -> list[tuple]:
         if closed is not None:
             state.status = _closed_status(state, closed)
             return []
+        refused = _card_refusal(state, path)
+        if refused:
+            state.status = refused
+            return []
         state.stack.pop()
-        return _choose(state, state.platform, path)
+        return _choose_card(state, path)
     return []
 
 
@@ -12505,6 +12748,9 @@ def _route_hint(state: TuiState, parts: tuple) -> tuple:
         named.append(key + sep + what)
     if state.pad == "muxterm" and state.screen == "path":
         named.append("Select Keyboard")
+    if state.pad == "miyoo" and state.screen in _CHECKLISTS:
+        tick = [entry for entry in named if entry.startswith("A ")]
+        named = named[:1] + tick + [entry for entry in named[1:] if entry not in tick]
     return tuple(named)
 
 
@@ -12542,6 +12788,7 @@ _ROW_VERBS = {
     "jobs": "Change", "retry": "Try again", "back": "Back", "stay": "Stay",
     "fromcard": "Choose", "from": "Add a folder", "misplaced": "Show", "zip": "Copy from it",
     "unreadable": "Show", "exit": "Exit", "addapp": "Put it on the card",
+    "cardsystem": "Choose", "rescan": "Look again",
 }
 
 
@@ -12773,15 +13020,18 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         lines.append("You cannot write to this folder: choose another one.")
     counts = (f"{check['present']} in place, {check['missing']} missing, "
               f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
+    lines.append(counts)
     if copied and fetch:
         # 47 to download above 49 missing and 1 wrong copy: the 3 found on
-        # this machine are the difference, said where the sum is read.
-        counts += (f": {len(copied)} of them {'is' if len(copied) == 1 else 'are'} "
-                   f"copied from this machine, {fetch} downloaded")
-    lines.append(counts)
-    saves = (state.saves if check is state.check
+        # this machine are the difference, on a line of its own ("0 wrong
+        # copies: 2 of them" read as two of the zero).
+        lines.append(f"{need} to install: {len(copied)} copied from this machine, {fetch} "
+                     + ("from the pack" if LOCAL.pack is not None else "downloaded"))
+    after_counts = len(lines)
+    saves =(state.saves if check is state.check
              else state.dry_saves if check is state.dry else None)
-    lines += [_styled(line, "path") for line in _saves_lines(state, saves)]
+    saves_lines = _saves_lines(state, saves)
+    lines += [_styled(line, "path" if index else "") for index, line in enumerate(saves_lines)]
     found_in = _retroarch_config_at(dest) if dest is not None else None
     if found_in:
         lines.append(_styled(f"Named by {_short_path(Path(found_in[0]), state.home)}", "path"))
@@ -12798,7 +13048,7 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
                      f"{'one' if wrong == 1 else 'ones'} kept in a backup folder.")
     misplaced = _tui_misplaced(state) if check is state.check else []
     if misplaced:
-        lines.insert(3, f"{_plural(len(misplaced), 'file')} "
+        lines.insert(after_counts, f"{_plural(len(misplaced), 'file')} "
                      f"{'is' if len(misplaced) == 1 else 'are'} in the wrong place, "
                      f"{'it' if len(misplaced) == 1 else 'they'} will be copied where the "
                      "emulators read "
@@ -12821,7 +13071,7 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         lines += _unavailable_lines(state)
     if check is state.check:
         lines += _unplaced_lines(state.check_summary, state,
-                                 "Choose it in Options, Save folder.")
+                                 "Choose it in Options, Save folder (--save-dir).")
     return lines[:2] + offline_lines + lines[2:]
 
 
@@ -12833,13 +13083,16 @@ def _saves_lines(state: TuiState, saves: dict | None) -> list[str]:
         return []
     name = display_name(state.platform) if state.platform else "the frontend"
     count = saves["files"]
+    # The folder alone is cut in the middle: cut with the sentence, it
+    # lost "directory goes to" even at 80 columns.
     return [f"{_plural(count, 'file')} read from {name}'s save directory "
-            f"{'goes' if count == 1 else 'go'} to "
-            f"{_short_path(Path(saves['folder']), state.home)}"]
+            f"{'goes' if count == 1 else 'go'} to:",
+            _short_path(Path(saves['folder']), state.home)]
 
 
 def _unplaced_lines(summary: dict | None, state: TuiState,
-                    remedy: str = "Name it with --save-dir.") -> list[str]:
+                    remedy: str = "Choose it in Options, Save folder (--save-dir), "
+                    "next time.") -> list[str]:
     """The files read from the frontend's save directory that the run left
     out, that directory being unknown: said, never silent."""
     count = sum(group.get("files", 0) for group in (summary or {}).get("skipped") or []
@@ -12889,12 +13142,22 @@ def _view_platforms(state: TuiState, width: int, height: int) -> tuple:
 def _view_folder(state: TuiState, width: int, height: int) -> tuple:
     name = display_name(state.platform)
     bound = _tui_card_bound(state)
-    if bound:
+    if bound and state.folder_default is not None and state.folder_kind == "found":
+        # On the device itself: its own folder, which is no card to look for.
+        title = "Which folder?"
+        before = [f"{bound[0]} reads its BIOS files from:", str(state.folder_default)]
+    elif bound:
         title = "Where is the SD card?"
         before = [f"{bound[0]} keeps its BIOS files on its SD card. Choose the card's "
                   "root folder"
                   + (", the one holding .system." if state.platform in CARD_PLATFORMS
                      else ".")]
+        if state.folder_default is not None:
+            # Use this folder takes it: named, not left to guess.
+            before += [f"The BIOS folder chosen for {bound[0]}:", str(state.folder_default)]
+        if any(row.action == "rescan" for row in tui_rows(state)):
+            before.append(f"No {bound[0]} card is mounted. Insert it, then choose "
+                          "Look again.")
     elif state.folder_default is not None:
         title = "Which folder?"
         lead = {"found": f"{name} reads its BIOS files from:",
@@ -13052,8 +13315,7 @@ def _view_systems(state: TuiState, width: int, height: int) -> tuple:
         footer.insert(0, OTHER_HELP)
     elif "shared" in focused.right:
         count = _shared_needed(state)[focused.value][0]
-        footer.insert(0, f"{count} of these files are shared with other systems, "
-                      "counted once in the total.")
+        footer.insert(0, f"+{count} shared: counted once")
     needle = state.filters.get("systems", "")
     after = [f"No system matches '{needle}'."] if len(rows) == 3 and needle else []
     if state.status:
@@ -13109,7 +13371,9 @@ _STATE_WORDS = {"missing": "missing", "wrong_hash": "wrong copy"}
 def _pager_items(state: TuiState) -> list:
     """The text of a screen that scrolls, the same for its view and its keys."""
     if state.screen == "misplaced":
-        return [f"{event['dest']}: {event['reason']}" for event in _tui_misplaced(state)]
+        return ["They are copied where the emulators read them. Your copies stay where "
+                "they are.", ""] + [f"{event['dest']}: {event['reason']}"
+                                    for event in _tui_misplaced(state)]
     if state.screen == "unreadable":
         return [f"{event['path']}" + (f", {event['member']}" if event["member"] else "")
                 + f": {event['reason']}" for event in state.unreadable]
@@ -13146,7 +13410,7 @@ def _view_unreadable(state: TuiState, width: int, height: int) -> tuple:
 
 
 def _view_misplaced(state: TuiState, width: int, height: int) -> tuple:
-    return ("Files in the wrong place", _pager(state, width, height, _pager_items(state)),
+    return ("Files in the wrong place", _pager(state, width, height, _pager_items(state), 2),
             ("A/Enter Back", "Up/Down Scroll"))
 
 
@@ -13259,7 +13523,8 @@ def _tui_sources(state: TuiState, installed: int, failed: int) -> str:
             name = _last_name(folder)
             folders[name] = folders.get(name, 0) + 1
     copied = fixed + sum(folders.values())
-    return sources_line(list(folders.items()), fixed, max(0, installed - copied), failed)
+    return sources_line(list(folders.items()), fixed, max(0, installed - copied), failed,
+                        "from the pack" if LOCAL.pack is not None else "downloaded")
 
 
 def _unavailable(state: TuiState) -> tuple[list[dict], int]:
@@ -13359,7 +13624,7 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     ok = {dest for dest, good, _why in state.finished if good}
     if any(reason and dest in ok for dest, (_folder, reason) in state.local_dests.items()):
         # A fix copies: the misplaced files are the user's, never moved.
-        lines.append("Your copies at the wrong place were left as they are.")
+        lines.append("Your copies in the wrong place were left as they are.")
     lines.append(f"BIOS folder: {state.dest}")
     if installed + up_to_date:
         lines += _saves_lines(state, state.done_saves)
@@ -13524,7 +13789,8 @@ def _help_lines(state: TuiState) -> list[tuple[str, str]]:
     keys = [(names["move"], "Move")]
     if len(tui_rows(state)) > TUI_LONG_LIST or screen in _PAGERS:
         keys += [*([(names["page"], "Page")] if names["page"] else []),
-                 ("Home/End, g/G", "First, last")]
+                 *([("Home/End, g/G", "First, last")] if state.pad in ("both", "keys")
+                   else [])]
     primary = _primary(state) or _TUI_VIEWS[screen](state, 80, 24)[2][0]
     ok = names["ok"]
     if state.pad == "miyoo" and screen in _CHECKLISTS:
@@ -13563,6 +13829,9 @@ def _primary(state: TuiState) -> str | None:
     verb = _ROW_VERBS.get(row.action)
     if state.screen == "systems" and row.action == "system" and not state.ticked:
         verb = "Only this system"
+    if state.screen == "systems" and row.action == "none" and not state.ticked:
+        # Nothing left to untick: A goes to the first system.
+        verb = "First system"
     return f"A/Enter {verb}" if verb else None
 
 
@@ -13707,7 +13976,17 @@ def tui_start(
                         if line.strip() and line.strip() not in unsaid]
     if plat and args.dest is not None:
         state.stack = []
-        return state, _choose(state, plat, Path(args.dest))
+        state.platform, state.card_bound = plat, card_bound(args.platform, plat)
+        dest = Path(args.dest)
+        if state.card_bound is None or plat in CARD_PLATFORMS:
+            return state, _choose(state, plat, dest)
+        # Read as the line mode reads --dest: a muOS card named for Onion
+        # gets MUOS/bios, a folder that is no Onion card is refused.
+        choice = card_choice(args.platform, plat, dest)
+        if choice.refused:
+            state.status = f"{choice.refused}. Choose the root of the {state.card_bound[0]} card."
+            return state, _open_folder_screen(state, None)
+        return state, _choose(state, choice.plat, choice.folder)
     if plat:
         bound = card_bound(args.platform, plat)
         # A system that runs from its card is its card or the device, never
