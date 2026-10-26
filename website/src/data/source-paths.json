@@ -9051,7 +9051,7 @@
   "Src/Util/ConfigBuilders.cpp",
   "Src/Version.h"
  ],
- "github.com/trzy/Supermodel@58d4b87470455fd942edea06f3268fe18815619b": [
+ "github.com/trzy/Supermodel@14815455dc28fca2c8662fb1ed99d447ecf8f364": [
   "Assets/DIR.txt",
   "Config/Games.xml",
   "Src/GameLoader.cpp",
