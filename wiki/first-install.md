@@ -7,7 +7,7 @@ order: 30
 
 From an empty BIOS folder to games that start.
 
-**You need:** internet and some free space. The installer says how much.
+**You need:** internet and some free space.
 
 ## 1. Open a terminal and paste
 
@@ -92,7 +92,7 @@ Press Enter on **Install**. **Choose systems** keeps the consoles you
 play.
 
 **Old card?** In a card reader, choose **Copy the BIOS files from your old
-card or a folder**, then the card. It stays unchanged.
+card or a folder**, then the card.
 
 ## 4. Wait
 
@@ -156,7 +156,7 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 
 ### Error: the downloaded installer does not match its expected fingerprint.
 
-The download was cut short. Nothing was changed. Run the command again.
+The download was cut short. Run the command again.
 
 ### Cannot create ...
 
