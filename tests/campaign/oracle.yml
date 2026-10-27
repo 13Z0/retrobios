@@ -487,3 +487,14 @@ content:
           - sha1: 9ae4dbf2ded891887635634d224dedccf176c1a0
             stage: game
             shows: the Bust-A-Move 2 title, press start button
+  - name: "Rez (USA) (En,Fr,De,Es,It)"
+    catalog: redump
+    sha1: f6ac65761e9d8c8c9eb9d3377ff53719557ae346
+    references:
+      "pcsx2":
+        recorded_from: 2026-10-27-fac0b52c9475
+        variant: ps2-0230a-20080220.bin
+        frames:
+          - sha1: 003685f698160f1cc79ca0bc00091f30ccb681db
+            stage: game
+            shows: Rez asking to format the unformatted memory card in slot 1
