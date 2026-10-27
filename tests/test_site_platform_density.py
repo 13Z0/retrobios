@@ -1,15 +1,16 @@
-"""A platform page lists one table row per file, the evidence on demand.
+"""A platform page lists one row per file, the evidence on demand.
 
 Batocera, AmberELEC and RomM ran to 14,000 to 16,000 words: every file
 spelled its full MD5, the copy serving it and each source reference of
 each reader, with "(emulator code, libretro port)" after every one. A row
-now shows the name, the folder, the status and a short hash; its details
-hold every hash, the served copy and the readers, the role of each
-reference named by one word that a legend defines once.
+now shows the name, the folder, the status and a short hash. Opened, it
+holds every hash, the served copy and the readers across the list, the
+role of each reference named by one word that a legend defines once.
 """
 
 from __future__ import annotations
 
+import html
 import re
 import sys
 import unittest
@@ -93,24 +94,34 @@ class ARowPerFile(unittest.TestCase):
         row = self._row({"name": "bios_a.bin", "status": "ok", "size": 2048},
                         {"name": "bios_a.bin", "md5": md5, "sha1": sha1, "crc32": "0badf00d",
                          "destination": "bios/bios_a.bin"})
-        cells = re.split(r"(?<!\\)\|", row)[1:-1]
-        self.assertEqual(len(cells), len(generate_site.PLATFORM_FILE_HEADER[0].split("|")) - 2)
-        name, folder, status, short, details = (cell.strip() for cell in cells)
-        self.assertEqual(name, r"bios\_a.bin")
-        # The folder: the name is in the cell before it.
-        self.assertEqual(folder, "bios/")
-        self.assertEqual(status, '<span class="rb-badge rb-badge-success">OK</span>')
-        # The hash the platform checks, short, on a button that copies it whole.
-        self.assertIn(f'data-copy="{md5}"', short)
-        self.assertIn(f">{md5[:8]}</button>", short)
-        # The accessible name holds the visible text (WCAG 2.5.3).
-        self.assertIn(f'aria-label="Copy MD5 {md5[:8]}"', short)
+        # The summary is the row: the name, its folder, the status.
+        self.assertIn('<details class="rb-file"><summary>bios&#95;a.bin<code>bios/</code>'
+                      '<span class="rb-badge rb-badge-success">OK</span></summary>', row)
+        # The hash the platform checks, short, on one button beside the
+        # summary (a summary is a control: no button inside it).
+        details, button = row.split("</details>")
+        self.assertNotIn("<button", details)
+        self.assertEqual(button, f'<button class="rb-copy" data-copy="{md5}" '
+                                 f'aria-label="Copy MD5 {md5[:8]}">{md5[:8]}</button>')
         # Every hash whole in the details, with the size.
         for value in (md5, sha1, "0badf00d"):
             self.assertIn(value, details)
-        self.assertIn("2.0 KB", details)
-        self.assertTrue(details.startswith('<details class="rb-row-details">'
-                                           '<summary aria-label="Details of bios_a.bin">Details</summary>'))
+        self.assertIn("(2.0 KB)", details)
+
+    def test_a_file_at_the_root_prints_no_path(self):
+        for destination in ("", "x.bin"):
+            row = self._row({"name": "x.bin", "status": "ok"}, {"destination": destination})
+            self.assertIn("<summary>x.bin<span", row)
+
+    def test_a_list_drops_the_path_column_when_no_row_has_one(self):
+        files = [{"name": "a.bin", "status": "ok"}, {"name": "b.bin", "status": "ok"}]
+        system = "nintendo-gamecube"
+        config = {(system, "a.bin"): [{"destination": "a.bin"}], (system, "b.bin"): [{}]}
+        text = "\n".join(generate_site._render_platform_systems({system: files}, config, {}))
+        self.assertIn('<div class="rb-files">', text)
+        config[(system, "b.bin")] = [{"destination": "sub/b.bin"}]
+        text = "\n".join(generate_site._render_platform_systems({system: files}, config, {}))
+        self.assertIn('<div class="rb-files rb-files-path">', text)
 
     def test_status_words(self):
         cases = {
@@ -129,18 +140,20 @@ class ARowPerFile(unittest.TestCase):
         values = ["1" * 32, "2" * 32, "3" * 32]
         row = self._row({"name": "x", "status": "ok"}, {"md5": ",".join(values)})
         self.assertIn(f'data-copy="{values[0]}"', row)
-        self.assertIn("</button> +2", row)
+        self.assertIn(f">{values[0][:8]} +2</button>", row)
         for value in values:
             self.assertIn(f'<code class="rb-hash">{value}</code>', row)
 
-    def test_a_destination_under_another_name_stays_whole(self):
-        row = self._row({"name": "a.bin", "status": "ok"}, {"destination": "x/b.bin"})
-        self.assertIn("| a.bin | x/b.bin |", row)
+    def test_markdown_never_reads_the_text(self):
+        row = self._row({"name": "*a_b*[1].bin", "status": "ok"}, {})
+        self.assertIn("&#42;a&#95;b&#42;&#91;1&#93;.bin", row)
 
-    def test_a_pipe_does_not_end_the_cell(self):
-        row = self._row({"name": "a|b", "status": "ok"}, {})
-        self.assertIn(r"a\|b", row)
-        self.assertEqual(len(re.split(r"(?<!\\)\|", row)), 7)
+    def test_a_long_list_gets_a_filter(self):
+        rows = ["<details></details>"] * generate_site.FILTER_ROWS
+        block = generate_site._platform_file_list(rows, False, "arcade")
+        self.assertTrue(block[0].startswith('<div class="rb-table-filter"><label for="rb-files-filter-arcade">'))
+        self.assertNotIn("rb-table-filter", "".join(
+            generate_site._platform_file_list(rows[1:], False, "arcade")))
 
 
 class ReferencesNameTheirRoleOnce(unittest.TestCase):
@@ -162,7 +175,7 @@ class ReferencesNameTheirRoleOnce(unittest.TestCase):
 
 
 def _unescaped(text: str) -> str:
-    return re.sub(r"\\([\\`*_\[\]~|])", r"\1", text)
+    return html.unescape(text)
 
 
 @unittest.skipUnless((REPO_ROOT / "database.json").is_file(), "database.json absent")
@@ -222,7 +235,7 @@ class NothingIsLost(unittest.TestCase):
 # 19,127: RetroDECK's arcade list).
 PAGE_CEILINGS = {"batocera": 2433, "amberelec": 1301, "romm": 1607, "retroarch": 2192}
 MAIN_PAGE_CEILING = 2459
-PART_PAGE_CEILING = 2306
+PART_PAGE_CEILING = 2219
 
 _SITE = REPO_ROOT / "website" / "dist" / "platforms"
 
@@ -235,9 +248,46 @@ class VisibleWordsStayUnderTheirCeiling(unittest.TestCase):
         mains = set(list_registered_platforms(str(REPO_ROOT / "platforms"), include_archived=True))
         for page in sorted(_SITE.glob("*/index.html")):
             name = page.parent.name
-            visible, _total = page_words(page.read_text(encoding="utf-8"))
+            text = page.read_text(encoding="utf-8")
+            if 'http-equiv="refresh"' in text[:2000]:
+                continue
+            visible, _total = page_words(text)
             ceiling = PAGE_CEILINGS.get(name, MAIN_PAGE_CEILING if name in mains else PART_PAGE_CEILING)
             self.assertLessEqual(visible, ceiling, name)
+
+
+# Each platform with its part pages, before the rows were rewritten: pages,
+# elements (outside scripts and styles, as validate_site counts them) and
+# bytes of HTML, on the built site of 2026-10-27.
+BEFORE_WEIGHT = {
+    "batocera": (12, 18_854, 1_211_117),
+    "amberelec": (1, 7_928, 473_388),
+    "romm": (2, 9_561, 572_487),
+    "retroarch": (14, 21_503, 1_430_802),
+}
+
+
+@unittest.skipUnless(_SITE.is_dir(), "website/dist not built")
+class APlatformWeighsNoMoreThanBefore(unittest.TestCase):
+    """The split budget measured Markdown length: rows written as a table
+    were longer Markdown, 38 systems moved to new part pages and Batocera
+    with its parts rose from 18,854 to 21,875 elements."""
+
+    def test_pages_elements_and_bytes(self):
+        from validate_site import _PageParser
+
+        for name, (pages, elements, size) in BEFORE_WEIGHT.items():
+            paths, weight = [], 0
+            for path in [_SITE / name / "index.html", *sorted(_SITE.glob(f"{name}-*/index.html"))]:
+                parser = _PageParser(path)
+                parser.feed(path.read_text(encoding="utf-8"))
+                # A part folded back into its platform page left a redirect.
+                if not parser.page.redirect:
+                    paths.append(path)
+                    weight += parser.page.elements
+            self.assertLessEqual(len(paths), pages, name)
+            self.assertLessEqual(weight, elements, name)
+            self.assertLessEqual(sum(path.stat().st_size for path in paths), size, name)
 
 
 if __name__ == "__main__":

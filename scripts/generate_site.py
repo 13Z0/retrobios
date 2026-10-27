@@ -3238,44 +3238,35 @@ def with_setup_table(page: str, coverages: dict, registry: dict | None = None) -
     return f"{page.rstrip()}\n\n{table}"
 
 
-# A platform system whose file list passes this much Markdown gets a page
-# of its own: RetroDECK's arcade list was 750 KB of a 1.1 MB page.
-PLATFORM_SECTION_BUDGET = 200_000
-# A system's own page in runs of at most this much Markdown: RetroDECK's
-# arcade list, each file with its served copy and pinned readers, rendered
-# 1.4 MB of HTML on one page.
-PLATFORM_PART_BUDGET = 350_000
-# The Markdown of a platform page's file lists, past which the largest
+# A platform's file lists are split by the share of a page they render to,
+# in thousandths: their elements against validate_site's MAX_PAGE_ELEMENTS,
+# their bytes against the 600,000 of test_site_r2_gate, whichever is
+# larger. Measured in Markdown characters, the lists split anew whenever
+# their markup changed: rows written as tables moved 38 more systems to
+# pages of their own.
+PAGE_ELEMENTS = 10_000
+PAGE_BYTES = 600_000
+# A system whose list passes this share gets a page of its own.
+PLATFORM_SECTION_BUDGET = 400
+# A system's own page in runs of at most this share.
+PLATFORM_PART_BUDGET = 700
+# The share of a platform page's file lists, past which the largest
 # systems move to pages of their own.
-PLATFORM_REFERENCE_BUDGET = 250_000
+PLATFORM_REFERENCE_BUDGET = 600
 
 
-def _file_runs(body: list[str], budget: int) -> list[list[str]]:
-    """A system's file list in runs of at most ``budget`` characters.
+# Every part page a platform list has had, with the system it held:
+# platforms/batocera-atari-st.md -> platforms/batocera.md#atari-st. When a
+# budget or a list changes, a part can fold back into its platform page,
+# and its address then redirects there instead of ending on the 404 page.
+PLATFORM_PARTS_FILE = (Path(__file__).resolve().parent.parent
+                       / "website" / "src" / "data" / "platform-parts.json")
 
-    The lines before the first file (counts, emulators, a table's header)
-    open every run. A file is never cut from its hash and evidence lines,
-    and a table row is one line.
-    """
-    rows = next((i + 1 for i, line in enumerate(body) if line.startswith("|--")), None)
-    first = rows if rows is not None else next(
-        (i for i, line in enumerate(body) if line.startswith("- ")), len(body))
-    head, items = body[:first], []
-    for line in body[first:]:
-        if line.startswith(("- ", "| ")) or not items:
-            items.append([line])
-        else:
-            items[-1].append(line)
-    runs: list[list[str]] = [[]]
-    size = 0
-    for item in items:
-        weight = sum(len(line) + 1 for line in item)
-        if runs[-1] and size + weight > budget:
-            runs.append([])
-            size = 0
-        runs[-1].extend(item)
-        size += weight
-    return [head + run for run in runs]
+
+def _published_platform_parts() -> dict[str, str]:
+    if not PLATFORM_PARTS_FILE.is_file():
+        return {}
+    return json.loads(PLATFORM_PARTS_FILE.read_text(encoding="utf-8"))
 
 
 # A list moved off a reference page (gaps, provenance) is cut in parts of
@@ -3283,13 +3274,18 @@ def _file_runs(body: list[str], budget: int) -> list[list[str]]:
 LIST_PART_BUDGET = 300_000
 
 
-def _blocks_in_runs(blocks: list[list[str]], budget: int) -> list[list[str]]:
-    """Blocks (table rows, folded lists) in runs of at most ``budget``
-    characters, a block never cut."""
+def _characters(lines: list[str]) -> int:
+    return sum(len(line) + 1 for line in lines)
+
+
+def _blocks_in_runs(blocks: list[list[str]], budget: int,
+                    weigh: Callable[[list[str]], int] = _characters) -> list[list[str]]:
+    """Blocks (table rows, folded lists) in runs of at most ``budget``, by
+    default in characters, a block never cut."""
     runs: list[list[str]] = [[]]
     size = 0
     for block in blocks:
-        weight = sum(len(line) + 1 for line in block)
+        weight = weigh(block)
         if runs[-1] and size + weight > budget:
             runs.append([])
             size = 0
@@ -3426,16 +3422,15 @@ def _launcher_refs(platform: str, config: dict) -> dict[str, list[str]]:
     return found
 
 
-PLATFORM_FILE_HEADER = [
-    "| File | Path | Status | Hash | Details |",
-    "|---|---|---|---|---|",
-]
 # The characters of a hash a row shows, as many as the served copy's sha1.
 SHORT_HASH = 8
 # The hash a row shows first, when the list does not say which it checks.
 _ROW_HASHES = ("sha1", "md5", "sha256", "crc32")
 # An untested entry whose reason is a hash the bytes do not match.
 _WRONG_HASH = re.compile(r"hash|mismatch|expected|must match", re.IGNORECASE)
+# A list this long gets a filter box above it, as a table of RECORD_ROWS
+# rows does (website/src/plugins/rehype-stack-tables.mjs).
+FILTER_ROWS = 20
 
 
 def _status_chip(f: dict) -> str:
@@ -3450,12 +3445,13 @@ def _status_chip(f: dict) -> str:
         tone = "warning"
     else:
         word, tone = str(status), "muted"
-    return f'<span class="rb-badge rb-badge-{tone}">{word}</span>'
+    return f'<span class="rb-badge rb-badge-{tone}">{html.escape(word)}</span>'
 
 
 def _copy_hash(algorithm: str, value: str | list) -> str:
-    """A declared hash cut to SHORT_HASH characters on a button that copies it whole.
-    A list of accepted values (Recalbox) shows its first and how many more."""
+    """A declared hash cut to SHORT_HASH characters on a button that copies
+    it whole. A list of accepted values (Recalbox) copies its first. Outside
+    a form a button submits nothing, so it carries no type."""
     from hashing import parse_hash_list  # noqa: PLC0415
 
     values = parse_hash_list(value)
@@ -3463,43 +3459,68 @@ def _copy_hash(algorithm: str, value: str | list) -> str:
         return ""
     first = html.escape(values[0])
     more = f" +{len(values) - 1}" if len(values) > 1 else ""
-    return (f'<button type="button" class="rb-copy" data-copy="{first}" '
-            f'aria-label="Copy {algorithm.upper()} {first[:SHORT_HASH]}">'
-            f'{first[:SHORT_HASH]}</button>{more}')
+    return (f'<button class="rb-copy" data-copy="{first}" '
+            f'aria-label="Copy {algorithm.upper()} {first[:SHORT_HASH]}{more}">'
+            f'{first[:SHORT_HASH]}{more}</button>')
 
 
-def _cell(text: str) -> str:
-    """Text for one cell of a Markdown table: a pipe would end the cell."""
-    return text.replace("|", "\\|")
+# Characters Markdown or MDX would read inside the raw HTML of a row: an
+# MDX page parses the text of its HTML as Markdown, a .md page does not.
+_INERT = str.maketrans({"*": "&#42;", "_": "&#95;", "`": "&#96;", "[": "&#91;", "]": "&#93;"})
+_INLINE_MD = re.compile(
+    r"\[(?P<label>(?:`[^`]*`|[^\]`])+)\]\((?P<url>[^)\s]+)\)"
+    r"|`(?P<code>[^`]+)`"
+    r"|\*\*(?P<bold>[^*]+)\*\*"
+)
 
 
-_MARKDOWN_PUNCTUATION = re.compile(r"([\\`*_\[\]~])")
-_CODE_LINK = re.compile(r"\[`([^`]+)`\]\(")
-_SHORT_SHA1 = re.compile(r"\(sha1 `([0-9a-f]+)`\)")
+def _text_html(text: str) -> str:
+    """Plain text as HTML that neither Markdown nor MDX rewrites."""
+    return html.escape(html.unescape(text), quote=False).translate(_INERT)
 
 
-def _plain(text: str) -> str:
-    """Text written as itself in Markdown: no emphasis, link or tag."""
-    return _MARKDOWN_PUNCTUATION.sub(r"\\\1", html.escape(text, quote=False))
+def _inline_html(markdown: str) -> str:
+    """The inline Markdown of a row's evidence (links, code, bold) as HTML.
 
-
-def _uncoded(text: str) -> str:
-    """A linked path as plain link text, a short sha1 as plain text.
-
-    Each code element is one more element of the page. With one in every
-    name, path and reference, Batocera's page measured 10,479 elements, over
-    validate_site's budget of 10,000. The link and the value say the same
-    without it.
+    Code spans become plain text and a linked path loses its code element:
+    one per reference and per reader was the bulk of the elements of a
+    platform page, and the words say the same without them.
     """
-    text = _CODE_LINK.sub(lambda m: f"[{_plain(m[1])}](", text)
-    return _SHORT_SHA1.sub(r"(sha1 \1)", text)
+    out: list[str] = []
+    position = 0
+    for match in _INLINE_MD.finditer(markdown):
+        out.append(_text_html(markdown[position:match.start()]))
+        if match["url"]:
+            out.append(f'<a href="{html.escape(match["url"])}">'
+                       f'{_text_html(match["label"].replace("`", ""))}</a>')
+        elif match["code"]:
+            out.append(_text_html(match["code"]))
+        else:
+            out.append(f"<strong>{_text_html(match['bold'])}</strong>")
+        position = match.end()
+    out.append(_text_html(markdown[position:]))
+    return "".join(out)
+
+
+def _row_path(fname: str, cfg_entry: dict) -> str:
+    """Where the file goes, when its name alone does not say: three GameCube
+    IPL.bin differ only by GC/USA, GC/EUR and GC/JAP. A destination that is
+    the name says nothing, and one that ends with it shows its folder."""
+    destination = str(cfg_entry.get("destination") or "")
+    if destination.endswith("/" + fname):
+        return destination[:len(destination) - len(fname)]
+    return "" if destination == fname else destination
 
 
 def _platform_file_row(f: dict, cfg_entry: dict, hash_type: str = "",
                        launched: list[str] | None = None) -> str:
-    """One file of a platform's list as a table row: its name, where it goes,
-    its status and a short hash at a glance. The details hold every hash the
-    platform declares, the size, the copy that serves it and its readers.
+    """One file of a platform's list as one row, written as HTML.
+
+    The row is a details element whose summary holds the name, the folder
+    when there is one and the status, followed by the short hash on its copy
+    button: a button cannot sit in a summary, which is itself a control.
+    The details hold every hash the platform declares, the size, the copy
+    that serves it and its readers, across the width of the list.
     """
     fname = f["name"]
     hashes = {
@@ -3525,7 +3546,7 @@ def _platform_file_row(f: dict, cfg_entry: dict, hash_type: str = "",
     elif size:
         facts.append(f"Size: {_fmt_size(size)}")
     if f.get("status") == "untested" and f.get("reason"):
-        facts.append(f"Not confirmed: {f['reason']}")
+        facts.append(_text_html(f"Not confirmed: {f['reason']}"))
     # Not every entry is firmware: the platform may list a game's data or a
     # file no core it runs opens.
     kind = {"game_data": "Game data, not firmware",
@@ -3534,29 +3555,53 @@ def _platform_file_row(f: dict, cfg_entry: dict, hash_type: str = "",
         facts.append(kind)
     served = _served_line(f)
     if served:
-        facts.append(_uncoded(served))
+        facts.append(_inline_html(served))
     if f.get("category_evidence"):
-        facts.append(_uncoded(_category_evidence_md(f["category_evidence"], launched)))
+        facts.append(_inline_html(_category_evidence_md(f["category_evidence"], launched)))
 
-    # Where the file goes: three GameCube IPL.bin differ only by GC/USA,
-    # GC/EUR and GC/JAP. A destination that ends with the name shows its
-    # folder only, the name being in the cell before it. Both are plain
-    # text set in the code font by the table's style: a code element in
-    # each cell was two more elements per row.
-    destination = str(cfg_entry.get("destination") or "")
-    if destination == fname or destination.endswith("/" + fname):
-        destination = destination[:len(destination) - len(fname)]
-    summary = f'<summary aria-label="Details of {html.escape(fname)}">Details</summary>'
-    details = (f'<details class="rb-row-details">{summary}{"<br>".join(facts)}</details>'
-               if facts else "")
-    cells = [
-        _plain(fname),
-        _plain(destination),
-        _status_chip(f),
-        _copy_hash(shown, hashes[shown]) if shown else "",
-        details,
-    ]
-    return "| " + " | ".join(_cell(cell) for cell in cells) + " |"
+    path = _row_path(fname, cfg_entry)
+    summary = (_text_html(fname) + (f"<code>{_text_html(path)}</code>" if path else "")
+               + _status_chip(f))
+    copy = _copy_hash(shown, hashes[shown]) if shown else ""
+    return (f'<details class="rb-file"><summary>{summary}</summary>'
+            f'{"<br>".join(facts)}</details>{copy}')
+
+
+def _platform_file_list(rows: list[str], has_path: bool, anchor: str) -> list[str]:
+    """A system's rows as one HTML block, with a filter box when long.
+
+    The list drops its path column when no row has one, so a blank cell
+    never reads as missing data.
+    """
+    lines: list[str] = []
+    if len(rows) >= FILTER_ROWS:
+        field = f"rb-files-filter-{anchor}"
+        lines += [
+            '<div class="rb-table-filter">'
+            f'<label for="{field}">Filter files</label>'
+            f'<input id="{field}" type="search" autocomplete="off" placeholder="File, path, status, hash...">'
+            f'<span class="rb-table-filter-count" aria-live="polite">{len(rows):,} rows</span></div>',
+            "",
+        ]
+    kind = "rb-files rb-files-path" if has_path else "rb-files"
+    return [*lines, f'<div class="{kind}">', *rows, "</div>"]
+
+
+# The elements a line puts on the page: its HTML tags, and the links and
+# code spans of the Markdown before a list.
+_ELEMENT = re.compile(r"<[a-zA-Z]|\]\(|`[^`]+`")
+
+
+def _element_weight(lines: list[str]) -> int:
+    """How many elements the lines render to."""
+    return sum(len(_ELEMENT.findall(line)) for line in lines)
+
+
+def _page_share(lines: list[str]) -> float:
+    """The share of a page the lines render to, in thousandths: the rows
+    are HTML already, so their length is their weight in bytes."""
+    return max(_element_weight(lines) * 1000 / PAGE_ELEMENTS,
+               _characters(lines) * 1000 / PAGE_BYTES)
 
 
 def _render_platform_systems(
@@ -3586,17 +3631,18 @@ def _render_platform_systems(
 
         sys_emus = _system_emulators(sys_id, emulator_files, by_system_declared.get(sys_id))
         anchor = sys_id.replace(" ", "-")
-        body = [f"{ok_count}/{total} files verified"]
+        head = [f"{ok_count}/{total} files verified"]
         if sys_emus:
             emu_links = ", ".join(_emulator_named_link(e, "../") for e in sorted(sys_emus))
-            body[-1] += "\\"
-            body.append(f"Emulators: {emu_links}")
-        body.append("")
+            head[-1] += "\\"
+            head.append(f"Emulators: {emu_links}")
+        head.append("")
 
         # One row per file, the evidence in its details. The sort is stable,
         # so same-named entries keep the order verify reported them in,
         # which is the declaration order.
-        body.extend(PLATFORM_FILE_HEADER)
+        rows: list[str] = []
+        has_path = False
         seen_names: dict[str, int] = {}
         for f in sorted(files, key=lambda x: x["name"]):
             fname = f["name"]
@@ -3604,23 +3650,23 @@ def _render_platform_systems(
             nth = seen_names.get(fname, 0)
             seen_names[fname] = nth + 1
             cfg_entry = declared[nth] if nth < len(declared) else {}
-            body.append(_platform_file_row(
+            has_path = has_path or bool(_row_path(fname, cfg_entry))
+            rows.append(_platform_file_row(
                 f, cfg_entry, str((config or {}).get("hash_type") or ""),
                 launched.get(fname.rsplit("/", 1)[-1].casefold())))
+        body = head + _platform_file_list(rows, has_path, anchor)
 
-        # Measured as the Markdown the split was tuned on, a collapsible
-        # block indented by four, so both engines split the same systems.
-        size = sum(len(line) + 1 for line in body)
+        # Measured in the share of a page the list renders to.
+        size = _page_share(body)
         if use_collapsible:
             status_tag = "OK" if ok_count == total else _count(total - ok_count, "issue")
-            title = f"{_count(total, 'file')} ({status_tag})"
-            size += len(f'??? note "{title}"') + 2 + 4 * sum(1 for line in body if line)
-            block = markup.details("note", title, body)
+            block = markup.details("note", f"{_count(total, 'file')} ({status_tag})", body)
             while block and not block[-1]:
                 block.pop()
         else:
             block = body
-        sections.append({"sys_id": sys_id, "anchor": anchor, "body": body, "block": block,
+        sections.append({"sys_id": sys_id, "anchor": anchor, "head": head, "rows": rows,
+                         "has_path": has_path, "block": block,
                          "size": size, "total": total, "ok": ok_count})
 
     # A list longer than its budget goes to a page of its own, then the
@@ -3639,7 +3685,7 @@ def _render_platform_systems(
                 kept -= sec["size"]
 
     for sec in sections:
-        sys_id, anchor, body = sec["sys_id"], sec["anchor"], sec["body"]
+        sys_id, anchor = sec["sys_id"], sec["anchor"]
         total, ok_count = sec["total"], sec["ok"]
         # Every system is a heading with the same anchor in both layouts:
         # emulator cards link here, and the site search splits a page at its
@@ -3649,7 +3695,9 @@ def _render_platform_systems(
         lines.append("")
         if moved is not None and platform and sys_id in own_page:
             key, display = platform
-            runs = _file_runs(body, PLATFORM_PART_BUDGET)
+            runs = [sec["head"] + _platform_file_list(run, sec["has_path"], anchor)
+                    for run in _blocks_in_runs([[row] for row in sec["rows"]],
+                                               PLATFORM_PART_BUDGET, _page_share)]
             stems = [f"{key}-{anchor}" + (f"-{n}" if n > 1 else "")
                      for n in range(1, len(runs) + 1)]
             for n, (stem, run) in enumerate(zip(stems, runs), 1):
@@ -11308,6 +11356,7 @@ def _generate(args: argparse.Namespace) -> None:
     )
     if HANDHELD_GUIDE:
         write_if_changed(str(docs / HANDHELD_GUIDE.path), generate_handheld_guide(HANDHELD_GUIDE))
+    published_parts = _published_platform_parts()
     for name, cov in coverages.items():
         # The emulators this platform runs, not every one of the system.
         runs = resolve_platform_cores(cov["config"], profiles)
@@ -11322,6 +11371,9 @@ def _generate(args: argparse.Namespace) -> None:
             if stem in coverages:
                 raise RuntimeError(f"a system page takes the platform {stem}'s address")
             PART_PAGES.add(f"platforms/{stem}.md")
+            anchor = re.search(rf"\]\({re.escape(name)}\.md#([^)\s]+)\)", page)
+            if anchor:
+                published_parts[f"platforms/{stem}.md"] = f"platforms/{name}.md#{anchor[1]}"
             # One console of one setup's list, a reference: "playstation
             # bios" found five setups' lists before the console's page.
             # Weighed down, they still won on their title, which the page
@@ -11488,6 +11540,8 @@ def _generate(args: argparse.Namespace) -> None:
     stale += _sweep_top_pages(docs)
 
     print("Adding page metadata and structured data...")
+    write_if_changed(str(PLATFORM_PARTS_FILE),
+                     json.dumps(dict(sorted(published_parts.items())), indent=1) + "\n")
     lastmod = decorate_markdown_pages(docs)
 
     nav = generate_nav(coverages, manufacturers, profiles, registry,
@@ -11504,7 +11558,7 @@ def _generate(args: argparse.Namespace) -> None:
                      json.dumps(sitestarlight.sidebar(nav, present, _overview_anchors(nav, docs)),
                                 indent=1) + "\n")
     write_if_changed(str(generated / "redirects.json"),
-                     json.dumps(sitestarlight.redirects(profiles, present), indent=1,
+                     json.dumps(sitestarlight.redirects(profiles, present, published_parts), indent=1,
                                 sort_keys=True) + "\n")
     write_if_changed(str(generated / "lastmod.json"),
                      json.dumps(dict(sorted(lastmod.items())), indent=1) + "\n")

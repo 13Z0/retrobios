@@ -931,6 +931,38 @@ const glossaryTerms = () => {
 	document.addEventListener('click', close);
 };
 
+// A platform's file list (div.rb-files) is rows of a details and its copy
+// button. The filter box written above a long one hides both of a row.
+const filterFiles = () => {
+	for (const list of document.querySelectorAll<HTMLElement>('.rb-table-filter + .rb-files')) {
+		const controls = list.previousElementSibling!;
+		const input = controls.querySelector('input');
+		const count = controls.querySelector('.rb-table-filter-count');
+		if (!input || !count) continue;
+		const rows = [...list.querySelectorAll<HTMLElement>(':scope > details.rb-file')];
+		let searchable: { row: HTMLElement; text: string }[] | null = null;
+		input.addEventListener('input', () => {
+			searchable ??= rows.map((row) => ({
+				row,
+				text: `${row.querySelector('summary')?.textContent ?? ''} ${row.nextElementSibling?.matches('button.rb-copy') ? row.nextElementSibling.textContent : ''}`
+					.normalize('NFKD')
+					.toLocaleLowerCase(),
+			}));
+			const query = input.value.trim().normalize('NFKD').toLocaleLowerCase();
+			let visible = 0;
+			for (const { row, text } of searchable) {
+				row.hidden = !!query && !text.includes(query);
+				const button = row.nextElementSibling;
+				if (button?.matches('button.rb-copy')) (button as HTMLElement).hidden = row.hidden;
+				if (!row.hidden) visible += 1;
+			}
+			count.textContent = query
+				? `${visible.toLocaleString('en')} of ${rows.length.toLocaleString('en')} rows`
+				: `${rows.length.toLocaleString('en')} rows`;
+		});
+	}
+};
+
 // A hash cut short on a button (button.rb-copy): a click copies the whole
 // value from data-copy, says so to a screen reader, and marks the button
 // for two seconds. The full value is also in the row's details, so a
@@ -982,6 +1014,7 @@ breakPaths();
 hashSearch();
 glossaryTerms();
 copyButtons();
+filterFiles();
 osTabs();
 showCurrentPage();
 notFound();

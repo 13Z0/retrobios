@@ -340,9 +340,9 @@ class APlatformPageSaysWhereEachFileGoes(unittest.TestCase):
         lines = generate_site._render_platform_systems(
             {"nintendo-gamecube": files}, {("nintendo-gamecube", "IPL.bin"): declared}, {})
         for region in regions:
-            # The folder: the name is in the cell before it.
-            self.assertIn(f"| IPL.bin | dolphin-emu/Sys/GC/{region}/ | "
-                          '<span class="rb-badge rb-badge-success">OK</span> |',
+            # The folder: the name is before it in the row.
+            self.assertIn(f"<summary>IPL.bin<code>dolphin-emu/Sys/GC/{region}/</code>"
+                          '<span class="rb-badge rb-badge-success">OK</span></summary>',
                           "\n".join(lines))
 
 
