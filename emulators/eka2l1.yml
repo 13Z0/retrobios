@@ -5,9 +5,9 @@ source:
   standalone: "https://github.com/EKA2L1/EKA2L1"
   libretro: "https://github.com/WizzardSK/eka2l1-libretro/tree/libretro"
 upstream: "https://github.com/EKA2L1/EKA2L1"
-profiled_date: "2026-09-17"
+profiled_date: "2026-10-27"
 source_commit:
-  standalone: "d55da28f59d56d0cd1f49d9e9780047960d973e5"
+  standalone: "cc30b451eaab3b73930ce0fbf2dabcfc31476e28"
   libretro: "e39ccac46e631be7470b4f420fb8eebed9c24eca"
 upstream_commit:
   libretro: "11f5b6cd141c0884a130ee45743f1f5e17bb1783"
@@ -632,7 +632,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: 4xBR.frag
     size: 2915
@@ -642,7 +642,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: 4xhq.frag
     size: 2699
@@ -652,7 +652,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: 5xBR-lv2.frag
     size: 8923
@@ -662,7 +662,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: 5xBR.frag
     size: 5385
@@ -672,7 +672,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: aacolor.frag
     size: 2120
@@ -682,7 +682,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: CRT-Hyllian.frag
     size: 6253
@@ -692,7 +692,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: CRT-Lottes-TV.frag
     size: 6828
@@ -702,7 +702,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: CRT-Lottes.frag
     size: 5318
@@ -712,7 +712,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: dot.frag
     size: 3066
@@ -722,7 +722,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: dot_mobile.frag
     size: 3060
@@ -732,7 +732,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: dotpsp_color_mobile.frag
     size: 3677
@@ -742,7 +742,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: fxaa.frag
     size: 2476
@@ -752,7 +752,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: grayscale.frag
     size: 336
@@ -762,7 +762,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: inversecolors.frag
     size: 416
@@ -772,7 +772,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: natural.frag
     size: 1938
@@ -782,7 +782,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: scanline-emu.frag
     size: 682
@@ -792,7 +792,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: scanline.frag
     size: 729
@@ -802,7 +802,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: sharpen.frag
     size: 408
@@ -812,7 +812,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: zfast_lcd.frag
     size: 1797
@@ -822,7 +822,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: zfast_lcd_mobile.frag
     size: 1888
@@ -832,7 +832,7 @@ files:
     required: false
     bundled: true
     description: "Upscale filter selected by an application's filter-shader-path setting"
-    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:636-638, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
+    source_ref: "src/emu/drivers/src/graphics/backend/ogl/graphics_ogl.cpp:414-426, src/emu/services/src/window/screen.cpp:628-630, src/emu/qt/src/settings_dialog.cpp:318-319, .gitmodules:70-72, src/emu/qt/CMakeLists.txt:276"
 
   - name: defaultbank.sf2
     size: 768010
