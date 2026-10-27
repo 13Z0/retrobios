@@ -251,8 +251,11 @@ unset), never on a handheld route (`RETROBIOS_PAD`) or with
 `RETROBIOS_NO_MOUSE=1`, and gives them back on every way out, a stop with
 Ctrl+Z included. On the result, the command line screen, any screen showing
 a command and the screen where a path is typed, the terminal keeps the mouse,
-so text is selected, copied and pasted as usual. Elsewhere, hold Shift while selecting (Option in macOS
-Terminal and iTerm2). `--plain` never asks for clicks.
+so text is selected, copied and pasted as usual. Elsewhere, hold Shift while
+selecting. `--plain` never asks for clicks. Clicks and taps were checked on
+2026-10-27 in xterm, tmux, GNU screen 4.09, Windows Terminal (WSL) and Termux
+on Android 17. macOS Terminal and iTerm2 are not checked yet, nor the key
+they use to select over the installer.
 
 - `--tui` asks for the full screen, and names the reason when it cannot open
   (code 2).
