@@ -39,7 +39,7 @@ HOSTS_MARKER = "<!-- measurements-hosts -->"
 INDEX_PATH = Path("data") / "measurements" / "index.json"
 SQLITE_PATH = Path("downloads") / "measurements.sqlite"
 PER_EMULATOR_DIR = Path("downloads") / "measurements"
-SQLITE_SCHEMA_VERSION = "2"
+SQLITE_SCHEMA_VERSION = "3"
 # Observables the variants table leaves out: one value per sampled frame.
 BULKY_OBSERVABLES = ("frame_hashes",)
 INDEX_SCHEMA_VERSION = 1
@@ -74,6 +74,40 @@ def permalink(repo: str, commit: str, path: str, line: int | None = None) -> str
     return f"{repo}/blob/{commit}/{path}" + (f"#L{line}" if line else "")
 
 
+def verdicts_of(record: dict) -> list[dict]:
+    """Each variant's boot verdict, from record version 4 on."""
+    return [{"variant": v["label"], "verdict": v["verdict"],
+             "detail": (v.get("verdict_evidence") or {}).get("detail", "")}
+            for v in record["variants"] if "verdict" in v]
+
+
+def result_of(record: dict) -> tuple[str, str]:
+    """The status and statement a page shows for a record.
+
+    A run, or a check compared on the sampled frames, is shown by its boot
+    verdicts: one verdict when every variant has it, else `mixed`, each
+    variant named in the statement. A check on another observable keeps
+    its comparison. A frame comparison recorded before the boot oracle
+    shows `no verdict`: frames that differ prove nothing about a boot.
+    """
+    check = record.get("check") or {}
+    result = check.get("result") or {}
+    if record["kind"] == "bench":
+        return "measured", bench_statement(record) if record.get("timing") else ""
+    verdicts = verdicts_of(record)
+    by_frames = record["kind"] == "run" or check.get("observable") == "frame_hashes"
+    if verdicts and by_frames:
+        values = {v["verdict"] for v in verdicts}
+        status = values.pop() if len(values) == 1 else "mixed"
+        if record["kind"] == "run":
+            return status, verdicts[0]["detail"]
+        return status, ". ".join(f"{v['variant']}: {v['verdict']}" for v in verdicts)
+    if by_frames:
+        return "no verdict", ("recorded before the boot oracle. Its frames were compared, which "
+                              "settles nothing about a boot")
+    return result.get("status") or "ran", result.get("statement") or ""
+
+
 def index_item(entry: mr.Stored, runs: int, source: dict, profiles: dict,
                system_names: dict[str, str]) -> dict:
     record = entry.record
@@ -93,9 +127,9 @@ def index_item(entry: mr.Stored, runs: int, source: dict, profiles: dict,
         "method": check.get("method"),
         "observable": check.get("observable"),
         "variable": check.get("variable"),
-        "status": (check.get("result") or {}).get("status") or ("measured" if record["kind"] == "bench" else "ran"),
-        "statement": (check.get("result") or {}).get("statement")
-                     or (bench_statement(record) if record.get("timing") else ""),
+        "status": result_of(record)[0],
+        "statement": result_of(record)[1],
+        "verdicts": verdicts_of(record),
         "content": content.get("label"),
         "variants": len(record["variants"]),
         "repetitions": record["inputs"]["repetitions"],
@@ -434,7 +468,8 @@ SCHEMA_SQL = """
         run_id TEXT NOT NULL REFERENCES runs(id), position INTEGER NOT NULL,
         label TEXT NOT NULL, repetitions INTEGER NOT NULL, loaded INTEGER NOT NULL,
         flags TEXT NOT NULL, observables TEXT NOT NULL, files_opened TEXT,
-        files_probed_absent TEXT, tracing TEXT, PRIMARY KEY (run_id, position)
+        files_probed_absent TEXT, tracing TEXT, verdict TEXT, verdict_evidence TEXT,
+        PRIMARY KEY (run_id, position)
     );
     CREATE TABLE system_files (
         run_id TEXT NOT NULL REFERENCES runs(id), variant_position INTEGER NOT NULL,
@@ -545,11 +580,12 @@ def _insert_run(connection: sqlite3.Connection, entry: mr.Stored, source: dict,
         # The first repetition stands for the variant, its per-frame hashes left out.
         observables = {key: value for key, value in (first.get("observables") or {}).items()
                        if key not in BULKY_OBSERVABLES}
-        connection.execute("INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (
+        connection.execute("INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (
             rid, position, variant["label"], len(reps), int(all(rep.get("loaded") for rep in reps)),
             json_text(variant["flags"]), json_text(observables),
             json_text(first.get("files_opened")), json_text(first.get("files_probed_absent")),
-            json_text(first.get("tracing"))))
+            json_text(first.get("tracing")), variant.get("verdict"),
+            json_text(variant.get("verdict_evidence")) if "verdict_evidence" in variant else None))
         connection.executemany("INSERT INTO system_files VALUES (?, ?, ?, ?)", [
             (rid, position, dest, sha1) for dest, sha1 in sorted(variant["system_files"].items())])
     for metric, stats in sorted((r.get("timing") or {}).items()):
@@ -646,12 +682,14 @@ def tested_item(item: dict) -> list[str]:
     core = item["core"]
     build = f"{_text(core['library'])} at {_short(core['commit'])}" if core.get("commit") \
         else _text(core["library"])
-    lines = [
-        f"- **{_text(title)}**",
-        "",
-        f"    **Result:** `{item['status']}`. {_text(item['statement'])}.",
-        "",
-    ]
+    lines = [f"- **{_text(title)}**", ""]
+    if len(item.get("verdicts") or ()) > 1:
+        lines += [f"    **Result:** `{item['status']}`.", ""]
+        lines += [f"    - {_text(v['variant'])}: `{v['verdict']}`. {_text(v['detail'])}."
+                  for v in item["verdicts"]]
+        lines.append("")
+    else:
+        lines += [f"    **Result:** `{item['status']}`. {_text(item['statement'])}.", ""]
     if item.get("method"):
         lines += [f"    **Method:** {_text(item['method'])}", ""]
     lines += [

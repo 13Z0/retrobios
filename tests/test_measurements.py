@@ -220,7 +220,7 @@ class ReadAndIndex(Workspace):
         keys = {"emulator", "emulator_name", "profiled", "systems", "system_names", "subject", "kind",
                 "claim", "method", "observable", "variable", "status", "statement", "content",
                 "variants", "repetitions", "flags", "date", "host", "core", "frontend_commit", "id",
-                "runs", "record_url", "sqlite"}
+                "runs", "record_url", "sqlite", "verdicts"}
         for item in index["items"]:
             self.assertEqual(set(item), keys)
         alpha = {i["subject"]: i for i in index["items"] if i["emulator"] == "alpha"}
@@ -233,6 +233,25 @@ class ReadAndIndex(Workspace):
         self.assertIn("Test CPU", alpha["speed"]["host"])
         written = json.loads((self.tmp / "public" / sm.INDEX_PATH).read_text())
         self.assertEqual(written, index)
+
+    def test_a_frame_check_shows_its_verdicts_never_frames_that_differ(self) -> None:
+        record = full_record("alpha", "boot", "2026-10-06T10:00:00+00:00", observable="frame_hashes")
+        record["variants"][1]["verdict"] = "hang"
+        self.assertEqual(sm.result_of(record), ("mixed", "v0: boots. v1: hang"))
+        self.assertEqual([v["verdict"] for v in sm.verdicts_of(record)], ["boots", "hang"])
+        old = {**record, "record_version": 3,
+               "variants": [{k: v for k, v in variant.items() if not k.startswith("verdict")}
+                            for variant in record["variants"]]}
+        status, statement = sm.result_of(old)
+        self.assertEqual(status, "no verdict")
+        self.assertNotIn("differ", statement)
+        # A check on another observable keeps its comparison.
+        self.assertEqual(sm.result_of(full_record("alpha", "c", "2026-10-06T10:00:00+00:00"))[0], "differs")
+        item = {"claim": "c", "runs": 1, "core": {"library": "Fake 1", "commit": None}, "status": "mixed",
+                "statement": "", "verdicts": sm.verdicts_of(record), "method": "m", "host": "h",
+                "date": "2026-10-06", "variants": 2, "repetitions": 2, "flags": 0, "record_url": "u"}
+        text = "\n".join(sm.tested_item(item))
+        self.assertIn("v1: `hang`", text)
 
     def test_links_name_the_last_commit_that_touched_the_records(self) -> None:
         first = self.repository()
