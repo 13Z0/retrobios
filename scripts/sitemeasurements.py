@@ -180,6 +180,12 @@ def _plain(value: object) -> str:
     return "".join(_UNSAFE.get(char, char) for char in text)
 
 
+def _sentence(value: object) -> str:
+    """A finding's statement as a sentence of the page: capital first."""
+    text = _plain(value)
+    return text[:1].upper() + text[1:]
+
+
 def _code(value: object) -> str:
     """A value as code that cannot close its element or open an expression."""
     return f"<code>{_plain(value)}</code>"
@@ -227,7 +233,7 @@ def campaign_section(summary: dict | None) -> list[str]:
         lines += [
             f"- **{_plain(item['emulator'])}**, {_code(item['file'])}, {_code(item['field'])} "
             f"({_plain(item['status'])}): the profile says {_value(item['profile_says'])}, the run "
-            f"shows {_value(item['run_shows'])}. {_plain(item['statement'])}. Records: {records}.",
+            f"shows {_value(item['run_shows'])}. {_sentence(item['statement'])}. Records: {records}.",
             "",
         ]
     return lines

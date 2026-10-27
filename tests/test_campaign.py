@@ -859,7 +859,7 @@ class SitePage(unittest.TestCase):
                          "failed": [{"emulator": "fake", "check": "fake/x/y/bench", "reason": "timeout"}]},
             "passes": 1, "applied": 2,
             "open": [{"emulator": "fake", "file": "bios.bin", "field": "required", "status": "open",
-                      "profile_says": True, "run_shows": False, "statement": "boots without it",
+                      "profile_says": True, "run_shows": False, "statement": "the core boots without it",
                       "evidence": ["2026-10-27-aaaaaaaaaaaa"], "links": ["https://x/l#L1"]}],
         }
         page = "\n".join(sitemeasurements.campaign_section(summary))
@@ -867,6 +867,7 @@ class SitePage(unittest.TestCase):
         self.assertIn("| standalone | 3 |", page)
         self.assertIn("the profile says <code>true</code>, the run shows <code>false</code>", page)
         self.assertIn("[2026-10-27-aaaaaaaaaaaa](https://x/l#L1)", page)
+        self.assertIn("<code>false</code>. The core boots without it. Records:", page)
         self.assertEqual(sitemeasurements.campaign_section({"last_run": None}), [])
 
     def test_observed_values_cannot_leave_their_place(self) -> None:
