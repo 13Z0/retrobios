@@ -220,7 +220,8 @@ class ReadAndIndex(Workspace):
         keys = {"emulator", "emulator_name", "profiled", "systems", "system_names", "subject", "kind",
                 "claim", "method", "observable", "variable", "status", "statement", "content",
                 "variants", "repetitions", "flags", "date", "host", "core", "frontend_commit", "id",
-                "runs", "record_url", "sqlite", "verdicts"}
+                "runs", "record_url", "sqlite", "verdicts", "title", "host_short", "groups",
+                "proves", "timing"}
         for item in index["items"]:
             self.assertEqual(set(item), keys)
         alpha = {i["subject"]: i for i in index["items"] if i["emulator"] == "alpha"}
@@ -247,11 +248,9 @@ class ReadAndIndex(Workspace):
         self.assertNotIn("differ", statement)
         # A check on another observable keeps its comparison.
         self.assertEqual(sm.result_of(full_record("alpha", "c", "2026-10-06T10:00:00+00:00"))[0], "differs")
-        item = {"claim": "c", "runs": 1, "core": {"library": "Fake 1", "commit": None}, "status": "mixed",
-                "statement": "", "verdicts": sm.verdicts_of(record), "method": "m", "host": "h",
-                "date": "2026-10-06", "variants": 2, "repetitions": 2, "flags": 0, "record_url": "u"}
-        text = "\n".join(sm.tested_item(item))
-        self.assertIn("v1: `hang`", text)
+        groups = sm.variant_groups(record)
+        self.assertEqual([(g["variant"], g["result"], g["group"]) for g in groups],
+                         [("v0", "works", 0), ("v1", "hang", 1)])
 
     def test_links_name_the_last_commit_that_touched_the_records(self) -> None:
         first = self.repository()
@@ -431,11 +430,89 @@ class SitePages(unittest.TestCase):
         self.assertEqual(sm.tested_section("beetle_saturn", []), [])
         text = "\n".join(sm.tested_section("beetle_saturn", [self.ITEM]))
         self.assertTrue(text.startswith("## Tested\n"))
-        for expected in ("**Result:** `same`", "**Method:** Twice per card. Every input fixed.", "**Ran on:** Test CPU, 12 CPUs",
-                         self.ITEM["record_url"], "1 flag raised", "2 runs",
-                         "../downloads/measurements/beetle_saturn.sqlite", "../wiki/measurements.md",
-                         "&lt;image>"):
+        for expected in ("no difference", "<strong>Method:</strong> Twice per card. Every input fixed.",
+                         "<strong>Ran on:</strong> Test CPU, 12 CPUs", self.ITEM["record_url"],
+                         "1 flag raised", "2 runs", "downloads/measurements/beetle_saturn.sqlite",
+                         "wiki/measurements/", "&lt;image&gt;", "1 test · 0 confirmed · 0 open"):
             self.assertIn(expected, text)
+
+    def item(self, **values: object) -> dict:
+        return {**self.ITEM, "host_short": "Test CPU, Linux", **values}
+
+    def test_summary_counts(self) -> None:
+        items = [self.item(proves=["hle_fallback of a.bin"], open_findings=2),
+                 self.item(subject="b", date="2026-10-28T00:00:00+00:00", open_findings=2),
+                 self.item(kind="bench", status="measured", subject="c",
+                           timing={"ms_per_frame": 1.5, "fps": 660.0, "stdev": 0.01})]
+        self.assertEqual(sm.tested_counts(items), {"tests": 3, "confirmed": 1, "open": 2, "benchmarks": 1,
+                                                   "last": "2026-10-28"})
+        text = "\n".join(sm.tested_section("beetle_saturn", items))
+        self.assertIn("3 tests · 1 confirmed · 2 open · last run 2026-10-28 on Test CPU, Linux.", text)
+        self.assertIn("<td>1.500</td><td>660.0</td>", text)
+
+    def test_short_titles(self) -> None:
+        cases = [
+            ({"subject": "mpeg-card-lunar-cr2-build", "variable": "mpeg_card.bin",
+              "content": "Redump: Lunar - Silver Star Story Complete (Japan), T-27904G V1.00"},
+             "`mpeg_card.bin`, Lunar (CR2 build)"),
+            ({"subject": "negative-scph5501-bin-mednafen-psx-bust-a-move-2-arcade-edition-usa",
+              "variable": "scph5501.bin", "content": "Bust-A-Move 2 - Arcade Edition (USA)",
+              "core": {"file": "mednafen_psx_libretro.so"}},
+             "`scph5501.bin`, Bust-A-Move 2 (wrong files)"),
+            ({"subject": "issue85-lunar-opening-movie", "variable": None,
+              "content": "Redump: Lunar - Silver Star Story Complete (Japan), T-27904G V1.00"},
+             "Lunar (issue 85 opening movie)"),
+            ({"subject": "with-command-auth-device-and-command-get-9a211715", "variable": "mpeg_card.bin",
+              "content": "Redump: Lunar"}, "`mpeg_card.bin`, Lunar (with command auth device ...)"),
+        ]
+        for item, title in cases:
+            self.assertEqual(sm.short_title(item), title)
+        self.assertEqual(sm.short_host({"cpu_model": "13th Gen Intel(R) Core(TM) i9-13900K",
+                                        "os": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64"}),
+                         "Intel Core i9-13900K, Linux (WSL2)")
+
+    def test_no_empty_sentence(self) -> None:
+        text = "\n".join(sm.tested_section("beetle_saturn", [self.item(claim=None, method=None, statement="",
+                                                                         kind="run", status="ran")]))
+        self.assertNotRegex(text, r"</strong>\s*\.|:\s*\.\s|`ran`\. \.")
+        self.assertNotIn("Claim:", text)
+        self.assertNotIn("Method:", text)
+
+    def test_dots_follow_the_result_groups(self) -> None:
+        record = full_record("alpha", "boot", "2026-10-06T10:00:00+00:00", values=("1" * 40, "2" * 40, "1" * 40))
+        record["check"]["variable"] = "card.bin"
+        record["variants"][2]["system_files"] = {"card.bin": None}
+        groups = sm.variant_groups(record)
+        self.assertEqual([g["group"] for g in groups],
+                         [i for i, group in enumerate(record["check"]["result"]["groups"])
+                          for _ in group["variants"]][:1] + [1, 0])
+        self.assertEqual([g["absent"] for g in groups], [False, False, True])
+        text = "\n".join(sm.tested_section("alpha", [self.item(groups=groups)]))
+        self.assertEqual(re.findall(r'rb-dot rb-dot-(\d)( rb-dot-empty)?"', text),
+                         [("0", ""), ("1", ""), ("0", " rb-dot-empty")])
+        self.assertIn('aria-label="3 variants. v0: result A; v1: result B; v2: result A"', text)
+
+    def test_the_details_hold_the_method_and_the_host(self) -> None:
+        text = "\n".join(sm.tested_section("beetle_saturn", [self.item()]))
+        details = text.split('<div class="rb-tested-more">', 1)[1].split("</div>", 1)[0]
+        self.assertIn("Twice per card", details)
+        self.assertIn("Test CPU, 12 CPUs", details)
+        self.assertIn(self.ITEM["record_url"], details)
+
+    def test_the_beetle_saturn_block_stays_short(self) -> None:
+        stored = mr.read_records(REPO_ROOT)
+        profiles = sm.load_profiles(REPO_ROOT / "emulators")
+        index = sm.build_index(stored, {"repo": REPO_URL, "commit": COMMIT}, profiles)
+        items = sm.by_emulator(index).get("beetle_saturn")
+        if not items:
+            self.skipTest("no beetle_saturn record")
+        block = "\n".join(sm.tested_section("beetle_saturn", items))
+        # What a reader sees before opening anything: the closed details hide their body.
+        shown = re.sub(r'<div class="rb-tested-more">.*?</div>', " ", block, flags=re.S)
+        shown = re.sub(r'<details class="rb-tested-earlier">.*?</details>\s*</details>', " ", shown,
+                       flags=re.S)
+        shown = re.sub(r"<[^>]+>", " ", shown)
+        self.assertLess(len(re.findall(r"[A-Za-z0-9][\w.'-]*", shown)), 120, shown)
 
     def test_hosts_table_on_the_method_page(self) -> None:
         page = sm.with_hosts(f"x\n\n{sm.HOSTS_MARKER}\n",
