@@ -409,11 +409,11 @@ VARIANT_WORDS = {"full": "every regional BIOS", "own": "its own region's BIOS on
                  "others": "the other regions' BIOS only", "pack": "the region's pack"}
 
 
-def region_section(results: list[dict]) -> list[str]:
+def region_section(results: list[dict], level: int = 3) -> list[str]:
     """What the region runs showed for one system, with the records."""
     if not results:
         return []
-    lines = ["### Region check", "",
+    lines = ["#" * level + " Region check", "",
              f"Each game ran with {VARIANT_WORDS['own']}, then with {VARIANT_WORDS['others']} "
              f"([method](../{METHOD_PAGE})).", ""]
     for result in results:

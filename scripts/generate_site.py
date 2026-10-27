@@ -7180,8 +7180,10 @@ def system_pages(
             _section_label(manufacturer, console),
             _install_pairs(installs.get(console, []), lead, consumers))
 
-    def region_block(console: str) -> list[str]:
-        return sitemeasurements.region_section(_REGION_RESULTS.get((slug, console), []))
+    def region_block(console: str, level: int = 3) -> list[str]:
+        # Under the console's heading on a maker's page, a section of its
+        # own on the console's page.
+        return sitemeasurements.region_section(_REGION_RESULTS.get((slug, console), []), level)
 
     def all_sections() -> dict[str, list[Card]]:
         anchors: set[str] = set()
@@ -7373,7 +7375,7 @@ def system_pages(
             lines.extend(_romset_note({console: consoles[console]}))
             lines.extend(install_block(console))
             if index == 0:
-                lines.extend(region_block(console))
+                lines.extend(region_block(console, 2))
             lines.extend(["## Files", ""])
             lines.extend(_cards_markdown(part))
             lines.append("")
