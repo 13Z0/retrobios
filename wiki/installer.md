@@ -176,7 +176,7 @@ install starts.
 | Back | Esc, Backspace | B, Select (B alone with muxterm's own keys, where Select shows its keyboard) |
 | Options | `o`, Tab | Y |
 | Filter a long list | `/` then type, Enter on a lone match chooses it | muxterm: Select shows a keyboard. Elsewhere none (the setup list puts the SD cards after RetroArch) |
-| Keys of the screen | `?`, F1 | |
+| Keys of the screen | `?`, F1 (F1 alone while typing a filter, where the help lists the keys that do not type) | |
 | Stop an install | Esc, `q`, Ctrl+C | B, Select+Start (B alone with muxterm's own keys) |
 | Quit | `q`, Ctrl+C | B on the first screen |
 | Pause, back with `fg` (Linux, macOS) | Ctrl+Z | |
@@ -197,10 +197,17 @@ progress, and a second one stops at once. Select+Start on a handheld ends the
 installer with a signal (SIGTERM), which stops it the same way. Either way the
 result says how many files were installed, and it stays printed in the terminal
 once the screen closes, with the command that repeats the run. A run that failed
-keeps its log and names it, and every other run leaves nothing behind.
+keeps its log and names it, and every other run leaves nothing behind. A path
+or a command on the result is never split inside a word: one longer than the
+window takes a line of its own, which the terminal folds, and a command breaks
+only between its arguments. Every path a run names is spelled the way its BIOS
+folder was named, the backup folder and the save directory included
+(`/sdcard/RetroArch` on Android, not the `/storage/emulated/0` it links to).
 
 It opens only for an install, at a terminal of at least 40 columns and 12 rows
-(a smaller window says so, with its size) whose `TERM` is set, is not `dumb`
+(a smaller window says so, with its size, before the first question:
+`The window is 39x12: questions come line by line (40x12 for the full
+screen).`) whose `TERM` is set, is not `dumb`
 and can draw it: where the terminal's description
 (terminfo) has no way to move the cursor, or moves it with other sequences
 than the ANSI ones the screen writes (`TERM=vt52`), the questions come line by
@@ -217,7 +224,10 @@ However the screen ends (Enter on the result, `q`, Ctrl+C, Ctrl+D, SIGTERM, a
 hangup), the terminal is given back as the screen found it: the cursor shown,
 the main screen back, echo and line editing on. Ctrl+Z, or SIGTSTP from
 outside, gives it back the same way and stops the run, and `fg` redraws the
-screen where it was.
+screen where it was. Ctrl+Z stops it only when a shell with job control
+started it, the one thing that can resume it: started from a terminal app's
+`-e`, a desktop entry or a launcher's `sh -c`, the key is ignored and the bar
+says why.
 
 - `--tui` asks for the full screen, and names the reason when it cannot open
   (code 2).
@@ -599,14 +609,23 @@ the full screen cannot open (a terminal smaller than 40x12, `TERM=dumb`), the
 same choice comes as questions after detection:
 
 ```
-RetroArch: 8069 files, 6.5 GB.
+RetroArch: 8348 files, 7.1 GB.
+  3259 BIOS files (4.4 GB) and 5089 game data files (2.7 GB).
   BIOS folder: /home/me/.config/retroarch/system
   Enter) install everything
   i) only what the installed cores read: 100 files, 44.2 MB
   c) choose systems, cores and regions
   f) copy from a folder or an old card
+  g) leave out the 5089 game data files (2.7 GB), game data: files a game or a game engine reads, of no use to the other cores
   q) quit
 ```
+
+A list that marks its game data counts it apart from the BIOS files, on the
+plan, in this menu and on the result (`Installed: 3259 BIOS files and 5089 game
+data files.`). `g` leaves it out, as `--no-game-data` does, and counts again
+(`g` then keeps it). The plan screen has the same choice as a row of its own,
+**Game data (5089 files, 2.7 GB): kept, leave out**, one press toggling it,
+and Options keeps its **Game data** row too.
 
 `i` appears for RetroArch, Lakka and RetroPie when cores are found installed,
 and the line above is a RetroArch with Beetle PSX HW, Snes9x, mGBA, Genesis Plus GX
@@ -615,7 +634,9 @@ It keeps what those cores read and drops the systems none of them emulates,
 the rule `--installed-cores` applies.
 
 `c` walks through three numbered lists, each answered with numbers such as
-`1,4,7-9`, or Enter to keep everything on that axis.
+`1,4,7-9`, or Enter to keep everything on that axis. The letter names the
+lists it asks (`c) choose systems` with a MiSTer pack), and a list with one
+answer is not asked.
 
 - **Systems.** The consoles and computers the platform declares, titled and
   ordered as the full screen's Choose systems lists them, the id `--system`
@@ -636,6 +657,16 @@ without questions, every other option of the run in it, for instance
 `python3 install.py --platform retroarch --dest /home/me/.config/retroarch/system
 --system sony-playstation --region north-america`. Enter then installs, and
 `c` chooses again.
+
+An option is refused by the axis the list does not record, with what works
+instead. The MinUI, NextUI and MyMinUI lists record cores and regions and no
+system: `--core` and `--region` narrow them, `--system` is refused with
+`Run it without --system, or narrow with --core and --region`. A pack records
+the systems of its files and what its platform's list narrows by: with the
+pack alone, `--core` or `--region` names that list (`--manifest FILE`, a copy
+of `install/minui.json`) only when it records them, and MiSTer FPGA's pack
+says its list records no cores. A list from an older release records none of
+the three, and the one-line installer fetches the current one.
 
 The same choices on the command line:
 
@@ -746,7 +777,7 @@ what the options name, everything by default.
 | <span id="option-list-cores"></span>`--list-cores` | Print the cores whose extra files a platform installs |
 | <span id="option-list-emulators"></span>`--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
 | <span id="option-romm-firmware"></span>`--romm-firmware TEMPLATE` | RomM: where each platform's firmware goes in the library, as `filesystem.structure.firmware` in RomM's `config.yml` says (`{platform}/bios` for a library laid out as `{platform}/roms`). Read from `config.yml` beside the library when it is there. See [RomM firmware layout](#romm-firmware-layout) |
-| <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal. A run whose output goes to a file or a pipe asks nothing either, and says so on stderr |
+| <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal. A run whose output goes to a file or a pipe asks nothing either, and says so on stderr. It finds the setups and the mounted cards the screen finds: one is taken, as Enter takes it, and two stop the run with an `error` event (`stage` `detect`, `reason` `conflict`) naming each with its `--platform` and `--dest` |
 | <span id="option-check"></span>`--check` | Report and exit without writing |
 | <span id="option-dry-run"></span>`--dry-run` | Show what would be downloaded, the totals first, then by system and with sizes, without writing anything. A plan taller than the screen names the ten largest systems, and `--verbose` lists every system and file |
 | <span id="option-yes"></span>`--yes`, `-y` | Do not ask before a download of 1 GB or more, nor anything else. Implies `--no-input`, so a run that needs an answer (nothing found here, two setups found) stops on what to name instead |
@@ -864,20 +895,42 @@ A card that holds a system's own files is read the same way, without
 `--platform` or with the one that names its list, by the rules the table above
 gives for the device, below the card's root instead of its mount point:
 
+<!-- generated: card-markers -->
+
 | On the card | System | Files go to |
 |-------------|--------|-------------|
+| `system/configs/emulationstation/about.info` holding the line `KNULLI` | KNULLI | `bios`, KNULLI's list |
+| `system/batocera.conf` holding the line `system.hostname=KNULLI` | KNULLI | `bios`, KNULLI's list |
+| `.config/system/configs/system.cfg` holding the line `root.password=rocknix` | ROCKNIX | `roms/bios`, ROCKNIX's list |
 | `MUOS/` | muOS | `MUOS/bios`, RetroArch's list |
-| `.tmp_update/onionVersion/version.txt` | Onion | `BIOS`, RetroArch's list |
 | `spruce/` | spruceOS | `BIOS`, RetroArch's list |
 | `System/usr/trimui/crossmix-version.txt` | CrossMix-OS | `BIOS`, RetroArch's list |
+| `.tmp_update/onionVersion/version.txt` | Onion | `BIOS`, RetroArch's list |
 | `.allium/` | Allium | `BIOS`, RetroArch's list |
 | `Koriki/version.txt` | Koriki | `BIOS`, RetroArch's list |
-| `system/batocera.conf` with `system.hostname=KNULLI`, as KNULLI's first boot writes its share | KNULLI | `bios`, KNULLI's list |
-| `.config/system/configs/system.cfg` with `root.password=rocknix`, as ROCKNIX's first boot writes its storage | ROCKNIX | `roms/bios`, ROCKNIX's list |
+| `system/batocera.conf` holding `system.hostname=BATOCERA` or no hostname line, and no KNULLI file above | Batocera SHARE drive | `bios`, Batocera's list |
+| `system/recalbox.conf` | Recalbox SHARE drive | `bios`, Recalbox's list |
+| `system/batocera.conf` with any other hostname, and no KNULLI file above, or the files of two SHARE drives | named by neither: the run says which systems it could be | the folder of the system named with `--platform` |
 
-The full screen lists such a card on its first screen ("muOS SD card (E:\)").
+<!-- /generated: card-markers -->
+
+Each file is one the system writes. KNULLI is read by `about.info` first,
+which no menu writes: its HOSTNAME row rewrites `system.hostname`, and a KNULLI
+card renamed there was read as a Batocera SHARE drive. ROCKNIX's line changes
+with its root password, and a card whose password was changed is named by
+nothing, never by another system. A drive whose files fit two systems is named
+by neither: the first screen and `--plain` say which systems it could be and
+the two commands that name it, and a `--dest` named with one of them takes it
+as that system's, with a note.
+
+The full screen lists such a card on its first screen ("muOS SD card (E:\)"),
+and a SHARE drive the same way ("Batocera SHARE drive (SHARE)"): its root, typed
+or given with `--dest`, stands for its `bios` folder. Two cards of one system
+say what their BIOS folder holds ("Onion SD card (OLDONION, 6 BIOS files)"),
+the one holding fewer first.
 Named by its system (`--platform muos`, `--platform knulli`), a `--dest` that
-is another system's card is refused. One that holds none of the system's
+is another system's card is refused, and so is another system's SHARE drive
+for Batocera and Recalbox. One that holds none of the system's
 files is refused where the card always carries them. For KNULLI, ROCKNIX and
 the systems no file on the card names, it gets the system's folder below it
 (`bios`, `roms/bios`), with a note. Named with a file list instead
@@ -1009,9 +1062,16 @@ and `--plain` gives the same list numbered, in the same order, with `--dest`
 too. Both find the SD cards mounted here, the screen under **Found on this
 machine**. With a setup found, the setup screen lists it with **Another setup
 or folder**, and `--plain` asks the same: Enter takes the first, `o` opens the
-numbered list and then the folder, `q` quits. A platform named, or read from
-a list or a pack, and found nowhere gets its folder asked, its usual one under
-Enter, the mounted drives numbered. A folder typed is read from the current
+numbered list and then the folder, `q` quits. A platform named and found
+nowhere gets its folder asked, its usual one under Enter, the mounted drives
+numbered. A list or a pack read by card setups too (RetroArch's, read by Onion,
+muOS, ArkOS and the others) opens the setup list instead, filtered to the
+setups that read it, RetroArch first: Enter on it asks RetroArch's folder. At
+that question a drive is numbered by the folder its system reads (`ONION:
+BIOS`), a drive nothing names by its `bios` folder (`EASYROMS: bios`), never
+by its root, which no setup reads. Another system's card or SHARE drive, and a
+drive two systems fit, are left out, and a line names them: each is reached
+through its own setup. A folder typed is read from the current
 one when it is not a full path, and named in full after. `q` quits there too
 (a folder named `q` is typed `./q`), and Enter with no default says what to
 type. On a computer Batocera and Recalbox have no default: the drives are
@@ -1360,11 +1420,19 @@ That keeps the installer's questions working when the script is piped from
 
 The manifest is fetched over the network and treated as untrusted input. Every
 path it carries goes through one validator that refuses an absolute path, a
-drive letter, a backslash, a null byte, a doubled separator, a trailing slash
-and any `..` component, so a destination cannot climb out of the BIOS
-directory. Manifest, target list and payloads each have a size cap, the file
+drive letter, a backslash, a null byte or any other control character, a
+doubled separator, a trailing slash and any `..` component, so a destination
+cannot climb out of the BIOS directory and no file is named with a terminal
+command. Manifest, target list and payloads each have a size cap, the file
 list a count cap, and the sum of the declared sizes is checked against the
 total the manifest claims.
+
+Every other string from outside is shown, never obeyed: the names a list or
+a pack records, a card's label and a folder a configuration names reach the
+terminal, line by line or on the screen, and the `--events` stream with a `?`
+for each control character. A folder a configuration names with one is not
+taken: the run says so and asks for `--dest`, its default being no answer
+for a setup that reads another folder.
 
 Symbolic links met under the BIOS root are followed on purpose: they are the
 user's own layout, and EmuDeck links `bios/shadps4/sys_modules` into shadPS4's
@@ -1419,7 +1487,7 @@ fields, the installer refuses to narrow rather than install everything.
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed or were left out by `--offline` while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, a `--dest` that is not the card of the system named (another system's card, a folder inside one, a drive with none of its files where its card always has them, or a folder that does not exist), `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), or `--offline` left every file out, the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
-| `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question, or the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`) before an install. Run the same command again to carry on |
+| `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question, or the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`) before an install. A quit chosen (`q`, **Quit**) is code `130` too, and the terminal keeps `RetroBIOS: quit. Nothing was installed.` where a stop keeps `stopped`. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
 <!-- /generated: exit-codes -->
@@ -1475,7 +1543,7 @@ other schemas under `api/v1/schemas/`.
 | `data` | `platform`, `files`, `bytes` | Right after `declared`: the data-tree files to fetch (the `data_missing` of `check`) and the bytes they write once in place |
 | `found` | `platform`, `dest`, `folder`, `path`, `member`, `reason` | Each file to install that this machine already holds, after `check` and before anything is written, in `--check` and `--dry-run` too. `folder` is the `--from` folder as given, or the `bios_dir` of the check when the BIOS folder holds the file at another place, and then `reason` says where in words (`nested folder: ...` for a misplaced file, `the same file is at ...` for one the list installs there too). `path` is the file, and `member` the ZIP member holding the bytes when `path` is an archive, an empty string otherwise. Its copy is reported by a `downloaded` event |
 | `unreadable` | `platform`, `folder`, `path`, `member`, `reason` | Each file in a `--from` folder that could not be read and may be one the run still needs, right after the `found` events: its size is that of a file no copy was found for, or unknown (a folder that could not be listed, a ZIP that would not open). `member` names the ZIP member, or is empty. `reason` says why in words (`Permission denied`, `it is encrypted, a password is needed`) |
-| `saves` | `platform`, `files`, `folder` | After `choices` and before `checking`, when the files the run installs (once `--system` and the other choices narrowed the list) hold some read from the frontend's save directory and that directory is known: how many, and the `folder` they go to, where `<system>` and `<core>` stand for one folder per system or per core. When it is not known, the files are counted in the summary's `skipped` instead (`no_save_directory`) |
+| `saves` | `platform`, `files`, `folder` | After `choices` and before `checking`, when the files the run installs (once `--system` and the other choices narrowed the list) hold some read from the frontend's save directory and that directory is known: how many, and the `folder` they go to, where `<system>` and `<core>` stand for one folder per system or per core (the screen and `--plain` say it in words: "a folder per core under /sdcard/RetroArch/saves"). When it is not known, the files are counted in the summary's `skipped` instead (`no_save_directory`) |
 | `download` | `platform`, `files`, `bytes` | Before the downloads start. Counts the files copied from this machine too |
 | `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
 | `transfer` | `bytes_local`, `bytes_network` | Right after each `progress` event, and once when the files of a `download` event are done. It splits `bytes_done`: `bytes_local` came from this machine (a copy found by `--from` or in the BIOS folder, the pack, a partial copy resumed), `bytes_network` from the network. A download speed is `bytes_network` over the time elapsed |
@@ -1510,7 +1578,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 |----------|--------|
 | `RETROBIOS_REF` | Branch or tag the file list and the files committed to the repository are read from. Defaults to `main`. Files the manifest marks `release_asset` always come from the `large-files` release, whatever the ref, and that release replaces an asset in place when it is rebuilt. Each release deletes the previous release tags, so a tag holds a file list until the next release. For contributors: [release process](release-process.md#cutting-a-release) |
 | `RETROBIOS_BASE_URL` | Base URL for the manifest and the files it declares. HTTPS only, plain HTTP allowed to loopback for end-to-end tests. Whoever controls this base controls the expected hashes, hence the check. A file list that cannot be fetched names the address, and this variable when it is set |
-| `RETROBIOS_INSTALL_OFFLINE` | Set to anything but `0`: no network request, as with `--offline`. The runs the full-screen interface starts inherit it. `RETROBIOS_OFFLINE` is the build scripts' own and leaves the installer alone |
+| `RETROBIOS_INSTALL_OFFLINE` | Set to anything but `0`: no network request, as with `--offline`. The runs the full-screen interface starts inherit it. The words then name the variable (`not fetched (RETROBIOS_INSTALL_OFFLINE=1)`, `run it with RETROBIOS_INSTALL_OFFLINE unset`), and `--offline` where the option was given. `RETROBIOS_OFFLINE` is the build scripts' own and leaves the installer alone |
 | `RETROBIOS_OS` | Names the host outright (`linux`, `wsl`, `windows`, `darwin`, `android`) instead of detecting it |
 | `EXTERNAL_STORAGE` | Android only, the shared storage root RetroArch builds its default directories from. Defaults to `/storage/emulated/0` |
 | `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |

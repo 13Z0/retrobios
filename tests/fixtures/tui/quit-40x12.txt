@@ -9,4 +9,4 @@
 
 
 
- A/Enter Quit  B/Esc Stay
+ A Quit  B Stay

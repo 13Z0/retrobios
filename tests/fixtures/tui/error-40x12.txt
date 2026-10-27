@@ -5,8 +5,8 @@
      -2] Name or service not known
    Address:
      https://raw.githubusercontent.com/
-     Abdess/retrobios/main/install/
-     retroarch.json
+ 1-5 of 7
+
  > Choose another setup or folder
    Quit
- A/Enter Choose  B/Esc Back
+ A Choose  B Back  PgUp/PgDn Scroll
