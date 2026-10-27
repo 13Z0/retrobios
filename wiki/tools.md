@@ -795,6 +795,9 @@ python scripts/sync_measurements.py --check-only      # check every line and sid
 python scripts/sync_measurements.py                   # write the site's measurement files
 ```
 
+`--clone` and `--pin` name another clone and pin file than
+`.cache/measurements/` and `measurements-pin.json`.
+
 `--fetch` is the only step on the network. It refuses a remote whose history
 changed or removed a line the pin holds, or rewrote a data file: a correction
 is a new line naming the record it `supersedes`. Every line must hash to its

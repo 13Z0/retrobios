@@ -158,7 +158,7 @@ def seal(slim: dict, sidecar: dict, rid: str | None = None) -> tuple[dict, bytes
     """The slim record with its data reference and id, and the sidecar bytes.
 
     ``rid`` keeps an id given before (a record carried over from the first
-    layout); otherwise the id is computed.
+    layout). Otherwise the id is computed.
     """
     blob = sidecar_bytes(sidecar)
     sealed = {**slim, "data": {"sha256": sha256_hex(blob), "bytes": len(blob)}}
@@ -229,7 +229,7 @@ def parse_lines(text: str, label: str) -> list[dict]:
 
 def appended_only(before: str, after: str) -> str | None:
     """None when ``after`` keeps every line of ``before``, in place, and
-    only adds lines at its end; otherwise the first line that moved."""
+    only adds lines at its end, else the first line that moved."""
     old, new = before.splitlines(), after.splitlines()
     for number, line in enumerate(old, 1):
         if number > len(new):
