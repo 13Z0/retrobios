@@ -369,7 +369,7 @@ class AVariantShowsWhoPinsIt(unittest.TestCase):
                       ".variants/advision.zip.1c086064</code>", block)
         self.assertIn('<a href="../platforms/batocera.md">Batocera</a>', block)
         self.assertIn('<a href="../platforms/retrobat.md">RetroBat</a>', block)
-        self.assertIn('<span class="rb-hash">' + "c" * 40 + "</span>", block)
+        self.assertIn('<dd class="rb-hash">' + "c" * 40 + "</dd>", block)
         self.assertIn("Catalogued", block)
 
 
@@ -992,7 +992,8 @@ class TheOneLinerIsWhereUsersLand(unittest.TestCase):
         page = generate_site.generate_system_page(
             "Microsoft", {"MSX": [entry]}, FileConsumers({"files": {}}),
             {"MSX": [("recalbox", "msx1,msx2,msxturbor"), ("batocera", "msx1")]})
-        self.assertIn("--platform recalbox --system msx1,msx2,msxturbor\n", page)
+        # The whole system id, up to the end of the command.
+        self.assertRegex(page, r"--platform recalbox --system msx1,msx2,msxturbor(\n|</code>)")
         self.assertIn("--platform batocera --system msx1", page)
 
     def test_a_system_is_offered_only_where_the_manifest_records_it(self):

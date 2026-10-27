@@ -32,6 +32,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
+from collections import Counter
 from collections.abc import Callable, Iterator
 from datetime import datetime, timezone
 from pathlib import Path
@@ -5392,6 +5393,17 @@ def _places_lines(places: list[Place]) -> list[str]:
     ]
 
 
+def _places_markdown(places: list[Place]) -> list[str]:
+    """_places_lines in Markdown, for a card written as a list: the places
+    as code spans, which the glossary and the line breaks treat as code."""
+    by_place: dict[tuple[str, ...], list[str]] = {}
+    for name, href, dests in places:
+        by_place.setdefault(tuple(dests), []).append(f"[{name}]({href})")
+    ordered = sorted(by_place.items(), key=lambda item: (not item[0], -len(item[1]), item[0]))
+    return [(" and ".join(_code(d) for d in dests) + ": " if dests else "") + ", ".join(links)
+            for dests, links in ordered]
+
+
 def _inline_card_html(text: str) -> str:
     """A card value written in Markdown (code spans, links), as the HTML a
     fact list holds. HTML already in the value is kept."""
@@ -5658,8 +5670,11 @@ def _system_file_card(
     for label, value in (("SHA1", sha1_full), ("MD5", md5_full),
                          ("CRC32", f.get("crc32")), ("SHA256", f.get("sha256"))):
         if value and value != "unknown":
-            facts.append((label, [f'<span class="rb-hash">{html.escape(str(value))}</span>'],
-                          False))
+            # Starlight writes the value bare: its cell carries the hash
+            # style and the copy button (_fact_list).
+            shown = (html.escape(str(value)) if markup.starlight()
+                     else f'<span class="rb-hash">{html.escape(str(value))}</span>')
+            facts.append((label, [shown], False))
 
     if not markup.starlight():
         # The size yardstick pages are cut by: the list a card was when the
@@ -5667,23 +5682,106 @@ def _system_file_card(
         lines.extend(search_excluded([f"- {label}: {', '.join(values)}"
                                       for label, values, _searched in facts]))
     else:
-        # A grid of facts, label then value: two bullet lists of code chips
-        # read as a dump. What the search skips is one list with one
-        # attribute: on each row it was 77 KB of the Sony page.
-        read = [fact for fact in facts if fact[2] and searchable]
-        skipped = [fact for fact in facts if fact not in read]
-        for group, attributes in ((read, ""), (skipped, f" {skip}")):
-            if group:
-                lines.append(f'<dl class="rb-facts"{attributes}>')
-                # One value cell per label: the grid pairs each dt with one dd.
-                # A searched value keeps its label out: the excerpt ran the two
-                # together, "On the setup's listAmberELEC".
-                label_skip = f" {skip}" if not attributes else ""
-                lines.extend(f"<dt{label_skip}>{label}</dt><dd>"
-                             + "<br>".join(_inline_card_html(v) for v in values) + "</dd>"
-                             for label, values, _searched in group)
-                lines.append("</dl>")
+        lines.extend(_card_fact_groups(facts, sha1_full, searchable))
     lines.extend(["", "</div>", ""])
+    return lines
+
+
+# What a system card shows at a glance: who lists the file and who reads it.
+# Its fingerprints and the rest open on demand, so a page of 250 cards reads
+# as a list of files, not a wall of hashes.
+_CARD_KEY_FACTS = ("On the setup's list", "Packed for its emulators by", "Emulators")
+_CARD_HASHES = ("SHA1", "MD5", "CRC32", "SHA256")
+# The words a card's fold names its other facts by.
+_CARD_MORE_WORDS = {"Romset": "romset", "Collection path": "collection path",
+                    "Catalogued": "catalogues"}
+# A SHA1 shown short: as long as the card's own address (sha1-<12 hex>).
+SHORT_HASH = 12
+
+
+def _listed_words(words: list[str]) -> str:
+    """"a", "a and b", "a, b and c", first letter capital."""
+    text = words[0] if len(words) == 1 else f"{', '.join(words[:-1])} and {words[-1]}"
+    return text[:1].upper() + text[1:]
+
+
+def _fact_list(facts: list[tuple[str, list[str], bool]], skip: str,
+               copy: dict[str, str] | None = None) -> list[str]:
+    """Facts as a grid, label then value, one value cell per label.
+
+    A label in *copy* holds one hash: its cell takes the hash style, and
+    the site script a copy button (site.ts). *copy* gives the cell's
+    classes. One element, where a span in the cell was one more per hash.
+    """
+    if not facts:
+        return []
+    copy = copy or {}
+
+    def cell(label: str, values: list[str]) -> str:
+        if label in copy:
+            return f'<dd class="{copy[label]}">{values[0]}</dd>'
+        return "<dd>" + "<br>".join(_inline_card_html(v) for v in values) + "</dd>"
+
+    return [f'<dl class="rb-facts"{skip}>',
+            *(f"<dt>{label}</dt>{cell(label, values)}" for label, values, _searched in facts),
+            "</dl>"]
+
+
+def card_fold(summary: str, body: list[str], skip: bool = True) -> list[str]:
+    """A fold of a file card: closed, its summary naming what it holds.
+
+    Native details: no script needed, and the text inside stays in the page
+    (and in the search, unless *skip*). No class: the card styles its folds,
+    and a class was 21 bytes on each of 250 cards."""
+    attribute = f" {markup.search_exclude()}" if skip else ""
+    summary_line = f"<summary>{html.escape(summary, quote=False)}</summary>"
+    # Each tag on a line of its own, or MDX reads the fold as a paragraph
+    # left open. Markdown inside also takes a blank line around it.
+    gap = [] if body and body[0].startswith("<") else [""]
+    return [f"<details{attribute}>", summary_line, *gap, *body, *gap, "</details>"]
+
+
+def _card_fact_groups(facts: list[tuple[str, list[str], bool]], sha1: str,
+                      searchable: bool) -> list[str]:
+    """A system card's facts under Starlight: the key ones open, a short
+    SHA1 first, then the hashes and the rest in one closed fold.
+
+    The search skips all of them, as it did when they were one list: on
+    each row the attribute was 77 KB of the Sony page. Hashes are found by
+    files/?hash=, which the search box offers for a pasted hash.
+    """
+    skip = f" {markup.search_exclude()}"
+    key = [fact for fact in facts if fact[0] in _CARD_KEY_FACTS]
+    hashes = [fact for fact in facts if fact[0] in _CARD_HASHES]
+    more = [fact for fact in facts if fact not in key and fact not in hashes]
+    searched = [fact for fact in facts if fact[2] and searchable]
+    lines: list[str] = []
+    if searched:
+        # No fact is searched today. One that is keeps its label out: the
+        # excerpt ran the two together, "On the setup's listAmberELEC".
+        lines += ['<dl class="rb-facts">',
+                  *(f"<dt{skip}>{label}</dt><dd>"
+                    + "<br>".join(_inline_card_html(v) for v in values) + "</dd>"
+                    for label, values, _searched in searched),
+                  "</dl>"]
+        key = [fact for fact in key if fact not in searched]
+        more = [fact for fact in more if fact not in searched]
+    glance = []
+    if sha1 and sha1 != "unknown":
+        # The first characters, enough to tell two dumps apart at a glance.
+        # Its button copies the whole value, read from the fold below: the
+        # value twice was 54 bytes more on each card.
+        glance.append(("SHA1", [html.escape(sha1[:SHORT_HASH])], False))
+    lines += _fact_list(glance + key, skip, {"SHA1": "rb-hash"})
+    # One fold: two were four more elements on each of 250 cards.
+    folded = hashes + more
+    if folded:
+        words = (["hashes"] if hashes else []) + [
+            _CARD_MORE_WORDS.get(label, label.lower()) for label, _values, _searched in more]
+        # On one line: nothing reads it as Markdown, and a page cut by size
+        # holds its cards in the same bytes.
+        lines += card_fold(_listed_words(words),
+                           ["".join(_fact_list(folded, "", dict.fromkeys(_CARD_HASHES, "rb-hash")))])
     return lines
 
 
@@ -7635,15 +7733,18 @@ def _render_emulator_file(
         if fmax:
             bounds.append(f"max {_fmt_size(fmax)}")
         details.append(f"Size: {', '.join(bounds)}")
+    # Starlight folds the hashes and gives each a copy button.
+    copyable = markup.starlight()
     if fsha1:
-        details.append(f"SHA1: {_hash_spans(fsha1)}")
+        details.append(f"SHA1: {_hash_spans(fsha1, copyable)}")
     if fmd5:
-        details.append(f"MD5: {_hash_spans(fmd5)}")
+        details.append(f"MD5: {_hash_spans(fmd5, copyable)}")
     if fcrc32:
         crcs = fcrc32 if isinstance(fcrc32, list) else [fcrc32]
-        details.append("CRC32: " + ", ".join(f"`{crc}`" for crc in crcs))
+        details.append("CRC32: " + ", ".join(
+            markup.hash_value(crc, True) if copyable else f"`{crc}`" for crc in crcs))
     if fsha256:
-        details.append(f"SHA256: {_hash_spans(fsha256)}")
+        details.append(f"SHA256: {_hash_spans(fsha256, copyable)}")
     if fadler32:
         # Printed as the downloads spell a hash, one per code span: the list
         # repr read `['0x66f334fe', ...]`. Dolphin hashes its DSP ROMs over
@@ -7710,7 +7811,14 @@ def _render_emulator_file(
             if copy:
                 details.append(_held_copy_line(copy, consumers))
         plat_links = _platform_links(sha1, consumers) if sha1 else []
-        if plat_links:
+        if plat_links and markup.starlight():
+            # Grouped by where the setups put the file, as the system card
+            # says it: twelve setups repeating scph5502.bin took twelve
+            # names and twelve paths where a few say it. One sentence a
+            # place: a list or a line break was one more element a place.
+            places = _places_markdown(_platform_places(sha1, consumers))
+            details.append("Platforms: " + ". ".join(places))
+        elif plat_links:
             details.append(f"Platforms: {', '.join(plat_links)}")
 
     if dest and dest != fname and dest != fpath:
@@ -7726,6 +7834,11 @@ def _render_emulator_file(
     if size_range:
         details.append(f"Size range: {size_range}")
 
+    if markup.starlight():
+        lines.extend(_emulator_card_folds(f, details, fnote, profile, in_repo, contents,
+                                          data_href))
+        lines.extend(["", "</div>", ""])
+        return lines
     if details:
         for d in details:
             lines.append(f"- {d}")
@@ -7738,30 +7851,153 @@ def _render_emulator_file(
             f"- Not collectable: {_escape_tags(str(f['unsourceable']))} "
             "([acknowledged gaps](../gaps.md#acknowledged-gaps))"
         )
-    if contents:
-        # Every member with the hashes the emulator checks: MAME and FBNeo
-        # verify the members, never the archive, so a member's crc32 is the
-        # value a reader compares a set against.
-        lines.append(f"- Contents ({len(contents)} members):")
-        for c in contents:
-            if isinstance(c, dict):
-                parts = []
-                if c.get("description"):
-                    parts.append(_escape_tags(str(c["description"])))
-                if c.get("size"):
-                    parts.append(_fmt_size(c["size"]))
-                if c.get("crc32"):
-                    parts.append(f"CRC32 `{c['crc32']}`")
-                if c.get("sha1"):
-                    parts.append(f"SHA1 `{c['sha1']}`")
-                extra = f": {', '.join(parts)}" if parts else ""
-                lines.append(f"    - `{c.get('name', '')}`{extra}")
-            else:
-                lines.append(f"    - {c}")
+    lines.extend(_contents_lines(contents))
     lines[body_start:] = _search_skipped_apart(lines[body_start:])
     lines.append("")
     lines.append("</div>")
     lines.append("")
+    return lines
+
+
+def _contents_lines(contents: list) -> list[str]:
+    """Every member with the hashes the emulator checks: MAME and FBNeo
+    verify the members, never the archive, so a member's crc32 is the
+    value a reader compares a set against."""
+    if not contents:
+        return []
+    lines = [f"- Contents ({len(contents)} members):"]
+    for c in contents:
+        if isinstance(c, dict):
+            parts = []
+            if c.get("description"):
+                parts.append(_escape_tags(str(c["description"])))
+            if c.get("size"):
+                parts.append(_fmt_size(c["size"]))
+            if c.get("crc32"):
+                parts.append(f"CRC32 `{c['crc32']}`")
+            if c.get("sha1"):
+                parts.append(f"SHA1 `{c['sha1']}`")
+            extra = f": {', '.join(parts)}" if parts else ""
+            lines.append(f"    - `{c.get('name', '')}`{extra}")
+        else:
+            lines.append(f"    - {c}")
+    return lines
+
+
+# What an emulator card shows at a glance: where the file goes, how big it
+# is, which setups list it and which copy answers it. Fingerprints and the
+# reading details open on demand.
+_ENTRY_KEY_FACTS = ("Path:", "Standalone path:", "Read from:", "Found by:", "System:",
+                    "Size:", "Aliases:", "Collection copy:", "Collection copies:",
+                    "Platforms", "Destination:")
+_ENTRY_HASHES = ("SHA1:", "MD5:", "CRC32:", "SHA256:", "Adler32")
+# The words the fold of an emulator card names its facts by.
+_ENTRY_MORE_WORDS = (
+    ("Priority", "priority"), ("Fast boot", "fast boot"), ("Validation", "validation"),
+    ("On a failed", "failed check"), ("Installed by the platform's own package", "packages"),
+    ("Not in the platform's package", "packages"), ("Never opened", "unread setups"),
+    ("Asked for by", "source"), ("Source", "source"), ("Config key", "config key"),
+    ("Pattern", "pattern"), ("Region check", "region check"), ("Size note", "size note"),
+    ("Size range", "size range"),
+)
+
+
+def _more_words(lines: list[str]) -> list[str]:
+    """The words a fold names its facts by, once each, in their order."""
+    words: list[str] = []
+    for line in lines:
+        text = re.sub(r"<[^>]+>", "", line.removeprefix("- "))
+        word = next((w for prefix, w in _ENTRY_MORE_WORDS if text.startswith(prefix)),
+                    text.split(":", 1)[0].lower())
+        if word not in words:
+            words.append(word)
+    return words
+
+
+def _short_hash_line(f: dict) -> str:
+    """The entry's strongest declared hash, cut to SHORT_HASH characters,
+    with a copy button for the whole value. "" when it declares none."""
+    from hashing import parse_hash_list  # noqa: PLC0415
+
+    for field, label in (("sha1", "SHA1"), ("md5", "MD5"), ("sha256", "SHA256"), ("crc32", "CRC32")):
+        values = parse_hash_list(f.get(field) or "")
+        if values:
+            value = str(values[0])
+            more = f" and {len(values) - 1} more" if len(values) > 1 else ""
+            return (f'{label}: <span class="rb-hash" data-copy="{html.escape(value)}">'
+                    f"{html.escape(value[:SHORT_HASH])}</span>{more}")
+    return ""
+
+
+def _emulator_card_folds(
+    f: dict, details: list[str], fnote: object, profile: dict, in_repo: bool,
+    contents: list, data_href: str,
+) -> list[str]:
+    """An emulator card's body under Starlight: the key facts and the notes
+    open, the hashes and the rest in one closed fold.
+
+    Lines the search reads and lines it skips are kept in two runs: mixed,
+    each change of side was one more list and one more block, five lists
+    on a card of a dozen lines.
+    """
+    def skipped(line: str) -> bool:
+        return f"- {line}".startswith(SEARCH_SKIPPED)
+
+    key = [d for d in details if d.startswith(_ENTRY_KEY_FACTS)]
+    hashes = [d for d in details if d.startswith(_ENTRY_HASHES)]
+    more = [d for d in details if d not in key and d not in hashes]
+    short = _short_hash_line(f)
+    shut_open = [d for d in key if skipped(d)]
+    sized = next((i for i, d in enumerate(shut_open) if d.startswith("Size:")), None)
+    if short and sized is not None:
+        # On the size's line: what tells this dump from another, one list
+        # item fewer on each card.
+        shut_open[sized] += ", " + short.replace(": ", " ", 1)
+    elif short:
+        shut_open.insert(0, short)
+    # What the search reads first, the notes included, then what it skips:
+    # one list each.
+    open_lines = [d for d in key if not skipped(d)]
+    if fnote:
+        open_lines.append(data_root_words(
+            _escape_tags(link_prose_citations(profile, str(fnote))), data_href))
+    if not in_repo and f.get("unsourceable"):
+        # The badge alone sent readers after a dump that cannot exist, and the
+        # reason was only on the gaps page, which the card did not link.
+        open_lines.append(
+            f"Not collectable: {_escape_tags(str(f['unsourceable']))} "
+            "([acknowledged gaps](../gaps.md#acknowledged-gaps))"
+        )
+    lines = [f"- {d}" for d in open_lines]
+    shut_fold = [f"- {d}" for d in hashes + [m for m in more if skipped(m)]]
+    read_fold = [f"- {m}" for m in more if not skipped(m)]
+    # The members of an archive, a list of their own under the fold's
+    # summary, which counts them: a "Contents" item holding them was two
+    # more elements and 44 bytes on each of 200 MAME cards.
+    members = [f"* {line.removeprefix('    - ')}" for line in _contents_lines(contents)[1:]]
+    fold: list[str] = []
+    if shut_fold or read_fold or members:
+        words = (["hashes"] if hashes else []) + _more_words(
+            [line for line in shut_fold + read_fold if not line.startswith(
+                tuple(f"- {h}" for h in _ENTRY_HASHES))])
+        words = words if len(words) <= 3 else [*words[:3], "more"]
+        if members:
+            words.append(_count(len(members), "member"))
+        hidden_part = [*shut_fold, "", *members] if members else shut_fold
+        body = (hidden_part if not read_fold else [
+            "", markup.block_open("div", f'class="rb-search-skip" {markup.search_exclude()}'),
+            "", *hidden_part, "", "</div>", "", *read_fold])
+        fold = card_fold(_listed_words(words), body, skip=False)
+    # A fold the search skips whole sits in the skipped block before it, with
+    # no attribute of its own: on a page of 200 MAME cards the attribute, the
+    # class and a block each were 12 KB.
+    hidden = bool(fold) and not read_fold
+    shut = [f"- {d}" for d in shut_open] + (["", *fold] if hidden else [])
+    if shut:
+        lines += ["", markup.block_open("div", f'class="rb-search-skip" {markup.search_exclude()}'),
+                  "", *shut, "", "</div>", ""]
+    if fold and not hidden:
+        lines += ["", *fold, ""]
     return lines
 
 
@@ -8350,6 +8586,85 @@ def _ps_quote(value: str) -> str:
     return value if re.fullmatch(r"[\w.+-]+", value) else "'" + value.replace("'", "''") + "'"
 
 
+# The OS tabs of a system's install box: labels the site's other command
+# tabs use, so the reader's choice carries from page to page.
+INSTALL_PICKER_OSES = ("windows", "macos", "linux", "steamdeck")
+
+
+def _install_args(platform: str, system: str, shell: str) -> str:
+    quoted = _ps_quote(system) if shell == "powershell" else shlex.quote(system)
+    return f"--platform {platform} --system {quoted}"
+
+
+def _install_picker(declared: list[tuple[str, str]]) -> list[str]:
+    """One command, for the setup the reader picks, under the OS tabs.
+
+    Every setup's command for a console was written out, twice: 12 long
+    lines for the PSP, about 360 page elements once highlighted. The
+    picker shows one and the script (site.ts) rewrites it for the setup
+    chosen, remembered from page to page. Without the script the picker
+    stays hidden and the plain list of every command shows, open.
+    """
+    def attribute(text: str) -> str:
+        # Quotes kept as written: a system id quoted for the shell ('Neo Geo').
+        return html.escape(text, quote=False).replace('"', "&quot;")
+
+    names = Counter(platform for platform, _system in declared)
+    options = "".join(
+        f'<option value="{attribute(platform)}" '
+        f'data-sh="{attribute(_install_args(platform, system, "sh"))}" '
+        f'data-ps="{attribute(_install_args(platform, system, "powershell"))}">'
+        + html.escape(_platform_display(platform) + (f" ({system})" if names[platform] > 1 else ""),
+                      quote=False)
+        + "</option>"
+        for platform, system in declared)
+    lead = declared[0]
+    args = {key: _install_args(*lead, TERMINALS[key][2]) for key in INSTALL_PICKER_OSES}
+    return [
+        "Each platform names the system its own way.",
+        "",
+        '<div class="rb-install" data-rb-install="" hidden>',
+        "",
+        f'<label class="rb-install-setup">Your setup <select>{options}</select></label>',
+        "",
+        *terminal_tabs(INSTALL_PICKER_OSES, args, steps=False),
+        "",
+        "</div>",
+        "",
+        # Each command as inline code, no highlighting: the list is the
+        # fallback and the reference, and highlighted it was most of the
+        # box's elements.
+        '<details class="rb-install-all" open>',
+        "<summary>Every setup's command</summary>",
+        "",
+        *_command_list("Terminal (Linux, macOS, Steam Deck):", declared, "sh"),
+        *_command_list("PowerShell (Windows):", declared, "powershell"),
+        "</details>",
+    ]
+
+
+def _command_list(label: str, declared: list[tuple[str, str]], shell: str) -> list[str]:
+    """Every setup's command for one shell, a line each, with a copy button.
+
+    Inline HTML code, so no break element is added at each slash. A break
+    point follows the URL's scheme: the Markdown around the code made the
+    bare URL a link inside the command, and a scheme with nothing after it
+    is no link. The break adds no character to a copy."""
+    def command(platform: str, system: str) -> str:
+        text = html.escape(install_command(shell, _install_args(platform, system, shell)), quote=False)
+        return text.replace("://", "://<wbr>")
+
+    # One HTML line: the glossary leaves HTML alone, and it marked a word
+    # inside a command.
+    names = Counter(platform for platform, _system in declared)
+    items = "".join(
+        f"<li>{html.escape(_platform_display(platform), quote=False)}"
+        + (f" ({html.escape(system, quote=False)})" if names[platform] > 1 else "")
+        + f': <code data-copy="">{command(platform, system)}</code></li>'
+        for platform, system in declared)
+    return [label, "", f"<ul>{items}</ul>", ""]
+
+
 def _console_install_block(console: str, declared: list[tuple[str, str]]) -> list[str]:
     """Each platform's command for one console, by the system id it gives it,
     for a terminal and for PowerShell, each under its setup's name: RetroBat
@@ -8367,6 +8682,8 @@ def _console_install_block(console: str, declared: list[tuple[str, str]]) -> lis
     # the files of Other arcade files".
     summary = ("Install these files" if console.casefold().endswith(" files")
                else f"Install the files of {console}")
+    if markup.starlight() and len(declared) > 1:
+        return search_excluded(markup.details("tip", summary, _install_picker(declared)))
     return search_excluded(markup.details("tip", summary, [
         "Each platform names the system its own way.",
         "",
@@ -8485,8 +8802,9 @@ def _render_structured_blocks(profile: dict) -> list[str]:
     return lines
 
 
-def _hash_spans(value: str | list) -> str:
-    """Each hash a profile accepts, in full.
+def _hash_spans(value: str | list, copy: bool = False) -> str:
+    """Each hash a profile accepts, in full, each with a copy button when
+    *copy*.
 
     Cut to 12 characters with the rest in a title attribute, 208 hashes
     that only a profile declares were out of reach of the site search: it
@@ -8495,7 +8813,7 @@ def _hash_spans(value: str | list) -> str:
     from hashing import parse_hash_list  # noqa: PLC0415
 
     return ", ".join(
-        markup.hash_value(v) for v in parse_hash_list(value)
+        markup.hash_value(v, copy) for v in parse_hash_list(value)
     )
 
 

@@ -17,6 +17,9 @@
    .rb-bar             inline coverage bar, width from --v
    .rb-details-*       collapsible block, neutral unless caution or danger
    dl.rb-facts         the facts of a file card, label and value side by side
+   .rb-install-all     the list of every command in a system's install box
+   .rb-copy            the copy button site.ts adds after a hash
+   .rb-install-setup   the setup list of a system's install box
    abbr.rb-term        a glossary term, its definition on hover or tap
 */
 
@@ -567,6 +570,50 @@ body:has(table.rb-entries) { --sl-content-width: var(--rb-grid-width); }
 	.sl-markdown-content table.rb-entries .rb-badge { white-space: normal; }
 	.sl-markdown-content details.rb-entry ul { font-size: 0.75rem; }
 }
+
+/* A fold of a file card (Hashes, the rest): no frame, a small summary in
+   the muted colour, a 24 px target (WCAG 2.5.8). */
+.sl-markdown-content :is(:is(.rb-sys-file, .rb-file-entry) details, details.rb-install-all) { margin: 0.3rem 0 0; padding: 0; border: 0; font-size: 0.85rem; }
+.sl-markdown-content :is(:is(.rb-sys-file, .rb-file-entry) details, details.rb-install-all) > summary {
+	min-height: 24px;
+	line-height: 24px;
+	font-size: 0.8rem;
+	color: var(--rb-text-secondary);
+	cursor: pointer;
+}
+.sl-markdown-content :is(:is(.rb-sys-file, .rb-file-entry) details, details.rb-install-all) > summary::before { background-color: var(--rb-text-secondary); }
+.sl-markdown-content :is(:is(.rb-sys-file, .rb-file-entry) details, details.rb-install-all) > summary:hover { color: var(--sl-color-white); }
+.sl-markdown-content :is(:is(.rb-sys-file, .rb-file-entry) details, details.rb-install-all) > :not(summary) { margin-top: 0.2rem; }
+
+/* The copy button after a hash (site.ts): the Download button's frame,
+   smaller, a 24 px target that stays inside a 24 px line, so it never
+   covers the fold below it (WCAG 2.5.8). */
+.rb-copy {
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	height: 24px;
+	margin-left: 0.4rem;
+	padding: 0 0.5rem;
+	border: 1px solid var(--rb-border-strong);
+	border-radius: 4px;
+	background: transparent;
+	font: inherit;
+	font-family: var(--sl-font);
+	font-size: 0.75rem;
+	line-height: 1;
+	color: var(--rb-link);
+	vertical-align: top;
+	cursor: pointer;
+}
+.rb-copy:hover { background: var(--sl-color-accent-low); }
+
+/* A system's install box: the setup list above the OS tabs, and the list
+   of every command, which wraps anywhere rather than scroll a phone. */
+.sl-markdown-content .rb-install-all code { overflow-wrap: anywhere; }
+.sl-markdown-content .rb-install-setup { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+/* Its select is styled as every other choice list on the site (the
+   arrow of --rb-select-arrow, below): a rule of its own hid the arrow. */
 
 /* Collapsible blocks are quiet: a closed block must not outweigh the
    command it explains. Colour is kept for caution and danger. */
