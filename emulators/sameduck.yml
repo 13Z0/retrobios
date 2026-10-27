@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/LIJI32/SameBoy"
 upstream: "https://github.com/LIJI32/SameBoy"
 profiled_date: "2026-03-25"
-source_commit: "208ba4afabffab9edde416f2dbb8ae459e34adb8"
+source_commit: "e7da9386e1533268b7e9de73450e070b1498d1bf"
 core_version: "0.13.6"
 display_name: "Mega Duck / Cougar Boy (SameDuck)"
 cores:

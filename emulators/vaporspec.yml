@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/minkcv/vm"
 upstream: "https://github.com/minkcv/vm"
 profiled_date: "2026-03-25"
-source_commit: "02a3345cc9b5cb38c529eabe6967b25a95501559"
+source_commit: "11f63848a592644722ea1240b4b96785db9b009f"
 core_version: "GIT"
 display_name: "VaporSpec"
 cores: [vaporspec]

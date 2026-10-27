@@ -4,7 +4,7 @@ core_classification: pure_libretro
 source: "https://github.com/libretro/gong"
 upstream: "https://danzaidan.itch.io/"
 profiled_date: "2026-03-23"
-source_commit: "11d98233f9bba2dec60cae555b196684fd9d2aa5"
+source_commit: "69ef0b69dc542af4c1cf2efcc451dd6c378281b6"
 core_version: "1.0"
 display_name: "Gong"
 cores: [gong]
