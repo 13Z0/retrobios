@@ -6,7 +6,11 @@ upstream: "https://github.com/mamedev/mame"
 profiled_date: "2026-03-25"
 source_commit: "ff9bb99a50d518aef6d2add1c49b7c44447e3e78"
 upstream_commit: "39eb9e44c394df9aec8186f2d2ef7517ace232e1"
-core_version: "Git"
+core_version: "0.287"
+version_basis:
+  kind: file
+  path: "gen/version.cpp"
+  pattern: '#define\s+BARE_BUILD_VERSION\s+"([^"]+)"'
 display_name: "Philips - CDi (SAME CDi)"
 cores: [same_cdi]
 systems:

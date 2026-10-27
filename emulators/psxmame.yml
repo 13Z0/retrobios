@@ -5,7 +5,11 @@ source: "https://github.com/mamedev/mame"
 upstream: "https://github.com/mamedev/mame"
 profiled_date: "2026-10-20"
 source_commit: "0fdce58484202265b0794a77652bb5e3da9c56af"
-core_version: "0.133"
+core_version: "mame0133"
+version_basis:
+  kind: tag
+  tag: "mame0133"
+  distance: 0
 display_name: "Arcade PSX boards (pSxMAME)"
 mode: standalone
 cores:

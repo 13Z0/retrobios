@@ -5,7 +5,12 @@ source: "https://github.com/recalbox/pifba"
 upstream: "https://github.com/finalburn/fbalpha-fork"
 profiled_date: "2026-10-04"
 source_commit: "419faa7c3967560f6fa149f2f78b5aedca5b123a"
-core_version: "0.2.97.x"
+core_version: "0.2.96.71"
+version_basis:
+  kind: file
+  path: "burn/version.h"
+  pattern: '#define\s+VER_MAJOR\s+(\d+)\s*\n#define\s+VER_MINOR\s+(\d+)\s*\n#define\s+VER_BETA\s+(\d+)\s*\n#define\s+VER_ALPHA\s+(\d+)'
+  format: "{1}.{2}.{3}.{4}"
 display_name: "Arcade (piFBA / fba2x)"
 cores: [fba2x, pifba]
 systems:
