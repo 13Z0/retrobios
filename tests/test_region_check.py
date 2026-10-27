@@ -176,6 +176,37 @@ class ContentList(unittest.TestCase):
             self.assertFalse(missing, f"{system}: no game for {sorted(missing)}")
 
 
+class RequiredFromTheRegionRuns(unittest.TestCase):
+    def test_beetle_psx_boots_each_region_without_its_bios(self) -> None:
+        """libretro.c maps its built-in OpenBIOS when the region's file is
+        absent: the evidence of required: false is a record where the file
+        was not staged and the oracle judged the run a boot."""
+        import json
+
+        import yaml
+
+        profile = yaml.safe_load((ROOT / "emulators" / "beetle_psx.yml").read_text(encoding="utf-8"))
+        records = {}
+        for line in (ROOT / "measurements" / "beetle_psx.jsonl").read_text(encoding="utf-8").splitlines():
+            record = json.loads(line)
+            records[record["id"]] = record
+        regional = [e for e in profile["files"] if e["name"] in ("scph5500.bin", "scph5501.bin", "scph5502.bin")]
+        self.assertEqual(len(regional), 3)
+        for entry in regional:
+            with self.subTest(entry=entry["name"]):
+                self.assertIs(entry["required"], False)
+                self.assertIn("3425-3511", entry["source_ref"])
+                ids = entry["evidence"]["required"]
+                self.assertTrue(ids)
+                for rid in ids:
+                    record = records[rid]
+                    self.assertEqual(record["record_version"], 4)
+                    variant = record["variants"][0]
+                    self.assertNotIn(entry["name"], variant["system_files"])
+                    self.assertEqual(variant["verdict"], "boots")
+                    self.assertIn("game", variant["verdict_evidence"].get("stages", []))
+
+
 class SitePages(unittest.TestCase):
     def test_region_section_links_every_record(self) -> None:
         import sitemeasurements as sm
