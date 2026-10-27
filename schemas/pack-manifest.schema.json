@@ -22,7 +22,8 @@
           "md5": { "type": "string", "pattern": "^[a-f0-9]{32}$" },
           "size": { "type": "integer", "minimum": 0 },
           "status": { "enum": ["verified", "verified_md5", "verified_rebuild", "verified_data", "verified_members", "untracked"] },
-          "name": { "type": "string" }
+          "name": { "type": "string" },
+          "systems": { "type": "array", "items": { "type": "string", "minLength": 1 } }
         }
       }
     },
@@ -37,6 +38,11 @@
         "errors": { "type": "integer", "minimum": 0 }
       }
     },
-    "errors": { "type": "array", "items": { "type": "string" } }
+    "errors": { "type": "array", "items": { "type": "string" } },
+    "system_titles": { "type": "object", "additionalProperties": { "type": "string" } },
+    "system_names": {
+      "type": "object",
+      "additionalProperties": { "type": "array", "items": { "type": "string" } }
+    }
   }
 }

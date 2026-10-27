@@ -421,7 +421,7 @@ class ACoreWithNoFileOfItsOwn(unittest.TestCase):
         self.assertIn("1 file, 9 B", self._line(out.getvalue(), "duckstation"))
 
     def test_the_cores_step_says_so_too(self):
-        answers = iter(["c", "", ""])
+        answers = iter(["c", "", "", ""])
         out = io.StringIO()
         with mock.patch("builtins.input", lambda _prompt="": next(answers)), \
                 contextlib.redirect_stdout(out):
@@ -458,7 +458,7 @@ class FilesSharedBySystemsAreCountedApart(unittest.TestCase):
         self.assertTrue(lines["nintendo-gba"].endswith("1 file, 8 B"))
 
     def test_the_systems_step(self):
-        answers = iter(["c", ""])
+        answers = iter(["c", "", ""])
         out = io.StringIO()
         with mock.patch("builtins.input", lambda _prompt="": next(answers)), \
                 contextlib.redirect_stdout(out):
@@ -680,7 +680,7 @@ class TheOneLinerNarrows(unittest.TestCase):
             command = " ".join(shlex.quote(part) for part in repo.command())
             proc = subprocess.run(
                 ["script", "-qec", command, "/dev/null"],
-                input="c\n2\n\n2\n", env=repo.env(), capture_output=True,
+                input="c\n2\n\n2\n\n", env=repo.env(), capture_output=True,
                 text=True, timeout=60, check=False,
             )
             out = proc.stdout

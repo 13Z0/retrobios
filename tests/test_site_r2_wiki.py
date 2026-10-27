@@ -301,7 +301,7 @@ class TroubleshootingLines(unittest.TestCase):
     def test_the_installer_names_what_to_run(self):
         source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
         advice = source[source.index("def _write_advice"):source.index("def _plural")]
-        self.assertIn("_INVOCATION.command(plat, path, elevated=True)", advice)
+        self.assertIn("hint.command(plat, path, elevated=True)", advice)
 
 
 class DiagramText(unittest.TestCase):

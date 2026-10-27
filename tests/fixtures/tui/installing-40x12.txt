@@ -4,7 +4,7 @@
  528.0 KB of 1.0 MB
  128.9 KB/s, 0:04 left
  2 of 4 files
- B, Ctrl-C or Start+Select stops. What
+ B, Ctrl-C or Select+Start stops. What
    is done stays done.
 
  FAILED scph5500.bin (HTTP 404)

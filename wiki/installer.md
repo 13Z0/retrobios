@@ -177,7 +177,7 @@ install starts.
 | Options | `o`, Tab | Y |
 | Filter a long list | `/` then type, Enter on a lone match chooses it | muxterm: Select shows a keyboard. Elsewhere none (the setup list puts the SD cards after RetroArch) |
 | Keys of the screen | `?`, F1 | |
-| Stop an install | Esc, `q`, Ctrl+C | B, Start+Select (B alone with muxterm's own keys) |
+| Stop an install | Esc, `q`, Ctrl+C | B, Select+Start (B alone with muxterm's own keys) |
 | Quit | `q`, Ctrl+C | B on the first screen |
 | Pause, back with `fg` (Linux, macOS) | Ctrl+Z | |
 
@@ -193,7 +193,7 @@ on a console no launcher named, it gives both spellings (`A/Enter`, `B/Esc`),
 and a narrow screen shortens them to `A`, `B` and `X`. On the
 regions screen, Left and Right move the region under the cursor up and down the
 order of preference. During the download, a stop waits for the files in
-progress, and a second one stops at once. Start+Select on a handheld ends the
+progress, and a second one stops at once. Select+Start on a handheld ends the
 installer with a signal (SIGTERM), which stops it the same way. Either way the
 result says how many files were installed, and it stays printed in the terminal
 once the screen closes, with the command that repeats the run. A run that failed
@@ -329,7 +329,7 @@ command never writes one.
 ```
 RetroBIOS 8c0e9c762d2f
 
-Detecting platform...
+Looking for setups here...
   Found Batocera at /userdata/bios
 ```
 
@@ -600,9 +600,11 @@ same choice comes as questions after detection:
 
 ```
 RetroArch: 8069 files, 6.5 GB.
+  BIOS folder: /home/me/.config/retroarch/system
   Enter) install everything
   i) only what the installed cores read: 100 files, 44.2 MB
   c) choose systems, cores and regions
+  f) copy from a folder or an old card
   q) quit
 ```
 
@@ -615,10 +617,12 @@ the rule `--installed-cores` applies.
 `c` walks through three numbered lists, each answered with numbers such as
 `1,4,7-9`, or Enter to keep everything on that axis.
 
-- **Systems.** The consoles and computers the platform declares. A last
-  entry, `other`, holds what cores load for systems the platform does not
-  list, such as game engines and extra computers. Choosing systems leaves it
-  out unless it is chosen too, as `generate_pack.py --system` does.
+- **Systems.** The consoles and computers the platform declares, titled and
+  ordered as the full screen's Choose systems lists them, the id `--system`
+  takes after each title. A last entry, `Other systems and game engines`,
+  holds what cores load for systems the platform does not list, such as game
+  engines and extra computers. Choosing systems leaves it out unless it is
+  chosen too, as `generate_pack.py --system` does.
 - **Cores.** The platform's own BIOS list for the chosen systems is always
   kept. This narrows only the extra files each emulator core loads beyond it.
   Asked only when the chosen systems have such files.
@@ -626,9 +630,12 @@ the rule `--installed-cores` applies.
   numbers give an order of preference: `2,1` keeps the second region where a
   file for it exists, and the first one elsewhere.
 
-The run then prints the options that repeat the same choice without
-questions, for instance
-`--platform retroarch --system sony-playstation --region north-america`.
+Nothing is written yet: the menu comes back counted for the choice, as the
+full screen's Confirm does, with the command that makes the same choice
+without questions, every other option of the run in it, for instance
+`python3 install.py --platform retroarch --dest /home/me/.config/retroarch/system
+--system sony-playstation --region north-america`. Enter then installs, and
+`c` chooses again.
 
 The same choices on the command line:
 
@@ -1212,7 +1219,7 @@ gets the column that names both:
 | Options | o, Tab | Y, o, Tab | Y, Tab, o | Y, Tab, o | o, Tab | Y, Tab, o | L2, Tab, o |
 | Back, and quit on the first screen | Esc, Backspace | B/Esc, Backspace | B, Select, Esc | B, Select, Esc | B, Esc, Backspace | B, Select, Esc | R2, Esc, Backspace |
 | Stop an install | Esc, Ctrl-C | B/Esc, Ctrl-C | B, Esc, Ctrl-C | B, Esc, Ctrl-C | B, Esc, Ctrl-C | B, Esc, Ctrl-C | R2, Esc, Ctrl-C |
-| Quit at once | none | Start+Select | Select, then Start | Select, then Start | none | none | none |
+| Quit at once | none | Select+Start | Select, then Start | Select, then Start | none | none | none |
 | Use the folder typed | Enter | Enter | A, Enter | A, Enter | Start, Enter | A, Enter | Start, Enter |
 | Clear a filter, leave the folder typed | Esc | Esc | B, Esc | B, Esc | Esc | B, Esc | Esc |
 
@@ -1417,7 +1424,7 @@ fields, the installer refuses to narrow rather than install everything.
 
 <!-- /generated: exit-codes -->
 
-The full screen ended by SIGTERM (Start+Select on a handheld) before any
+The full screen ended by SIGTERM (Select+Start on a handheld) before any
 install exits `143`. During an install it stops the install first, and exits
 `130`. Its window or terminal closed (SIGHUP) exits `129`, during an install
 too: the install is stopped as Ctrl+C stops it, and the last lines go
@@ -1459,6 +1466,7 @@ other schemas under `api/v1/schemas/`.
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
 | `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. The BIOS folder cannot be created (`stage` is `dest`, `reason` `not_writable`): a `summary` follows with what the run installed before it. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). The platform named with `--platform` is found nowhere and no folder can be assumed for it: a card system with no card named, a portable emulator, Batocera or Recalbox named on a computer (their folder is the `bios` folder of their SHARE drive), or no usual folder on this system or one set aside behind a folder this user cannot open (`stage` is `detect`, `reason` `not_found`). A `--dest` refused as the card of the system named carries the same `stage` and `reason`: another system's card, a folder inside a card, a drive with none of the files its card always has, or a folder that does not exist. `message` says it in words, and is the only thing that tells these cases apart |
 | `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
+| `choices` | `platform`, `systems` | Before `checking`: the systems the run's list lets one choose among, sorted by id, `other` last for the files no system names. The run's other options apply (`--core`, `--region`, `--no-game-data`, the files left out for an unknown save directory), `--system` does not: these are the systems a screen lists to choose from, and the count a `--system` is out of |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
 | `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id, and with `--system` only the systems named. Files with no system count under `other`. `name` is the platform's own name for it |
 | `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
@@ -1467,7 +1475,7 @@ other schemas under `api/v1/schemas/`.
 | `data` | `platform`, `files`, `bytes` | Right after `declared`: the data-tree files to fetch (the `data_missing` of `check`) and the bytes they write once in place |
 | `found` | `platform`, `dest`, `folder`, `path`, `member`, `reason` | Each file to install that this machine already holds, after `check` and before anything is written, in `--check` and `--dry-run` too. `folder` is the `--from` folder as given, or the `bios_dir` of the check when the BIOS folder holds the file at another place, and then `reason` says where in words (`nested folder: ...` for a misplaced file, `the same file is at ...` for one the list installs there too). `path` is the file, and `member` the ZIP member holding the bytes when `path` is an archive, an empty string otherwise. Its copy is reported by a `downloaded` event |
 | `unreadable` | `platform`, `folder`, `path`, `member`, `reason` | Each file in a `--from` folder that could not be read and may be one the run still needs, right after the `found` events: its size is that of a file no copy was found for, or unknown (a folder that could not be listed, a ZIP that would not open). `member` names the ZIP member, or is empty. `reason` says why in words (`Permission denied`, `it is encrypted, a password is needed`) |
-| `saves` | `platform`, `files`, `folder` | After `detect` and before `checking`, when the list holds files read from the frontend's save directory and that directory is known: how many, and the `folder` they go to, where `<system>` and `<core>` stand for one folder per system or per core. When it is not known, the files are counted in the summary's `skipped` instead (`no_save_directory`) |
+| `saves` | `platform`, `files`, `folder` | After `choices` and before `checking`, when the files the run installs (once `--system` and the other choices narrowed the list) hold some read from the frontend's save directory and that directory is known: how many, and the `folder` they go to, where `<system>` and `<core>` stand for one folder per system or per core. When it is not known, the files are counted in the summary's `skipped` instead (`no_save_directory`) |
 | `download` | `platform`, `files`, `bytes` | Before the downloads start. Counts the files copied from this machine too |
 | `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
 | `transfer` | `bytes_local`, `bytes_network` | Right after each `progress` event, and once when the files of a `download` event are done. It splits `bytes_done`: `bytes_local` came from this machine (a copy found by `--from` or in the BIOS folder, the pack, a partial copy resumed), `bytes_network` from the network. A download speed is `bytes_network` over the time elapsed |
@@ -1509,6 +1517,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters. When either of these two is set and the fingerprint does not match, the error names the variable instead of suggesting a retry |
 | `RETROBIOS_BOOTSTRAP` | Set by `install.sh` (`sh`) and `install.ps1` (`ps1`) for the temporary installer they run, so that its hints give back the one-line command rather than `python3 install.py` |
 | `NO_COLOR` | Plain text, no colour, even at a terminal, when set to any value but an empty one. `TERM=dumb`, or no `TERM` outside Windows, also turns the live progress line and the colour off, as does a terminal whose description moves no cursor the ANSI way (`TERM=vt52`). The full screen draws no colour at all: the row in focus is marked with `>` as well as reverse video, and every state is written in words |
+| `TERM`, `TERMINFO`, `TERMINFO_DIRS` | Decide whether the full screen opens. `TERM` unset or `dumb` (outside Windows) gives the questions line by line. Otherwise the terminal's description is read where ncurses reads it: `TERMINFO`, then `~/.terminfo`, then each folder of `TERMINFO_DIRS`, then the system's own. A description whose cursor moves are not the ANSI ones the screen writes (`TERM=vt52`) gives the questions too, and `--tui` there stops with the reason |
 | `FORCE_COLOR`, `CLICOLOR_FORCE` | Colour even when the output is a pipe or a file, set to any value but `0` or an empty one. `NO_COLOR` wins over both, and the progress line stays one line per file |
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |

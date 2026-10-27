@@ -15,6 +15,7 @@
         "detect",
         "error",
         "scanned",
+        "choices",
         "file",
         "system",
         "checking",
@@ -49,6 +50,9 @@
     },
     {
       "$ref": "#/$defs/scanned"
+    },
+    {
+      "$ref": "#/$defs/choices"
     },
     {
       "$ref": "#/$defs/file"
@@ -233,6 +237,29 @@
           "type": "boolean"
         },
         "other_drives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "choices": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "systems"
+      ],
+      "properties": {
+        "event": {
+          "const": "choices"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "systems": {
           "type": "array",
           "items": {
             "type": "string"

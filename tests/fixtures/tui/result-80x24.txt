@@ -21,4 +21,4 @@
 
 
 
- A/Enter Exit  Up/Down Scroll
+ A/Enter Exit
