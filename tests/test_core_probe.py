@@ -286,6 +286,45 @@ class OracleTests(unittest.TestCase):
         self.assertEqual(core_probe.oracle_for(data, "b" * 40, "Fake")["references"], [])
         self.assertEqual(core_probe.oracle_for(data, "a" * 40, "Nobody")["error_patterns"], ["shared"])
 
+    def test_every_reference_judges_its_own_record_a_boot(self) -> None:
+        """Each reference block names the run it was taken from: judged
+        again with the oracle as it stands, every repetition of that run
+        boots, so a frame copied wrong or a stage mislabelled fails here."""
+        data, _ = core_probe.load_oracle(core_probe.DEFAULT_ORACLE)
+        records = {s.record["id"]: s.record for s in measurement_records.read_records(REPO_ROOT)}
+        checked = 0
+        for item in data.get("content") or ():
+            for library, block in item["references"].items():
+                record = records.get(block["recorded_from"])
+                self.assertIsNotNone(record, f"{item['name']} on {library}: {block['recorded_from']}")
+                self.assertEqual(record["inputs"]["content"]["sha1"], item["sha1"], item["name"])
+                for rep in record["variants"][0]["repetitions"]:
+                    oracle = core_probe.oracle_for(data, item["sha1"], rep["library_name"])
+                    verdict, evidence = core_probe.judge(rep, oracle)
+                    self.assertEqual(verdict, "boots", f"{item['name']} on {library}: {evidence}")
+                    checked += 1
+        self.assertGreaterEqual(checked, 2 * 14)
+
+    def test_the_repository_error_patterns_and_screens(self) -> None:
+        data, _ = core_probe.load_oracle(core_probe.DEFAULT_ORACLE)
+        saturn = core_probe.oracle_for(data, None, "Beetle Saturn")
+        for line in ('Cannot open BIOS file "/system/sega_101.bin".',
+                     'BIOS file "/system/sega_101.bin" is of an incorrect size.',
+                     'BIOS file "/system/sega_101.bin" could not be fully read (short or failed read).'):
+            rep = {"loaded": False, "logs": [{"frame": 0, "level": "error", "text": line}]}
+            self.assertEqual(core_probe.judge(rep, saturn)[0], "bios_error", line)
+        menu = {"Beetle PSX": "dfbfc299250c0983f86bbf951efd187441306d92",
+                "Beetle PSX HW": "dfbfc299250c0983f86bbf951efd187441306d92",
+                "SwanStation": "167fb7b6527e295b12dca5806a29856f5f31d401"}
+        for library, sha1 in menu.items():
+            rep = {"loaded": True, "logs": [], "frames": 100, "warmup": 0,
+                   "observables": {"frame_hashes": [[90, sha1]], "uniform_frames": []}}
+            verdict, evidence = core_probe.judge(rep, core_probe.oracle_for(data, None, library))
+            self.assertEqual((verdict, evidence["rule"]), ("bios_error", "error_screen"), library)
+        # The PlayStation cores fall back to a built-in BIOS: nothing they log is an error.
+        for library in ("Beetle PSX", "SwanStation", "PCSX-ReARMed", "PCSX1"):
+            self.assertEqual(core_probe.oracle_for(data, None, library)["error_patterns"], [])
+
     def test_the_repository_oracle_is_well_formed(self) -> None:
         import yaml
         data = yaml.safe_load(core_probe.DEFAULT_ORACLE.read_text(encoding="utf-8"))
