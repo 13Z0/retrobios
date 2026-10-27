@@ -779,7 +779,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("run", parents=[common], help="one execution")
     bench = sub.add_parser("bench", parents=[common], help="timed repetitions")
-    bench.add_argument("--repeat", type=int, default=MIN_BENCH_REPETITIONS)
+    bench.add_argument("--repeat", type=int, default=MIN_BENCH_REPETITIONS,
+                       help=f"timed repetitions, each in a fresh process (at least {MIN_BENCH_REPETITIONS} to record)")
     check = sub.add_parser("check", parents=[common], help="compare variants of a system file")
     check.add_argument("--vary", action="append", required=True, metavar="DEST=SRC",
                        type=lambda t: parse_assignment(t, "--vary"),
@@ -788,10 +789,10 @@ def build_parser() -> argparse.ArgumentParser:
                        help="the observable compared across variants")
     check.add_argument("--claim", required=True, help="the statement under test")
     check.add_argument("--method", required=True, help="how the run tests it")
-    check.add_argument("--repeat", type=int, default=2)
-    worker = sub.add_parser("_worker")
-    worker.add_argument("spec")
-    worker.add_argument("out")
+    check.add_argument("--repeat", type=int, default=2, help="runs of each variant, each in a fresh process")
+    worker = sub.add_parser("_worker", help="internal: one run in this process, started by the others")
+    worker.add_argument("spec", help="JSON file describing the run")
+    worker.add_argument("out", help="JSON file the result is written to")
     return parser
 
 
