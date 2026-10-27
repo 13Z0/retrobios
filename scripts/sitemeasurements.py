@@ -280,12 +280,22 @@ def packs_section(items: list[dict]) -> list[str]:
     ]
 
 
+def _inert(value: object) -> str:
+    """Run output (a core's log line, a file name it opened) placed in raw
+    HTML as text: every character HTML, MDX or Markdown reads as markup,
+    quotes included, written as a character reference."""
+    return _plain(value).replace('"', "&quot;").replace("'", "&#x27;")
+
+
 def _pack_details(item: dict) -> list[str]:
+    def line(label: str, value: object) -> str:
+        return _sentence_html(label, _inert(value), markup_ready=True)
+
     lines = [
-        _sentence_html("Result", item["detail"]),
-        _sentence_html("Core", f"{item['core']} ({item['emulator']})"),
-        _sentence_html("Files the core opened", "; ".join(item["files"]) or "none"),
-        _sentence_html("Findings", "; ".join(item["finding_list"]) or "none"),
+        line("Result", item["detail"]),
+        line("Core", f"{item['core']} ({item['emulator']})"),
+        line("Files the core opened", "; ".join(item["files"]) or "none"),
+        line("Findings", "; ".join(item["finding_list"]) or "none"),
         f'<p><a href="{_attr(item["record_url"])}">Full record</a>.</p>' if item["record_url"] else "",
     ]
     return [line for line in lines if line]
@@ -308,8 +318,8 @@ def pack_tested_section(items: list[dict]) -> list[str]:
              '<div class="rb-tested-head" aria-hidden="true"><span>Test</span>'
              "<span>Result</span><span>Installed by</span><span>Date</span></div>"]
     for item in sorted(items, key=lambda i: (i["system"], i["content"], i["core"], i["install"])):
-        title = (f"{_cell(item['system'])}, {_cell(short_content(item['content']))} "
-                 f"<small>{html.escape(item['core'])}</small>")
+        title = (f"{_inert(item['system'])}, {_inert(short_content(item['content']))} "
+                 f"<small>{_inert(item['core'])}</small>")
         lines += [
             '<details class="rb-tested-row">',
             ("<summary>"
@@ -646,6 +656,9 @@ def by_emulator(index: dict) -> dict[str, list[dict]]:
         opened[line["emulator"]] = opened.get(line["emulator"], 0) + 1
     out: dict[str, list[dict]] = {}
     for item in index.get("items", []):
+        # A pack probe's run is shown on its platform's page, beside the pack.
+        if item["subject"].startswith(mr.PACK_SUBJECT_PREFIX):
+            continue
         out.setdefault(item["emulator"], []).append(
             {**item, "open_findings": opened.get(item["emulator"], 0)})
     return out

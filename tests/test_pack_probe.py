@@ -249,10 +249,44 @@ class SitePages(unittest.TestCase):
         self.assertIn('<span class="rb-tested-result"><span class="rb-badge rb-badge-success">works</span>',
                       text)
         self.assertIn('<span class="rb-tested-variants">pack</span>', text)
-        self.assertIn("sega-saturn, Game <small>mednafen_saturn</small>", text)
-        self.assertIn("<strong>Files the core opened:</strong> sega_101.bin (sega_101.bin).", text)
-        self.assertIn("<strong>Findings:</strong> missing_declared x.bin.", text)
+        self.assertIn("sega-saturn, Game <small>mednafen&#95;saturn</small>", text)
+        self.assertIn("<strong>Files the core opened:</strong> sega&#95;101.bin (sega&#95;101.bin).", text)
+        self.assertIn("<strong>Findings:</strong> missing&#95;declared x.bin.", text)
         self.assertNotIn("| retroarch |", text)
+
+    def test_pack_runs_stay_off_the_emulator_page(self) -> None:
+        import sitemeasurements as sm
+
+        subject = pp.subject_for("retroarch", "pack", "sega-saturn", "mednafen_saturn", "Game (Japan)")
+        self.assertEqual(subject, "pack-retroarch-pack-sega-saturn-mednafen-saturn-game-japan")
+        index = {"items": [{"emulator": "beetle_saturn", "subject": subject},
+                           {"emulator": "beetle_saturn", "subject": "boot-sega-101-bin"}]}
+        self.assertEqual([i["subject"] for i in sm.by_emulator(index)["beetle_saturn"]],
+                         ["boot-sega-101-bin"])
+
+    def test_run_output_is_inert(self) -> None:
+        """A file name or log line from a third-party core reaches the page
+        as text: no tag, link, code span or MDX expression comes out of it."""
+        import sitemarkup
+        import sitemeasurements as sm
+
+        hostile = "`x` {alert(1)} <script>alert(1)</script> [x](javascript:alert(1)) \"q\" 'q' **b**"
+        item = {"platform": "retroarch", "platform_version": "1", "install": "pack",
+                "system": hostile, "emulator": hostile, "core": hostile, "content": hostile,
+                "verdict": "boots", "date": "2026-10-28T00:00:00+00:00", "opened": 1, "findings": 1,
+                "id": "2026-10-28-0123456789ab", "record_url": "https://example.org/r#L1",
+                "files": [hostile], "finding_list": [hostile], "detail": hostile}
+        text = "\n".join(sm.pack_tested_section([item]))
+        for raw in ("<script", "{alert", "`x`", "[x](", "<code>", "<strong>b", "**b",
+                    "href=\"javascript", '"q"', "'q'"):
+            self.assertNotIn(raw, text)
+        self.assertIn("&lt;script&gt;", text)
+        self.assertIn("&#123;alert(1)&#125;", text)
+        # A Markdown link in other site text keeps only http(s) and relative targets.
+        self.assertEqual(sitemarkup.inline_html("[x](javascript:alert(1))"), "[x](javascript:alert(1))")
+        self.assertEqual(sitemarkup.inline_html('[x](https://a.org/"onmouseover=1)'),
+                         '<a href="https://a.org/&quot;onmouseover=1">x</a>')
+        self.assertEqual(sitemarkup.inline_html("[x](../a.md)"), '<a href="../a.md">x</a>')
         self.assertEqual(sm.pack_tested_section([]), [])
 
 

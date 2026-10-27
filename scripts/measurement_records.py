@@ -89,6 +89,8 @@ def records_path(emulator: str) -> str:
 FINDINGS = "findings"
 CAMPAIGN_RUNS = "campaign-runs"
 PACK_PROBES = "pack-probes"
+# The subject of every core_probe record a pack probe writes.
+PACK_SUBJECT_PREFIX = "pack-"
 CAMPAIGN_FILES = {
     FINDINGS: ("found_at", "campaign-finding.schema.json"),
     CAMPAIGN_RUNS: ("started_at", "campaign-run.schema.json"),

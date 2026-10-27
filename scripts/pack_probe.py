@@ -514,7 +514,8 @@ def probe_argv(core: dict, choice: CoreChoice, content: campaign.Content, load: 
 
 
 def subject_for(platform: str, install: str, system: str, so: str, content: str) -> str:
-    return mr.slugify(f"pack {platform} {install} {system} {so} {content}", 90)
+    subject = mr.slugify(f"{platform} {install} {system} {so} {content}", 85)
+    return f"{mr.PACK_SUBJECT_PREFIX}{subject}"
 
 
 def probe_one(layout: Layout, platform: str, config: dict, profile: dict, choice: CoreChoice,
