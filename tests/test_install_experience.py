@@ -878,7 +878,8 @@ class ColourFollowsNoColorOrg(unittest.TestCase):
     def _colour(self, **env: str) -> bool:
         clean = {k: v for k, v in os.environ.items()
                  if k not in ("NO_COLOR", "FORCE_COLOR", "CLICOLOR_FORCE", "TERM")}
-        with mock.patch.dict(os.environ, {**clean, **env}, clear=True), \
+        # A terminal that is named: an unset TERM is a dumb one.
+        with mock.patch.dict(os.environ, {**clean, "TERM": "xterm", **env}, clear=True), \
                 mock.patch.object(install, "_enable_ansi", return_value=True):
             return install.Terminal(_Tty()).colour
 

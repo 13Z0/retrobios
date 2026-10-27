@@ -341,7 +341,9 @@ def _enable_ansi() -> bool:
 class Terminal:
     """What the output stream can show: a live line, colour, or neither.
 
-    A pipe or a log gets plain lines, and NO_COLOR and TERM=dumb are honoured.
+    A pipe or a log gets plain lines, and NO_COLOR and TERM=dumb or unset are
+    honoured, as is a terminal whose description moves no cursor the ANSI way
+    (vt52).
     As no-color.org reads it, an empty NO_COLOR is not set: `NO_COLOR= cmd`
     turned colour off. FORCE_COLOR or CLICOLOR_FORCE paints a pipe, for a
     log viewer that shows colour, and never makes the line live.
@@ -351,7 +353,12 @@ class Terminal:
         self.stream = stream or sys.stdout
         self.quiet = quiet
         isatty = getattr(self.stream, "isatty", None)
-        self.live = bool(isatty and isatty()) and os.environ.get("TERM") != "dumb"
+        # An unset TERM is a dumb one, as the full screen reads it. A Windows
+        # console sets none and draws the sequences once _enable_ansi is on.
+        term = os.environ.get("TERM", "")
+        self.live = (bool(isatty and isatty()) and term != "dumb"
+                     and (bool(term) or os.name == "nt")
+                     and not terminal_without_ansi(os.environ))
         forced = any(os.environ.get(name, "0") not in ("", "0")
                      for name in ("FORCE_COLOR", "CLICOLOR_FORCE"))
         self.colour = (
@@ -9048,9 +9055,9 @@ def _help_epilog() -> str:
     return "\n".join(lines)
 
 
-def main() -> None:
-    """Entry point."""
-    _INVOCATION.os_type = detect_os()
+def build_parser() -> argparse.ArgumentParser:
+    """The options, in the order --help and wiki/installer.md list them
+    (scripts/generate_installer_doc.py writes its table from this parser)."""
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
         description="Download missing BIOS files for retrogaming emulators. "
@@ -9061,10 +9068,12 @@ def main() -> None:
     )
     parser.add_argument(
         "--platform",
+        metavar="NAME",
         help="target platform (retroarch, batocera, emudeck, ...)",
     )
     parser.add_argument(
         "--dest",
+        metavar="PATH",
         type=Path,
         help="BIOS folder to install into. Without --platform, the file list is "
              "the platform detected here, asked at a terminal, RetroArch's when "
@@ -9072,6 +9081,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--target",
+        metavar="NAME",
         help="hardware target for core filtering (switch, rpi4, ...); "
         "on Batocera, Recalbox, ROCKNIX and Lakka the board is read from the system",
     )
@@ -9081,55 +9091,17 @@ def main() -> None:
         help="install the files of every board, not only the detected one",
     )
     parser.add_argument(
-        "--check",
-        action="store_true",
-        help="check existing files without downloading",
-    )
-    parser.add_argument(
-        "--list-platforms",
-        action="store_true",
-        help="list detected platforms and exit",
-    )
-    parser.add_argument(
-        "--list-targets",
-        action="store_true",
-        help="list available targets for a platform and exit",
-    )
-    parser.add_argument(
-        "--jobs", "-j",
-        type=int,
-        default=8,
-        help="parallel download threads (default: 8)",
-    )
-    parser.add_argument(
-        "--verbose", "-v",
-        action="store_true",
-        help="verbose output",
-    )
-    parser.add_argument(
-        "--standalone-copies",
-        action="store_true",
-        help="opt in to copies into detected standalone-emulator directories",
-    )
-    parser.add_argument(
-        "--add-app",
-        action="store_true",
-        help="after the install, put the RetroBIOS app on the handheld card the BIOS "
-             "folder is on (muOS, KNULLI, ROCKNIX), to check and update the BIOS "
-             "files from the console later",
-    )
-    parser.add_argument(
-        "--emulator",
-        action="append",
-        metavar="NAME",
-        help="install what these emulators read on the platform, as a pack "
-             "built for them carries (names: --list-emulators)",
-    )
-    parser.add_argument(
         "--installed-cores",
         action="store_true",
         help="install only what the cores already installed read "
              "(RetroArch, Lakka, RetroPie)",
+    )
+    parser.add_argument(
+        "--cores-dir",
+        type=Path,
+        metavar="PATH",
+        help="the folder RetroArch loads its cores from, when it is not found "
+             "(implies --installed-cores)",
     )
     parser.add_argument(
         "--save-dir",
@@ -9140,24 +9112,24 @@ def main() -> None:
              "data), when it is not found",
     )
     parser.add_argument(
-        "--cores-dir",
-        type=Path,
-        metavar="PATH",
-        help="the folder RetroArch loads its cores from, when it is not found "
-             "(implies --installed-cores)",
-    )
-    parser.add_argument(
         "--system",
         action="append",
-        metavar="NAME",
+        metavar="NAMES",
         help="install only these systems (repeat or comma-separate, see "
              "--list-systems)",
     )
     parser.add_argument(
         "--core",
         action="append",
-        metavar="NAME",
+        metavar="NAMES",
         help="keep only the extra files these cores load (see --list-cores)",
+    )
+    parser.add_argument(
+        "--emulator",
+        action="append",
+        metavar="NAMES",
+        help="install what these emulators read on the platform, as a pack "
+             "built for them carries (names: --list-emulators)",
     )
     parser.add_argument(
         "--region",
@@ -9189,6 +9161,11 @@ def main() -> None:
         help="list the cores whose extra files a platform installs and exit",
     )
     parser.add_argument(
+        "--list-emulators",
+        action="store_true",
+        help="list every name --emulator accepts for a platform and exit",
+    )
+    parser.add_argument(
         "--romm-firmware",
         metavar="TEMPLATE",
         help="RomM: where each platform's firmware goes in the library, as "
@@ -9196,14 +9173,14 @@ def main() -> None:
              "from config.yml, else bios/{platform})",
     )
     parser.add_argument(
-        "--list-emulators",
-        action="store_true",
-        help="list every name --emulator accepts for a platform and exit",
-    )
-    parser.add_argument(
         "--no-input",
         action="store_true",
         help="never ask a question and fail where an answer is needed",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="check existing files without downloading",
     )
     parser.add_argument(
         "--dry-run",
@@ -9227,11 +9204,13 @@ def main() -> None:
              "usual text on stderr (implies --no-input)",
     )
     parser.add_argument(
-        "--restore",
+        "--from",
+        action="append",
         type=Path,
         metavar="FOLDER",
-        help=f"put back the files an earlier run replaced and kept in FOLDER "
-             f"(a dated folder inside {BACKUP_DIR})",
+        help="copy the BIOS files found in FOLDER (an old SD card, a backup, a "
+             "ZIP) instead of downloading them: every file recognised by its "
+             "hash, never moved. Repeat for several folders",
     )
     parser.add_argument(
         "--from-pack",
@@ -9250,20 +9229,18 @@ def main() -> None:
              f"({OFFLINE_VARIABLE}=1 does the same)",
     )
     parser.add_argument(
-        "--from",
-        action="append",
-        type=Path,
-        metavar="FOLDER",
-        help="copy the BIOS files found in FOLDER (an old SD card, a backup, a "
-             "ZIP) instead of downloading them: every file recognised by its "
-             "hash, never moved. Repeat for several folders",
-    )
-    parser.add_argument(
         "--manifest",
         type=Path,
         metavar="FILE",
         help="read the file list from FILE (install/<platform>.json) instead "
              "of downloading it",
+    )
+    parser.add_argument(
+        "--restore",
+        type=Path,
+        metavar="FOLDER",
+        help=f"put back the files an earlier run replaced and kept in FOLDER "
+             f"(a dated folder inside {BACKUP_DIR})",
     )
     parser.add_argument(
         "--tui",
@@ -9285,7 +9262,47 @@ def main() -> None:
         version=f"retrobios installer {installer_id()} (ref {RELEASE_REF})",
         help="print the installer version and exit",
     )
+    parser.add_argument(
+        "--list-platforms",
+        action="store_true",
+        help="list detected platforms and exit",
+    )
+    parser.add_argument(
+        "--list-targets",
+        action="store_true",
+        help="list available targets for a platform and exit",
+    )
+    parser.add_argument(
+        "--jobs", "-j",
+        metavar="N",
+        type=int,
+        default=8,
+        help="parallel download threads (default: 8)",
+    )
+    parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="verbose output",
+    )
+    parser.add_argument(
+        "--standalone-copies",
+        action="store_true",
+        help="opt in to copies into detected standalone-emulator directories",
+    )
+    parser.add_argument(
+        "--add-app",
+        action="store_true",
+        help="after the install, put the RetroBIOS app on the handheld card the BIOS "
+             "folder is on (muOS, KNULLI, ROCKNIX), to check and update the BIOS "
+             "files from the console later",
+    )
+    return parser
 
+
+def main() -> None:
+    """Entry point."""
+    _INVOCATION.os_type = detect_os()
+    parser = build_parser()
     args = parser.parse_args()
     if args.verbose:
         _RAW_ERRORS.set()
@@ -11113,7 +11130,7 @@ def _plain_key(char: str) -> TuiKey | None:
     """The key one character stands for, None for a control nobody bound."""
     named = {"\r": "enter", "\n": "enter", "\x7f": "backspace", "\x08": "backspace",
              "\t": "tab", "\x1b": "esc", "\x03": "ctrl-c", "\x04": "ctrl-d",
-             "\x15": "ctrl-u"}.get(char)
+             "\x15": "ctrl-u", "\x1a": "ctrl-z"}.get(char)
     if named:
         return TuiKey(named)
     if char < " " or unicodedata.category(char) in ("Cc", "Cs"):
@@ -11536,7 +11553,92 @@ def plain_requested(args: argparse.Namespace, env: Mapping[str, str] | None = No
 # (ports/shared/tui.txt exports RB_PAD as this), so the bar names those
 # buttons and no others.
 TUI_PAD_ENV = "RETROBIOS_PAD"
-TUI_PAD_ROUTES = ("gptokeyb", "gptokeyb_muxterm", "muxterm", "evmapy", "miyoo")
+
+
+class TuiRoute(NamedTuple):
+    """How one input route names the keys, read by the screen and by
+    scripts/generate_installer_doc.py for the key table of the page.
+
+    bar maps a key of the bottom line, written in the "both" form ("A/Enter
+    Install"), to the route's own name, None for a key the route lacks: a PC
+    user read "A/Enter", a muOS player was told a Start+Select that muxterm
+    does not have. help names each action of the help screen, the buttons
+    first, then the keys a keyboard plugged in also has, None for an action
+    the route lacks. stop is what stops an install the second time, then the
+    first time.
+    """
+
+    bar: Mapping[str, str | None]
+    help: Mapping[str, str | None]
+    stop: tuple[str, str]
+
+
+# retrobios.gptk: A Enter, B Esc, X Space, Y Tab, L1 and R1 a page, Start
+# Enter, Select Esc, Start+Select the kill.
+_GPTOKEYB = TuiRoute(
+    {"A/Enter": "A", "B/Esc": "B", "X/Space": "X", "Y/o": "Y", "?": None, "/": None,
+     "Ctrl-C": "Start+Select", "Enter": "A", "Esc": "B", "Ctrl-U": None},
+    {"move": "D-pad, Up/Down", "page": "L1/R1, PgUp/PgDn", "ok": "A, Start, Enter",
+     "tick": "X, Space, Right/Left", "options": "Y, Tab, o", "back": "B, Select, Esc",
+     "stop": "B, Esc, Ctrl-C", "kill": "Select, then Start", "enter": "A, Enter",
+     "esc": "B, Esc"},
+    ("B", "B or Start+Select"))
+# keys is a keyboard's, and both names the button and the key where nothing
+# says which one is held. The others are the values of RETROBIOS_PAD.
+TUI_ROUTES: dict[str, TuiRoute] = {
+    "keys": TuiRoute(
+        {"A/Enter": "Enter", "B/Esc": "Esc", "X/Space": "Space", "Y/o": "o"},
+        {"move": "Up/Down, k/j", "page": "PgUp/PgDn", "ok": "Enter",
+         "tick": "Space, Right/Left", "options": "o, Tab", "back": "Esc, Backspace",
+         "stop": "Esc, Ctrl-C", "kill": None, "enter": "Enter", "esc": "Esc"},
+        ("Esc or Ctrl-C", "Esc or Ctrl-C")),
+    "both": TuiRoute(
+        {},
+        {"move": "Up/Down, k/j", "page": "PgUp/PgDn, L1/R1", "ok": "A/Enter, Start",
+         "tick": "X, Right/Left", "options": "Y, o, Tab", "back": "B/Esc, Backspace",
+         "stop": "B/Esc, Ctrl-C", "kill": "Start+Select", "enter": "Enter", "esc": "Esc"},
+        ("B or Ctrl-C", "B, Ctrl-C or Start+Select")),
+    "gptokeyb": _GPTOKEYB,
+    # gptokeyb2 with retrobios.gptk inside muxterm, which no longer reads the
+    # pad: the gptokeyb buttons. muxterm keeps PgUp and PgDn for its
+    # scrollback, and the launcher sends nothing on L1 and R1 there: Left and
+    # Right page.
+    "gptokeyb_muxterm": _GPTOKEYB._replace(help={**_GPTOKEYB.help,
+                                                 "page": "D-pad Left/Right",
+                                                 "tick": "X, Space"}),
+    # muxterm's own keys: Start Enter, B Backspace, Y Space, Menu closes the
+    # terminal. A, X, L1 and R1 send nothing, Select shows its keyboard, and
+    # the D-pad's Left and Right page a list.
+    "muxterm": TuiRoute(
+        {"A/Enter": "Start", "B/Esc": "B", "X/Space": "Y", "Y/o": None, "?": None,
+         "/": None, "Ctrl-C": "Menu", "Enter": "Start", "Esc": None, "Ctrl-U": None},
+        {"move": "D-pad, Up/Down", "page": "D-pad Left/Right", "ok": "Start, Enter",
+         "tick": "Y, Space", "options": "o, Tab", "back": "B, Esc, Backspace",
+         "stop": "B, Esc, Ctrl-C", "kill": None, "enter": "Start, Enter", "esc": "Esc"},
+        ("B", "B")),
+    # RetroBIOS.sh.keys: the gptokeyb buttons, and no combo that ends the run.
+    "evmapy": TuiRoute(
+        {"A/Enter": "A", "B/Esc": "B", "X/Space": "X", "Y/o": "Y", "?": None, "/": None,
+         "Ctrl-C": None, "Enter": "A", "Esc": "B", "Ctrl-U": None},
+        {"move": "D-pad, Up/Down", "page": "L1/R1, PgUp/PgDn", "ok": "A, Start, Enter",
+         "tick": "X, Space, Right/Left", "options": "Y, Tab, o",
+         "back": "B, Select, Esc", "stop": "B, Esc, Ctrl-C", "kill": None,
+         "enter": "A, Enter", "esc": "B, Esc"},
+        ("B", "B")),
+    # Buttons that are keys already: A Space, Start Enter, L2 Tab, R2
+    # Backspace. B is Left Ctrl, a modifier: alone it sends no byte to a
+    # terminal (the console's keyboard driver only records its state), so
+    # the interface never sees it, nor X, Y and Select (Shift, Alt, Ctrl).
+    "miyoo": TuiRoute(
+        {"A/Enter": "A", "B/Esc": "R2", "X/Space": "A", "Y/o": "L2", "?": None, "/": None,
+         "Ctrl-C": None, "Enter": "Start", "Esc": None, "Ctrl-U": None},
+        {"move": "D-pad, Up/Down", "page": "L1/R1, PgUp/PgDn", "ok": "A, Start, Enter",
+         "tick": "A, Space, Right/Left", "options": "L2, Tab, o",
+         "back": "R2, Esc, Backspace", "stop": "R2, Esc, Ctrl-C", "kill": None,
+         "enter": "Start, Enter", "esc": "Esc"},
+        ("R2", "R2")),
+}
+TUI_PAD_ROUTES = tuple(name for name in TUI_ROUTES if name not in ("keys", "both"))
 # Set by Steam for what it starts, and by gamescope: a controller may be
 # all there is, mapped by Steam Input to keys nobody here can name.
 _STEAM_MARKERS = ("SteamGamepadUI", "SteamDeck", "SteamGameId", "GAMESCOPE_WAYLAND_DISPLAY")
@@ -11588,6 +11690,81 @@ def _terminal_size(stream: TextIO) -> tuple[int, int]:
     return size.columns, size.lines
 
 
+# Where ncurses finds a terminal's compiled description after $TERMINFO,
+# ~/.terminfo and $TERMINFO_DIRS.
+_TERMINFO_DIRS = ("/etc/terminfo", "/lib/terminfo", "/usr/share/terminfo",
+                  "/usr/lib/terminfo", "/usr/share/lib/terminfo")
+# cursor_address, string capability 10 of term(5).
+_TERMINFO_CUP = 10
+
+
+def _terminfo_folders(env: Mapping[str, str]) -> list[Path]:
+    folders = [Path(env["TERMINFO"])] if env.get("TERMINFO") else []
+    if env.get("HOME"):
+        folders.append(Path(env["HOME"]) / ".terminfo")
+    # An empty entry stands for the system's folders, which come last anyway.
+    folders += [Path(part) for part in env.get("TERMINFO_DIRS", "").split(":") if part]
+    return folders + [Path(folder) for folder in _TERMINFO_DIRS]
+
+
+def terminfo_string(data: bytes, index: int) -> str | None:
+    """String capability index of a compiled term(5) entry, "" when the
+    entry lacks it, None when data is no compiled entry."""
+    def short(at: int) -> int:
+        return int.from_bytes(data[at:at + 2], "little", signed=True)
+
+    if len(data) < 12:
+        return None
+    # The legacy format stores numbers in 2 bytes, the extended one in 4.
+    width = {0o432: 2, 0o1036: 4}.get(short(0))
+    if width is None:
+        return None
+    names, bools, numbers, strings = short(2), short(4), short(6), short(8)
+    offsets = 12 + names + bools
+    offsets += offsets % 2 + numbers * width
+    if index >= strings:
+        return ""
+    at = short(offsets + 2 * index)
+    if at < 0:
+        return ""
+    start = offsets + 2 * strings + at
+    end = data.find(b"\0", start)
+    if end < 0:
+        return None
+    return data[start:end].decode("latin-1")
+
+
+def terminal_cursor_address(term: str, env: Mapping[str, str]) -> str | None:
+    """How TERM's description here moves the cursor, "" when it cannot,
+    None when no description is found: Windows, Android and many handheld
+    images carry none, and the screen is not held back for it."""
+    if not term or "/" in term or term.startswith("."):
+        return None
+    for folder in _terminfo_folders(env):
+        # Linux files xterm under x/, macOS under 78/.
+        for sub in (term[0], f"{ord(term[0]):02x}"):
+            try:
+                data = (folder / sub / term).read_bytes()
+            except (OSError, ValueError):
+                continue
+            return terminfo_string(data, _TERMINFO_CUP)
+    return None
+
+
+def terminal_without_ansi(env: Mapping[str, str]) -> str:
+    """Why TERM's description here says the ANSI sequences the screen and
+    the progress line write would print as text, "" when it does not."""
+    if os.name == "nt":
+        return ""
+    term = env.get("TERM", "")
+    cup = terminal_cursor_address(term, env)
+    if cup == "":
+        return f"TERM={term} cannot move the cursor"
+    if cup is not None and not cup.startswith(("\x1b[", "\x9b")):
+        return f"TERM={term} does not take the escape sequences the screen is drawn with"
+    return ""
+
+
 def tui_blocker(
     args: argparse.Namespace, stdin: TextIO | None = None, stdout: TextIO | None = None,
     env: Mapping[str, str] | None = None,
@@ -11612,6 +11789,9 @@ def tui_blocker(
             return f"the {name} is not a terminal"
     if os.name != "nt" and env.get("TERM", "") in ("", "dumb"):
         return "TERM is dumb or not set"
+    drawing = terminal_without_ansi(env)
+    if drawing:
+        return drawing
     # A pseudo-terminal nobody sized reports 0x0: script(1) fed from a pipe
     # is one, and the line questions run there as they always have.
     cols, rows = _terminal_size(stdout)
@@ -13371,42 +13551,12 @@ _SHORT_KEYS = (("A/Enter ", "A "), ("B/Esc ", "B "), ("X/Space ", "X "), ("Y/o "
                ("Left/Right ", "<> "), ("Up/Down ", "^v "))
 
 
-# The key of a hint as each route names it, None for a key it lacks. The
-# bar is written in the "both" form ("A/Enter Install"), the route's own
-# names replace it: a PC user read "A/Enter", a muOS player was told a
-# Start+Select that muxterm does not have.
-_ROUTE_KEYS: dict[str, dict[str, str | None]] = {
-    "keys": {"A/Enter": "Enter", "B/Esc": "Esc", "X/Space": "Space", "Y/o": "o"},
-    # retrobios.gptk: A Enter, B Esc, X Space, Y Tab, L1 and R1 a page,
-    # Start Enter, Select Esc, Start+Select the kill.
-    "gptokeyb": {"A/Enter": "A", "B/Esc": "B", "X/Space": "X", "Y/o": "Y", "?": None,
-                 "/": None, "Ctrl-C": "Start+Select", "Enter": "A", "Esc": "B",
-                 "Ctrl-U": None},
-    # RetroBIOS.sh.keys: the same buttons, and no combo that ends the run.
-    "evmapy": {"A/Enter": "A", "B/Esc": "B", "X/Space": "X", "Y/o": "Y", "?": None,
-               "/": None, "Ctrl-C": None, "Enter": "A", "Esc": "B", "Ctrl-U": None},
-    # muxterm's own keys: Start Enter, B Backspace, Y Space, Menu closes the
-    # terminal. A, X, L1 and R1 send nothing, Select shows its keyboard.
-    "muxterm": {"A/Enter": "Start", "B/Esc": "B", "X/Space": "Y", "Y/o": None, "?": None,
-                "/": None, "Ctrl-C": "Menu", "Enter": "Start", "Esc": None,
-                "Ctrl-U": None},
-    # Buttons that are keys already: A Space, Start Enter, L2 Tab, R2
-    # Backspace. B is Left Ctrl, a modifier: alone it sends no byte to a
-    # terminal (the console's keyboard driver only records its state), so
-    # the interface never sees it, nor X, Y and Select (Shift, Alt, Ctrl).
-    "miyoo": {"A/Enter": "A", "B/Esc": "R2", "X/Space": "A", "Y/o": "L2", "?": None,
-              "/": None, "Ctrl-C": None, "Enter": "Start", "Esc": None, "Ctrl-U": None},
-}
-# gptokeyb2 with retrobios.gptk inside muxterm, which no longer reads the pad:
-# the gptokeyb buttons.
-_ROUTE_KEYS["gptokeyb_muxterm"] = _ROUTE_KEYS["gptokeyb"]
-
-
 def _route_hint(state: TuiState, parts: tuple) -> tuple:
     """The bar's entries named as the run's input names them."""
-    names = _ROUTE_KEYS.get(state.pad)
-    if names is None or state.help:
+    route = TUI_ROUTES.get(state.pad)
+    if route is None or state.help:
         return parts
+    names = route.bar
     named = []
     for part in parts:
         key, sep, what = part.partition(" ")
@@ -14218,18 +14368,6 @@ def _bar(share: float, width: int) -> str:
     return f"[{'#' * filled}{'-' * (room - filled)}] {int(share * 100):3d}%"
 
 
-# What stops an install a second time, and the first time, per route.
-_STOP_KEYS = {
-    "both": ("B or Ctrl-C", "B, Ctrl-C or Start+Select"),
-    "keys": ("Esc or Ctrl-C", "Esc or Ctrl-C"),
-    "gptokeyb": ("B", "B or Start+Select"),
-    "gptokeyb_muxterm": ("B", "B or Start+Select"),
-    "evmapy": ("B", "B"),
-    "muxterm": ("B", "B"),
-    "miyoo": ("R2", "R2"),
-}
-
-
 def _view_installing(state: TuiState, width: int, height: int) -> tuple:
     lines: list = []
     if state.download is None:
@@ -14252,7 +14390,7 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
         lines.append(f"{files_done} of {_plural(state.download['files'], 'file')}")
         if files_done >= state.download["files"] and state.summary is None:
             lines.append("Finishing...")
-    stops = _STOP_KEYS.get(state.pad, _STOP_KEYS["both"])
+    stops = TUI_ROUTES.get(state.pad, TUI_ROUTES["both"]).stop
     lines.append(_styled(f"Stopping, finishing the files in flight. Press {stops[0]} "
                          "again to stop now." if state.stopping
                          else f"{stops[1]} stops. What is done stays done.", "dim"))
@@ -14526,41 +14664,6 @@ _TUI_VIEWS: dict[str, Callable[[TuiState, int, int], tuple]] = {
 }
 
 
-# The help's names for each action, per route: the buttons first, then the
-# keys a keyboard plugged in also has. None for an action the route lacks.
-_HELP_KEYS: dict[str, dict[str, str | None]] = {
-    "both": {"move": "Up/Down, k/j", "page": "PgUp/PgDn, L1/R1", "ok": "A/Enter, Start",
-             "tick": "X, Right/Left", "options": "Y, o, Tab", "back": "B/Esc, Backspace",
-             "stop": "B/Esc, Ctrl-C", "kill": "Start+Select", "enter": "Enter",
-             "esc": "Esc"},
-    "keys": {"move": "Up/Down, k/j", "page": "PgUp/PgDn", "ok": "Enter",
-             "tick": "Space, Right/Left", "options": "o, Tab", "back": "Esc, Backspace",
-             "stop": "Esc, Ctrl-C", "kill": None, "enter": "Enter", "esc": "Esc"},
-    "gptokeyb": {"move": "D-pad, Up/Down", "page": "L1/R1, PgUp/PgDn",
-                 "ok": "A, Start, Enter", "tick": "X, Space, Right/Left",
-                 "options": "Y, Tab, o", "back": "B, Select, Esc", "stop": "B, Esc, Ctrl-C",
-                 "kill": "Select, then Start", "enter": "A, Enter", "esc": "B, Esc"},
-    "evmapy": {"move": "D-pad, Up/Down", "page": "L1/R1, PgUp/PgDn", "ok": "A, Start, Enter",
-               "tick": "X, Space, Right/Left", "options": "Y, Tab, o",
-               "back": "B, Select, Esc", "stop": "B, Esc, Ctrl-C", "kill": None,
-               "enter": "A, Enter", "esc": "B, Esc"},
-    # muxterm keeps PgUp and PgDn for its own scrollback, and its L1 and R1
-    # send nothing: the D-pad's Left and Right page a list there.
-    "muxterm": {"move": "D-pad, Up/Down", "page": "D-pad Left/Right", "ok": "Start, Enter",
-                "tick": "Y, Space", "options": "o, Tab",
-                "back": "B, Esc, Backspace", "stop": "B, Esc, Ctrl-C", "kill": None,
-                "enter": "Start, Enter", "esc": "Esc"},
-    "miyoo": {"move": "D-pad, Up/Down", "page": "L1/R1, PgUp/PgDn", "ok": "A, Start, Enter",
-              "tick": "A, Space, Right/Left", "options": "L2, Tab, o",
-              "back": "R2, Esc, Backspace", "stop": "R2, Esc, Ctrl-C", "kill": None,
-              "enter": "Start, Enter", "esc": "Esc"},
-}
-# muxterm keeps PgUp and PgDn for its scrollback even when gptokeyb2 owns the
-# pad, and the launcher sends nothing on L1 and R1 there: Left and Right page.
-_HELP_KEYS["gptokeyb_muxterm"] = {**_HELP_KEYS["gptokeyb"], "page": "D-pad Left/Right",
-                                  "tick": "X, Space"}
-
-
 def _route_extras(state: TuiState) -> list[tuple[str, str]]:
     """What a route's own buttons do that no key of the table says."""
     if state.pad == "muxterm":
@@ -14572,7 +14675,7 @@ def _route_extras(state: TuiState) -> list[tuple[str, str]]:
 
 def _help_lines(state: TuiState) -> list[tuple[str, str]]:
     screen = state.screen
-    names = _HELP_KEYS.get(state.pad, _HELP_KEYS["both"])
+    names = TUI_ROUTES.get(state.pad, TUI_ROUTES["both"]).help
     # gptokeyb's kill: Start pressed first also chooses the row in focus.
     kill = ([(names["kill"], "Quit at once")]
             if state.pad in ("gptokeyb", "gptokeyb_muxterm") else [])
@@ -14666,10 +14769,15 @@ def _view_help(state: TuiState, width: int, height: int) -> tuple:
 def tui_view(state: TuiState, cols: int, rows: int) -> list[str]:
     """The screen as rows lines of at most cols cells, from the state alone."""
     if cols < TUI_MIN_COLS or rows < TUI_MIN_ROWS:
+        # How large, and how large it is now: "larger" alone left the
+        # reader resizing by guess.
         lines = [_styled("")] * rows
-        text = fit("Make the window larger", cols)
-        if rows:
-            lines[rows // 2] = _styled(" " * max(0, (cols - cell_width(text)) // 2) + text)
+        said = [fit(text, cols) for text in (
+            "Make the window larger:",
+            f"{TUI_MIN_COLS}x{TUI_MIN_ROWS} or more, now {cols}x{rows}")][:rows]
+        top = max(0, (rows - len(said)) // 2)
+        for index, text in enumerate(said):
+            lines[top + index] = _styled(" " * max(0, (cols - cell_width(text)) // 2) + text)
         return lines
     width = min(cols, TUI_MAX_WIDTH) - 2
     height = rows - 3
@@ -15364,6 +15472,13 @@ def run_tui(args: argparse.Namespace) -> int:
             state.now = time.monotonic()
             terminal.draw(tui_view(state, cols, rows), cols)
             for key in terminal.keys(TUI_FRAME):
+                if key.name == "ctrl-z":
+                    # ISIG is off, so Ctrl-Z comes as a key: it stops the run
+                    # as kill -TSTP does, where the system has job control.
+                    if hasattr(signal, "SIGSTOP"):
+                        flags["suspend"] = True
+                        break
+                    continue
                 pressed = True
                 state.now = time.monotonic()
                 perform(tui_update(state, key))

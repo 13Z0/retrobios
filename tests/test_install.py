@@ -5334,6 +5334,97 @@ class TheEventSchemaFileIsEventKeys(unittest.TestCase):
             self.assertEqual(generator.main(["--check", "--output", str(scratch)]), 0)
 
 
+class TheInstallerPageIsWrittenFromTheCode(unittest.TestCase):
+    """The options, events, exit codes and keys of wiki/installer.md were
+    written by hand beside the code that defines them, and every audit
+    found one of them behind it."""
+
+    PAGE = REPO_ROOT / "wiki" / "installer.md"
+
+    def setUp(self):
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import generate_installer_doc  # noqa: PLC0415
+
+        self.generator = generate_installer_doc
+        self.scratch = Path(_tempdir(self)) / "installer.md"
+        self.scratch.write_text(self.PAGE.read_text(encoding="utf-8"), encoding="utf-8")
+
+    def run_generator(self, *argv: str) -> tuple[int, str]:
+        err = io.StringIO()
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(err):
+            code = self.generator.main([*argv, "--page", str(self.scratch)])
+        return code, err.getvalue()
+
+    def test_the_committed_page_is_the_generated_one(self):
+        with contextlib.redirect_stderr(io.StringIO()) as err:
+            self.assertEqual(self.generator.main(["--check"]), 0,
+                             err.getvalue() + "run python scripts/generate_installer_doc.py")
+
+    def test_a_hand_edit_of_a_fact_fails_the_check(self):
+        page = self.scratch.read_text(encoding="utf-8")
+        for old, new in (("`--jobs N`", "`--jobs JOBS`"),
+                         ("| `end` | `code` |", "| `end` | `code`, `reason` |"),
+                         ("| Quit at once | none |", "| Quit at once | q |"),
+                         # A code install.py never exits with.
+                         ("| `141` |", "| `142` | stopped twice |\n| `141` |")):
+            with self.subTest(edit=new):
+                self.assertIn(old, page)
+                self.scratch.write_text(page.replace(old, new, 1), encoding="utf-8")
+                self.assertEqual(self.run_generator("--check")[0], 1)
+                self.assertEqual(self.run_generator()[0], 0)
+                self.assertEqual(self.scratch.read_text(encoding="utf-8"), page)
+
+    def test_the_prose_is_kept(self):
+        page = self.scratch.read_text(encoding="utf-8")
+        old = "| Parallel downloads, 1 to 32, default 8 |"
+        self.assertIn(old, page)
+        edited = page.replace(old, "| Parallel downloads, from 1 to 32 |")
+        self.scratch.write_text(edited, encoding="utf-8")
+        self.assertEqual(self.run_generator("--check")[0], 0)
+
+    def test_what_the_code_gains_stops_it_until_the_page_says_it(self):
+        real = self.generator._install.build_parser
+
+        def gained() -> argparse.ArgumentParser:
+            parser = real()
+            parser.add_argument("--brand-new", action="store_true", help="new")
+            return parser
+
+        page = self.scratch.read_text(encoding="utf-8")
+        events = {**self.generator._install.EVENT_KEYS, "brand_new": ("thing",)}
+        for name, patch in (
+                ("--brand-new", unittest.mock.patch.object(
+                    self.generator._install, "build_parser", gained)),
+                ("brand_new", unittest.mock.patch.object(
+                    self.generator._install, "EVENT_KEYS", events))):
+            with self.subTest(gained=name), patch:
+                code, said = self.run_generator()
+                self.assertEqual(code, 1)
+                self.assertIn(name, said)
+                self.assertEqual(self.scratch.read_text(encoding="utf-8"), page)
+                self.assertEqual(self.run_generator("--check")[0], 1)
+        # The row added by hand, its first cell alone: the generator fills it.
+        close = "\n\n<!-- /generated: options -->"
+        self.scratch.write_text(
+            page.replace(close, "\n| `--brand-new` | Something new |" + close, 1),
+            encoding="utf-8")
+        with unittest.mock.patch.object(self.generator._install, "build_parser", gained):
+            self.assertEqual(self.run_generator()[0], 0)
+        self.assertIn('| <span id="option-brand-new"></span>`--brand-new` | Something new |',
+                      self.scratch.read_text(encoding="utf-8"))
+
+    def test_the_exit_codes_are_the_ones_install_py_exits_with(self):
+        self.assertEqual(self.generator.exit_codes(), [0, 1, 2, 130, 141])
+
+    def test_a_missing_marker_stops_it(self):
+        page = self.scratch.read_text(encoding="utf-8")
+        self.scratch.write_text(page.replace("<!-- generated: route-keys -->\n", ""),
+                                encoding="utf-8")
+        code, said = self.run_generator("--check")
+        self.assertEqual(code, 1)
+        self.assertIn("route-keys", said)
+
+
 class NetworkFailuresInPlainWords(unittest.TestCase):
     """Offline, the run printed "[Errno -2] Name or service not known". A
     beginner needs "no internet connection", and the raw text only under

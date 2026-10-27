@@ -163,19 +163,23 @@ after a change of options, the folder is checked again, so its numbers are the
 exact ones for the new choice. Ticked systems get their exact count before the
 install starts.
 
-| Action | Keyboard | Controller |
-|--------|----------|------------|
+| Action | Keyboard | Controller (gptokeyb, evmapy) |
+|--------|----------|------------------------------|
 | Move | Up and Down, `k` and `j` | D-pad Up and Down |
-| Page | PgUp and PgDn | L1 and R1 |
+| Page | PgUp and PgDn | L1 and R1, D-pad Right and Left inside muxterm |
 | First, last | Home and End, `g` and `G` | |
 | Continue, open, choose | Enter, and Space outside a list of ticks | A, Start |
-| Tick, untick | Space, Right, Left | X, D-pad Right and Left |
-| Back | Esc, Backspace | B, Select |
+| Tick, untick | Space, Right, Left | X, D-pad Right and Left (X alone inside muxterm, Y with muxterm's own keys) |
+| Back | Esc, Backspace | B, Select (B alone with muxterm's own keys, where Select shows its keyboard) |
 | Options | `o`, Tab | Y |
 | Filter a long list | `/` then type, Enter on a lone match chooses it | none: a pad cannot type (the setup list puts the SD cards after RetroArch) |
 | Keys of the screen | `?`, F1 | |
-| Stop an install | Esc, `q`, Ctrl+C | B, Start+Select |
+| Stop an install | Esc, `q`, Ctrl+C | B, Start+Select (B alone with muxterm's own keys) |
 | Quit | `q`, Ctrl+C | B on the first screen |
+| Pause, back with `fg` (Linux, macOS) | Ctrl+Z | |
+
+The buttons of each handheld route, muxterm's and a Miyoo's among them, are
+in the [key table of each route](#on-a-handheld-the-retrobios-port).
 
 The bottom line of each screen names what A does on the row under the cursor,
 in the names of what is held. On a computer it names the keys (`Enter Install`,
@@ -193,9 +197,20 @@ once the screen closes, with the command that repeats the run. A run that failed
 keeps its log and names it, and every other run leaves nothing behind.
 
 It opens only for an install, at a terminal of at least 40 columns and 12 rows
-that is not `TERM=dumb`. A listing, `--check`, `--dry-run`, `--events`,
+(a smaller window says so, with its size) whose `TERM` is set, is not `dumb`
+and can draw it: where the terminal's description
+(terminfo) has no way to move the cursor, or moves it with other sequences
+than the ANSI ones the screen writes (`TERM=vt52`), the questions come line by
+line instead, by themselves. A terminal whose description is not found on the
+machine gets the screen. A listing, `--check`, `--dry-run`, `--events`,
 `--quiet`, `--no-input`, `--yes` and `--restore` keep the plain output. Options
 given on the command line fill the screens in advance and are kept as they are.
+
+However the screen ends (Enter on the result, `q`, Ctrl+C, Ctrl+D, SIGTERM, a
+hangup), the terminal is given back as the screen found it: the cursor shown,
+the main screen back, echo and line editing on. Ctrl+Z, or SIGTSTP from
+outside, gives it back the same way and stops the run, and `fg` redraws the
+screen where it was.
 
 - `--tui` asks for the full screen, and names the reason when it cannot open
   (code 2).
@@ -696,6 +711,8 @@ what the options name, everything by default.
 
 ## Options
 
+<!-- generated: options -->
+
 | Option | Effect |
 |--------|--------|
 | <span id="option-platform"></span>`--platform NAME` | Install for this platform instead of the detected one. A system `--list-platforms` names under its own files (`muos`, `arkos`) stands for the file list it gets, and the run says which. Unknown names are refused with the closest ones |
@@ -736,6 +753,8 @@ what the options name, everything by default.
 | <span id="option-standalone-copies"></span>`--standalone-copies` | Also copy into detected standalone emulator directories |
 | <span id="option-add-app"></span>`--add-app` | After the install, put the RetroBIOS app on the handheld card the BIOS folder is on (muOS, KNULLI, ROCKNIX), to check and update the BIOS files from the console later. Refused (code 2) for a folder on no such card, and with `--check`, `--dry-run`, a listing, `--from-pack` and `--offline`. See [On a handheld](#on-a-handheld-the-retrobios-port) |
 | <span id="option-help"></span>`--help`, `-h` | Print the option list, a few examples in the form the run was started with, and the address of this page |
+
+<!-- /generated: options -->
 
 `--check` reads the same file list, hashes the destination and exits, with
 code 1 when a file is missing or does not match and 0 when every one does. Files
@@ -1142,6 +1161,8 @@ same way. Any launcher can set it to another number of seconds.
 Each launcher tells the interface which buttons reach it, in
 `RETROBIOS_PAD`, so the hints can name them:
 
+<!-- generated: pad-routes -->
+
 | Value | Input | Set by |
 |-------|-------|--------|
 | `gptokeyb` | gptokeyb or gptokeyb2 with `retrobios.gptk`, the table above | the PortMaster port and the Tools entry |
@@ -1150,7 +1171,30 @@ Each launcher tells the interface which buttons reach it, in
 | `evmapy` | `RetroBIOS.sh.keys`, the same buttons as the table | the Batocera and Knulli port |
 | `miyoo` | buttons that are already keys: A as Space, Start as Enter, L1 and R1 as E and T, L2 as Tab, R2 as Backspace | no launcher yet |
 
+<!-- /generated: pad-routes -->
+
 A launcher with no mapper at all (a keyboard) leaves it unset.
+
+The help screen (`?`) names the keys of the route in use. A computer gets
+the keyboard column, and SteamOS game mode or a console no launcher named
+gets the column that names both:
+
+<!-- generated: route-keys -->
+
+| Action | Computer (`keys`) | Unknown (`both`) | `gptokeyb` | `gptokeyb_muxterm` | `muxterm` | `evmapy` | `miyoo` |
+|--------|-------------------|------------------|------------|--------------------|-----------|----------|---------|
+| Move | Up/Down, k/j | Up/Down, k/j | D-pad, Up/Down | D-pad, Up/Down | D-pad, Up/Down | D-pad, Up/Down | D-pad, Up/Down |
+| Page | PgUp/PgDn | PgUp/PgDn, L1/R1 | L1/R1, PgUp/PgDn | D-pad Left/Right | D-pad Left/Right | L1/R1, PgUp/PgDn | L1/R1, PgUp/PgDn |
+| Continue, open, choose | Enter | A/Enter, Start | A, Start, Enter | A, Start, Enter | Start, Enter | A, Start, Enter | A, Start, Enter |
+| Tick, untick | Space, Right/Left | X, Right/Left | X, Space, Right/Left | X, Space | Y, Space | X, Space, Right/Left | A, Space, Right/Left |
+| Options | o, Tab | Y, o, Tab | Y, Tab, o | Y, Tab, o | o, Tab | Y, Tab, o | L2, Tab, o |
+| Back, and quit on the first screen | Esc, Backspace | B/Esc, Backspace | B, Select, Esc | B, Select, Esc | B, Esc, Backspace | B, Select, Esc | R2, Esc, Backspace |
+| Stop an install | Esc, Ctrl-C | B/Esc, Ctrl-C | B, Esc, Ctrl-C | B, Esc, Ctrl-C | B, Esc, Ctrl-C | B, Esc, Ctrl-C | R2, Esc, Ctrl-C |
+| Quit at once | none | Start+Select | Select, then Start | Select, then Start | none | none | none |
+| Use the folder typed | Enter | Enter | A, Enter | A, Enter | Start, Enter | A, Enter | Start, Enter |
+| Clear a filter, leave the folder typed | Esc | Esc | B, Esc | B, Esc | Esc | B, Esc | Esc |
+
+<!-- /generated: route-keys -->
 
 On a Miyoo, B, X, Y and Select are Left Ctrl, Shift, Alt and Right Ctrl:
 pressed alone, a modifier sends nothing to a terminal, so the interface goes
@@ -1316,6 +1360,14 @@ The build scripts need 3.9 and are not bound by this.
 Every change to `install.py` recomputes the SHA-256 pinned in `install.sh` and
 `install.ps1` in the same commit. The tests compare the pins with the file.
 
+The tables of options, events, exit codes and keys on this page sit between
+`generated` markers and are written from `install.py` by
+`scripts/generate_installer_doc.py`: the options from its parser, the events
+from `EVENT_KEYS`, the codes from its `sys.exit` calls, the keys from
+`TUI_ROUTES`. The prose cells stay as written. A row the code gains stops the
+script until its text is added inside the markers, and `--check`, which a
+test runs, fails on a table behind the code.
+
 The [handheld](#on-a-handheld-the-retrobios-port) archives each carry
 `install.py`, the one the one-line command of the same commit downloads:
 `scripts/build_port.py` refuses any other (it compares it with the SHA-256
@@ -1330,6 +1382,8 @@ fields, the installer refuses to narrow rather than install everything.
 
 ## Exit status
 
+<!-- generated: exit-codes -->
+
 | Code | Meaning |
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
@@ -1337,6 +1391,8 @@ fields, the installer refuses to narrow rather than install everything.
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), or `--offline` left every file out, the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question, or the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`) before an install. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
+
+<!-- /generated: exit-codes -->
 
 The full screen ended by SIGTERM (Start+Select on a handheld) before any
 install exits `143`. During an install it stops the install first, and exits
@@ -1366,10 +1422,12 @@ the text a person reads goes to standard error. A program driving the installer
 (the [handheld port](#on-a-handheld-the-retrobios-port) is one) reads the
 objects and never parses the text. Every object has an `event` key naming its
 kind, and each kind has exactly the keys below, in this order. The schema is
-`EVENT_KEYS` in `install.py`, and a test holds this table to it. The same
+`EVENT_KEYS` in `install.py`, and this table is written from it. The same
 keys, with their types, are in `schemas/install-events.schema.json`, written
 from `EVENT_KEYS` by `scripts/generate_event_schema.py` and published with the
 other schemas under `api/v1/schemas/`.
+
+<!-- generated: events -->
 
 | Kind | Keys | When |
 |------|------|------|
@@ -1378,9 +1436,9 @@ other schemas under `api/v1/schemas/`.
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
 | `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). The platform named with `--platform` is found nowhere and no folder can be assumed for it: a card system with no card named, a portable emulator, or no usual folder on this system or one set aside behind a folder this user cannot open (`stage` is `detect`, `reason` `not_found`). `message` says it in words |
 | `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
-| `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
 | `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id, and with `--system` only the systems named. Files with no system count under `other`. `name` is the platform's own name for it |
+| `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |
 | `declared` | `platform`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `dests` | Right after `check`, the same counts over the files the platform's own list names (`cores: null`), and their `dests` in the order of the `file` events. A setup that checks its own list reads its answer here, with or without `--declared-only` |
 | `data` | `platform`, `files`, `bytes` | Right after `declared`: the data-tree files to fetch (the `data_missing` of `check`) and the bytes they write once in place |
@@ -1394,6 +1452,8 @@ other schemas under `api/v1/schemas/`.
 | `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `left_out`, `kept`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply, `left_out` lists `{category, label, files, dests}` for what `--no-game-data` left out, and is empty without it. `kept` lists `{folder, files, bytes}`, one per backup folder, for the files in place the run moved aside before replacing them (with `--dry-run`, would move), and is empty when none. Not written for a listing |
 | `app` | `system`, `folder`, `ok`, `reason`, `dests`, `written`, `kept` | After `summary`, with `--add-app` or a yes to its question: the RetroBIOS app on the card of `system` whose root is `folder`. `dests` lists the app's files below that root, `written` the ones this run wrote (empty when each was in place), `kept` the backup folders as in `summary`. `ok` is false, with `reason`, when the card takes no app (before anything is written, code 2), when the install did not finish, or when a file could not be fetched, verified or written (code 1) |
 | `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
+
+<!-- /generated: events -->
 
 Schema 1 can gain a kind (`found` came with `--from`, `declared` with `--declared-only`, `unsearched` with the search that goes on past a closed folder, `app` with `--add-app`, `data` with the size of the data trees), never a key of an
 existing kind: a reader skips a kind it does not know. An option refused
@@ -1425,7 +1485,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |
 | `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters. When either of these two is set and the fingerprint does not match, the error names the variable instead of suggesting a retry |
 | `RETROBIOS_BOOTSTRAP` | Set by `install.sh` (`sh`) and `install.ps1` (`ps1`) for the temporary installer they run, so that its hints give back the one-line command rather than `python3 install.py` |
-| `NO_COLOR` | Plain text, no colour, even at a terminal, when set to any value but an empty one. `TERM=dumb` also turns the live progress line off |
+| `NO_COLOR` | Plain text, no colour, even at a terminal, when set to any value but an empty one. `TERM=dumb`, or no `TERM` outside Windows, also turns the live progress line and the colour off, as does a terminal whose description moves no cursor the ANSI way (`TERM=vt52`). The full screen draws no colour at all: the row in focus is marked with `>` as well as reverse video, and every state is written in words |
 | `FORCE_COLOR`, `CLICOLOR_FORCE` | Colour even when the output is a pipe or a file, set to any value but `0` or an empty one. `NO_COLOR` wins over both, and the progress line stays one line per file |
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |

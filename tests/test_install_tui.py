@@ -153,7 +153,9 @@ class KeyDecoding(unittest.TestCase):
                          [Key("paste", "/a/b"), Key("enter")])
 
     def test_controls_nobody_bound_are_ignored(self):
-        self.assertEqual(self.feed("\x00\x1a\x1cx"), keys("char:x"))
+        self.assertEqual(self.feed("\x00\x1cx"), keys("char:x"))
+        # Ctrl-Z is a key once ISIG is off: the run stops on it, as on SIGTSTP.
+        self.assertEqual(self.feed("\x1a"), [Key("ctrl-z")])
 
     def test_windows_scan_codes(self):
         for prefix in ("\x00", "\xe0"):
@@ -738,7 +740,9 @@ class Flow(unittest.TestCase):
         self.assertEqual(state.screen, "setup")
         lines = install.tui_view(state, 30, 10)
         self.assertEqual([line.strip() for line in lines if line.strip()],
-                         ["Make the window larger"])
+                         ["Make the window larger:", "40x12 or more, now 30x10"])
+        self.assertEqual(len(install.tui_view(state, 39, 1)), 1)
+        self.assertEqual(install.tui_view(state, 30, 0), [])
 
 
 class PlanWarnings(unittest.TestCase):
@@ -4212,6 +4216,9 @@ class Pty:
             if pid:
                 while self._pump(0.05) and select.select([self.fd], [], [], 0)[0]:
                     pass
+                # The modes the run left the terminal in: the master reads
+                # the slave's.
+                self.modes = termios.tcgetattr(self.fd)
                 os.close(self.fd)
                 self.status = os.WEXITSTATUS(status)
                 return self.status
@@ -4853,7 +4860,7 @@ class EndToEnd(unittest.TestCase):
         screen = term.wait("> Another setup or folder")
         self.assertIn("B/Esc Quit", screen.splitlines()[29])
         term.resize(30, 10)
-        term.wait("Make the window larger")
+        term.wait("40x12 or more, now 30x10")
         term.resize(40, 12)
         term.wait("Where do you play?")
         term.send("q")
@@ -4873,13 +4880,272 @@ class EndToEnd(unittest.TestCase):
                     self.env.pop(name)
 
     def test_dumb_terminal_writes_no_escape(self):
+        """TERM unset printed the banner bold and dim, and redrew the
+        progress with CSI, where the screen itself read it as dumb."""
         self.repo()
-        self.env["TERM"] = "dumb"
+        for value in ("dumb", None):
+            with self.subTest(term=value):
+                if value is None:
+                    self.env.pop("TERM", None)
+                else:
+                    self.env["TERM"] = value
+                term = self.start()
+                term.wait("Enter) install everything")
+                term.send("\r")
+                term.wait("installed")
+                term.close()
+                self.assertNotIn(b"\x1b", term.raw)
+
+    def test_a_terminal_that_cannot_draw_the_screen_gets_the_questions(self):
+        """TERM=vt52 moves the cursor with ESC Y: the screen opened and drew
+        CSI sequences it printed as text."""
+        self.repo()
+        self.env["TERMINFO"] = str(_terminfo_folder(self))
+        for name in ("rbtest-glass", "rbtest-vt52"):
+            with self.subTest(term=name):
+                self.env["TERM"] = name
+                term = self.start()
+                term.wait("Enter) install everything")
+                term.send("q\r")
+                term.close()
+                self.assertNotIn(b"\x1b[?1049h", term.raw)
+                term = self.start("--tui")
+                self.assertEqual(term.close(), 2)
+                said = term.raw.decode()
+                self.assertIn(f"--tui cannot open the full-screen interface here: TERM={name}",
+                              said)
+                self.assertNotIn("\x1b", said)
+
+    def test_no_color_draws_no_colour(self):
+        """The screen marks the row in focus with > as well as reverse video,
+        and draws no colour at all: NO_COLOR has nothing left to remove."""
+        self.repo()
+        self.env["NO_COLOR"] = "1"
         term = self.start()
-        term.wait("Enter) install everything")
-        term.send("q\r")
-        term.close()
-        self.assertNotIn(b"\x1b", term.raw)
+        screen = term.wait("Where do you play?")
+        self.assertIn("> RetroArch", screen)
+        term.send("q")
+        self.assertEqual(term.close(), 130)
+        for params in re.findall(rb"\x1b\[([0-9;]*)m", term.raw):
+            codes = {int(code) for code in params.split(b";") if code}
+            self.assertFalse(codes & {*range(30, 50), *range(90, 108)}, params)
+
+
+def _terminfo_entry(name: str, cup: str | None, extended: bool = False) -> bytes:
+    """A compiled term(5) entry holding the strings up to cursor_address,
+    only that one set."""
+    def short(value: int) -> bytes:
+        return value.to_bytes(2, "little", signed=True)
+
+    names = name.encode() + b"|test terminal\0"
+    table = (cup.encode("latin-1") + b"\0") if cup is not None else b""
+    offsets = [-1] * (install._TERMINFO_CUP + 1)
+    if cup is not None:
+        offsets[install._TERMINFO_CUP] = 0
+    body = names + (b"\0" if len(names) % 2 else b"")
+    # One number, columns, in the width of the format.
+    body += (80).to_bytes(4 if extended else 2, "little")
+    body += b"".join(short(offset) for offset in offsets) + table
+    header = b"".join(short(value) for value in (
+        0o1036 if extended else 0o432, len(names), 0, 1, len(offsets), len(table)))
+    return header + body
+
+
+def _terminfo_folder(test: unittest.TestCase) -> Path:
+    """A $TERMINFO with a glass terminal, a VT52 and two ANSI terminals,
+    one in the extended format."""
+    (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+    folder = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+    test.addCleanup(shutil.rmtree, folder, True)
+    for name, cup, extended in (
+            ("rbtest-glass", None, False),
+            ("rbtest-vt52", "\x1bY%p1%' '%+%c%p2%' '%+%c", False),
+            ("rbtest-ansi", "\x1b[%i%p1%d;%p2%dH", False),
+            ("rbtest-ansi2", "\x1b[%i%p1%d;%p2%dH", True)):
+        (folder / "r").mkdir(exist_ok=True)
+        (folder / "r" / name).write_bytes(_terminfo_entry(name, cup, extended))
+    return folder
+
+
+class TerminalsTheScreenCannotDraw(unittest.TestCase):
+    """The screen writes CSI sequences: a terminal whose description moves
+    the cursor otherwise, or not at all, gets the line questions."""
+
+    def setUp(self):
+        self.master, self.slave = os.openpty()
+        self.addCleanup(os.close, self.master)
+        self.addCleanup(os.close, self.slave)
+        fcntl.ioctl(self.slave, termios.TIOCSWINSZ, struct.pack("HHHH", 24, 80, 0, 0))
+        self.tty = StartConditions._Tty(self.slave)
+        self.env = {"TERMINFO": str(_terminfo_folder(self))}
+
+    def blocker(self, term: str) -> str:
+        return install.tui_blocker(_args(), self.tty, self.tty, {**self.env, "TERM": term})
+
+    def test_the_cursor_address_is_read(self):
+        self.assertEqual(install.terminal_cursor_address("rbtest-ansi", self.env),
+                         "\x1b[%i%p1%d;%p2%dH")
+        self.assertEqual(install.terminal_cursor_address("rbtest-ansi2", self.env),
+                         "\x1b[%i%p1%d;%p2%dH")
+        self.assertEqual(install.terminal_cursor_address("rbtest-glass", self.env), "")
+        self.assertIsNone(install.terminal_cursor_address("rbtest-none", self.env))
+
+    def test_ansi_opens_and_the_others_say_why(self):
+        self.assertEqual(self.blocker("rbtest-ansi"), "")
+        self.assertEqual(self.blocker("rbtest-ansi2"), "")
+        self.assertEqual(self.blocker("rbtest-glass"),
+                         "TERM=rbtest-glass cannot move the cursor")
+        self.assertIn("escape sequences", self.blocker("rbtest-vt52"))
+
+    def test_no_description_is_no_refusal(self):
+        """Android and most handheld images carry no terminfo: the screen
+        draws there as before."""
+        self.assertEqual(self.blocker("rbtest-none"), "")
+        self.assertEqual(self.blocker("../r/rbtest-glass"), "")
+
+    def test_the_folders_are_searched_in_order(self):
+        home = Path(self.env["TERMINFO"])
+        (home / ".terminfo" / "r").mkdir(parents=True)
+        (home / ".terminfo" / "r" / "rbtest-ansi").write_bytes(
+            _terminfo_entry("rbtest-ansi", None))
+        # $TERMINFO first, then ~/.terminfo, then $TERMINFO_DIRS.
+        self.assertTrue(install.terminal_cursor_address(
+            "rbtest-ansi", {**self.env, "HOME": str(home)}))
+        self.assertEqual(install.terminal_cursor_address(
+            "rbtest-ansi", {"HOME": str(home), "TERMINFO_DIRS": self.env["TERMINFO"]}), "")
+        # macOS files a terminal under the hex of its first letter.
+        (home / "72").mkdir()
+        (home / "72" / "rbtest-hex").write_bytes(_terminfo_entry("rbtest-hex", None))
+        self.assertEqual(install.terminal_cursor_address(
+            "rbtest-hex", {"TERMINFO_DIRS": str(home)}), "")
+
+    def test_the_line_questions_draw_no_escape_there_either(self):
+        """The progress line redraws with CSI and paints with SGR: on a VT52
+        both print as text, as on TERM=dumb."""
+        for term, live in (("rbtest-ansi", True), ("rbtest-vt52", False),
+                           ("rbtest-glass", False)):
+            with self.subTest(term=term), mock.patch.dict(
+                    os.environ, {**self.env, "TERM": term}), \
+                    mock.patch.object(install, "_enable_ansi", return_value=True):
+                os.environ.pop("NO_COLOR", None)
+                shown = install.Terminal(self.tty)
+                self.assertEqual((shown.live, shown.colour), (live, live))
+                self.assertEqual(shown.ok("ok") == "ok", not live)
+
+    def test_an_unset_term_is_a_dumb_one(self):
+        with mock.patch.dict(os.environ, {"FORCE_COLOR": ""}), \
+                mock.patch.object(install, "_enable_ansi", return_value=True):
+            for name in ("TERM", "NO_COLOR"):
+                os.environ.pop(name, None)
+            shown = install.Terminal(self.tty)
+            self.assertEqual((shown.live, shown.colour), (False, False))
+            with mock.patch.object(install.os, "name", "nt"):
+                self.assertTrue(install.Terminal(self.tty).live)
+
+    def test_a_damaged_description_is_no_description(self):
+        for data in (b"", b"\x1a\x01", b"\x00" * 12, _terminfo_entry("x", "\x1b[H")[:-1]):
+            with self.subTest(data=data):
+                self.assertIsNone(install.terminfo_string(data, install._TERMINFO_CUP))
+
+
+@unittest.skipUnless(pyte and pty and hasattr(pty, "fork"),
+                     "screen tests need pyte (pip install pyte==0.8.2) and a pty")
+class TheTerminalComesBack(unittest.TestCase):
+    """However the screen ends or pauses, the terminal is handed back as it
+    was lent: the cursor shown, the main screen, echo, lines and signals."""
+
+    repo = EndToEnd.repo
+    start = EndToEnd.start
+
+    # What a new pseudo-terminal has, which the child started on.
+    @staticmethod
+    def fresh_modes() -> list:
+        master, slave = os.openpty()
+        try:
+            return termios.tcgetattr(slave)
+        finally:
+            os.close(master)
+            os.close(slave)
+
+    def assertGivenBack(self, term: Pty, since: int = 0) -> None:
+        raw = term.raw[since:]
+        self.assertGreater(raw.rfind(b"\x1b[?1049l"), raw.rfind(b"\x1b[?1049h"), raw[-200:])
+        self.assertGreater(raw.rfind(b"\x1b[?25h"), raw.rfind(b"\x1b[?25l"), raw[-200:])
+
+    def assertModesBack(self, modes: list) -> None:
+        fresh = self.fresh_modes()
+        for index, flag in ((3, termios.ECHO), (3, termios.ICANON), (3, termios.ISIG),
+                            (3, termios.IEXTEN), (0, termios.ICRNL), (0, termios.IXON)):
+            self.assertEqual(modes[index] & flag, fresh[index] & flag, (index, flag))
+        self.assertEqual(modes, fresh)
+
+    def ended(self, how) -> Pty:
+        self.repo()
+        term = self.start()
+        term.wait("Where do you play?")
+        how(term)
+        return term
+
+    def test_ctrl_c(self):
+        term = self.ended(lambda term: term.send("\x03"))
+        self.assertEqual(term.close(), 130)
+        self.assertGivenBack(term)
+        self.assertModesBack(term.modes)
+
+    def test_eof_on_stdin(self):
+        """Ctrl-D, the terminal's end of input, typed at the screen."""
+        term = self.ended(lambda term: term.send("\x04"))
+        self.assertEqual(term.close(), 130)
+        self.assertGivenBack(term)
+        self.assertModesBack(term.modes)
+
+    def test_sigterm(self):
+        import signal
+
+        term = self.ended(lambda term: os.kill(term.pid, signal.SIGTERM))
+        self.assertEqual(term.close(), 128 + signal.SIGTERM)
+        self.assertGivenBack(term)
+        self.assertModesBack(term.modes)
+
+    def test_sighup(self):
+        """The hangup without the window gone (kill -HUP, an ssh session
+        dropped while its pty lingers)."""
+        import signal
+
+        term = self.ended(lambda term: os.kill(term.pid, signal.SIGHUP))
+        self.assertEqual(term.close(), 128 + signal.SIGHUP)
+        self.assertGivenBack(term)
+        self.assertModesBack(term.modes)
+
+    def test_ctrl_z_then_fg(self):
+        """ISIG is off on the screen, so Ctrl-Z reached it as a byte and did
+        nothing: the shell never got its terminal back."""
+        import signal
+
+        term = self.ended(lambda term: None)
+        mark = len(term.raw)
+        term.send("\x1a")
+        end, stopped = time.monotonic() + 10, False
+        while time.monotonic() < end and not stopped:
+            term._pump(0.05)
+            pid, status = os.waitpid(term.pid, os.WNOHANG | os.WUNTRACED)
+            stopped = bool(pid) and os.WIFSTOPPED(status)
+        self.assertTrue(stopped, term.text())
+        self.assertGivenBack(term, mark)
+        self.assertModesBack(termios.tcgetattr(term.fd))
+        # fg: the shell's SIGCONT, and the screen is back, raw again.
+        mark = len(term.raw)
+        os.kill(term.pid, signal.SIGCONT)
+        end = time.monotonic() + 5
+        while b"\x1b[?1049h" not in term.raw[mark:] and time.monotonic() < end:
+            term._pump(0.05)
+        self.assertIn(b"\x1b[?1049h", term.raw[mark:])
+        term.wait("Where do you play?")
+        self.assertFalse(termios.tcgetattr(term.fd)[3] & termios.ECHO)
+        term.send("q")
+        self.assertEqual(term.close(), 130)
+        self.assertGivenBack(term)
+        self.assertModesBack(term.modes)
 
 
 class TheFolderScreenSaysWhatItOffers(unittest.TestCase):
@@ -6041,6 +6307,65 @@ class AuditSevenScreens(unittest.TestCase):
             self.assertIn("Copy it from", " ".join(install._unavailable_lines(state)))
         view = " ".join(" ".join(install.tui_view(state, 40, 12)).split())
         self.assertIn("1 wrong copy: backed up, replaced.", view)
+
+
+class EdgesTheMutantsFound(unittest.TestCase):
+    """Changes to the code that every test let through: the survivors of a
+    mutmut run over the device filter, the card bounds and the WSL paths."""
+
+    def test_a_folder_below_a_drive_is_named_with_backslashes(self):
+        """Only the drive itself was ever shown: D:\\Games/bios passed."""
+        for root in ("/mnt", "/mnt/", "/windows", "/drvX/"):
+            with self.subTest(root=root), mock.patch.dict(install._WSL,
+                                                         {"active": True, "root": root}):
+                base = root.rstrip("/")
+                self.assertEqual(install.shown_path(Path(f"{base}/d/Games/bios")),
+                                 "D:\\Games\\bios")
+                self.assertEqual(install.shown_path(Path(f"{base}/e")), "E:\\")
+
+    def test_every_path_option_is_read_through_drvfs(self):
+        """--cores-dir G:\\ under WSL stayed a relative path named G:."""
+        with mock.patch.dict(install._WSL, {"active": True, "root": "/mnt"}):
+            args = _args(dest=Path("D:\\bios"), save_dir=Path("F:\\saves"),
+                         cores_dir=Path("G:\\RetroArch\\cores"))
+            install._wsl_dest(args)
+        self.assertEqual((args.dest, args.save_dir, args.cores_dir),
+                         (Path("/mnt/d/bios"), Path("/mnt/f/saves"),
+                          Path("/mnt/g/RetroArch/cores")))
+
+    def card(self, system: str) -> Path:
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        make_card(root / "card", system)
+        return root / "card"
+
+    def test_a_card_is_looked_for_three_folders_up_and_no_further(self):
+        card = self.card("KNULLI")
+        setup = install.card_setup("KNULLI", "knulli")
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            self.assertEqual(install._card_above(setup, card / "a" / "b" / "c"),
+                             ("own", "KNULLI", card))
+            self.assertIsNone(install._card_above(setup, card / "a" / "b" / "c" / "d"))
+
+    def test_a_minui_root_is_looked_for_two_folders_up_and_no_further(self):
+        card = self.card("MinUI")
+        self.assertEqual(install.card_root_above(card / "Bios" / "GBA"), ("minui", card))
+        self.assertIsNone(install.card_root_above(card / "Bios" / "GBA" / "x"))
+        self.assertIsNone(install.card_root_above(card))
+
+    def test_the_filter_compares_the_letters_alone(self):
+        self.assertEqual(install._folded("Pokémon Évolution"), "pokemon evolution")
+        self.assertFalse(install._matches("Odroid", "x"))
+
+    def test_a_letter_no_name_holds_finds_nothing(self):
+        with mock.patch.dict(install._SETUP_DEVICES, {"batocera": ("Odroid",),
+                                                      "Onion": ("Miyoo Mini",)}):
+            self.assertIsNone(install._setup_matches("batocera", ["Onion"], "x"))
+            self.assertEqual(install._setup_matches("batocera", ["Onion"], "mini"),
+                             ["Onion"])
+            self.assertEqual(install._setup_matches("batocera", ["Onion"], "odroid"),
+                             ["Odroid"])
 
 
 if __name__ == "__main__":
