@@ -272,10 +272,13 @@ def _listed_directories(
     """The cited paths found by listing their directories one by one, for a
     tree the forge truncates (aps3e vendors RPCS3 whole). A directory that
     cannot be listed confirms none of its paths. None off GitHub, the one
-    forge with that call."""
+    forge with that call, and None when no directory could be listed: the
+    tree was not read, so its record is kept (TeknoParrotUI answers 404, and
+    each fetch without its cached tree dropped its four paths)."""
     if repo.family != "github":
         return None
     found: set[str] = set()
+    listed = False
     for folder in sorted({path.rpartition("/")[0] for path in paths} - {""}):
         names = None
         for index, cache_dir in enumerate(cache_dirs):
@@ -286,8 +289,9 @@ def _listed_directories(
                 names = None
             if names is not None:
                 break
+        listed = listed or names is not None
         found.update(f"{folder}/{name}" for name in names or ())
-    return frozenset(found)
+    return frozenset(found) if listed else None
 
 
 def build_source_paths(

@@ -232,6 +232,19 @@ class SourceLinksOnlyWhereTheFileIs(unittest.TestCase):
         self.assertEqual(held, {"github.com/o/r@" + "e" * 40: ["src/a.c", "src/c.c"]})
         self.assertEqual(unread, [])
 
+    def test_a_tree_no_directory_answers_for_stays_unread(self):
+        # TeknoParrotUI answers 404: listed folder by folder, every listing
+        # failed and the tree read as holding nothing, so a fetch without its
+        # cached tree dropped its four recorded paths.
+        profile = {"source": "https://github.com/o/r", "source_commit": "e" * 40,
+                   "files": [{"source_ref": "src/a.c:5"}]}
+        with mock.patch.object(sitesources, "_cached_tree", return_value=None), \
+                mock.patch.object(sitesources.upstream, "list_directory",
+                                  side_effect=upstream.UpstreamError("HTTP 404")):
+            held, unread = sitesources.build_source_paths({"p": profile}, [TMP])
+        self.assertEqual(held, {})
+        self.assertEqual(unread, ["github.com/o/r@" + "e" * 40])
+
     def test_every_rendered_link_is_recorded(self):
         record = json.loads(sitesources.SOURCE_PATHS.read_text(encoding="utf-8"))
         pages = sorted(_built(DOCS / "emulators").rglob("*.md*")) + sorted(DOCS.glob("gaps*.md*"))
