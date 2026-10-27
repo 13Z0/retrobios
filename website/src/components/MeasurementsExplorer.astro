@@ -1,7 +1,7 @@
 ---
 // The Measurements page: every test of the measurements index, filtered in
 // the browser. Reads public/data/measurements/index.json, which
-// scripts/sync_measurements.py writes from the records at the pinned commit.
+// scripts/sitemeasurements.py writes from the records under measurements/.
 // Each row keeps its method and the computer it ran on beside the result,
 // and links its full record. The filters answer from the index alone: no
 // SQL engine is loaded.
@@ -52,7 +52,6 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 		host: string;
 		runs: number;
 		record_url: string;
-		data_url: string;
 		sqlite: string;
 		core: { library: string; commit: string | null };
 	};
@@ -124,7 +123,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 			host.append(text('span', item.host), text('small', `Core ${item.core.library}${item.core.commit ? ` at ${item.core.commit.slice(0, 12)}` : ''}`));
 			tr.append(host);
 			const record = document.createElement('td');
-			record.append(link(item.record_url, 'Record'), document.createTextNode(' '), link(item.data_url, 'data'));
+			record.append(link(item.record_url, 'Record'));
 			record.append(text('small', item.runs === 1 ? '1 run' : `${item.runs} runs`));
 			tr.append(record);
 			return tr;

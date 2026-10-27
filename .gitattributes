@@ -21,3 +21,7 @@ install.ps1 text eol=lf
 # preserved, so they follow the LF rule above.
 bios/** -text
 data/** -text
+
+# Measurement records are append-only: two branches that each add a line to
+# the same file merge by keeping both.
+measurements/*.jsonl text eol=lf merge=union

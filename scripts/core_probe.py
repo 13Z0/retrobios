@@ -10,10 +10,9 @@ Three modes share one runner:
 
 Each repetition runs in its own process, under strace when it is installed,
 so the files a core opened are read from the kernel rather than guessed.
-`--record DIR` appends one record per invocation to a clone of the
-measurements repository, carrying what is needed to reproduce it (core build,
-frontend commit, host, inputs by hash). measurement_records.py splits it into
-a slim line and a gzip sidecar.
+`--record` appends one record per invocation, as one line of
+measurements/<emulator>.jsonl in this repository, carrying what is needed to
+reproduce it (core build, frontend commit, host, inputs by hash).
 """
 
 from __future__ import annotations
@@ -39,7 +38,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-MEASUREMENTS_CLONE = ROOT / ".cache" / "measurements"
 MIN_BENCH_REPETITIONS = 5
 DEFAULT_WORK_DIR = ROOT / "tmp" / "core_probe"
 BASE_OBSERVABLES = ("frame_sha1", "video_sha1", "audio_sha1", "state_sha1")
@@ -771,10 +769,9 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument("--core-repo", help="source repository URL of the core build")
     common.add_argument("--core-commit", help="commit the core was built from")
     common.add_argument("--build-command", help="command and flags that built the core")
-    common.add_argument("--record", metavar="DIR",
-                        help="append the record to the measurements clone DIR "
-                             f"(records/<emulator>.jsonl and data/<emulator>/), "
-                             f"for example {MEASUREMENTS_CLONE.relative_to(ROOT)}")
+    common.add_argument("--record", metavar="DIR", nargs="?", const=str(ROOT),
+                        help="append the record as one line of measurements/<emulator>.jsonl "
+                             "in the checkout DIR (default: this one)")
     common.add_argument("--emulator", help="profile the record is filed under (default: the "
                                            "profile whose cores: names the .so, else the "
                                            "core's library name)")
@@ -823,7 +820,6 @@ def validate_args(args: argparse.Namespace) -> list[str]:
     if args.png_dir and not args.frame_hash_every:
         problems.append("--png-dir needs --frame-hash-every")
     if args.record:
-        problems.extend(record_target_problems(Path(args.record)))
         if not args.emulator and Path(args.core).is_file():
             try:
                 default_emulator(Path(args.core), None)
@@ -907,32 +903,6 @@ def check_result(variants: list[dict], observable: str) -> dict:
     }
 
 
-def record_target_problems(directory: Path) -> list[str]:
-    """Why records may not be written under ``directory``.
-
-    Records live in their own repository. A directory inside this one's
-    tracked tree would put them in its history, megabytes per campaign;
-    an ignored directory (tmp/, the clone under .cache/) is fine.
-    """
-    target = directory.resolve()
-    if target != ROOT and ROOT not in target.parents:
-        return []
-    try:
-        ignored = subprocess.run(["git", "check-ignore", "-q", str(target)], cwd=ROOT,
-                                 capture_output=True, check=False).returncode
-    except OSError as exc:
-        return [f"--record {directory}: cannot ask git whether it is tracked ({exc})"]
-    if ignored == 0:
-        return []
-    if ignored != 1:
-        # 128: not a git checkout, nothing to keep records out of.
-        return []
-    return [f"--record {directory}: inside the tracked tree of this repository. Records go "
-            f"to the measurements repository: clone it with "
-            f"`python scripts/sync_measurements.py --fetch` and pass "
-            f"--record {MEASUREMENTS_CLONE.relative_to(ROOT)}"]
-
-
 def default_emulator(core_file: Path, library_name: str | None) -> str:
     """The profile whose cores: names the .so, else the library name as a slug."""
     stem = core_file.name.split(".")[0].removesuffix("_libretro")
@@ -966,24 +936,19 @@ def default_subject(record: dict) -> str:
     return f"{record['kind']}-{slugify(content, 30)}-{digest}"
 
 
-def write_record(directory: Path, full: dict) -> tuple[Path, Path]:
-    """Append the record to its emulator's .jsonl and write its sidecar."""
-    from measurement_records import (  # noqa: PLC0415
-        line_text, parse_lines, records_path, seal, sidecar_path, split)
+def write_record(directory: Path, full: dict) -> Path:
+    """Append the record, with its id, to its emulator's .jsonl."""
+    from measurement_records import line_text, parse_lines, records_path, seal  # noqa: PLC0415
 
-    slim, sidecar = split(full)
-    sealed, blob = seal(slim, sidecar)
+    sealed = seal(full)
     lines = directory / records_path(sealed["emulator"])
     existing = parse_lines(lines.read_text(encoding="utf-8"), str(lines)) if lines.is_file() else []
     if sealed["supersedes"] and sealed["supersedes"] not in {r["id"] for r in existing}:
         raise ProbeError(f"--supersedes {sealed['supersedes']}: no such record in {lines}")
-    data = directory / sidecar_path(sealed["emulator"], sealed["id"])
-    data.parent.mkdir(parents=True, exist_ok=True)
-    data.write_bytes(blob)
     lines.parent.mkdir(parents=True, exist_ok=True)
     with lines.open("a", encoding="utf-8") as handle:
         handle.write(line_text(sealed) + "\n")
-    return lines, data
+    return lines
 
 
 def probe(args: argparse.Namespace) -> int:
@@ -1060,11 +1025,11 @@ def probe(args: argparse.Namespace) -> int:
     record["subject"] = args.subject or default_subject(record)
     if args.record:
         try:
-            lines, data = write_record(Path(args.record), record)
+            lines = write_record(Path(args.record), record)
         except ProbeError as exc:
             print(f"ERROR: {exc}", file=sys.stderr)
             return 2
-        print(f"recorded {lines} (line {sum(1 for _ in lines.open(encoding='utf-8'))}) and {data}",
+        print(f"recorded {lines} (line {sum(1 for _ in lines.open(encoding='utf-8'))})",
               file=sys.stderr)
     print(json.dumps(record, indent=2, sort_keys=False))
     return 0

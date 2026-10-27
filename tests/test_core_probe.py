@@ -261,34 +261,25 @@ class FakeCoreTests(unittest.TestCase):
             self.assertEqual(record["variants"][3]["repetitions"][0]["files_probed_absent"], ["card.bin"])
         self.assertEqual(first["frames"], 3)
         self.assertEqual(record["emulator"], "fake")
-        self.assertEqual(sorted(p.relative_to(record_dir).as_posix()
-                                for p in record_dir.rglob("*") if p.is_file()),
-                         sorted(["records/fake.jsonl", f"data/fake/{self._only_id(record_dir)}.json.gz"]))
-        line = json.loads((record_dir / "records" / "fake.jsonl").read_text())
-        blob = (record_dir / "data" / "fake" / f"{line['id']}.json.gz").read_bytes()
+        self.assertEqual([p.relative_to(record_dir).as_posix()
+                          for p in record_dir.rglob("*") if p.is_file()], ["measurements/fake.jsonl"])
+        line = json.loads((record_dir / "measurements" / "fake.jsonl").read_text())
         self.assertEqual(measurement_records.check_line(line), [])
-        self.assertEqual(measurement_records.check_pair(line, blob), [])
-        # The line and its sidecar give back the record the run printed.
-        self.assertEqual(measurement_records.join(line, measurement_records.read_sidecar(blob)), record)
+        # The line is the record the run printed, with its id.
+        self.assertEqual({k: v for k, v in line.items() if k != "id"}, record)
         try:
             from jsonschema import Draft202012Validator
         except ImportError:
             return
-        for name, document in (("core-probe-record", line),
-                               ("core-probe-data", measurement_records.read_sidecar(blob))):
-            schema = json.loads((REPO_ROOT / "schemas" / f"{name}.schema.json").read_text())
-            self.assertEqual(list(Draft202012Validator(schema).iter_errors(document)), [], name)
-
-    @staticmethod
-    def _only_id(record_dir: Path) -> str:
-        return json.loads((record_dir / "records" / "fake.jsonl").read_text())["id"]
+        schema = json.loads((REPO_ROOT / "schemas" / "core-probe-record.schema.json").read_text())
+        self.assertEqual(list(Draft202012Validator(schema).iter_errors(line)), [])
 
     def test_second_run_is_appended_beside_the_first(self) -> None:
         record_dir = self.tmp / "appended"
         argv = ["run", "--core", str(self.core), "--frames", "1", "--no-trace", "--max-load", "1000",
                 "--record", str(record_dir), "--subject", "smoke"]
         self.assertEqual(self.probe(argv)[0], 0)
-        lines = record_dir / "records" / "fake.jsonl"
+        lines = record_dir / "measurements" / "fake.jsonl"
         first = lines.read_text()
         code, record = self.probe(argv)
         self.assertEqual(code, 0)
@@ -301,16 +292,11 @@ class FakeCoreTests(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertEqual(len(lines.read_text().splitlines()), 3)
 
-    def test_recording_inside_the_tracked_tree_is_refused(self) -> None:
-        inside = REPO_ROOT / "measurements"
-        err = io.StringIO()
-        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(err):
-            code = core_probe.main(["run", "--core", str(self.core), "--frames", "1", "--no-trace",
-                                    "--record", str(inside), "--work-dir", str(self.tmp / "work")])
-        self.assertEqual(code, 2)
-        self.assertIn("inside the tracked tree", err.getvalue())
-        self.assertIn(".cache/measurements", err.getvalue())
-        self.assertFalse(inside.exists())
+    def test_record_defaults_to_this_checkout(self) -> None:
+        parser = core_probe.build_parser()
+        args = parser.parse_args(["run", "--core", sys.executable, "--record", "--frames", "1"])
+        self.assertEqual(Path(args.record), REPO_ROOT)
+        self.assertIsNone(parser.parse_args(["run", "--core", sys.executable]).record)
 
     def test_bench_stats(self) -> None:
         code, record = self.probe(["bench", "--core", str(self.core), "--frames", "2", "--warmup", "1",
