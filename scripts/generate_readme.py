@@ -535,7 +535,10 @@ def generate_readme(db: dict, platforms_dir: str, db_path: str = "database.json"
 
     lines = [
         '<p align="center">',
-        '  <img src=".github/assets/banner.png" alt="RetroBIOS" width="400">',
+        "  <picture>",
+        '    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.svg">',
+        '    <img src=".github/assets/banner-light.svg" alt="RetroBIOS" width="400">',
+        "  </picture>",
         "</p>",
         "",
         '<p align="center">',

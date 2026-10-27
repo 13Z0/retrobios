@@ -1,5 +1,8 @@
 <p align="center">
-  <img src=".github/assets/banner.png" alt="RetroBIOS" width="400">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.svg">
+    <img src=".github/assets/banner-light.svg" alt="RetroBIOS" width="400">
+  </picture>
 </p>
 
 <p align="center">
@@ -200,4 +203,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in [the project's legal position](https://abdess.github.io/retrobios/wiki/legal/).
 
-*Auto-generated on 2026-10-26T22:14:08Z*
+*Auto-generated on 2026-10-27T23:07:44Z*
