@@ -110,7 +110,6 @@ from siteguides import (
 )
 import release_record
 import sitemeasurements
-import sync_measurements
 
 # The Starlight project, and where its pages go inside it.
 STARLIGHT_DIR = "website"
@@ -11007,11 +11006,6 @@ def main() -> None:
         help="directory the pages are written to (default: the project's "
              "content collection, src/content/docs)",
     )
-    parser.add_argument(
-        "--require-measurements", action="store_true",
-        help="fail when the measurements clone does not hold the pinned commit "
-             "(the deploy build passes it; without it the site lists no measurements)",
-    )
     args = parser.parse_args()
     if args.docs_dir is None:
         args.docs_dir = str(Path(args.site_dir) / STARLIGHT_CONTENT)
@@ -11168,9 +11162,9 @@ def _generate(args: argparse.Namespace) -> None:
     if clash:
         raise RuntimeError(f"a console page takes a manufacturer's address: {sorted(clash)}")
 
-    print("Compiling the measurements at their pin...")
-    measured = sync_measurements.build(
-        public, emulators_dir=Path(args.emulators_dir), require=args.require_measurements,
+    print("Compiling the measurements...")
+    measured = sitemeasurements.build(
+        public, emulators_dir=Path(args.emulators_dir), repo=REPO_URL,
         system_names={sys_id: system_name(sys_id) for sys_id in sorted(set(_system_page_map))},
     )
     for path in measured.paths:
@@ -11187,7 +11181,7 @@ def _generate(args: argparse.Namespace) -> None:
     )
     write_release_advertised(Path(args.site_dir) / "src" / "generated")
     write_if_changed(str(docs / "data.md"),
-                     generate_data_page(exports, public / sync_measurements.SQLITE_PATH)
+                     generate_data_page(exports, public / sitemeasurements.SQLITE_PATH)
                      + reference_next())
     PAGE_DATA["data.md"] = dataset_structured_data(exports, db)
 

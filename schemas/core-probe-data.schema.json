@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://abdess.github.io/retrobios/api/v1/schemas/core-probe-data.schema.json",
   "title": "RetroBIOS core probe record data",
-  "description": "The sidecar of a core probe record, data/<emulator>/<id>.json.gz: every repetition in full, the raw timing values and compared values too large for the record line. With the record it rebuilds the full result.",
+  "description": "The sidecar of a core probe record, measurements/data/<emulator>/<id>.json.gz: every repetition in full, the raw timing values and compared values too large for the record line. With the record it rebuilds the full result.",
   "type": "object",
   "additionalProperties": false,
   "required": [

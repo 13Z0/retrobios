@@ -27,9 +27,6 @@ Mapping (stale -> command):
                             --source mame --fetch
     catalogs/fbneo recipes  python -m scripts.scraper.romset_dat_importer
                             --source fbneo --fetch
-    measurements/records pin
-                            python scripts/sync_measurements.py --fetch --bump,
-                            which refuses a remote that rewrote a pinned line
 
 A platform that inherits from a rescraped one (retropie and lakka from
 retroarch) reads the parent's file: its jobs start once the parent's chain
@@ -66,7 +63,7 @@ CHECK_FRESHNESS = REPO_ROOT / "scripts" / "check_freshness.py"
 PLATFORMS_REGISTRY = REPO_ROOT / "platforms" / "_registry.yml"
 DATA_DIRS_REGISTRY = REPO_ROOT / "platforms" / "_data_dirs.yml"
 
-AUTO_AREAS = ("platforms", "native", "targets", "data", "catalogs", "measurements")
+AUTO_AREAS = ("platforms", "native", "targets", "data", "catalogs")
 MANUAL_AREAS = ("coreinfo", "ci", "profiles")
 
 JOB_TIMEOUT = 1800  # 30 minutes per refresher, scrapers rarely exceed 10
@@ -409,11 +406,6 @@ def _command_for(
             ]
         # redump / no-intro / tosec need manual DAT download.
         return None
-
-    if area == "measurements":
-        # --fetch refuses a remote that rewrote a pinned line, and --bump
-        # only rewrites measurements-pin.json: nothing is committed.
-        return [sys.executable, "scripts/sync_measurements.py", "--fetch", "--bump"]
 
     # coreinfo, ci, profiles: never auto-refresh.
     return None

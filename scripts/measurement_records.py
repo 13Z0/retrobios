@@ -1,9 +1,9 @@
-"""Core probe records as the measurements repository stores them.
+"""Core probe records as this repository stores them.
 
 A run of core_probe.py produces one full record. It is stored as two parts:
 
-  records/<emulator>.jsonl            one slim record per line, append-only
-  data/<emulator>/<id>.json.gz        the bulky rest, named by the record id
+  measurements/<emulator>.jsonl                one slim record per line, append-only
+  measurements/data/<emulator>/<id>.json.gz    the bulky rest, named by the record id
 
 The slim record keeps what a reader needs to judge and reproduce the result:
 claim, method, observable, result, statistics, host, inputs by hash, core
@@ -18,7 +18,7 @@ A record id is the date and the first 12 hex digits of the sha256 of the
 record without its id. A record carried over from the first layout keeps
 the id it had, which hashes that full record.
 
-Standard library only: core_probe.py, sync_measurements.py and the site
+Standard library only: core_probe.py, validate_schemas.py and the site
 read it.
 """
 
@@ -29,12 +29,14 @@ import gzip
 import hashlib
 import json
 import re
+import subprocess
 from collections.abc import Iterable
+from dataclasses import dataclass
+from pathlib import Path
 
 RECORD_VERSION = 2
-MEASUREMENTS_REPO = "https://github.com/Abdess/retrobios-measurements"
-RECORDS_DIR = "records"
-DATA_DIR = "data"
+RECORDS_DIR = "measurements"
+DATA_DIR = f"{RECORDS_DIR}/data"
 # Fields a repetition keeps in the slim record, per variant, from the first one.
 VARIANT_SUMMARY = ("observables", "files_opened", "files_probed_absent", "tracing")
 # Observables too large for a line: their values stay in the sidecar.
@@ -244,3 +246,113 @@ def live(records: Iterable[dict]) -> list[dict]:
     records = list(records)
     superseded = {r["supersedes"] for r in records if r.get("supersedes")}
     return [r for r in records if r["id"] not in superseded]
+
+
+class MeasurementsError(RuntimeError):
+    """The records of a tree cannot be read, or break a rule."""
+
+
+@dataclass(frozen=True)
+class Stored:
+    """One record line as read from the tree."""
+
+    emulator: str
+    line: int
+    record: dict
+
+
+def tree_files(root: Path) -> dict[str, Path]:
+    """Repository path -> file of every record file and data file under ``root``."""
+    base = root / RECORDS_DIR
+    if not base.is_dir():
+        return {}
+    return {path.relative_to(root).as_posix(): path
+            for path in sorted(base.rglob("*")) if path.is_file()}
+
+
+def read_records(root: Path) -> list[Stored]:
+    """Every record line under ``root``, each checked against its rules and data."""
+    files = tree_files(root)
+    data_prefix = f"{DATA_DIR}/"
+    problems: list[str] = []
+    stored: list[Stored] = []
+    claimed: set[str] = set()
+    for path in sorted(p for p in files if not p.startswith(data_prefix)):
+        emulator = path[len(RECORDS_DIR) + 1:].removesuffix(".jsonl")
+        if not path.endswith(".jsonl") or "/" in emulator:
+            problems.append(f"{path}: {RECORDS_DIR}/ holds <emulator>.jsonl files and data/ only")
+            continue
+        seen: set[str] = set()
+        try:
+            records = parse_lines(files[path].read_text(encoding="utf-8"), path)
+        except RecordError as exc:
+            problems.append(str(exc))
+            continue
+        for number, record in enumerate(records, 1):
+            where = f"{path}:{number}"
+            problems.extend(f"{where}: {p}" for p in check_line(record))
+            if record.get("emulator") != emulator:
+                problems.append(f"{where}: emulator {record.get('emulator')!r} in {path}")
+            if record.get("id") in seen:
+                problems.append(f"{where}: id {record.get('id')} appears twice")
+            if record.get("supersedes") and record["supersedes"] not in seen:
+                problems.append(f"{where}: supersedes {record['supersedes']}, no earlier line of this file")
+            seen.add(record.get("id"))
+            data = sidecar_path(emulator, str(record.get("id")))
+            claimed.add(data)
+            if data not in files:
+                problems.append(f"{where}: {data} is missing")
+            else:
+                problems.extend(f"{where}: {p}" for p in check_pair(record, files[data].read_bytes()))
+            stored.append(Stored(emulator, number, record))
+    problems.extend(f"{path}: no record line names it"
+                    for path in sorted(files) if path.startswith(data_prefix) and path not in claimed)
+    if problems:
+        raise MeasurementsError("records under {}:\n  {}".format(root, "\n  ".join(problems)))
+    return stored
+
+
+def _git(root: Path, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(["git", "-C", str(root), *args], capture_output=True, check=False)
+
+
+def committed_files(root: Path, ref: str) -> dict[str, bytes]:
+    """Path -> content of every record and data file at ``ref``."""
+    listing = _git(root, "ls-tree", "-r", "-z", "--name-only", ref, "--", RECORDS_DIR)
+    if listing.returncode != 0:
+        raise MeasurementsError(f"git ls-tree {ref}: {listing.stderr.decode(errors='replace').strip()}")
+    out = {}
+    for path in filter(None, listing.stdout.decode("utf-8").split("\0")):
+        blob = _git(root, "show", f"{ref}:{path}")
+        if blob.returncode != 0:
+            raise MeasurementsError(f"git show {ref}:{path}: {blob.stderr.decode(errors='replace').strip()}")
+        out[path] = blob.stdout
+    return out
+
+
+def append_only_problems(root: Path, ref: str = "HEAD") -> list[str]:
+    """What the tree under ``root`` changed or removed of the lines and data
+    files ``ref`` holds. Lines added at the end and new files are allowed."""
+    before, after = committed_files(root, ref), tree_files(root)
+    problems = []
+    for path, content in sorted(before.items()):
+        if path not in after:
+            problems.append(f"{path}: removed")
+            continue
+        now = after[path].read_bytes()
+        if now == content:
+            continue
+        if path.endswith(".jsonl"):
+            moved = appended_only(content.decode("utf-8"), now.decode("utf-8"))
+            if moved:
+                problems.append(f"{path}: {moved}")
+        else:
+            problems.append(f"{path}: rewritten")
+    return problems
+
+
+def last_commit(root: Path) -> str | None:
+    """The last commit that touched the records: the one their permalinks name."""
+    proc = _git(root, "log", "-1", "--format=%H", "--", RECORDS_DIR)
+    commit = proc.stdout.decode().strip() if proc.returncode == 0 else ""
+    return commit if re.fullmatch(r"[0-9a-f]{40}", commit) else None

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://abdess.github.io/retrobios/api/v1/schemas/core-probe-record.schema.json",
   "title": "RetroBIOS core probe record",
-  "description": "One line of records/<emulator>.jsonl in the measurements repository: one run of scripts/core_probe.py, a libretro core executed headless, with what is needed to judge and reproduce it. The bulky rest (every repetition, core logs, raw timings) is the gzip sidecar data/<emulator>/<id>.json.gz, valid against core-probe-data.schema.json, whose sha256 is in `data`.",
+  "description": "One line of measurements/<emulator>.jsonl: one run of scripts/core_probe.py, a libretro core executed headless, with what is needed to judge and reproduce it. The bulky rest (every repetition, core logs, raw timings) is the gzip sidecar measurements/data/<emulator>/<id>.json.gz, valid against core-probe-data.schema.json, whose sha256 is in `data`.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -32,7 +32,7 @@
     },
     "emulator": {
       "$ref": "#/$defs/slug",
-      "description": "The emulator profile the record is filed under: records/<emulator>.jsonl."
+      "description": "The emulator profile the record is filed under: measurements/<emulator>.jsonl."
     },
     "subject": {
       "$ref": "#/$defs/slug",

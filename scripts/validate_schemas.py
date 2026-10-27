@@ -593,46 +593,33 @@ def _format_errors() -> list[str]:
     ]
 
 
-def _measurement_errors(clone: Path | None = None, pin_path: Path | None = None) -> list[str]:
-    """Every record line and data file at the measurements pin, against their
-    schemas and the rules sync_measurements.py applies.
-
-    The records live in their own repository. Without a clone holding the
-    pin there is nothing to read, and the run says so.
-    """
-    import sync_measurements  # noqa: PLC0415
+def _measurement_errors(root: Path | None = None) -> list[str]:
+    """Every record line and data file under measurements/, against their
+    schemas and the rules measurement_records.read_records applies."""
     import measurement_records as mr  # noqa: PLC0415
 
-    clone = clone or sync_measurements.CLONE
-    pin = sync_measurements.load_pin(pin_path or sync_measurements.PIN_FILE)
-    if not sync_measurements.has_commit(clone, pin["commit"]):
-        print(f"SKIP measurements: {pin['commit'][:12]} is not in {clone} "
-              "(python scripts/sync_measurements.py --fetch)")
-        return []
-    commit = pin["commit"]
+    root = root or ROOT
     record_validator = _validator("core-probe-record.schema.json")
     data_validator = _validator("core-probe-data.schema.json")
     out: list[str] = []
-    files = sync_measurements.tree_files(clone, commit)
+    files = mr.tree_files(root)
     for path in sorted(p for p in files if p.endswith(".jsonl")):
-        text = sync_measurements.show(clone, commit, path).decode("utf-8")
-        for number, line in enumerate(text.splitlines(), 1):
+        emulator = path[len(mr.RECORDS_DIR) + 1:].removesuffix(".jsonl")
+        for number, line in enumerate(files[path].read_text(encoding="utf-8").splitlines(), 1):
             try:
                 record = json.loads(line)
             except json.JSONDecodeError as exc:
-                out.append(f"measurements {path}:{number}: {exc}")
+                out.append(f"{path}:{number}: {exc}")
                 continue
-            out.extend(_errors(record_validator, record, f"measurements {path}:{number}"))
-            data = mr.sidecar_path(path[len("records/"):-len(".jsonl")], str(record.get("id")))
+            out.extend(_errors(record_validator, record, f"{path}:{number}"))
+            data = mr.sidecar_path(emulator, str(record.get("id")))
             if data in files:
-                out.extend(_errors(data_validator,
-                                   mr.read_sidecar(sync_measurements.show(clone, commit, data)),
-                                   f"measurements {data}"))
+                out.extend(_errors(data_validator, mr.read_sidecar(files[data].read_bytes()), data))
     if not out:
         try:
-            sync_measurements.read_records(clone, commit)
-        except sync_measurements.MeasurementsError as exc:
-            out.append(f"measurements {exc}")
+            mr.read_records(root)
+        except mr.MeasurementsError as exc:
+            out.append(str(exc))
     return out
 
 

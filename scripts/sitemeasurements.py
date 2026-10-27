@@ -1,23 +1,374 @@
-"""The site's measurement pages, from the index sync_measurements.py writes.
+"""The measurements the site shows, from the records under measurements/.
 
-Three places read the same index: the Tested block of each emulator page,
-the Measurements explorer page and the host table of the methodology page.
-A number is never shown without its method and host beside it.
+The records are core probe runs, one append-only .jsonl per emulator with a
+gzip data file per record (measurement_records.py). From them the build
+writes, never committed:
+
+  public/data/measurements/index.json        the compact index the explorer and
+                                             the emulator pages read, one item
+                                             per emulator and subject
+  public/downloads/measurements.sqlite       every record, normalised
+  public/downloads/measurements/<emu>.sqlite one database per emulator
+
+Three places read the index: the Tested block of each emulator page, the
+Measurements explorer page and the host table of the methodology page. A
+number is never shown without its method and host beside it. A record links
+its line at the last commit that touched measurements/.
 """
 
 from __future__ import annotations
 
+import json
+import os
 import re
 import sqlite3
+import sys
+from dataclasses import dataclass
 from pathlib import Path
 
+import measurement_records as mr
 import sitemarkup as markup
+from artifacts import json_text, write_if_changed
 from siterender import _escape_tags
 
+ROOT = Path(__file__).resolve().parent.parent
+REPO = "https://github.com/Abdess/retrobios"
 EXPLORER_PAGE = "measurements.md"
 METHOD_PAGE = "wiki/measurements.md"
 HOSTS_MARKER = "<!-- measurements-hosts -->"
+INDEX_PATH = Path("data") / "measurements" / "index.json"
+SQLITE_PATH = Path("downloads") / "measurements.sqlite"
+PER_EMULATOR_DIR = Path("downloads") / "measurements"
+SQLITE_SCHEMA_VERSION = "1"
+INDEX_SCHEMA_VERSION = 1
 
+
+# --------------------------------------------------------------------------
+# Index
+# --------------------------------------------------------------------------
+
+def host_summary(host: dict) -> str:
+    parts = [host.get("cpu_model") or "unknown CPU"]
+    if host.get("cpu_count"):
+        parts.append(f"{host['cpu_count']} CPUs")
+    parts.append(f"{host.get('machine', '')} Linux {host.get('kernel', '')}".strip()
+                 if "Linux" in host.get("os", "") else host.get("os", ""))
+    parts.append(f"Python {host.get('python', '')}")
+    before, after = host.get("load_before"), host.get("load_after")
+    if before and after:
+        parts.append(f"load {before[0]} before, {after[0]} after")
+    return ", ".join(part for part in parts if part)
+
+
+def bench_statement(record: dict) -> str:
+    timing = record["timing"]
+    frame, fps = timing["ms_per_frame"], timing["fps"]
+    return (f"median {frame['median']:.3f} ms per frame ({fps['median']:.1f} fps), "
+            f"min {frame['min']:.3f}, max {frame['max']:.3f}, over "
+            f"{record['inputs']['repetitions']} repetitions of {record['inputs']['frames']} frames")
+
+
+def permalink(repo: str, commit: str, path: str, line: int | None = None) -> str:
+    return f"{repo}/blob/{commit}/{path}" + (f"#L{line}" if line else "")
+
+
+def index_item(entry: mr.Stored, runs: int, source: dict, profiles: dict,
+               system_names: dict[str, str]) -> dict:
+    record = entry.record
+    profile = profiles.get(entry.emulator) or {}
+    check = record.get("check") or {}
+    core = record["core"]
+    content = (record["inputs"].get("content") or {})
+    return {
+        "emulator": entry.emulator,
+        "emulator_name": str(profile.get("emulator", entry.emulator)),
+        "profiled": bool(profile),
+        "systems": sorted(set(profile.get("systems") or [])),
+        "system_names": [system_names.get(s) or s for s in sorted(set(profile.get("systems") or []))],
+        "subject": record["subject"],
+        "kind": record["kind"],
+        "claim": check.get("claim"),
+        "method": check.get("method"),
+        "observable": check.get("observable"),
+        "variable": check.get("variable"),
+        "status": (check.get("result") or {}).get("status") or ("measured" if record["kind"] == "bench" else "ran"),
+        "statement": (check.get("result") or {}).get("statement")
+                     or (bench_statement(record) if record.get("timing") else ""),
+        "content": content.get("label"),
+        "variants": len(record["variants"]),
+        "repetitions": record["inputs"]["repetitions"],
+        "flags": len(record["flags"]),
+        "date": record["recorded_at"],
+        "host": host_summary(record["host"]),
+        "core": {
+            "library": " ".join(filter(None, [core.get("library_name"), core.get("library_version")])),
+            "file": core["file"], "sha256": core["sha256"], "repo": core.get("repo"),
+            "commit": core.get("commit"), "build": core.get("build_command"),
+        },
+        "frontend_commit": record["frontend"].get("commit"),
+        "id": record["id"],
+        "runs": runs,
+        "record_url": permalink(source["repo"], source["commit"], mr.records_path(entry.emulator), entry.line),
+        "data_url": permalink(source["repo"], source["commit"], mr.sidecar_path(entry.emulator, record["id"])),
+        "sqlite": f"downloads/measurements/{entry.emulator}.sqlite",
+    }
+
+
+def build_index(stored: list[mr.Stored], source: dict | None, profiles: dict,
+                system_names: dict[str, str] | None = None) -> dict:
+    """One item per (emulator, subject): its latest record not superseded."""
+    by_subject: dict[tuple[str, str], list[mr.Stored]] = {}
+    live_ids = {r["id"] for r in mr.live(s.record for s in stored)}
+    for entry in stored:
+        if entry.record["id"] in live_ids:
+            by_subject.setdefault((entry.emulator, entry.record["subject"]), []).append(entry)
+    items = []
+    for key in sorted(by_subject):
+        entries = by_subject[key]
+        latest = max(entries, key=lambda s: (s.record["recorded_at"], s.line))
+        items.append(index_item(latest, len(entries), source or {}, profiles, system_names or {}))
+    items.sort(key=lambda item: (item["emulator"], item["date"], item["subject"]))
+    return {
+        "schema_version": INDEX_SCHEMA_VERSION,
+        "kind": "measurements",
+        "repo": (source or {}).get("repo"),
+        "commit": (source or {}).get("commit"),
+        "records": len(stored),
+        "count": len(items),
+        "items": items,
+    }
+
+
+# --------------------------------------------------------------------------
+# SQLite
+# --------------------------------------------------------------------------
+
+SCHEMA_SQL = """
+    PRAGMA journal_mode = OFF;
+    PRAGMA synchronous = OFF;
+    CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+    CREATE TABLE cores (
+        sha256 TEXT PRIMARY KEY, file TEXT NOT NULL, repo TEXT, commit_sha TEXT,
+        build_command TEXT, compiler TEXT, library_name TEXT, library_version TEXT
+    );
+    CREATE TABLE hosts (
+        id INTEGER PRIMARY KEY, cpu_model TEXT, cpu_count INTEGER, os TEXT NOT NULL,
+        kernel TEXT NOT NULL, machine TEXT NOT NULL, python TEXT NOT NULL
+    );
+    CREATE TABLE emulator_systems (
+        emulator TEXT NOT NULL, system TEXT NOT NULL, PRIMARY KEY (emulator, system)
+    );
+    CREATE TABLE runs (
+        id TEXT PRIMARY KEY, emulator TEXT NOT NULL, subject TEXT NOT NULL,
+        kind TEXT NOT NULL, recorded_at TEXT NOT NULL, supersedes TEXT,
+        superseded INTEGER NOT NULL, core_sha256 TEXT NOT NULL REFERENCES cores(sha256),
+        host_id INTEGER NOT NULL REFERENCES hosts(id), load_before TEXT, load_after TEXT,
+        max_load REAL, frontend_commit TEXT, script_sha256 TEXT NOT NULL,
+        script_modified INTEGER, flags TEXT NOT NULL, data_sha256 TEXT NOT NULL,
+        data_bytes INTEGER NOT NULL, record_url TEXT NOT NULL, line INTEGER NOT NULL,
+        migrated_from_version INTEGER
+    );
+    CREATE TABLE inputs (
+        run_id TEXT PRIMARY KEY REFERENCES runs(id), content_label TEXT, content_sha1 TEXT,
+        content_size INTEGER, options TEXT NOT NULL, env TEXT NOT NULL, frames INTEGER NOT NULL,
+        warmup INTEGER NOT NULL, repetitions INTEGER NOT NULL, presses TEXT NOT NULL,
+        observables TEXT NOT NULL, frame_hash_every INTEGER NOT NULL, joypad_ports INTEGER NOT NULL
+    );
+    CREATE TABLE content_tracks (
+        run_id TEXT NOT NULL REFERENCES runs(id), position INTEGER NOT NULL,
+        file TEXT NOT NULL, sha1 TEXT NOT NULL, size INTEGER NOT NULL,
+        PRIMARY KEY (run_id, position)
+    );
+    CREATE TABLE checks (
+        run_id TEXT PRIMARY KEY REFERENCES runs(id), claim TEXT NOT NULL, method TEXT NOT NULL,
+        observable TEXT NOT NULL, variable TEXT NOT NULL, status TEXT NOT NULL,
+        statement TEXT NOT NULL
+    );
+    CREATE TABLE check_groups (
+        run_id TEXT NOT NULL REFERENCES runs(id), position INTEGER NOT NULL,
+        value TEXT, value_sha1 TEXT, variants TEXT NOT NULL, PRIMARY KEY (run_id, position)
+    );
+    CREATE TABLE variants (
+        run_id TEXT NOT NULL REFERENCES runs(id), position INTEGER NOT NULL,
+        label TEXT NOT NULL, repetitions INTEGER NOT NULL, loaded INTEGER NOT NULL,
+        flags TEXT NOT NULL, observables TEXT NOT NULL, files_opened TEXT,
+        files_probed_absent TEXT, tracing TEXT, PRIMARY KEY (run_id, position)
+    );
+    CREATE TABLE system_files (
+        run_id TEXT NOT NULL REFERENCES runs(id), variant_position INTEGER NOT NULL,
+        destination TEXT NOT NULL, sha1 TEXT,
+        PRIMARY KEY (run_id, variant_position, destination)
+    );
+    CREATE TABLE benchmarks (
+        run_id TEXT NOT NULL REFERENCES runs(id), metric TEXT NOT NULL,
+        median REAL NOT NULL, mean REAL NOT NULL, stdev REAL NOT NULL,
+        min REAL NOT NULL, max REAL NOT NULL, PRIMARY KEY (run_id, metric)
+    );
+    CREATE INDEX runs_emulator_idx ON runs(emulator, subject);
+    CREATE INDEX runs_subject_idx ON runs(subject);
+    CREATE INDEX emulator_systems_system_idx ON emulator_systems(system);
+    CREATE INDEX checks_claim_idx ON checks(claim);
+    CREATE INDEX system_files_sha1_idx ON system_files(sha1);
+"""
+
+TABLES = ("meta", "cores", "hosts", "emulator_systems", "runs", "inputs", "content_tracks",
+          "checks", "check_groups", "variants", "system_files", "benchmarks")
+
+
+def _host_key(host: dict) -> tuple:
+    return tuple(json_text(host.get(k)) for k in ("cpu_model", "cpu_count", "os", "kernel",
+                                                     "machine", "python"))
+
+
+def write_sqlite(destination: Path, stored: list[mr.Stored], source: dict | None, profiles: dict,
+                 scratch: Path) -> None:
+    """A deterministic database of the records: sorted rows, no clock."""
+    scratch.mkdir(parents=True, exist_ok=True)
+    temp = scratch / f"{destination.stem}-{os.getpid()}.sqlite"
+    temp.unlink(missing_ok=True)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    stored = sorted(stored, key=lambda s: (s.emulator, s.line))
+    live_ids = {r["id"] for r in mr.live(s.record for s in stored)}
+    hosts = {key: number for number, key in enumerate(sorted({_host_key(s.record["host"]) for s in stored}), 1)}
+    connection = sqlite3.connect(temp)
+    try:
+        connection.executescript(SCHEMA_SQL)
+        meta = {
+            "schema_version": SQLITE_SCHEMA_VERSION,
+            "record_version": str(mr.RECORD_VERSION),
+            "measurements_repo": (source or {}).get("repo") or "",
+            "measurements_commit": (source or {}).get("commit") or "",
+            "license": "MIT",
+            "scope": "core probe records: the record lines, not their data files",
+        }
+        connection.executemany("INSERT INTO meta VALUES (?, ?)", sorted(meta.items()))
+        cores = {s.record["core"]["sha256"]: s.record["core"] for s in stored}
+        connection.executemany("INSERT INTO cores VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
+            (sha, core["file"], json_text(core.get("repo")), json_text(core.get("commit")),
+             json_text(core.get("build_command")), json_text(core.get("compiler")),
+             json_text(core.get("library_name")), json_text(core.get("library_version")))
+            for sha, core in sorted(cores.items())])
+        connection.executemany("INSERT INTO hosts VALUES (?, ?, ?, ?, ?, ?, ?)", [
+            (number, *key) for key, number in sorted(hosts.items(), key=lambda kv: kv[1])])
+        emulators = sorted({s.emulator for s in stored})
+        connection.executemany("INSERT INTO emulator_systems VALUES (?, ?)", [
+            (emu, system) for emu in emulators
+            for system in sorted(set((profiles.get(emu) or {}).get("systems") or []))])
+        for entry in stored:
+            _insert_run(connection, entry, source or {}, hosts, entry.record["id"] not in live_ids)
+        connection.commit()
+        connection.execute("VACUUM")
+    finally:
+        connection.close()
+    os.replace(temp, destination)
+
+
+def _insert_run(connection: sqlite3.Connection, entry: mr.Stored, source: dict,
+                hosts: dict, superseded: bool) -> None:
+    r = entry.record
+    host, front, inputs = r["host"], r["frontend"], r["inputs"]
+    rid = r["id"]
+    connection.execute("INSERT INTO runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (
+        rid, entry.emulator, r["subject"], r["kind"], r["recorded_at"], r.get("supersedes"),
+        int(superseded), r["core"]["sha256"], hosts[_host_key(host)],
+        json_text(host.get("load_before")), json_text(host.get("load_after")), host.get("max_load"),
+        front.get("commit"), front["script_sha256"],
+        None if front.get("script_modified") is None else int(front["script_modified"]),
+        json_text(r["flags"]), r["data"]["sha256"], r["data"]["bytes"],
+        permalink(source.get("repo", ""), source.get("commit", ""), mr.records_path(entry.emulator), entry.line),
+        entry.line, r.get("migrated_from_version")))
+    content = inputs.get("content") or {}
+    connection.execute("INSERT INTO inputs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (
+        rid, content.get("label"), content.get("sha1"), content.get("size"),
+        json_text(inputs["options"]), json_text(inputs["env"]), inputs["frames"], inputs["warmup"],
+        inputs["repetitions"], json_text(inputs["presses"]), json_text(inputs["observables"]),
+        inputs["frame_hash_every"], inputs["joypad_ports"]))
+    connection.executemany("INSERT INTO content_tracks VALUES (?, ?, ?, ?, ?)", [
+        (rid, position, track["file"], track["sha1"], track["size"])
+        for position, track in enumerate(content.get("tracks") or [])])
+    check = r.get("check")
+    if check:
+        result = check["result"]
+        connection.execute("INSERT INTO checks VALUES (?, ?, ?, ?, ?, ?, ?)", (
+            rid, check["claim"], check["method"], check["observable"], check["variable"],
+            result["status"], result["statement"]))
+        connection.executemany("INSERT INTO check_groups VALUES (?, ?, ?, ?, ?)", [
+            (rid, position, json_text(group["value"]) if "value" in group else None,
+             group.get("value_sha1"), json_text(group["variants"]))
+            for position, group in enumerate(result["groups"])])
+    for position, variant in enumerate(r["variants"]):
+        connection.execute("INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (
+            rid, position, variant["label"], variant["repetitions"], int(variant["loaded"]),
+            json_text(variant["flags"]), json_text(variant["observables"]),
+            json_text(variant["files_opened"]), json_text(variant["files_probed_absent"]),
+            json_text(variant["tracing"])))
+        connection.executemany("INSERT INTO system_files VALUES (?, ?, ?, ?)", [
+            (rid, position, dest, sha1) for dest, sha1 in sorted(variant["system_files"].items())])
+    for metric, stats in sorted((r.get("timing") or {}).items()):
+        connection.execute("INSERT INTO benchmarks VALUES (?, ?, ?, ?, ?, ?, ?)", (
+            rid, metric, stats["median"], stats["mean"], stats["stdev"], stats["min"], stats["max"]))
+
+
+# --------------------------------------------------------------------------
+# Building the site's files
+# --------------------------------------------------------------------------
+
+@dataclass
+class Built:
+    index: dict
+    paths: list[Path]
+
+
+def load_profiles(emulators_dir: Path) -> dict:
+    from common import load_emulator_profiles  # noqa: PLC0415
+
+    return load_emulator_profiles(str(emulators_dir), skip_aliases=False)
+
+
+def records_commit(root: Path) -> str | None:
+    """The commit the record links name, with a warning when the records on
+    disk are not the ones it holds."""
+    commit = mr.last_commit(root)
+    if commit is None:
+        print(f"WARNING: no commit holds {root / mr.RECORDS_DIR}: the record links "
+              "lead nowhere until the records are committed.", file=sys.stderr)
+        return None
+    on_disk = {path: file.read_bytes() for path, file in mr.tree_files(root).items()}
+    if mr.committed_files(root, commit) != on_disk:
+        print(f"WARNING: {mr.RECORDS_DIR}/ differs from {commit[:12]}, the last commit that "
+              "touched it: links to records added since lead nowhere until they are "
+              "committed.", file=sys.stderr)
+    return commit
+
+
+def build(public: Path, root: Path = ROOT, emulators_dir: Path = ROOT / "emulators",
+          scratch: Path = ROOT / "tmp" / "site", system_names: dict[str, str] | None = None,
+          repo: str = REPO, commit: str | None = None) -> Built:
+    """Write the index and the databases under the site's public folder.
+
+    ``commit`` is the revision the record links name, by default the last
+    commit that touched the records.
+    """
+    stored = mr.read_records(root)
+    source = {"repo": repo, "commit": commit or (records_commit(root) if stored else None)}
+    profiles = load_profiles(emulators_dir)
+    index = build_index(stored, source, profiles, system_names)
+    paths = [public / INDEX_PATH]
+    (public / INDEX_PATH).parent.mkdir(parents=True, exist_ok=True)
+    write_if_changed(str(public / INDEX_PATH),
+                     json.dumps(index, ensure_ascii=False, indent=1, sort_keys=True) + "\n")
+    write_sqlite(public / SQLITE_PATH, stored, source, profiles, scratch)
+    paths.append(public / SQLITE_PATH)
+    for emulator in sorted({s.emulator for s in stored}):
+        target = public / PER_EMULATOR_DIR / f"{emulator}.sqlite"
+        write_sqlite(target, [s for s in stored if s.emulator == emulator], source, profiles, scratch)
+        paths.append(target)
+    return Built(index, paths)
+
+
+# --------------------------------------------------------------------------
+# Pages
+# --------------------------------------------------------------------------
 
 def by_emulator(index: dict) -> dict[str, list[dict]]:
     out: dict[str, list[dict]] = {}
@@ -91,7 +442,7 @@ def hosts_table(index: dict) -> list[str]:
         computer = item["host"].split(", load ")[0]
         hosts[computer] = hosts.get(computer, 0) + 1
     if not hosts:
-        return ["No result is recorded at the pinned commit yet.", ""]
+        return ["No result is recorded yet.", ""]
     return [
         "| Computer | Tests |",
         "|----------|------:|",
@@ -108,8 +459,8 @@ def with_hosts(page: str, index: dict) -> str:
 def generate_explorer_page(index: dict) -> str:
     commit = index.get("commit")
     repo = index.get("repo") or ""
-    source = (f"[retrobios-measurements]({repo}/tree/{commit}) at {_short(commit)}"
-              if commit else "the measurements project, not read in this build")
+    source = (f"[`measurements/`]({repo}/tree/{commit}/{mr.RECORDS_DIR}) at {_short(commit)}"
+              if commit else f"`{mr.RECORDS_DIR}/` of this repository")
     return "\n".join([
         "# Measurements",
         "",
@@ -148,8 +499,7 @@ def data_page_section(path: Path) -> list[str]:
         "## Measurements",
         "",
         "[`measurements.sqlite`](downloads/measurements.sqlite) holds every core probe "
-        "record at the pinned commit of [retrobios-measurements]"
-        "(https://github.com/Abdess/retrobios-measurements), and "
+        f"record kept in [`{mr.RECORDS_DIR}/`]({REPO}/tree/main/{mr.RECORDS_DIR}), and "
         "`downloads/measurements/<emulator>.sqlite` the records of one emulator, linked "
         f"from its page. The [Measurements]({EXPLORER_PAGE}) page reads "
         "[`data/measurements/index.json`](data/measurements/index.json). A record line is "
@@ -160,7 +510,7 @@ def data_page_section(path: Path) -> list[str]:
         "|-------|---------|",
         *(f"| `{name}` | {', '.join(f'`{c}`' for c in columns)} |" for name, columns in sqlite_tables(path)),
         "",
-        "`meta` names the measurements commit and the record version. A list or object "
+        "`meta` names the commit the record links point to and the record version. A list or object "
         "value is JSON text, an absent one empty. `runs.superseded` is 1 for a record a "
         "later one corrects.",
         "",
