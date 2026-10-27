@@ -6844,13 +6844,19 @@ class EdgesTheMutantsFound(unittest.TestCase):
         make_card(root / "card", system)
         return root / "card"
 
-    def test_a_card_is_looked_for_three_folders_up_and_no_further(self):
+    def test_a_card_is_looked_for_up_to_the_mount_point_and_no_further(self):
         card = self.card("KNULLI")
         setup = install.card_setup("KNULLI", "knulli")
-        with mock.patch.object(install, "_mounted_cards", return_value=[]):
-            self.assertEqual(install._card_above(setup, card / "a" / "b" / "c"),
-                             ("own", "KNULLI", card))
-            self.assertIsNone(install._card_above(setup, card / "a" / "b" / "c" / "d"))
+        deep = card / "a" / "b" / "c" / "d"
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()), \
+                mock.patch.object(install.os.path, "ismount", return_value=False):
+            self.assertEqual(install._card_above(setup, deep), ("own", "KNULLI", card))
+        mounted = frozenset({str(card / "a")})
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "_mount_points", return_value=mounted), \
+                mock.patch.object(install.os.path, "ismount", return_value=False):
+            self.assertIsNone(install._card_above(setup, deep))
 
     def test_a_minui_root_is_looked_for_two_folders_up_and_no_further(self):
         card = self.card("MinUI")
