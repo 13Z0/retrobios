@@ -147,6 +147,12 @@ class ParsingTests(unittest.TestCase):
             handle.flush()
             self.assertEqual(core_probe.elf_comment(Path(handle.name)), [])
 
+    def test_env_file_recorded_by_name_and_hash(self) -> None:
+        library = Path(sys.executable).resolve()
+        described = core_probe.describe_env_value(str(library))
+        self.assertEqual(described, f"{library.name} sha256:{core_probe.file_digest(library, 'sha256')}")
+        self.assertEqual(core_probe.describe_env_value("2000-01-01 00:00:00"), "2000-01-01 00:00:00")
+
     def test_cue_tracks(self) -> None:
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp" / "tests") as tmp:
             cue = Path(tmp, "d.cue")

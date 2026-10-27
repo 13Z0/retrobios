@@ -110,6 +110,18 @@ def content_identity(path: Path, label: str | None) -> dict:
     }
 
 
+def describe_env_value(value: str) -> str:
+    """An environment value as a record keeps it: a file by name and sha256.
+
+    The path is a detail of the host that ran the probe, the bytes are what
+    the run depended on.
+    """
+    path = Path(value)
+    if path.is_absolute() and path.is_file():
+        return f"{path.name} sha256:{file_digest(path, 'sha256')}"
+    return value
+
+
 def parse_assignment(text: str, flag: str) -> tuple[str, str]:
     key, sep, value = text.partition("=")
     if not sep or not key:
@@ -878,7 +890,7 @@ def probe(args: argparse.Namespace) -> int:
         "inputs": {
             "content": content_identity(Path(args.content), args.content_label) if args.content else None,
             "options": dict(args.option),
-            "env": dict(args.env),
+            "env": {key: describe_env_value(value) for key, value in args.env},
             "frames": args.frames,
             "warmup": args.warmup,
             "repetitions": repetitions,

@@ -738,7 +738,7 @@ strace the record says that tracing was unavailable.
 | `--frames`, `--warmup` | frames timed, and frames run before timing starts |
 | `--press FRAME:BUTTON[:LEN]` | hold a libretro joypad button on port 0 (`a`, `b`, `start`, `up`...). A menu may need 15 frames or more to see it |
 | `--joypad-ports N` | ports given a joypad after loading, as RetroArch does (default 2) |
-| `--env KEY=VALUE` | environment of the core process. A core that reads the host clock repeats only with the clock fixed, for example `LD_PRELOAD` of libfaketime with `FAKETIME` |
+| `--env KEY=VALUE` | environment of the core process. A core that reads the host clock repeats only with the clock fixed, for example `LD_PRELOAD` of libfaketime with `FAKETIME`. A value naming a file is recorded by file name and sha256 |
 | `--frame-hash-every K`, `--png-dir` | sha1 of every K-th frame, and those frames as PNG |
 | `--state-var SECTION.VAR` | a variable of a Mednafen save state, as an observable |
 | `--state-dir` | keep the save state taken at the end of the first repetition |
