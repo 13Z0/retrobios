@@ -1173,8 +1173,9 @@ DEFAULT_ORACLE = ROOT / "tests" / "campaign" / "oracle.yml"
 
 def oracle_for(data: dict, content_sha1: str | None, library_name: str | None) -> dict:
     """The oracle entries that judge one content on one core: its reference
-    frames, the error patterns every core shares and the core's own, and the
-    core's known error screens."""
+    frames, the error patterns every core shares and the core's own, the
+    core's known error screens, and the log lines by which it says it loaded
+    the console's own BIOS."""
     core = (data.get("cores") or {}).get(library_name or "") or {}
     references: list[dict] = []
     for item in data.get("content") or ():
@@ -1185,7 +1186,9 @@ def oracle_for(data: dict, content_sha1: str | None, library_name: str | None) -
     patterns = [p["pattern"] for p in (data.get("error_patterns") or ())]
     patterns += [p["pattern"] for p in core.get("error_patterns") or ()]
     screens = [{"sha1": s["sha1"], "shows": s["shows"]} for s in core.get("error_screens") or ()]
-    return {"references": references, "error_patterns": patterns, "error_screens": screens}
+    loaded = [p["pattern"] for p in core.get("bios_patterns") or ()]
+    return {"references": references, "error_patterns": patterns, "error_screens": screens,
+            "bios_patterns": loaded}
 
 
 def sampled(rep: dict) -> list[tuple[int, str]]:
@@ -1197,8 +1200,8 @@ def judge(rep: dict, oracle: dict) -> tuple[str, dict]:
     """The verdict of one repetition and the evidence that decided it.
 
     In order: a worker killed after the timeout is a hang and one that died
-    a crash, from the process status. A reference frame reached is a boot.
-    Without one, an error pattern of the core log or a known error screen
+    a crash, from the process status. A reference frame of the game reached
+    is a boot: the console's own screens alone are not. Without one, an error pattern of the core log or a known error screen
     is a BIOS error. Every sampled frame of the second half one colour is a
     hang. Anything else is unknown: a run is never called a boot because
     its frames differ from another run's.
@@ -1217,12 +1220,28 @@ def judge(rep: dict, oracle: dict) -> tuple[str, dict]:
         frames.append((int(rep.get("frames", 0)) + int(rep.get("warmup", 0)), final))
     references = {r["sha1"]: r for r in oracle.get("references") or ()}
     reached = [(frame, digest) for frame, digest in frames if digest in references]
-    if reached:
-        frame, digest = reached[0]
-        stages = list(dict.fromkeys(references[d]["stage"] for _, d in reached))
+    stages = list(dict.fromkeys(references[d]["stage"] for _, d in reached))
+    # A core that hides the BIOS screens by default still says it loaded one.
+    if "bios" not in stages and any(re.search(pattern, line["text"])
+                                    for pattern in oracle.get("bios_patterns") or ()
+                                    for line in rep.get("logs") or ()):
+        stages.insert(0, "bios")
+    game = [(frame, digest) for frame, digest in reached if references[digest]["stage"] == "game"]
+    if game:
+        frame, digest = game[0]
         return BOOTS, {"rule": "reference_frame",
                        "detail": f"frame {frame} shows {references[digest]['shows']}",
                        "frame": frame, "sha1": digest, "stages": stages}
+    verdict, evidence = _without_the_game(rep, oracle, frames)
+    if stages:
+        # The console's own screens without one of the game: never a boot.
+        evidence["stages"] = stages
+        evidence["detail"] += ", after the BIOS screens and no screen of the game"
+    return verdict, evidence
+
+
+def _without_the_game(rep: dict, oracle: dict, frames: list[tuple[int, str]]) -> tuple[str, dict]:
+    """The verdict of a run that reached no screen of the game."""
     for pattern in oracle.get("error_patterns") or ():
         for line in rep.get("logs") or ():
             if re.search(pattern, line["text"]):

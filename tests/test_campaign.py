@@ -155,6 +155,14 @@ class RuleTable(unittest.TestCase):
         optional = rules.rule_need(NONE_BOOTS, PRESENT, {"name": "a", "required": False})
         self.assertEqual([v.field for v in optional], ["hle_fallback"])
 
+    def test_a_file_the_content_never_uses_settles_nothing(self) -> None:
+        unused = run(rules.BOOTS, "bios.bin", ("game",))
+        self.assertFalse(rules.read(NONE_BOOTS, unused, unused, unused))
+        self.assertEqual(rules.rule_need(NONE_BOOTS, unused, self.ENTRY, used=False), [])
+        # A wrong file that hangs where no file boots: the core reads it.
+        self.assertTrue(rules.read(NONE_BOOTS, unused, run(rules.HANG), unused))
+        self.assertTrue(rules.read(NONE_BOOTS, PRESENT, None, None))
+
     def test_fails_without_and_boots_alone_settles_required(self) -> None:
         for failure in rules.FAILS:
             verdicts = rules.rule_need(run(failure, "none"), PRESENT, self.ENTRY)
@@ -396,6 +404,19 @@ class StateAndResume(Workspace):
         self.assertTrue(campaign.should_run(done, "a", "e"))
         self.assertTrue(campaign.should_run({**done, "status": "pending"}, "a", "d"))
         self.assertFalse(campaign.should_run({**done, "status": "failed"}, "a", "d"))
+
+    def test_only_its_own_oracle_entries_make_a_check_run_again(self) -> None:
+        key = [hashlib.sha1(b"GAME").hexdigest(), "Fake"]
+        before = self.make().oracle_digest(key)
+        data = yaml.safe_load(self.oracle.read_text())
+        data["content"][0]["references"]["Other"] = {"recorded_from": "2026-10-27-000000000000",
+                                                     "frames": [{"sha1": "a" * 40, "stage": "game",
+                                                                 "shows": "x"}]}
+        self.oracle.write_text(yaml.safe_dump(data), encoding="utf-8")
+        self.assertEqual(self.make().oracle_digest(key), before)
+        data["cores"] = {"Fake": {"error_patterns": [{"pattern": "BIOS", "reason": "r"}]}}
+        self.oracle.write_text(yaml.safe_dump(data), encoding="utf-8")
+        self.assertNotEqual(self.make().oracle_digest(key), before)
 
     def test_evidence_does_not_change_the_digest(self) -> None:
         profile = yaml.safe_load(PROFILE)
@@ -880,6 +901,37 @@ class Findings(Workspace):
         with contextlib.redirect_stdout(out):
             self.assertEqual(self.c.commit_batch(dry_run=True), [])
         self.assertIn("would commit 'chore: add campaign measurements'", out.getvalue())
+
+
+class ContentFile(Workspace):
+    def test_a_content_list_can_be_named(self) -> None:
+        other = self.tmp / "other.yml"
+        other.write_text(yaml.safe_dump({"systems": {"fake-system": {
+            "romfetch": "fakesys", "content": [{"name": "Other Game (Japan)", "catalog": "redump",
+                                                "reason": "r"}]}}}), encoding="utf-8")
+        out = io.StringIO()
+        with unittest.mock.patch.object(campaign.Paths, "default", return_value=self.paths), \
+                contextlib.redirect_stdout(out):
+            self.assertEqual(campaign.main(["run", "--dry-run", "--content-file", str(other)]), 0)
+        self.assertIn("Other Game (Japan)", out.getvalue())
+
+
+class InstallTimer(unittest.TestCase):
+    def test_writes_the_units_and_enables_only_when_asked(self) -> None:
+        calls = []
+        real_run = subprocess.run
+
+        def fake_run(argv: list[str], **kwargs: object) -> subprocess.CompletedProcess:
+            if "install-timers" not in argv:
+                return real_run(argv, **kwargs)
+            calls.append(argv)
+            return subprocess.CompletedProcess(argv, 0)
+        with unittest.mock.patch.object(campaign.subprocess, "run", fake_run):
+            self.assertEqual(campaign.main(["install-timer"]), 0)
+            self.assertEqual(campaign.main(["install-timer", "--enable"]), 0)
+        self.assertEqual([argv[2:] for argv in calls],
+                         [["install-timers"], ["install-timers", "--enable"]])
+        self.assertTrue(calls[0][1].endswith("scripts/autorun.py"))
 
 
 class Registry(unittest.TestCase):
