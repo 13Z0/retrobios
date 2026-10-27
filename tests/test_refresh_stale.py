@@ -206,5 +206,28 @@ class Running(unittest.TestCase):
             self.assertFalse(marker.exists())
 
 
+class SavedFindings(unittest.TestCase):
+    """--findings reads the report a full check_freshness run saved, so the
+    nightly job checks every area once and refreshes only some."""
+
+    def test_rows_outside_the_asked_areas_are_left_out(self):
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp" / "tests") as directory:
+            path = Path(directory) / "freshness.json"
+            path.write_text(
+                '[{"area": "data", "subject": "dolphin-sys", "status": "STALE"},'
+                ' {"area": "platforms", "subject": "batocera", "status": "STALE"}]',
+                encoding="utf-8",
+            )
+            findings = rs.load_findings(path, ("data", "catalogs"))
+            self.assertEqual([f["subject"] for f in findings], ["dolphin-sys"])
+
+    def test_a_report_that_is_not_a_list_is_refused(self):
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp" / "tests") as directory:
+            path = Path(directory) / "freshness.json"
+            path.write_text('{"area": "data"}', encoding="utf-8")
+            with self.assertRaises(RuntimeError):
+                rs.load_findings(path, ("data",))
+
+
 if __name__ == "__main__":
     unittest.main()
