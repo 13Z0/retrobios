@@ -51,6 +51,7 @@ class RequiredTwins(unittest.TestCase):
         self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
         platform = {
             "platform": "Twins",
+            "version": "2.1",
             "verification_mode": "md5",
             "base_destination": "bios",
             "cores": [],

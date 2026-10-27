@@ -58,6 +58,7 @@ class ACoreFileFillsAFreeDeclaration(unittest.TestCase):
         self.emulators.mkdir()
         (self.platforms / "fakeplat.yml").write_text(yaml.safe_dump({
             "platform": "FakePlat",
+            "version": "2.1",
             "verification_mode": "existence",
             "base_destination": "system",
             "cores": ["fakecore"],
@@ -118,7 +119,7 @@ class AFileDeclaredUnderAnotherName(unittest.TestCase):
         (root / "platforms").mkdir()
         (root / "emulators").mkdir()
         (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
-            "platform": "FakePlat", "verification_mode": "existence",
+            "platform": "FakePlat", "version": "2.1", "verification_mode": "existence",
             "base_destination": "system", "cores": ["gs"],
             "systems": {"apple-iigs": {"files": [
                 {"name": "ROM1", "destination": "ROM1", "md5": md5},
@@ -156,7 +157,7 @@ class AMissingDataDirectoryFailsTheRun(unittest.TestCase):
         (root / "emulators").mkdir()
         (root / "bios").mkdir()
         (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
-            "platform": "FakePlat", "verification_mode": "existence",
+            "platform": "FakePlat", "version": "2.1", "verification_mode": "existence",
             "base_destination": "system", "cores": [],
             "systems": {"console-a": {"files": [], "data_directories": [
                 {"ref": "assets", "destination": "assets"},
@@ -197,7 +198,7 @@ class AFileNobodyHoldsIsAnOmission(unittest.TestCase):
         for folder in ("platforms", "emulators", "bios"):
             (root / folder).mkdir()
         (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
-            "platform": "FakePlat", "verification_mode": "existence",
+            "platform": "FakePlat", "version": "2.1", "verification_mode": "existence",
             "base_destination": "system", "cores": ["devil"],
             "systems": {"diablo": {"files": []}},
         }))
@@ -238,7 +239,7 @@ class AMemberNameIsNotALooseFile(unittest.TestCase):
         (root / "platforms").mkdir()
         (root / "emulators").mkdir()
         (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
-            "platform": "FakePlat", "verification_mode": "existence",
+            "platform": "FakePlat", "version": "2.1", "verification_mode": "existence",
             "base_destination": "system", "cores": ["naomi2core"],
             "systems": {"sega-naomi2": {"files": []}},
         }))
@@ -283,7 +284,7 @@ class TwoDeclarationsOfOnePath(unittest.TestCase):
         for folder in ("platforms", "emulators"):
             (root / folder).mkdir()
         (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
-            "platform": "FakePlat", "verification_mode": "existence",
+            "platform": "FakePlat", "version": "2.1", "verification_mode": "existence",
             "base_destination": "system", "cores": [],
             "systems": {
                 "a-system": {"files": [{"name": first, "destination": "shared.bin"}]},
@@ -335,7 +336,7 @@ class ANamelessWhitelistEntry(unittest.TestCase):
             (root / folder).mkdir()
         values = [md5.upper(), f"{'0' * 32},{md5}", "f" * 32]
         (root / "platforms" / "fakeplat.yml").write_text(yaml.safe_dump({
-            "platform": "FakePlat", "verification_mode": "md5",
+            "platform": "FakePlat", "version": "2.1", "verification_mode": "md5",
             "base_destination": "bios", "cores": [],
             "systems": {"sony-playstation": {"files": [
                 {"name": f"sony-playstation:{v}", "destination": "", "md5": v}

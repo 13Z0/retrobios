@@ -351,6 +351,23 @@ def _platform_pack_stem(
     return "_".join(_name_part(n) for n in names) + version_tag
 
 
+def platform_list_version(config: dict, platform: str) -> str:
+    """The version of the list a platform's YAML transcribes: the release
+    tag the scraper read, or for a list kept on a branch with no release,
+    the date of the commit it pinned. load_platform_config never passes a
+    parent's version to a child, Lakka is not RetroArch v1.22.2.
+
+    The installer compares it with the version a machine runs, so a missing
+    value is refused rather than written as a stand-in.
+    """
+    version = str(config.get("version") or "").strip()
+    if not version:
+        raise ValueError(
+            f"{platform}: the platform YAML records no version of its own"
+        )
+    return version
+
+
 # What the builder writes into a platform pack beside the files it carries.
 PACK_DOCUMENTS = ("README.txt", "manifest.json")
 
@@ -2568,6 +2585,9 @@ def _run_manifest_mode(
                         alias_manifest["display_name"] = alias_cfg.get(
                             "platform", alias_plat
                         )
+                        alias_manifest["version"] = platform_list_version(
+                            alias_cfg, alias_plat
+                        )
                         alias_manifest["base_destination"] = alias_cfg.get(
                             "base_destination", ""
                         )
@@ -4600,7 +4620,7 @@ def generate_manifest(
         **({"no_game_data": True} if no_game_data else {}),
         "platform": platform_name,
         "display_name": platform_display,
-        "version": "1.0",
+        "version": platform_list_version(config, platform_name),
         "generated": now,
         "base_destination": base_dest,
         "detect": detect,
@@ -4772,13 +4792,18 @@ def pack_systems(install_manifest: dict) -> dict:
         records.add("cores")
     if records or any("regions" in entry for entry in entries):
         records.add("regions")
-    return {
+    systems = {
         "files": {entry["dest"]: list(entry.get("systems") or [])
                   for entry in files if "systems" in entry},
         "system_titles": dict(install_manifest.get("system_titles") or {}),
         "system_names": dict(install_manifest.get("system_names") or {}),
         "list_records": sorted(records),
     }
+    # The version of the platform's list, which the installer compares with
+    # the one the machine runs when it has the pack alone.
+    if install_manifest.get("version"):
+        systems["list_version"] = install_manifest["version"]
+    return systems
 
 
 def annotate_pack_systems(manifest: dict, systems: dict | None) -> None:
@@ -4793,8 +4818,9 @@ def annotate_pack_systems(manifest: dict, systems: dict | None) -> None:
     for key in ("system_titles", "system_names"):
         if systems.get(key):
             manifest[key] = systems[key]
-    if "list_records" in systems:
-        manifest["list_records"] = systems["list_records"]
+    for key in ("list_records", "list_version"):
+        if key in systems:
+            manifest[key] = systems[key]
 
 
 def inject_manifest(zip_path: str, manifest: dict) -> None:
