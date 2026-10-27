@@ -3122,6 +3122,27 @@ class TestBumpCommit(unittest.TestCase):
         self.assertEqual(profile_sync.pending_recale(report), 1)
         self.assertFalse(bump_commit(self.path, report))
 
+    def test_a_profile_citing_nothing_advances(self):
+        # anarch's pin sat behind HEAD through every bulk advance: the
+        # report skips a profile with no source_ref, and the skip blocked it.
+        report = ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead", entries=[], counts={},
+            skipped=profile_sync.NO_SOURCE_REF,
+        )
+        report.upstream_head, report.upstream_pin = "uphead", "uppin"
+        self.assertTrue(bump_commit(self.path, report))
+        text = self.path.read_text(encoding="utf-8")
+        self.assertIn("newhead", text)
+        # Nothing was compared upstream, so its pin is not written.
+        self.assertNotIn("uphead", text)
+
+    def test_any_other_skip_still_holds_the_pin(self):
+        report = ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead", entries=[], counts={},
+            skipped="rate limited: gitlab.com",
+        )
+        self.assertFalse(bump_commit(self.path, report))
+
     def test_accepted_when_nothing_had_to_move(self):
         part = PartResult(
             RefPart("a.c", 10, 12, "a.c:10-12"), "ANCHORED", None, 10, 12, []

@@ -1674,7 +1674,7 @@ def build_report(
     # A profile carrying no source_ref still has a pin worth writing and a
     # version worth checking, so the revisions above are resolved first.
     if not refs:
-        report.skipped = "no source_ref"
+        report.skipped = NO_SOURCE_REF
         return report
 
     owners: dict[tuple[str, int | None], tuple[RepoView, str]] = {}
@@ -3268,9 +3268,14 @@ def pending_recale(
     return pending
 
 
+NO_SOURCE_REF = "no source_ref"
+
+
 def _needs_review(report: ProfileReport, accept_changed: bool) -> bool:
     """Whether the report leaves a ref to read before the pin may move."""
-    if report.skipped or not report.head or report.pinned_tag:
+    # A profile citing nothing has nothing to read again: anarch's pin sat
+    # behind a CI-only commit through every bulk advance.
+    if report.skipped not in (None, NO_SOURCE_REF) or not report.head or report.pinned_tag:
         return True
     blocking = REVIEW_STATUSES if not accept_changed else (
         s for s in REVIEW_STATUSES if s != "CHANGED"
@@ -3309,10 +3314,13 @@ def bump_commit(
         return False
     # An upstream pinned on a release tag is the base the port was cut from:
     # its HEAD is another program, so the bump leaves it on the tag.
+    # A profile citing nothing compared nothing upstream: writing that HEAD
+    # would claim gme's vendored libgme or hbmame's port is current.
     upstream_moves = bool(
         report.upstream_head
         and report.upstream_pin != report.upstream_head
         and not report.upstream_tag
+        and report.skipped != NO_SOURCE_REF
     )
     if document.get("source_commit") == report.head and not upstream_moves:
         # Rewriting the pin to the value it already holds is not a bump, and
