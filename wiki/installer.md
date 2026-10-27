@@ -1382,11 +1382,19 @@ That keeps the installer's questions working when the script is piped from
 
 The manifest is fetched over the network and treated as untrusted input. Every
 path it carries goes through one validator that refuses an absolute path, a
-drive letter, a backslash, a null byte, a doubled separator, a trailing slash
-and any `..` component, so a destination cannot climb out of the BIOS
-directory. Manifest, target list and payloads each have a size cap, the file
+drive letter, a backslash, a null byte or any other control character, a
+doubled separator, a trailing slash and any `..` component, so a destination
+cannot climb out of the BIOS directory and no file is named with a terminal
+command. Manifest, target list and payloads each have a size cap, the file
 list a count cap, and the sum of the declared sizes is checked against the
 total the manifest claims.
+
+Every other string from outside is shown, never obeyed: the names a list or
+a pack records, a card's label and a folder a configuration names reach the
+terminal, line by line or on the screen, and the `--events` stream with a `?`
+for each control character. A folder a configuration names with one is not
+taken: the run says so and asks for `--dest`, its default being no answer
+for a setup that reads another folder.
 
 Symbolic links met under the BIOS root are followed on purpose: they are the
 user's own layout, and EmuDeck links `bios/shadps4/sys_modules` into shadPS4's

@@ -632,7 +632,11 @@ class EventStream:
         keys = EVENT_KEYS[kind]
         if set(fields) != set(keys):
             raise ValueError(f"event {kind}: keys {sorted(fields)} != {sorted(keys)}")
-        line = json.dumps({"event": kind, **{key: fields[key] for key in keys}})
+        # Every string a script reads goes through the terminal's filter,
+        # a new line kept: a consumer printing a folder or a name obeyed
+        # the control characters a card label or a list held.
+        line = json.dumps({"event": kind, **{key: _clean_strings(fields[key], "\n")
+                                             for key in keys}})
         with self._lock:
             self.stream.write(line + "\n")
             self.stream.flush()
@@ -941,8 +945,11 @@ def shown_path(path: Path | str) -> str:
     match = (re.match(rf"^{re.escape(root)}([a-z])(?:/(.*))?$", text)
              if _WSL["active"] else None)
     if match:
-        return f"{match.group(1).upper()}:\\" + (match.group(2) or "").replace("/", "\\")
-    return text
+        text = f"{match.group(1).upper()}:\\" + (match.group(2) or "").replace("/", "\\")
+    # A folder's name comes from whoever named it: a card's label, a
+    # retroarch.cfg, a pack. Printed raw, a control character in it is a
+    # terminal command (code_audit_18 P2-1).
+    return screen_text(text)
 
 
 def _wsl_dest(args: argparse.Namespace) -> None:
@@ -2009,6 +2016,8 @@ def launchbox_bios_dirs(root: Path) -> dict[str, Path]:
 
 # (folder, why in words) for each folder detection could not look in.
 _DETECTION_REFUSED: list[tuple[Path, str]] = []
+# The platforms whose configuration names a folder with a control character.
+_UNNAMEABLE: list[str] = []
 
 
 def refused_words(folder: Path, why: str, shown: str = "") -> str:
@@ -2360,7 +2369,21 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
     _detect_by_path(os_type, found)
     # An embedded system's config read again as the home folder's one (HOME is
     # /storage on the ELEC family) is the same folder.
-    return list(dict.fromkeys(found))
+    kept = []
+    for name, path in dict.fromkeys(found):
+        if _CONTROLS.search(str(path)):
+            # A config naming a folder with a control character: printed,
+            # the name is a terminal command, and the folder one nobody can
+            # type (code_audit_18 P2-1). Its default is then no answer: the
+            # setup reads the folder named.
+            if name not in _UNNAMEABLE:
+                _UNNAMEABLE.append(name)
+            print(f"  {display_name(name)}: the folder its configuration names holds a "
+                  f"control character ({shown_path(path)}). Name its BIOS folder with "
+                  "--dest.", file=sys.stderr)
+            continue
+        kept.append((name, path))
+    return kept
 
 
 def _emudeck_windows_bios() -> Path | None:
@@ -2728,11 +2751,14 @@ def _safe_relative_path(value: object, field: str) -> PurePosixPath:
         raise ValueError(f"invalid {field}")
     if (
         "\\" in value
-        or "\x00" in value
+        or _CONTROLS.search(value)
         or "//" in value
         or value.endswith("/")
         or re.match(r"^[A-Za-z]:", value)
     ):
+        # A control character is refused with NUL: a pack's member named
+        # x<ESC>]0;PWN<BEL>.bin set the window title in the progress line,
+        # and the file was written under that name (code_audit_18 P2-1).
         raise ValueError(f"unsafe {field}: {value!r}")
     path = PurePosixPath(value)
     if path.is_absolute() or any(part in ("", ".", "..") for part in path.parts):
@@ -2759,7 +2785,7 @@ def _safe_target_dir(value: object, field: str) -> str:
     """
     if not isinstance(value, str) or not value or len(value) > 2048:
         raise ValueError(f"invalid {field}")
-    if "\x00" in value:
+    if _CONTROLS.search(value):
         raise ValueError(f"unsafe {field}: {value!r}")
     parts = re.split(r"[\\/]", value)
     if any(part == ".." for part in parts):
@@ -3126,6 +3152,21 @@ def _check_data_directory(entry: object, where: str) -> None:
             raise ValueError(f"{where}.files[{rel!r}] is invalid")
 
 
+def _clean_strings(value: object, keep: str = "") -> object:
+    """value with a "?" for each control character of its strings, keys
+    included, those of keep left: the one filter between a list, a card or
+    a config and the terminal, its paths refused before (_safe_relative_path)."""
+    if isinstance(value, str):
+        return _CONTROLS.sub(lambda found: found.group() if found.group() in keep else "?",
+                             value)
+    if isinstance(value, dict):
+        return {_clean_strings(key, keep): _clean_strings(item, keep)
+                for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_clean_strings(item, keep) for item in value]
+    return value
+
+
 def _validate_manifest(data: object, plat: str) -> dict:
     """Validate the untrusted install-manifest boundary using stdlib only."""
     if not isinstance(data, dict):
@@ -3284,7 +3325,9 @@ def _validate_manifest(data: object, plat: str) -> dict:
                 raise ValueError(f"invalid standalone copy targets at index {index}")
             for value in values:
                 _safe_target_dir(value, f"standalone_copies[{index}].targets")
-    return data
+    # Its paths checked above, every other string (a system's title, a
+    # core's name) is shown as the terminal shows text.
+    return _clean_strings(data)
 
 
 def _validate_targets(data: object) -> dict[str, dict]:
@@ -6771,7 +6814,7 @@ def _default_dest(os_type: str, platform_name: str) -> Path | None:
     C:\\userdata\\bios, reported done.
     """
     default = _built_in_dest(os_type, platform_name)
-    if default is not None and _refused_near(default):
+    if default is not None and (_refused_near(default) or platform_name in _UNNAMEABLE):
         # The Flatpak's own folder at 000 hid the retroarch.cfg naming
         # ~/Games/bios, and 6.6 GB were offered to a folder it does not read.
         return None
@@ -13584,7 +13627,8 @@ def _mount_name(mount: Path) -> str:
     if (_WSL["active"] and mount.parent == Path(_WSL["root"]) and len(mount.name) == 1
             and mount.name.isalpha()):
         return f"{mount.name.upper()}:"
-    return mount.name or str(mount)
+    # The label is whoever formatted the card's: shown, never obeyed.
+    return screen_text(mount.name or str(mount))
 
 
 def _mounted_cards() -> list[Path]:

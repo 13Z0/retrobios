@@ -8595,5 +8595,119 @@ class AuditEighteenAndEleven(unittest.TestCase):
         self.assertIn("Recalbox SHARE drive", block)
         self.assertEqual(generate_installer_doc.render(page), page)
 
+class NothingFromOutsideReachesTheTerminalRaw(unittest.TestCase):
+    """code_audit_18 P2-1: a pack's member path, a --manifest dest, the
+    names a list records, a card's label and a retroarch.cfg folder reached
+    line mode, the events and the disk with their control characters. Each
+    source is fed escape sequences, and none comes out raw."""
+
+    OSC = "\x1b]0;PWNED\x07"
+    CSI = "\x1b[41m"
+
+    def setUp(self):
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        self.root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.root, True)
+        install.LOCAL.reset()
+        self.addCleanup(install.LOCAL.reset)
+        install._UNNAMEABLE.clear()
+        self.addCleanup(install._UNNAMEABLE.clear)
+        self.dest = self.root / "dest"
+        self.dest.mkdir()
+
+    def assertClean(self, text: str, where: str) -> None:
+        self.assertNotIn("\x1b", text, where)
+        self.assertNotIn("\x07", text, where)
+
+    def assertNothingRawOnDisk(self) -> None:
+        for path in self.root.rglob("*"):
+            self.assertIsNone(install._CONTROLS.search(path.name), path)
+
+    def run_install(self, args: argparse.Namespace, mounts: list = (),
+                    env: dict | None = None) -> str:
+        events = io.StringIO()
+        with mock.patch.object(install, "_mounted_cards", return_value=list(mounts)), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(install.EVENTS, "stream", events), \
+                mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1", **(env or {})}), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                contextlib.redirect_stderr(io.StringIO()) as err, \
+                contextlib.suppress(SystemExit):
+            install._install(args, io.StringIO())
+        return out.getvalue() + err.getvalue() + events.getvalue()
+
+    def test_a_pack_member_path_is_refused(self):
+        from test_install_offline import _pack, GBA  # noqa: PLC0415
+
+        pack = _pack(self.root, "RetroArch_v1_BIOS_Pack.zip", {f"x{self.OSC}.bin": GBA})
+        text = self.run_install(_args(platform="retroarch", dest=self.dest,
+                                      from_pack=[pack], no_input=True, declared_only=False))
+        self.assertClean(text, "pack")
+        self.assertIn("is not valid: unsafe", text)
+        self.assertEqual(list(self.dest.iterdir()), [])
+        self.assertNothingRawOnDisk()
+
+    def test_a_list_dest_and_its_names_are_refused_or_shown(self):
+        files = [{"dest": f"x{self.CSI}BAD.bin", "sha1": "0" * 40, "size": 1,
+                  "repo_path": "bios/x", "cores": None, "systems": ["a"]}]
+        listing = self.root / "list.json"
+        listing.write_text(json.dumps({"manifest_version": 2, "platform": "retroarch",
+                                       "files": files}))
+        text = self.run_install(_args(platform="retroarch", dest=self.dest, manifest=listing,
+                                      no_input=True, dry_run=True, verbose=True,
+                                      declared_only=False))
+        self.assertClean(text, "--manifest dest")
+        self.assertIn("unsafe", text)
+        named = {"manifest_version": 2, "platform": "retroarch", "files": [
+            {**files[0], "dest": "a.bin", "systems": [f"a{self.CSI}"],
+             "cores": [f"core{self.OSC}"]}],
+            "system_titles": {f"a{self.CSI}": f"Title{self.OSC}"}}
+        cleaned = install._validate_manifest(named, "retroarch")
+        self.assertClean(json.dumps(cleaned, ensure_ascii=False), "names")
+        self.assertNothingRawOnDisk()
+
+    def test_a_card_label_is_shown_and_never_obeyed(self):
+        card = self.root / "media" / f"S{self.CSI}RED"
+        (card / "system").mkdir(parents=True)
+        (card / "system" / "batocera.conf").write_text("system.hostname=BATOCERA\n")
+        listing = self.root / "batocera.json"
+        listing.write_text(json.dumps({"manifest_version": 2, "platform": "batocera",
+                                       "files": []}))
+        with mock.patch.object(install, "detect_platforms", return_value=[]):
+            text = self.run_install(_args(platform="batocera", manifest=listing,
+                                          no_input=True, dry_run=True, events=True,
+                                          declared_only=False), [card])
+        self.assertIn("S?[41mRED", text)
+        self.assertClean(text, "card label")
+        self.assertClean(install.card_line(card), "card row")
+
+    def test_a_folder_a_config_names_is_refused(self):
+        home = self.root / "home"
+        weird = home / f"sys{self.OSC}x"
+        weird.mkdir(parents=True)
+        cfg = home / ".config" / "retroarch" / "retroarch.cfg"
+        cfg.parent.mkdir(parents=True)
+        cfg.write_text(f'system_directory = "{weird}"\n')
+        listing = self.root / "retroarch.json"
+        listing.write_text(json.dumps({"manifest_version": 2, "platform": "retroarch",
+                                       "files": []}))
+        text = self.run_install(
+            _args(manifest=listing, no_input=True, dry_run=True, events=True,
+                  declared_only=False),
+            env={"HOME": str(home), "XDG_CONFIG_HOME": str(home / ".config"),
+                 "RETROBIOS_OS": "linux"})
+        self.assertClean(text, "retroarch.cfg")
+        self.assertIn("holds a control character", text)
+        self.assertNotIn("using default path", text)
+        self.assertNotIn(str(home / ".config" / "retroarch" / "system"), text)
+
+    def test_a_path_with_a_control_character_is_no_relative_path(self):
+        for value in ("a\x1bb.bin", "a\x07.bin", "a\x9bb.bin", "a\nb.bin"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                install._safe_relative_path(value, "dest")
+        self.assertEqual(install.shown_path(Path("/a/b\x1b[2Jc")), "/a/b?[2Jc")
+
 if __name__ == "__main__":
     unittest.main()
