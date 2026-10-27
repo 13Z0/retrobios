@@ -717,6 +717,7 @@ them is a reviewed commit.
 | Load | Waits while the 1-minute load is above a quarter of the CPUs, up to `max_load_wait` seconds, then `deferred`. |
 | Disk | Below the job's `min_free_gb` the job is `refused`. Under 100 GB free the `disk` alert is raised. |
 | Retry | Exit 139 (or signal 11), `SystemError` or "unknown opcode" is run again once on an idle host. A second failure is a failure. |
+| Environment | A step, gate or recomputation inherits `PATH`, `HOME`, `LANG`, `LC_*`, `TZ` and `TMPDIR`, the runner's own markers and the variables its `env:` key names. A name with `TOKEN`, `SECRET` or `PASS` in it, `GH_TOKEN` and the RomStation account are dropped even when named, and a step naming one is refused when the registry loads. Only the push and the `gh` calls that read CI get `GITHUB_TOKEN`. |
 | Double computation | Each `twice` entry recomputes an artifact the gate wrote and compares both, timestamps aside. A difference is recomputed once on an idle host, then the job fails with the `host-integrity` alert. |
 
 Jobs that commit run in `.cache/autorun/worktree`, on the branch `autorun`,
@@ -746,6 +747,7 @@ job's status. Exit codes: 0 for `ok`,
 |-----|----------|--------------|
 | `nightly` | 02:00 | `check_freshness.py --json` saved to a file, `refresh_stale.py --findings` on its `data` and `catalogs` rows, the MAME and FBNeo hash scrapers, then `pipeline.py --offline` as the gate. `database.json` and `install/*.json` are computed a second time and compared. Commits the hash profiles, the recipes and the regenerated records |
 | `assets` | 04:30 | `sync_release_assets.py`, as a dry run |
+| `campaign` | 06:00 | `campaign.py run --budget 150m` once the host is idle (up to two hours of waiting), gated by `campaign.py gate`. Commits the records, findings and pass line, then the profile fields the runs proved |
 | `bios-integrity` | Sunday 08:30 | `bios_integrity.py --apply --json` in the main checkout, once the host is idle (up to four hours of waiting). Its report is kept in the job's status |
 | `cleanup` | 05:30 | `cleanup_disk.py --apply --hours 72` in the main checkout |
 | `disk-check` | hourly | `cleanup_disk.py --check`, without the lock |
@@ -845,7 +847,14 @@ python scripts/core_probe.py check --core core.so --content disc.cue \
 ```
 
 Each repetition runs in a fresh process under `strace -f -e trace=openat,open`
-when strace is installed. The files the core opened under the system
+when strace is installed. The worker starts with an empty environment and
+clears its own before it loads the core, keeping only the `--env` values.
+When bubblewrap works on the host, the worker runs in it: the whole tree
+read-only, the staged system directory and the scratch folder writable, no
+network, and `~/.config`, `~/.ssh`, `~/.gnupg`, `~/.git-credentials` and
+`~/.netrc` masked. Each repetition names what it ran under in `isolation`
+(`bwrap`, or `environment only` with the reason). A timeout kills the
+worker's whole process group. The files the core opened under the system
 directory come from the kernel, each hashed again after the run. Without
 strace the record says that tracing was unavailable.
 
@@ -863,7 +872,8 @@ strace the record says that tracing was unavailable.
 | `--state-var SECTION.VAR` | a variable of a Mednafen save state, as an observable |
 | `--state-dir` | keep the save state taken at the end of the first repetition |
 | `--core-repo`, `--core-commit`, `--build-command` | where the core build comes from, copied into the record |
-| `--record [DIR]` | append the record as one line of `measurements/<emulator>.jsonl` in the checkout `DIR`, by default this one. Commit it |
+| `--core-artifact URL` | where a downloaded `.so` came from, such as a buildbot nightly, copied into the record |
+| `--record [DIR]` | append the record as one line of `measurements/<emulator>.jsonl` in the checkout `DIR`, by default this one. `DIR` must be the root of a git checkout, never its `measurements/` folder. Commit it |
 | `--emulator` | the profile the record is filed under. By default the profile whose `cores:` names the `.so`, else the core's library name |
 | `--subject` | a slug naming the test, shared by its reruns. By default derived from the claim and method, or from the inputs of a run or bench |
 | `--supersedes ID` | the id of an earlier record of the same emulator this one corrects |
@@ -873,7 +883,8 @@ strace the record says that tracing was unavailable.
 
 Observables are `frame_sha1` (last frame), `video_sha1` (every frame, chained),
 `audio_sha1`, `state_sha1` (save state at the end), plus `state:SECTION.VAR`
-and `frame_hashes` when asked for. A repetition that disagrees with the first
+and `frame_hashes` when asked for, with `uniform_frames` (the sampled frames
+of a single colour) beside it. A repetition that disagrees with the first
 one is flagged. A `check` reports `inconclusive` instead of a comparison when,
 in any variant, the compared observable differs between repetitions, a run did
 not load, or a file changed during the run. A disagreement on another
@@ -905,6 +916,8 @@ and a gzip data file, then merged back into one line. Each keeps its first
 id, which hashes the first file (`migrated_from_version: 1`), so the line
 still proves it rebuilds that file. Two branches that each add a line
 merge cleanly: `.gitattributes` marks `measurements/*.jsonl` `merge=union`.
+`findings.jsonl` and `campaign-runs.jsonl` sit beside the records under the
+same rules, written by `campaign.py`, and no profile takes those names.
 
 `generate_site.py` compiles the records into files it never commits
 (`sitemeasurements.py`): `public/data/measurements/index.json` (one item per
@@ -915,6 +928,80 @@ commit) and one `public/downloads/measurements/<emulator>.sqlite` per
 emulator. A permalink names the last commit that touched `measurements/`, and
 the build warns when the records on disk differ from that commit. Rows are
 sorted and nothing reads the clock, so two builds give the same bytes.
+
+### campaign.py
+
+Runs the real-condition campaign with nobody watching: for each emulator
+profile in scope it gets the core and the test content, runs `core_probe.py`,
+applies what the runs prove and queues the rest. It is a thin layer over
+`core_probe.py`, the libretro buildbot and romfetch. RetroArch's
+`--max-frames` and libretro.py were the other candidates: neither traces the
+files a core opens nor writes a record.
+
+```bash
+python scripts/campaign.py run --system sony-playstation --budget 6h
+python scripts/campaign.py run --only beetle_psx,swanstation --dry-run
+python scripts/campaign.py run --commit --commit-every 10
+python scripts/campaign.py status            # done, failed, pending, and why
+python scripts/campaign.py findings          # what waits for review
+python scripts/campaign.py gate              # the checks behind a commit
+python scripts/campaign.py install-timer     # the autorun units, the campaign's among them
+```
+
+| Step | What happens |
+|------|--------------|
+| Core | The x86_64 Linux nightly from `buildbot.libretro.com`, for each name of the profile's `cores:` the buildbot publishes, downloaded again only when its `ETag` or `Last-Modified` changes. The record keeps the artifact URL, the `.so` sha256 and the `retro_get_system_info` version. With no nightly, the profile's `source_commit` is cloned and built once with `make` (`Makefile.libretro` first), the failure kept so it is not tried again for that commit. git clones with the allowlisted environment, and `make` runs in the same bubblewrap sandbox as a core, its source tree writable, with a private `/tmp`. The record's `build_command` says which isolation was used. A standalone emulator is `pending: standalone` |
+| Content | Each system's games come from `tests/campaign/content.yml`, by catalog name and with the reason each was chosen. They are read from `.cache/test-content/<romfetch system>/<name>/`, each file checked against its `identity.json`. Missing content is fetched with `romfetch get <system> <name> --json` when romfetch is on `PATH`, in `RETROBIOS_ROMFETCH` or given with `--romfetch`. Otherwise the checks are `pending: content`, with romfetch's exit code and error code when it failed. Content never enters git, and a record keeps only its identity |
+| Checks | `files` stages every declared file the collection holds and reads which ones the core opens (strace). `boot` runs the game with no file and with the declared one (`boot_file:`, else the entry of the game's region). An entry the `files` run left unread is staged `alone`, then where the core looked for it (`path`) and under the names it looked for (`alias`). `variants` runs each `.variants/` copy of a file the core opened. `bench` times the game, warm-up excluded, 5 repetitions |
+| Rules | `campaign_rules.py`, a fixed table of pure functions (below). A field the table settles is written into the profile, with `evidence:` naming the record ids. Anything else is a line of `measurements/findings.jsonl` |
+| Content reuse | A game stays on disk until the last emulator that needs it in the pass is done, then the campaign deletes it if it fetched it. Past `--cache-cap-gb` (default 20) the least recently used goes first. An entry marked `pinned:`, or one the campaign did not fetch, is never deleted |
+
+| Observable | Field | Written |
+|------------|-------|---------|
+| Without the file, at least 2 screens the run with the file also shows (single-colour frames left out), in every repetition | `hle_fallback` | `true` |
+| Without the file, no repetition loads the game or shows more than one colour, while the run with it reaches the game | `required`, `hle_fallback` | `true`, `false` |
+| The core opened the file staged at another place it looked for | `path` | that path |
+| The core opened the file staged under a name no entry declares | `aliases` | the name added |
+| A staged file the game's region uses, never opened, staged alone either | nothing | flagged |
+| Anything else (runs that disagree, a profile that says `required: true` for a file the core boots without) | nothing | open finding |
+
+A run that agrees with the profile adds its record id to `evidence:` and
+resolves an open finding of the same field. The profile is edited as text and
+the edit is refused unless the result parses to the same profile with only
+those fields changed.
+
+State lives in `.cache/campaign/state.json` of the main checkout: each check
+is `done`, `failed` (with the reason and its log) or `pending` (with the
+reason), with the core sha256 and the profile digest it ran against. A pass
+skips a check that is done or failed against the same core and profile, so it
+takes new nightlies, changed profiles, newly fetched content and pending
+checks. The campaign's own `evidence:` writes do not count as a profile change.
+
+| Guard | Rule |
+|-------|------|
+| Lock | The host-wide autorun lock. Under the `campaign` job, autorun holds it and says so with `RETROBIOS_AUTO_LOCK_HELD` |
+| Environment | `core_probe.py`, git and `make` get autorun's allowlist, romfetch the same plus its `ROMFETCH_*` settings. None sees a token or a password |
+| Load | Before each run, waits while the 1-minute load is above a quarter of the CPUs, up to `--max-load-wait` seconds, then the pass stops as `paused` |
+| Disk | Below `--min-free-gb` (default 30) the pass stops as `paused` |
+| Budget | No check starts after `--budget` |
+| Timeout | A run is killed after 900 seconds per repetition and variant, recorded `failed: timeout`, and the pass moves on |
+| Crash | A run that dies is tried 3 times, then `failed` with its log |
+| Network | Buildbot and romfetch source errors are retried after 10, 60 and 300 seconds |
+
+Each pass appends one line to `measurements/campaign-runs.jsonl`: when it ran,
+how it ended, the checks done, failed and pending by reason, the records and
+the findings it added. Logs are `.cache/campaign/logs/`, kept 30 days.
+
+`--commit` commits the records, findings and pass line in one commit, and
+each changed profile in its own, behind `campaign.py gate`: the measurement
+and campaign tests, `validate_schemas.py --source-only`, then `verify.py
+--emulator` and `generate_pack.py --emulator` for each changed profile. A file
+that had uncommitted changes before the pass is left alone. The nightly
+`campaign` autorun job (06:00, after `nightly`) runs a 150-minute pass in the
+automation worktree, gates it with `campaign.py gate` and commits with its
+own rules, pushing only with `--push`.
+
+Schemas: `campaign-finding.schema.json` and `campaign-run.schema.json`.
 
 ### Other tools
 
