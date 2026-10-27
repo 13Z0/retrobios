@@ -57,6 +57,16 @@ cores:
         source_ref: frontend/libretro.c:3646-3669 at c8816799
     error_patterns: []
     error_screens: []
+  "Beetle Saturn":
+    note: Without a usable BIOS the core logs one of these and retro_load_game fails.
+    error_patterns:
+      - pattern: '^Cannot open BIOS file '
+        source_ref: mednafen/ss/ss.c:1943-1947 at 2ce77e20
+      - pattern: '^BIOS file ".*" is of an incorrect size\.'
+        source_ref: mednafen/ss/ss.c:1961-1967 at 2ce77e20
+      - pattern: '^BIOS file ".*" could not be fully read'
+        source_ref: mednafen/ss/ss.c:1978-1983 at 2ce77e20
+    error_screens: []
   "PCSX1":
     note: An HLE BIOS stands in when none is found, and the run logs nothing about it.
     error_patterns: []
