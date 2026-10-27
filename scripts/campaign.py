@@ -6,7 +6,7 @@ x86_64 Linux nightly, else a build of the profile's pinned commit), the test
 content of each of its systems (tests/campaign/content.yml, fetched through
 romfetch when it is not on disk), and runs core_probe.py:
 
-  files      every declared file the collection holds, staged; which ones
+  files      every declared file the collection holds, staged, and which ones
              the core opens
   boot       the content with no file against the content with the declared
              file, compared on the frames the core shows
@@ -1682,14 +1682,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     run_p.add_argument("--commit-every", type=int, default=0, metavar="N",
                        help="with --commit, also commit after every N emulators")
     status_p = sub.add_parser("status", help="done, failed and pending checks, and why")
-    status_p.add_argument("--json", action="store_true")
+    status_p.add_argument("--json", action="store_true", help="the report as JSON")
     findings_p = sub.add_parser("findings", help="profile claims the runs contradict, open for review")
     findings_p.add_argument("--all", action="store_true", help="applied and resolved too")
-    findings_p.add_argument("--json", action="store_true")
+    findings_p.add_argument("--json", action="store_true", help="the findings as JSON")
     sub.add_parser("gate", help="tests, schemas, verify and pack of the changed profiles")
     timer_p = sub.add_parser("install-timer",
                              help="write the autorun units, the campaign job's timer among them")
-    timer_p.add_argument("--enable", action="store_true")
+    timer_p.add_argument("--enable", action="store_true",
+                         help="also reload systemd and enable the timers")
     args = parser.parse_args(argv)
 
     paths = Paths.default()

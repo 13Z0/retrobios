@@ -10,7 +10,7 @@
 #                     boot test varies is the one whose `region:` holds it, or one
 #                     without `region:`
 #   load              the file handed to the core: `cue` (the .cue sheet) or a
-#                     file name inside the folder; by default the single file
+#                     file name inside the folder, by default the single file
 #   frames            frames run per repetition, the same with and without the file
 #   frame_hash_every  frames between two sampled frame hashes
 #   pinned            never deleted by the campaign, whoever fetched it
