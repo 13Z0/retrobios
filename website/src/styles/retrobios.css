@@ -913,7 +913,7 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 .sl-markdown-content .rb-tested-row > summary:hover { background: var(--rb-surface); }
 .sl-markdown-content .rb-tested-test { font-weight: 600; overflow-wrap: anywhere; }
 .sl-markdown-content :is(.rb-tested-test, .rb-tested-date) small { color: var(--rb-text-secondary); font-weight: 400; }
-.sl-markdown-content .rb-tested-date { color: var(--rb-text-secondary); font-variant-numeric: tabular-nums; }
+.sl-markdown-content .rb-tested-date { color: var(--rb-text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .sl-markdown-content .rb-tested-more {
 	margin: 0 0 0.75rem 1.75rem;
 	padding: 0.5rem 0.75rem;
@@ -938,12 +938,21 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 .sl-markdown-content .rb-dot-2 { --rb-dot: var(--rb-warn-fg); }
 .sl-markdown-content .rb-dot-3 { --rb-dot: var(--rb-err-fg); }
 .sl-markdown-content .rb-dot-4 { --rb-dot: var(--rb-muted-fg); }
+.sl-markdown-content p.rb-tested-file {
+	margin: 0.9rem 0 0;
+	padding-bottom: 0.2rem;
+	border-bottom: 1px solid var(--rb-border-strong);
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+.sl-markdown-content p.rb-tested-legend { margin-top: 0.5rem; color: var(--rb-text-secondary); font-size: 0.8rem; }
+.sl-markdown-content p.rb-tested-legend .rb-dot { display: inline-block; vertical-align: -1px; }
 .sl-markdown-content table.rb-tested-bench { margin-top: 1rem; font-size: 0.875rem; }
 .sl-markdown-content table.rb-tested-bench td:not(:first-child) { font-variant-numeric: tabular-nums; text-align: right; }
 @media (max-width: 50rem) {
 	.sl-markdown-content div.rb-tested-head { display: none; }
 	.sl-markdown-content details.rb-tested-row > summary {
-		grid-template-columns: 1.25rem auto auto minmax(0, 1fr);
+		grid-template-columns: 1.25rem auto minmax(0, 1fr) auto;
 		row-gap: 0.2rem;
 	}
 	.sl-markdown-content .rb-tested-row > summary::before { grid-row: 1; }

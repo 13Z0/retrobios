@@ -221,7 +221,7 @@ class ReadAndIndex(Workspace):
                 "claim", "method", "observable", "variable", "status", "statement", "content",
                 "variants", "repetitions", "flags", "date", "host", "core", "frontend_commit", "id",
                 "runs", "record_url", "sqlite", "verdicts", "title", "host_short", "groups",
-                "proves", "timing"}
+                "proves", "timing", "setup"}
         for item in index["items"]:
             self.assertEqual(set(item), keys)
         alpha = {i["subject"]: i for i in index["items"] if i["emulator"] == "alpha"}
@@ -430,19 +430,23 @@ class SitePages(unittest.TestCase):
         self.assertEqual(sm.tested_section("beetle_saturn", []), [])
         text = "\n".join(sm.tested_section("beetle_saturn", [self.ITEM]))
         self.assertTrue(text.startswith("## Tested\n"))
-        for expected in ("no difference", "<strong>Method:</strong> Twice per card. Every input fixed.",
+        for expected in ("same with every file", "<strong>Method:</strong> Twice per card. Every input fixed.",
                          "<strong>Ran on:</strong> Test CPU, 12 CPUs", self.ITEM["record_url"],
                          "1 flag raised", "2 runs", "downloads/measurements/beetle_saturn.sqlite",
-                         "wiki/measurements/", "&lt;image&gt;", "1 test · 0 confirmed · 0 open"):
+                         "wiki/measurements/", "&lt;image&gt;", "1 test · last run 2026-10-27",
+                         '<p class="rb-tested-file"><code>mpeg_card.bin</code></p>',
+                         'class="rb-tested-legend"', "No file staged."):
             self.assertIn(expected, text)
+        self.assertNotIn("confirmed", text)
+        self.assertNotIn(" open", text)
 
     def item(self, **values: object) -> dict:
         return {**self.ITEM, "host_short": "Test CPU, Linux", **values}
 
     def test_summary_counts(self) -> None:
         items = [self.item(proves=["hle_fallback of a.bin"], open_findings=2),
-                 self.item(subject="b", date="2026-10-28T00:00:00+00:00", open_findings=2),
-                 self.item(kind="bench", status="measured", subject="c",
+                 self.item(id="b", subject="b", date="2026-10-28T00:00:00+00:00", open_findings=2),
+                 self.item(id="c", kind="bench", status="measured", subject="c",
                            timing={"ms_per_frame": 1.5, "fps": 660.0, "stdev": 0.01})]
         self.assertEqual(sm.tested_counts(items), {"tests": 3, "confirmed": 1, "open": 2, "benchmarks": 1,
                                                    "last": "2026-10-28"})
@@ -463,13 +467,36 @@ class SitePages(unittest.TestCase):
               "content": "Redump: Lunar - Silver Star Story Complete (Japan), T-27904G V1.00"},
              "Lunar (issue 85 opening movie)"),
             ({"subject": "with-command-auth-device-and-command-get-9a211715", "variable": "mpeg_card.bin",
-              "content": "Redump: Lunar"}, "`mpeg_card.bin`, Lunar (with command auth device ...)"),
+              "content": "Redump: Lunar"},
+             "`mpeg_card.bin`, Lunar (with command auth device and get)"),
         ]
         for item, title in cases:
             self.assertEqual(sm.short_title(item), title)
         self.assertEqual(sm.short_host({"cpu_model": "13th Gen Intel(R) Core(TM) i9-13900K",
                                         "os": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64"}),
                          "Intel Core i9-13900K, Linux (WSL2)")
+
+    def test_rows_of_one_file_never_read_alike(self) -> None:
+        def item(rid: str, build: str, files: int, observable: str, clock: bool = True) -> dict:
+            record = {"core": {"build_command": build}, "subject": "mpeg-card-lunar", "kind": "check",
+                      "check": {"observable": observable}, "variants": [{}] * files,
+                      "inputs": {"options": {"beetle_saturn_mpeg_card": "enabled"},
+                                 "env": {"FAKETIME": "x"} if clock else {}}}
+            return self.item(id=rid, content="Redump: Lunar - Silver Star Story", setup=sm.setup_of(record))
+        items = [item("a", "make -j8", 11, "video_sha1"),
+                 item("b", "make -j8 after editing cdb.c", 11, "video_sha1"),
+                 item("c", "make -j10, with the CR2 patch to cdb.c", 3, "state:MPEG.AuthState"),
+                 item("d", "make -j8", 11, "video_sha1", clock=False)]
+        titles = sm.distinct_titles(items)
+        self.assertEqual(titles, {
+            "a": "Lunar",
+            "b": "Lunar, patched build",
+            "c": "Lunar, CR2 patch, 3 files, MPEG.AuthState",
+            "d": "Lunar, running clock"})
+        self.assertEqual(len(set(titles.values())), len(items))
+        self.assertNotIn("...", " ".join(titles.values()))
+        # Alone in its file, a test is named by its game.
+        self.assertEqual(sm.distinct_titles(items[:1]), {"a": "Lunar"})
 
     def test_no_empty_sentence(self) -> None:
         text = "\n".join(sm.tested_section("beetle_saturn", [self.item(claim=None, method=None, statement="",
@@ -488,16 +515,18 @@ class SitePages(unittest.TestCase):
                           for _ in group["variants"]][:1] + [1, 0])
         self.assertEqual([g["absent"] for g in groups], [False, False, True])
         text = "\n".join(sm.tested_section("alpha", [self.item(groups=groups)]))
-        self.assertEqual(re.findall(r'rb-dot rb-dot-(\d)( rb-dot-empty)?"', text),
+        strip = text.split('class="rb-dots"', 1)[1].split("</span></span>", 1)[0]
+        self.assertEqual(re.findall(r'rb-dot rb-dot-(\d)( rb-dot-empty)?"', strip),
                          [("0", ""), ("1", ""), ("0", " rb-dot-empty")])
         self.assertIn('aria-label="3 variants. v0: result A; v1: result B; v2: result A"', text)
 
     def test_the_details_hold_the_method_and_the_host(self) -> None:
-        text = "\n".join(sm.tested_section("beetle_saturn", [self.item()]))
+        text = "\n".join(sm.tested_section("beetle_saturn", [self.item(runs=1)]))
         details = text.split('<div class="rb-tested-more">', 1)[1].split("</div>", 1)[0]
         self.assertIn("Twice per card", details)
-        self.assertIn("Test CPU, 12 CPUs", details)
-        self.assertIn(self.ITEM["record_url"], details)
+        self.assertIn("<strong>Ran on:</strong> Test CPU, Linux.", details)
+        self.assertIn(f'<a href="{self.ITEM["record_url"]}">Full record</a>.', details)
+        self.assertNotIn("1 run", details)
 
     def test_the_beetle_saturn_block_stays_short(self) -> None:
         stored = mr.read_records(REPO_ROOT)
