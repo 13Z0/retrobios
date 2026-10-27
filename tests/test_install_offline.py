@@ -779,5 +779,69 @@ class ADryRunOpensOnItsTotals(Scratch):
         self.assertTrue(any("sys00/file0.bin" in line for line in plan))
 
 
+
+class OfflineLeavesFilesMissing(Scratch):
+    """code_audit_13 P1-1, P3-7, P3-8: the files --offline leaves out at a
+    terminal were counted with a "no" to the size question. Once one file
+    came from this machine, 14,696 missing ended on Done and exit 0."""
+
+    def outcome(self, **counts) -> tuple[int, str]:
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), self.assertRaises(SystemExit) as stop:
+            install._report_outcome([self.dest], counts.get("installed", 0), 0,
+                                    counts.get("errors", 0), 0, False,
+                                    sources=counts.get("sources", ""),
+                                    offline=counts["offline"])
+        return stop.exception.code, out.getvalue()
+
+    def test_some_installed_is_not_done(self):
+        code, text = self.outcome(installed=4, offline=14696,
+                                  sources="4 files copied from old, 14696 still missing.")
+        self.assertEqual(code, 1)
+        self.assertNotIn("Done", text)
+        self.assertIn("Finished with files missing. 4 files installed, 14696 not fetched "
+                      "(--offline).", text)
+        self.assertIn("14696 still missing", text)
+
+    def test_nothing_installed_is_code_2(self):
+        code, text = self.outcome(offline=14700)
+        self.assertEqual(code, 2)
+        self.assertIn("Nothing installed: 14700 files need the internet, which --offline "
+                      "does not use.", text)
+        # Nothing was up to date: the line said "0 files already up to date".
+        self.assertNotIn("up to date", text)
+
+    def test_the_folder_given_is_not_suggested_again(self):
+        old = self.root / "old"
+        old.mkdir()
+        install.LOCAL.reset()
+        self.addCleanup(install.LOCAL.reset)
+        install.LOCAL.folders = [install.FolderIndex(old)]
+        _code, text = self.outcome(offline=3)
+        self.assertIn(f"They are not in {old}", text)
+        self.assertNotIn("(--from)", text)
+
+    def test_a_dry_run_offline_says_no_download(self):
+        proc = self.run_installer("--offline", "--dry-run", "--manifest", str(self.list))
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertNotIn("Would download", proc.stdout)
+        self.assertIn("4 files (", proc.stdout)
+        self.assertIn("need the internet, which --offline does not use. Without --offline "
+                      "they would go to", proc.stdout)
+
+    def test_an_archive_not_read_is_only_its_error(self):
+        listed = manifest()
+        listed["data_directories"] = [{
+            "ref": "bluemsx", "dest": "Machines", "type": "zip",
+            "url": "https://example.invalid/blueMSX.zip", "systems": ["nintendo-gba"],
+            "files": {"a.txt": {"sha1": _sha1(b"a"), "size": 1}},
+        }]
+        self.list.write_text(json.dumps(listed))
+        self.complete()
+        proc = self.run_installer("--offline", "--manifest", str(self.list), "--no-input")
+        self.assertIn("bluemsx: could not read", proc.stderr)
+        self.assertNotIn("no longer in the source", proc.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()

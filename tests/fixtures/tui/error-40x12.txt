@@ -9,4 +9,4 @@
      retroarch.json
  > Choose another setup or folder
    Quit
- A/Enter Back  B/Esc Back
+ A/Enter Choose  B/Esc Back

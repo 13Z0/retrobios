@@ -1,15 +1,15 @@
  RetroBIOS: Where is the SD card?
 
- NextUI keeps its BIOS files on its SD
-   card. Choose the card's root folder,
-   the one holding .system.
+ NextUI keeps its BIOS files at the
+   root of its SD card. Choose the
+   card's top folder, the one holding
+   .system.
  No NextUI card is mounted. Insert it,
    then choose Look again.
 
  > Browse for a folder
    Type a path
    Look again
-
 
 
  A/Enter Browse  B/Esc Back  ? Help

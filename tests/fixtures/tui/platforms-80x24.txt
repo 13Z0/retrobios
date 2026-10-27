@@ -1,24 +1,24 @@
  RetroBIOS: Which setup?
 
- Choose the setup that will use the BIOS files.
-
    Filter (/ to type)
- > RetroArch                            muOS, JELOS, KOLOS...nic stock firmware
+ > RetroArch
    Batocera
    Recalbox
    RetroBat
    EmuDeck
    Lakka
    RetroDECK
-   ROCKNIX
+   ROCKNIX, SD card
    RomM
    BizHawk
    MiSTer FPGA
    RetroPie
    AmberELEC                                                           PAN4ELEC
    EmuELEC
-   KNULLI
-   MinUI
-   NextUI
-   MyMinUI
+   KNULLI, SD card
+   MinUI, SD card
+   NextUI, SD card
+   MyMinUI, SD card
+   Allium, SD card                                              RetroArch files
+ 1-19 of 34
  A/Enter Choose  B/Esc Back  / Filter  ? Help
