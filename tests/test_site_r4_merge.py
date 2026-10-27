@@ -182,7 +182,8 @@ class FaqInstallsFromWhatYouHold(unittest.TestCase):
             with self.subTest(card=name):
                 self.assertIn(name, known)
         source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
-        self.assertIn('f"{card[2]} SD card ({_mount_name(mount)})"', source)
+        self.assertIn('f"{card[2]} {kind} ({_mount_name(mount)})"', source)
+        self.assertIn('else "SD card"', source)
 
     def test_a_wiped_card_links_the_copy(self):
         section = self._section("Lost or wiped card?")

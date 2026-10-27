@@ -388,7 +388,7 @@
 
 
 
- Start+Select Quit  B Quit
+ Select+Start Quit  B Quit
 === checking 40x15
  RetroBIOS: Checking
 
@@ -404,7 +404,7 @@
 
 
 
- Start+Select Quit  B Quit
+ Select+Start Quit  B Quit
 === checking 80x24
  RetroBIOS: Checking
 
@@ -429,7 +429,7 @@
 
 
 
- Start+Select Quit  B Quit
+ Select+Start Quit  B Quit
 === plan 40x12
  RetroBIOS: RetroArch
 
@@ -766,7 +766,7 @@
  missing      16.0 KB  gba_bios.bin
 
 
- A Back  Up/Down Scroll
+ A Back
 === preview 40x15
  RetroBIOS: Preview
 
@@ -782,7 +782,7 @@
 
 
 
- A Back  Up/Down Scroll
+ A Back
 === preview 80x24
  RetroBIOS: Preview
 
@@ -807,7 +807,7 @@
 
 
 
- A Back  Up/Down Scroll
+ A Back
 === command 40x12
  RetroBIOS: Command line
 
@@ -923,7 +923,7 @@
  528.0 KB of 1.0 MB
  128.9 KB/s, 0:04 left
  2 of 4 files
- B or Start+Select stops. What is done
+ B or Select+Start stops. What is done
    stays done.
 
  FAILED scph5500.bin (HTTP 404)
@@ -936,7 +936,7 @@
  528.0 KB of 1.0 MB
  128.9 KB/s, 0:04 left
  2 of 4 files
- B or Start+Select stops. What is done
+ B or Select+Start stops. What is done
    stays done.
 
  FAILED scph5500.bin (HTTP 404)
@@ -952,7 +952,7 @@
  528.0 KB of 1.0 MB
  128.9 KB/s, 0:04 left
  2 of 4 files
- B or Start+Select stops. What is done stays done.
+ B or Select+Start stops. What is done stays done.
 
  FAILED scph5500.bin (HTTP 404)
  ok     gba_bios.bin
@@ -982,7 +982,7 @@
    retrobios-backup/2026-10-23_1200
  Details: /tmp/retrobios-x/install.log
 
- A Exit  Up/Down Scroll
+ A Exit
 === result 40x15
  RetroBIOS: Finished with errors
 
@@ -998,7 +998,7 @@
 
 
 
- A Exit  Up/Down Scroll
+ A Exit
 === result 80x24
  RetroBIOS: Finished with errors
 
@@ -1023,7 +1023,7 @@
 
 
 
- A Exit  Up/Down Scroll
+ A Exit
 === error 40x12
  RetroBIOS: Something went wrong
 

@@ -712,7 +712,7 @@
  missing      16.0 KB  gba_bios.bin
 
 
- Enter Back  Up/Down Scroll
+ Enter Back
 === preview 40x15
  RetroBIOS: Preview
 
@@ -728,7 +728,7 @@
 
 
 
- Enter Back  Up/Down Scroll
+ Enter Back
 === preview 80x24
  RetroBIOS: Preview
 
@@ -753,7 +753,7 @@
 
 
 
- Enter Back  Up/Down Scroll
+ Enter Back
 === command 40x12
  RetroBIOS: Command line
 
@@ -969,7 +969,7 @@
 
 
 
- Enter Exit  Up/Down Scroll
+ Enter Exit
 === error 40x12
  RetroBIOS: Something went wrong
 

@@ -479,12 +479,12 @@ class TheOneLinerReadsInstalledCores(unittest.TestCase):
             command = " ".join(shlex.quote(part) for part in repo.command())
             proc = subprocess.run(
                 ["script", "-qec", command, "/dev/null"],
-                input="i\n", env=repo.env(), capture_output=True,
+                input="i\n\n", env=repo.env(), capture_output=True,
                 text=True, timeout=60, check=False,
             )
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             self.assertIn("i) only what the installed cores read: 2 files", proc.stdout)
-            self.assertIn("--platform retroarch --installed-cores", proc.stdout)
+            self.assertRegex(proc.stdout, r"--platform retroarch --dest \S+ --installed-cores")
             self.assertEqual(repo.installed(), ["gba_bios.bin", "mgba/extra.bin"])
 
 

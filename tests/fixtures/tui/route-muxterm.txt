@@ -766,7 +766,7 @@
  missing      16.0 KB  gba_bios.bin
 
 
- Start Back  Up/Down Scroll
+ Start Back
 === preview 40x15
  RetroBIOS: Preview
 
@@ -782,7 +782,7 @@
 
 
 
- Start Back  Up/Down Scroll
+ Start Back
 === preview 80x24
  RetroBIOS: Preview
 
@@ -807,7 +807,7 @@
 
 
 
- Start Back  Up/Down Scroll
+ Start Back
 === command 40x12
  RetroBIOS: Command line
 
@@ -982,7 +982,7 @@
    retrobios-backup/2026-10-23_1200
  Details: /tmp/retrobios-x/install.log
 
- Start Exit  Up/Down Scroll
+ Start Exit
 === result 40x15
  RetroBIOS: Finished with errors
 
@@ -998,7 +998,7 @@
 
 
 
- Start Exit  Up/Down Scroll
+ Start Exit
 === result 80x24
  RetroBIOS: Finished with errors
 
@@ -1023,7 +1023,7 @@
 
 
 
- Start Exit  Up/Down Scroll
+ Start Exit
 === error 40x12
  RetroBIOS: Something went wrong
 

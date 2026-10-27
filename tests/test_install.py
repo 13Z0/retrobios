@@ -3946,8 +3946,8 @@ class PlatformsAreNamedAsTheyNameThemselves(unittest.TestCase):
                 contextlib.redirect_stdout(out):
             install._prompt_platform_choice(
                 [("misterfpga", Path("/m")), ("retrodeck", Path("/r"))])
-        self.assertIn("MiSTer FPGA (/m)", out.getvalue())
-        self.assertIn("RetroDECK (/r)", out.getvalue())
+        self.assertIn("MiSTer FPGA: /m", out.getvalue())
+        self.assertIn("RetroDECK: /r", out.getvalue())
         self.assertEqual(install.display_name("romm", {"display_name": "RomM"}), "RomM")
         self.assertEqual(install.display_name("romm", {"display_name": "\x1b[2J"}), "RomM")
 
@@ -5177,6 +5177,9 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
             {"event": "detect", "os": "linux", "os_name": install._os_name(),
              "platforms": [{"platform": "retroarch", "name": "RetroArch",
                             "bios_dir": str(self.bios)}]},
+            # The systems Choose systems lists, before the files are read.
+            {"event": "choices", "platform": "retroarch",
+             "systems": ["sys-a", "sys-b", "other"]},
             # a.bin and b.bin are in place: the first read and the last.
             {"event": "checking", "files_done": 1, "files_total": 2},
             {"event": "checking", "files_done": 2, "files_total": 2},

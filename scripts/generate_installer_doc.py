@@ -170,7 +170,8 @@ def render(page: str) -> str:
         if name not in writers:
             raise MissingProse(f"no table is written for the marker {name!r}")
         seen.append(name)
-        return f"{match.group('open')}\n{writers[name](match.group('body'))}\n{match.group('close')}"
+        table = writers[name](match.group("body"))
+        return f"{match.group('open')}\n{table}\n{match.group('close')}"
 
     text = BLOCK.sub(write, page)
     absent = sorted(set(writers) - set(seen))

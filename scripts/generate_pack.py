@@ -2802,6 +2802,10 @@ def _run_platform_packs(
 ) -> None:
     """Generate ZIP packs for platform groups and verify."""
     variants = ALL_VARIANTS if args.all_variants else ((args.source, args.required_only),)
+    registry_path = os.path.join(args.platforms_dir, "_registry.yml")
+    # Per pack, the systems each of its files is for, written into its
+    # manifest.json once the pack is verified (pack_systems).
+    systems_for: dict[str, dict] = {}
 
     failed: list[str] = []
     for source, required_only in variants:
@@ -2902,6 +2906,20 @@ def _run_platform_packs(
                 # the output directory already held and exit 0.
                 if not _produced(args.split, zip_path, zip_paths):
                     failed.append(representative)
+                elif zip_path and not system_filter:
+                    # The install list of the same choices names each file's
+                    # systems: the pack records them, so a pack alone (a
+                    # handheld without Wi-Fi) can be narrowed by system.
+                    systems_for[os.path.basename(zip_path)] = pack_systems(generate_manifest(
+                        representative, args.platforms_dir, db, args.bios_dir,
+                        registry_path, emulators_dir=args.emulators_dir,
+                        zip_contents=zip_contents, emu_profiles=emu_profiles,
+                        target_cores=tc, source=source,
+                        regions=getattr(args, "regions", None), target_name=named_target,
+                        offline=args.offline, required_only=required_only,
+                        data_registry=data_registry,
+                        no_game_data=getattr(args, "no_game_data", False),
+                    ))
 
     print("\nVerifying packs and generating manifests...")
     skip_conf = bool(system_filter or args.split)
@@ -2910,6 +2928,7 @@ def _run_platform_packs(
         db,
         platforms_dir=args.platforms_dir,
         emulators_dir=args.emulators_dir,
+        pack_systems_by_name=systems_for,
         skip_conformance=skip_conf,
         data_registry=data_registry,
         regions=getattr(args, "regions", None),
@@ -4731,6 +4750,37 @@ def _manifest_core_index(
 
 
 
+def pack_systems(install_manifest: dict) -> dict:
+    """What a pack's manifest.json records of its systems, from the install
+    list built with the same choices: each file's systems, by its path in
+    the pack, and the names a person reads for them.
+
+    A pack recorded none: the installer refused --system with a pack alone
+    ("the file list comes from an older release") and offered no Choose
+    systems, the route of a handheld without Wi-Fi.
+    """
+    return {
+        "files": {entry["dest"]: list(entry.get("systems") or [])
+                  for entry in install_manifest.get("files", []) if "systems" in entry},
+        "system_titles": dict(install_manifest.get("system_titles") or {}),
+        "system_names": dict(install_manifest.get("system_names") or {}),
+    }
+
+
+def annotate_pack_systems(manifest: dict, systems: dict | None) -> None:
+    """Write pack_systems into a pack's manifest: a systems list on each
+    file the install list names, the titles and names beside."""
+    if not systems:
+        return
+    for entry in manifest.get("files", []):
+        held = systems["files"].get(entry["path"])
+        if held is not None:
+            entry["systems"] = held
+    for key in ("system_titles", "system_names"):
+        if systems.get(key):
+            manifest[key] = systems[key]
+
+
 def inject_manifest(zip_path: str, manifest: dict) -> None:
     """Inject manifest.json into an existing ZIP pack.
 
@@ -4952,8 +5002,12 @@ def verify_and_finalize_packs(
     target_name: str | None = None,
     emulators_dir: str = "emulators",
     no_game_data: bool = False,
+    pack_systems_by_name: dict[str, dict] | None = None,
 ) -> bool:
     """Verify all packs, inject manifests, generate SHA256SUMS.
+
+    pack_systems_by_name gives, per pack file name, the systems its
+    manifest.json records (pack_systems).
 
     Two-stage verification:
     1. Hash check against database.json (integrity)
@@ -4994,6 +5048,7 @@ def verify_and_finalize_packs(
                 print(f"    ERROR: {err}")
             all_ok = False
             failing.append(name)
+        annotate_pack_systems(manifest, (pack_systems_by_name or {}).get(name))
         inject_manifest(zip_path, manifest)
 
         # Stage 2: platform conformance (extract + verify)
