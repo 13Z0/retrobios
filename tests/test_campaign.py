@@ -470,65 +470,142 @@ class FailClosed(Workspace):
 
 @unittest.skipUnless(shutil.which("git") and shutil.which("make"), "no git or make")
 class BuildIsolation(unittest.TestCase):
-    """A build that writes into .git must not reach the next host git command."""
+    """Builds run on an archive exported from bare mirrors that only host git
+    touches: a build cannot reach the mirror, and host git runs nothing a
+    repository's config or attributes name."""
+
+    MAIN = "https://example.invalid/team/main.git"
+    SUB = "https://example.invalid/team/sub.git"
 
     def setUp(self) -> None:
         TMP.mkdir(parents=True, exist_ok=True)
         self.tmp = Path(tempfile.mkdtemp(dir=TMP))
         self.addCleanup(shutil.rmtree, self.tmp, True)
-        self.src = self.tmp / "src"
         self.pwned = self.tmp / "PWNED"
-        hook = f"#!/bin/sh\ntouch {self.pwned}\n"
-        # A Makefile that tries to plant a hook and a config line in the clone.
+        sub = self.repo("sub", {"sub.c": "int x;\n"})
+        self.sub_sha = self.git(sub, "rev-parse", "HEAD").strip()
+        self.mirrors = {self.SUB: self.bare(sub, "sub")}
+        main_mirror = self.tmp / "mirrors" / "main.git"
+        # A Makefile that tries to plant a hook and a config line in the mirror.
         makefile = (
             "all:\n"
-            f"\t-mkdir -p {self.src}/.git/hooks ../.git/hooks\n"
-            f"\t-printf '{hook.replace(chr(10), '\\\\n')}' > {self.src}/.git/hooks/post-checkout\n"
-            f"\t-printf '[core]\\n\\tfsmonitor = touch {self.pwned}\\n' >> {self.src}/.git/config\n"
+            f"\t-mkdir -p {main_mirror}/hooks\n"
+            f"\t-echo 'touch {self.pwned}' > {main_mirror}/hooks/post-checkout\n"
+            f"\t-printf '[core]\\n\\tfsmonitor = touch {self.pwned}\\n' >> {main_mirror}/config\n"
             "\ttouch fake_libretro.so\n")
-        git = ["git", "-c", "user.name=t", "-c", "user.email=t@t", "-C", str(self.src)]
-        subprocess.run(["git", "init", "-q", str(self.src)], check=True)
-        (self.src / "Makefile").write_text(makefile)
-        (self.src / "a.txt").write_text("one")
-        subprocess.run([*git, "add", "Makefile", "a.txt"], check=True)
-        subprocess.run([*git, "commit", "-q", "-m", "one"], check=True)
-        (self.src / "a.txt").write_text("two")
-        subprocess.run([*git, "commit", "-q", "-am", "two"], check=True)
-        self.config = (self.src / ".git" / "config").read_text()
+        main = self.repo("main", {"Makefile": makefile, ".gitmodules":
+                                  '[submodule "lib"]\n\tpath = lib\n\turl = ../sub.git\n'})
+        self.git(main, "update-index", "--add", "--cacheinfo", f"160000,{self.sub_sha},lib")
+        self.git(main, "commit", "-q", "-m", "submodule")
+        self.commit = self.git(main, "rev-parse", "HEAD").strip()
+        self.mirrors[self.MAIN] = self.bare(main, "main")
+        self.config = (main_mirror / "config").read_text()
 
-    def test_the_build_runs_on_an_export_without_git(self) -> None:
-        prefix, isolation = campaign.core_probe.sandbox_argv([self.tmp / "tree"])
+    def git(self, repo: Path, *args: str) -> str:
+        return subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "-C", str(repo), *args],
+                              check=True, capture_output=True, text=True).stdout
+
+    def repo(self, name: str, files: dict[str, str]) -> Path:
+        path = self.tmp / "work" / name
+        subprocess.run(["git", "init", "-q", str(path)], check=True)
+        for rel, text in files.items():
+            (path / rel).write_text(text)
+        self.git(path, "add", *files)
+        self.git(path, "commit", "-q", "-m", "one")
+        return path
+
+    def bare(self, work: Path, name: str) -> Path:
+        path = self.tmp / "mirrors" / f"{name}.git"
+        subprocess.run(["git", "clone", "-q", "--bare", str(work), str(path)], check=True)
+        return path
+
+    def test_the_export_holds_the_tree_and_its_submodule_and_no_git(self) -> None:
+        tree = self.tmp / "tree"
+        campaign.export_commit(self.mirrors.__getitem__, self.MAIN, self.commit, tree)
+        self.assertEqual((tree / "lib" / "sub.c").read_text(), "int x;\n")
+        self.assertTrue((tree / "Makefile").is_file())
+        self.assertEqual([p for p in tree.rglob(".git")], [])
+
+    def test_a_build_cannot_reach_the_mirror(self) -> None:
+        tree = self.tmp / "tree"
+        prefix, isolation = campaign.core_probe.sandbox_argv([tree])
         if isolation != campaign.core_probe.SANDBOX:
             self.skipTest("no working bwrap on this host")
-        tree = self.tmp / "tree"
-        campaign.export_tree(self.src, tree)
-        self.assertFalse((tree / ".git").exists())
-        self.assertEqual((tree / "a.txt").read_text(), "two")
+        campaign.export_commit(self.mirrors.__getitem__, self.MAIN, self.commit, tree)
         proc = subprocess.run(prefix + ["make"], cwd=tree, capture_output=True, text=True,
                               check=False, env=campaign.child_env())
         self.assertEqual(proc.returncode, 0, proc.stderr)
-        self.assertTrue((tree / "fake_libretro.so").exists())
-        self.assertFalse((self.src / ".git" / "hooks" / "post-checkout").exists())
-        self.assertEqual((self.src / ".git" / "config").read_text(), self.config)
-        subprocess.run(campaign.host_git("-C", str(self.src), "checkout", "-q", "HEAD~1"),
-                       check=True, env=campaign.git_env())
+        mirror = self.mirrors[self.MAIN]
+        self.assertFalse((mirror / "hooks" / "post-checkout").exists())
+        self.assertEqual((mirror / "config").read_text(), self.config)
+        campaign.export_commit(self.mirrors.__getitem__, self.MAIN, self.commit, self.tmp / "again")
         self.assertFalse(self.pwned.exists())
 
-    def test_host_git_runs_no_planted_hook_or_fsmonitor(self) -> None:
-        hook = self.src / ".git" / "hooks" / "post-checkout"
+    def test_host_git_runs_nothing_a_repository_config_names(self) -> None:
+        mirror = self.mirrors[self.MAIN]
+        hook = mirror / "hooks" / "reference-transaction"
         hook.write_text(f"#!/bin/sh\ntouch {self.pwned}\n")
         hook.chmod(0o755)
-        with (self.src / ".git" / "config").open("a") as handle:
-            handle.write(f"[core]\n\tfsmonitor = touch {self.pwned}\n")
-        subprocess.run(campaign.host_git("-C", str(self.src), "checkout", "-q", "HEAD~1"),
-                       check=True, env=campaign.git_env())
-        subprocess.run(campaign.host_git("-C", str(self.src), "status", "--short"),
-                       check=True, env=campaign.git_env(), capture_output=True)
+        with (mirror / "config").open("a") as handle:
+            handle.write(f"[core]\n\tfsmonitor = touch {self.pwned}\n\tsshCommand = touch {self.pwned}\n"
+                         f'[filter "x"]\n\tsmudge = touch {self.pwned}\n')
+        (mirror / "info").mkdir(exist_ok=True)
+        (mirror / "info" / "attributes").write_text("* filter=x\n")
+        campaign.export_commit(self.mirrors.__getitem__, self.MAIN, self.commit, self.tmp / "tree")
+        campaign.git_out("-C", str(mirror), "update-ref", "refs/x", self.commit)
         self.assertFalse(self.pwned.exists())
-        # The same checkout with plain git does run the hook: the test plants a live one.
-        subprocess.run(["git", "-C", str(self.src), "checkout", "-q", "HEAD@{1}"], check=True,
-                       capture_output=True)
+        # Plain git on the same mirror runs the planted hook: the test plants a live one.
+        subprocess.run(["git", "-C", str(mirror), "update-ref", "refs/y", self.commit], check=True)
         self.assertTrue(self.pwned.exists())
+
+    def test_only_https_mirrors(self) -> None:
+        c = campaign.Campaign(campaign.Paths(root=self.tmp, home=self.tmp / "home", content=self.tmp,
+                                             db=self.tmp / "db.json", content_file=campaign.CONTENT_FILE),
+                              campaign.Settings(echo=False), FakeHost(), lock_path=self.tmp / "l")
+        for url in ("file:///etc", "/home/x/repo", "ext::sh -c touch", "ssh://h/r", "git@h:r"):
+            with self.subTest(url=url), self.assertRaises(campaign.Unavailable):
+                c.cores.mirror(url)
+        self.assertEqual(campaign.submodule_url(self.MAIN, "../sub.git"), self.SUB)
+        self.assertEqual(campaign.git_env()["GIT_ALLOW_PROTOCOL"], "https")
+
+    def test_a_whole_build_wipes_old_clones_and_copies_a_regular_file(self) -> None:
+        if campaign.core_probe.sandbox_argv([])[1] != campaign.core_probe.SANDBOX:
+            self.skipTest("no working bwrap on this host")
+        home = self.tmp / "home"
+        (home / "src" / "old" / ".git").mkdir(parents=True)
+        c = campaign.Campaign(campaign.Paths(root=self.tmp, home=home, content=self.tmp,
+                                             db=self.tmp / "db.json", content_file=campaign.CONTENT_FILE),
+                              campaign.Settings(echo=False), campaign.Host(), lock_path=self.tmp / "l")
+        c.cores.mirror = self.mirrors.__getitem__
+        so, command = c.cores.compile(self.MAIN, self.commit, self.tmp / "out")
+        self.assertEqual(so, self.tmp / "out" / "fake_libretro.so")
+        self.assertIn("isolation: bwrap", command)
+        self.assertFalse((home / "src").exists())
+
+
+class BuiltCore(unittest.TestCase):
+    def setUp(self) -> None:
+        TMP.mkdir(parents=True, exist_ok=True)
+        self.tree = Path(tempfile.mkdtemp(dir=TMP))
+        self.addCleanup(shutil.rmtree, self.tree, True)
+        self.secret = self.tree.parent / f"{self.tree.name}-host-file"
+        self.secret.write_text("host secret")
+        self.addCleanup(self.secret.unlink)
+
+    def test_a_link_is_never_taken_for_the_core(self) -> None:
+        (self.tree / "a_libretro.so").symlink_to(self.secret)
+        with self.assertRaises(campaign.Unavailable):
+            campaign.built_core(self.tree)
+        (self.tree / "sub").mkdir()
+        (self.tree / "sub" / "b_libretro.so").write_bytes(b"\x7fELF")
+        self.assertEqual(campaign.built_core(self.tree), self.tree / "sub" / "b_libretro.so")
+
+    def test_copy_refuses_a_link(self) -> None:
+        link = self.tree / "c_libretro.so"
+        link.symlink_to(self.secret)
+        with self.assertRaises(OSError):
+            campaign.copy_regular(link, self.tree / "out.so")
+        self.assertFalse((self.tree / "out.so").exists())
 
 
 class ProbeRuns(Workspace):

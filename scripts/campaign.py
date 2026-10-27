@@ -50,6 +50,7 @@ import os
 import re
 import shutil
 import signal
+import stat
 import subprocess
 import sys
 import tarfile
@@ -284,10 +285,18 @@ def child_env(romfetch: bool = False) -> dict[str, str]:
     return autorun.safe_env(names)
 
 
-# Host-side git on a clone of a third-party project: no hook, no fsmonitor,
-# no local-file transport, no user or system config.
-GIT_SAFE = ("-c", "core.hooksPath=/dev/null", "-c", "core.fsmonitor=false",
-            "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never")
+# Host-side git on a third-party project. It only ever touches bare mirrors
+# this campaign created: no working tree, never bound into a sandbox. No user
+# or system config is read, https is the only transport, and the overrides
+# blank every hook, filter, proxy and ssh command a config could name.
+GIT_SAFE = (
+    "-c", "core.hooksPath=/dev/null", "-c", "core.fsmonitor=false",
+    "-c", "core.sshCommand=", "-c", "core.gitProxy=", "-c", "core.askPass=",
+    "-c", "credential.helper=", "-c", "protocol.allow=never", "-c", "protocol.https.allow=always",
+    "-c", "filter.lfs.smudge=", "-c", "filter.lfs.clean=", "-c", "filter.lfs.process=",
+    "-c", "filter.lfs.required=false", "-c", "core.attributesFile=/dev/null",
+)
+MIRROR_URL = re.compile(r"^https://[A-Za-z0-9.-]+(?::\d+)?/[A-Za-z0-9._~/+-]+$")
 
 
 def host_git(*args: str) -> list[str]:
@@ -296,41 +305,129 @@ def host_git(*args: str) -> list[str]:
 
 def git_env() -> dict[str, str]:
     env = child_env()
-    env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull, GIT_TERMINAL_PROMPT="0")
+    env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull, GIT_TERMINAL_PROMPT="0",
+               GIT_ALLOW_PROTOCOL="https", GIT_ATTR_NOSYSTEM="1")
     return env
 
 
-def export_tree(src: Path, dest: Path) -> None:
-    """The checked-out commit of src and of its submodules, recursively, as
-    plain files in a fresh dest: git archive read by tarfile, which refuses
-    absolute paths, .. and links that leave dest."""
+def blank_filters(repo: Path) -> list[str]:
+    """-c overrides emptying every filter driver the repository's config,
+    includes followed, defines: git archive runs smudge filters."""
+    config = repo / "config"
+    if not config.is_file():
+        return []
+    listing = run_group(["git", "config", "--file", str(config), "--includes", "--name-only",
+                         "--get-regexp", r"^filter\."], capture_output=True, env=git_env(),
+                        timeout=60).stdout.decode("utf-8", "replace")
+    drivers = sorted({line.rsplit(".", 1)[0] for line in listing.splitlines() if line.count(".") >= 2})
+    out = []
+    for driver in drivers:
+        for key in ("smudge", "clean", "process"):
+            out += ["-c", f"{driver}.{key}="]
+        out += ["-c", f"{driver}.required=false"]
+    return out
+
+
+def git_out(*args: str, timeout: int = 1800) -> bytes:
+    extra = blank_filters(Path(args[1])) if len(args) > 1 and args[0] == "-C" else []
+    return run_group(["git", *GIT_SAFE, *extra, *args], capture_output=True, check=True,
+                     env=git_env(), timeout=timeout).stdout
+
+
+def submodule_url(base: str, url: str) -> str:
+    """A .gitmodules URL, relative ones read against the parent's URL."""
+    if url.startswith(("./", "../")):
+        parts = base.rstrip("/").removesuffix(".git").split("/")
+        for piece in url.split("/"):
+            if piece == "..":
+                parts.pop()
+            elif piece not in (".", ""):
+                parts.append(piece)
+        url = "/".join(parts)
+    return url
+
+
+def extract_tar(blob: bytes, target: Path) -> None:
+    """A git archive unpacked into target: no absolute path, no .., no link
+    that leaves target."""
+    target.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(fileobj=io.BytesIO(blob)) as handle:
+        if hasattr(tarfile, "data_filter"):
+            handle.extractall(target, filter="data")
+            return
+        for member in handle.getmembers():
+            name = Path(member.name)
+            link = Path(member.linkname)
+            if name.is_absolute() or ".." in name.parts or member.islnk() or (
+                    member.issym() and (link.is_absolute() or ".." in link.parts)):
+                raise Unavailable(f"core: unsafe archive member {member.name}")
+        handle.extractall(target)
+
+
+def export_commit(mirror: Callable[[str], Path], url: str, commit: str, dest: Path) -> None:
+    """The tree of commit, and of each submodule at the commit the tree
+    records, as plain files in a fresh dest. Every object comes from a bare
+    mirror (mirror(url) fetches into it), never from a working tree."""
     if dest.exists():
         shutil.rmtree(dest)
-    dest.mkdir(parents=True)
 
-    def one(repo: Path, target: Path) -> None:
-        archive = run_group(host_git("-C", str(repo), "archive", "--format=tar", "HEAD"),
-                            capture_output=True, check=True, env=git_env(), timeout=1800)
-        with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as handle:
-            if hasattr(tarfile, "data_filter"):
-                handle.extractall(target, filter="data")
-            else:
-                for member in handle.getmembers():
-                    name = Path(member.name)
-                    if name.is_absolute() or ".." in name.parts or member.islnk() or (
-                            member.issym() and (Path(member.linkname).is_absolute()
-                                                or ".." in Path(member.linkname).parts)):
-                        raise Unavailable(f"core: unsafe member {member.name} in {repo}")
-                handle.extractall(target)
-        listing = run_group(host_git("-C", str(repo), "ls-files", "--stage", "-z"),
-                            capture_output=True, check=True, env=git_env(), timeout=600)
-        for entry in listing.stdout.decode("utf-8", "replace").split("\0"):
-            if entry.startswith("160000 "):
-                path = entry.split("\t", 1)[1]
-                if (repo / path / ".git").exists():
-                    one(repo / path, target / path)
+    def one(repo_url: str, sha: str, target: Path) -> None:
+        if not re.fullmatch(r"[0-9a-f]{40}", sha):
+            raise Unavailable(f"core: {sha!r} is not a commit id")
+        bare = mirror(repo_url)
+        try:
+            git_out("-C", str(bare), "cat-file", "-e", f"{sha}^{{commit}}")
+        except subprocess.CalledProcessError:
+            git_out("-C", str(bare), "fetch", "--quiet", repo_url, sha)
+        extract_tar(git_out("-C", str(bare), "archive", "--format=tar", sha), target)
+        links = {}
+        for entry in git_out("-C", str(bare), "ls-tree", "-r", "-z", sha).split(b"\0"):
+            if entry.startswith(b"160000 commit "):
+                meta, path = entry.split(b"\t", 1)
+                links[path.decode()] = meta.split()[2].decode()
+        if not links:
+            return
+        try:
+            config = git_out("-C", str(bare), "config", "--blob", f"{sha}:.gitmodules", "-z",
+                             "--get-regexp", r"^submodule\..*\.(path|url)$").decode()
+        except subprocess.CalledProcessError as exc:
+            raise Unavailable(f"core: {repo_url} has submodules and no readable .gitmodules") from exc
+        paths: dict[str, str] = {}
+        urls: dict[str, str] = {}
+        for item in filter(None, config.split("\0")):
+            key, _, value = item.partition("\n")
+            name, field_ = key[len("submodule."):].rsplit(".", 1)
+            (paths if field_ == "path" else urls)[name] = value
+        for name, path in paths.items():
+            if path in links and name in urls:
+                one(submodule_url(repo_url, urls[name]), links[path], target / path)
 
-    one(src, dest)
+    one(url, commit, dest)
+
+
+def built_core(tree: Path) -> Path:
+    """The newest *_libretro.so a build left: a regular file inside the tree,
+    never a link a build could point at a host file."""
+    root = tree.resolve()
+    found = []
+    for path in tree.rglob("*_libretro.so"):
+        info = path.lstat()
+        if stat.S_ISREG(info.st_mode) and path.resolve().is_relative_to(root):
+            found.append((info.st_mtime, path))
+    if not found:
+        raise Unavailable(f"core: the build left no *_libretro.so regular file in {tree}")
+    return max(found)[1]
+
+
+def copy_regular(src: Path, dest: Path) -> None:
+    """Copy src only when it is a regular file, never through a link."""
+    fd = os.open(src, os.O_RDONLY | os.O_NOFOLLOW)
+    with os.fdopen(fd, "rb") as handle:
+        if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+            raise Unavailable(f"core: {src} is not a regular file")
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        with dest.open("wb") as out:
+            shutil.copyfileobj(handle, out)
 
 
 @contextlib.contextmanager
@@ -683,55 +780,52 @@ class Cores:
         return Core(built[0].name.removesuffix("_libretro.so"), built[0], file_sha256(built[0]),
                     repo=source, commit=commit, build_command=command)
 
+    def mirror(self, url: str) -> Path:
+        """The bare mirror of a repository, created on first use. Only host
+        git with the overrides of GIT_SAFE ever touches it."""
+        if not MIRROR_URL.match(url):
+            raise Unavailable(f"core: {url!r} is not an https repository URL")
+        bare = self.c.paths.home / "mirrors" / f"{slug(url)}.git"
+        if not (bare / "HEAD").is_file():
+            bare.parent.mkdir(parents=True, exist_ok=True)
+            git_out("clone", "--bare", "--quiet", url, str(bare))
+        return bare
+
     def compile(self, source: str, commit: str, out: Path) -> tuple[Path, str]:
-        """Clone with git (trusted, networked), then run the project's make
-        under bubblewrap: no network, a read-only tree with the source
-        writable, the user's credentials masked. Returns the .so and the
-        command, with how it was isolated."""
-        src = self.c.paths.home / "src" / slug(source)
+        """Fetch the commit into a bare mirror (host git, networked), export
+        it and its submodules with git archive into a fresh folder, and run
+        the project's make there under bubblewrap: no network, that folder
+        the one writable path. Returns the .so and the command, with how it
+        was isolated."""
         log = self.c.paths.logs / "builds" / f"{slug(source)}-{commit[:12]}.log"
         log.parent.mkdir(parents=True, exist_ok=True)
-
-        def step(argv: list[str], cwd: Path | None = None, timeout: int = 1800,
-                 env: dict[str, str] | None = None) -> None:
-            with log.open("a", encoding="utf-8") as handle:
-                handle.write(f"$ {' '.join(argv)}\n")
-                handle.flush()
-                proc = self.c.host.run(argv, cwd=cwd, stdout=handle, stderr=subprocess.STDOUT,
-                                       check=False, timeout=timeout, env=env or git_env())
-            if proc.returncode != 0:
-                tail = log.read_text(encoding="utf-8", errors="replace").strip().splitlines()[-3:]
-                raise Unavailable(f"core: {argv[0]} exited {proc.returncode}: "
-                                  f"{' | '.join(tail)} (log {log})")
-        if core_probe.sandbox_argv([])[1] != core_probe.SANDBOX and not self.c.settings.allow_unsandboxed:
-            raise Unavailable(f"refused: no sandbox to build {source} in "
-                              f"({core_probe.sandbox_argv([])[1]}), --allow-unsandboxed overrides")
-        if not (src / ".git").is_dir():
-            src.parent.mkdir(parents=True, exist_ok=True)
-            step(host_git("clone", "--quiet", "--no-checkout", source, str(src)))
-        step(host_git("-C", str(src), "fetch", "--quiet", "origin", commit))
-        step(host_git("-C", str(src), "checkout", "--quiet", "--force", commit))
-        step(host_git("-C", str(src), "submodule", "update", "--init", "--recursive", "--quiet"))
-        # The build runs on an exported tree. The clone and its .git are never
-        # bound into the sandbox, so a build cannot plant a hook or a config
-        # line that the next host git command would run.
+        isolation = core_probe.sandbox_argv([])[1]
+        if isolation != core_probe.SANDBOX and not self.c.settings.allow_unsandboxed:
+            raise Unavailable(f"refused: no sandbox to build {source} in ({isolation}), "
+                              f"--allow-unsandboxed overrides")
+        # Working-tree clones of earlier campaign versions are never reused.
+        shutil.rmtree(self.c.paths.home / "src", ignore_errors=True)
         tree = self.c.paths.home / "build-trees" / f"{slug(source)}-{commit[:12]}"
         try:
-            export_tree(src, tree)
+            export_commit(self.mirror, source, commit, tree)
         except (OSError, subprocess.CalledProcessError, tarfile.TarError) as exc:
             raise Unavailable(f"core: exporting {commit[:12]} of {source} failed: {exc}") from exc
         makefile = "Makefile.libretro" if (tree / "Makefile.libretro").is_file() else "Makefile"
         jobs = str(max(1, (os.cpu_count() or 2) // 2))
         command = ["make", "-f", makefile, f"-j{jobs}", "platform=unix"]
         prefix, isolation = core_probe.sandbox_argv([tree])
-        step(prefix + command, cwd=tree, timeout=BUILD_TIMEOUT, env=child_env())
-        built = sorted(tree.rglob("*_libretro.so"), key=lambda p: p.stat().st_mtime)
-        if not built:
-            raise Unavailable(f"core: {' '.join(command)} produced no *_libretro.so (log {log})")
-        out.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(built[-1], out / built[-1].name)
+        with log.open("a", encoding="utf-8") as handle:
+            handle.write(f"$ {' '.join(command)} in {tree} ({isolation})\n")
+            handle.flush()
+            proc = self.c.host.run(prefix + command, cwd=tree, stdout=handle, stderr=subprocess.STDOUT,
+                                   check=False, timeout=BUILD_TIMEOUT, env=child_env())
+        if proc.returncode != 0:
+            tail = log.read_text(encoding="utf-8", errors="replace").strip().splitlines()[-3:]
+            raise Unavailable(f"core: make exited {proc.returncode}: {' | '.join(tail)} (log {log})")
+        built = built_core(tree)
+        copy_regular(built, out / built.name)
         shutil.rmtree(tree, ignore_errors=True)
-        return out / built[-1].name, f"{' '.join(command)} on git archive (isolation: {isolation})"
+        return out / built.name, f"{' '.join(command)} on git archive (isolation: {isolation})"
 
 
 # --------------------------------------------------------------------------
