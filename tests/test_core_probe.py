@@ -319,7 +319,8 @@ class OracleTests(unittest.TestCase):
             self.assertEqual(core_probe.judge(rep, saturn)[0], "bios_error", line)
         menu = {"Beetle PSX": "dfbfc299250c0983f86bbf951efd187441306d92",
                 "Beetle PSX HW": "dfbfc299250c0983f86bbf951efd187441306d92",
-                "SwanStation": "167fb7b6527e295b12dca5806a29856f5f31d401"}
+                "SwanStation": "167fb7b6527e295b12dca5806a29856f5f31d401",
+                "pcsx2": "46329c633ea7d0b63349261e4aab169e4f44d3f6"}
         for library, sha1 in menu.items():
             rep = {"loaded": True, "logs": [], "frames": 100, "warmup": 0,
                    "observables": {"frame_hashes": [[90, sha1]], "uniform_frames": []}}

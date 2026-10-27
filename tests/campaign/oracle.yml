@@ -74,6 +74,15 @@ cores:
       - pattern: '^BIOS file ".*" could not be fully read'
         source_ref: mednafen/ss/ss.c:1978-1983 at 2ce77e20
     error_screens: []
+  "pcsx2":
+    note: >-
+      PCSX2 standalone (scripts/standalone_probe.py). Without a BIOS it shows a
+      dialog and runs nothing: the dialog is its error screen, captured as the
+      1280x720 root window.
+    error_patterns: []
+    error_screens:
+      - sha1: 46329c633ea7d0b63349261e4aab169e4f44d3f6
+        shows: the dialog "PCSX2 requires a PlayStation 2 BIOS in order to run"
   "PCSX1":
     note: An HLE BIOS stands in when none is found, and the run logs nothing about it.
     error_patterns: []
