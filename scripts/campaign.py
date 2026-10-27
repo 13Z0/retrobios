@@ -1413,7 +1413,8 @@ class Campaign:
         key = self.finding_key(emulator, content, entry, verdict)
         previous = self.latest_findings().get(key)
         if previous and previous["status"] == status and previous["rule"] == verdict.rule \
-                and previous["run_shows"] == verdict.value and previous["profile_says"] == says:
+                and previous["run_shows"] == verdict.value and previous["profile_says"] == says \
+                and previous["evidence"] == list(verdict.evidence):
             return
         line = mr.seal_line({
             "schema_version": 1, "found_at": now_iso(), "key": key, "emulator": emulator,
