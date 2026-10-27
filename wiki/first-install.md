@@ -81,8 +81,7 @@ It opens a menu:
 
 - **Right folder?** Press Enter.
 - **Wrong folder?** Choose **Another setup or folder**, then browse to yours.
-- **A handheld's SD card?** Under **Another setup or folder**, choose its
-  system: **Onion, SD card**.
+- **A handheld's SD card?** Type its name (Miyoo Mini).
 
 Arrows move, Enter chooses, Esc goes back, as A and B on a handheld.
 
@@ -103,6 +102,7 @@ Esc or Ctrl+C stops, B on a handheld. Run again to resume.
 
 - **Done**: all files are in place.
 - **Finished with errors**: run the command again. It retries only those.
+- **Finished with files missing**: run it again online.
 - **Nothing installed**: the screen says why. See [If it stops](#if-it-stops).
 
 For questions line by line (screen readers), add `--plain`.

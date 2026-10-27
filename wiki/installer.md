@@ -120,10 +120,16 @@ they do online, and a file of the list the pack does not hold fails as
 
 `--offline` forbids every request, for a device with no Wi-Fi: `--check`
 still names the platform and its folder, then stops at the file list unless
-`--manifest` or `--from-pack` gives it. At a terminal the run installs the
-copies found on this machine and downloads nothing. The files left out are
-missing, not declined: it ends `Finished with files missing` (code 1), or
-`Nothing installed` (code 2) when none was found, as the full screen does.
+`--manifest` or `--from-pack` gives it, and counts the files that need the
+internet instead of offering to fetch them. The run installs the copies found
+on this machine and downloads nothing. The files left out are missing, not
+failed: it ends `Finished with files missing` (code 1), or `Nothing installed`
+(code 2) when nothing was installed, at a terminal, without questions and on
+the full screen alike. The advice that follows names a pack or a run without
+`--offline`, and no `--from` folder already read. A command it suggests keeps
+`--offline` when `RETROBIOS_INSTALL_OFFLINE` set it, sudo not passing that on.
+The `--plain` menu then offers `f) copy from a folder or an old card`, and its
+Enter checks the BIOS folder when nothing can be copied.
 
 ## The full-screen interface { #the-full-screen-interface }
 
@@ -144,9 +150,10 @@ downloads, the folder and, for a list with files read from the frontend's save
 directory, that directory. Each row names the option it sets, and **Show the
 command line** gives the same choice as one command for a script. **Preview the
 file list** shows what would be downloaded and writes nothing. **Copy the BIOS
-files from your old card or a folder** opens the folder browser, mounted cards
-first, and adds [`--from`](#copy-from-an-old-card): the plan then says how many
-files that folder holds and how many are left to download. After an install
+files from your old card or a folder** opens the folder browser on the first
+mounted card, and adds [`--from`](#copy-from-an-old-card): the plan then says how
+many files that folder holds and how many are left to download, or that it
+holds none of them. After an install
 on a muOS, KNULLI or ROCKNIX card, the result offers **Put RetroBIOS on this
 card (update from the console later)**, and **Options** has the same row
 ([On a handheld](#on-a-handheld-the-retrobios-port)). Files the BIOS
@@ -165,7 +172,7 @@ install starts.
 | Tick, untick | Space, Right, Left | X, D-pad Right and Left |
 | Back | Esc, Backspace | B, Select |
 | Options | `o`, Tab | Y |
-| Filter a long list | `/` then type | the Filter row |
+| Filter a long list | `/` then type, Enter on a lone match chooses it | none: a pad cannot type (the setup list puts the SD cards after RetroArch) |
 | Keys of the screen | `?`, F1 | |
 | Stop an install | Esc, `q`, Ctrl+C | B, Start+Select |
 | Quit | `q`, Ctrl+C | B on the first screen |
@@ -838,8 +845,11 @@ gives for the device, below the card's root instead of its mount point:
 The full screen lists such a card on its first screen ("muOS SD card (E:\)").
 Named by its system (`--platform muos`, `--platform knulli`), a `--dest` that
 is another system's card is refused. One that holds none of the system's
-files is refused where the card always carries them, and is taken as named
-for KNULLI, ROCKNIX and the systems no file on the card names.
+files is refused where the card always carries them. For KNULLI, ROCKNIX and
+the systems no file on the card names, it gets the system's folder below it
+(`bios`, `roms/bios`), with a note. Named with a file list instead
+(`--platform batocera --dest` an Onion card), another system's card takes the
+files as named, and a note names the system and its folder.
 
 Desktop installs are read from their own configuration, and several can be
 found on one machine.
@@ -910,8 +920,7 @@ When a platform named with `--platform` is not found on the machine, the
 destination falls back to the directory its detection looks for:
 `/userdata/bios` for Batocera, `/recalbox/share/bios` for Recalbox,
 `/storage/system` for Lakka, `~/retrodeck` for RetroDECK, `~/Emulation/bios`
-for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms` for AmberELEC and
-EmuELEC, `/media/fat/games` for MiSTer,
+for EmuDeck (`C:\Emulation\bios` on Windows), `/media/fat/games` for MiSTer,
 `~/RetroPie/BIOS` for RetroPie, `/romm/library/bios` for RomM,
 `C:\RetroBat\bios` for RetroBat, and RetroArch's own default system
 directory for RetroArch. BizHawk has no such folder: it reads `Firmware`
@@ -919,29 +928,42 @@ beside its executable wherever the archive was extracted, so a forced
 `--platform bizhawk` that finds no install stops and asks for `--dest`.
 
 The systems that run from an SD card keep their files there: MinUI, NextUI,
-MyMinUI, KNULLI, ROCKNIX, and each system of the
+MyMinUI, KNULLI, ROCKNIX, AmberELEC and EmuELEC (the card's games part, which
+they mount as `/storage/roms`), and each system of the
 [Linux handhelds](../platforms/linux-handhelds.md) that gets RetroArch's list
 (Onion, muOS, spruceOS, ArkOS, UnofficialOS and the others). Run on the
 device, the installer finds its folder. From a computer, each has a row of its
 own in the setup list (**Onion, SD card**), without the filter, and in the
-`--plain` menu. That row, `--platform onion` and the menu all ask for the
-card: one card of that system mounted is taken, otherwise the screen opens
-**Where is the SD card?**, which lists only that system's cards and offers
-**Look again**, and `--plain` asks `Card root`, listing the same cards by
-number. The RetroArch row is this computer's RetroArch.
+`--plain` menu, beside the devices that run it (Miyoo Mini, Miyoo Mini Plus).
+The filter takes a device name, and so does the `--plain` menu, which lists
+the setups it matches by number. With nothing found here, the SD card rows
+come right after RetroArch: Onion is four presses away with L1 and R1 at
+40x12, where it was row 30 of 34. That row, `--platform onion` and the menu
+all ask for the card: one card of that system mounted is taken, otherwise
+the screen opens **Where is the SD card?**, which lists only that system's
+cards and offers **Look again**, and `--plain` asks `Card root`, listing the
+same cards by number and naming the one picked and its folder. The RetroArch
+row is this computer's RetroArch.
 
-The card's top folder is checked the same way wherever it is chosen, listed,
-browsed, typed or named with `--dest`, and gives the same folder. A folder
-that does not exist, or that is another system's card, is refused for every
-system. One without the system's own files is refused for the MinUI family,
-Onion, muOS, spruceOS, CrossMix-OS, Allium and Koriki. KNULLI and ROCKNIX
-fill their card when they first start, and no file on the card names ArkOS,
-dArkOS, JELOS, KOLOS, UnofficialOS, ArchR, RetroOZ, plumOS, MiyooCFW or the
-Anbernic firmware: such a folder is taken, and a note says so. No to
-creating its folders asks for the card again. Under WSL a drive letter
-typed (`D:`, `D:\`) is that Windows drive. Without questions (`--no-input`)
-the run stops with a `--dest` example. A `--dest` that is a folder inside a
-MinUI card (its `Bios/`) is refused with the root to name instead. On Android a forced `--platform retroarch` falls back to
+The card's top folder is read by one function wherever it is chosen, listed,
+browsed, typed, numbered or named with `--dest`, and gives the same folder and
+the same note on the screen and in `--plain`. A folder that does not exist,
+or that is another system's card, is refused for every system, and so is a
+folder inside another system's card (ROCKNIX's `roms/bios` named for KNULLI).
+A card whose own files name it is that card whatever its name: an Onion card
+mounted as `BIOS` gets `BIOS/BIOS`. One without the system's own files is
+refused for the MinUI family, Onion, muOS, spruceOS, CrossMix-OS, Allium and
+Koriki. KNULLI and ROCKNIX fill their card when they first start, and no file
+on the card names ArkOS, dArkOS, JELOS, KOLOS, UnofficialOS, ArchR, RetroOZ,
+plumOS, MiyooCFW, AmberELEC, EmuELEC or the Anbernic firmware: such a folder
+gets the system's folder below it, and a note says so, kept on **Create the
+folder?** and the plan. No to creating its folders asks for the card again.
+Under WSL a drive letter (`D:`, `D:\`) is that Windows drive, typed or given
+to `--dest`, `--from`, `--from-pack`, `--save-dir` and `--cores-dir`, and the
+screens write the folder `D:\BIOS`. Without questions (`--no-input`) the
+run stops with a `--dest` example. A `--dest` that is a folder inside a MinUI
+card (its `Bios/`) is refused with the root to name instead. A refused
+`--dest` ends with code 1 and an `error` event (`stage` `detect`). On Android a forced `--platform retroarch` falls back to
 `<shared storage>/RetroArch/system` instead, a home directory there belonging
 to Termux rather than to the frontend. Pass `--dest` to say where instead of
 relying on that. When detection met a folder this user cannot open, under the
@@ -1311,7 +1333,7 @@ fields, the installer refuses to narrow rather than install everything.
 | Code | Meaning |
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
-| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed or were left out by `--offline` while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
+| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed or were left out by `--offline` while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, a `--dest` that is not the card of the system named (another system's card, a folder inside one, or a drive with none of its files where its card always has them), `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), or `--offline` left every file out, the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question, or the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`) before an install. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |

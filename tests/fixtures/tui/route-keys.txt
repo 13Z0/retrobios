@@ -55,7 +55,7 @@
 === platforms 40x12
  RetroBIOS: Which setup?
 
-   Filter (/ to type)
+   Filter: setup or device (/)
  > RetroArch
    Batocera
    Recalbox
@@ -68,7 +68,7 @@
 === platforms 40x15
  RetroBIOS: Which setup?
 
-   Filter (/ to type)
+   Filter: setup or device (/)
  > RetroArch
    Batocera
    Recalbox
@@ -76,15 +76,15 @@
    EmuDeck
    Lakka
    RetroDECK
-   ROCKNIX, SD card
    RomM
    BizHawk
+   MiSTer FPGA
  1-10 of 34
  Enter Choose  Esc Back  / Filter
 === platforms 80x24
  RetroBIOS: Which setup?
 
-   Filter (/ to type)
+   Filter: setup or device (/)
  > RetroArch
    Batocera
    Recalbox
@@ -92,18 +92,18 @@
    EmuDeck
    Lakka
    RetroDECK
-   ROCKNIX, SD card
    RomM
    BizHawk
    MiSTer FPGA
    RetroPie
-   AmberELEC                                                           PAN4ELEC
-   EmuELEC
-   KNULLI, SD card
-   MinUI, SD card
-   NextUI, SD card
-   MyMinUI, SD card
-   Allium, SD card                                              RetroArch files
+   Allium, SD card                 Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip
+   AmberELEC, SD card                                     Anbernic RG351, RG552
+   Anbernic stock firmware, SD card                             RetroArch files
+   ArchR, SD card              R36S, R33S, R36S Soysauce, Odroid Go Advance, +8
+   ArkOS, SD card     RG353M, RG353V, RG503, RGB30, RK2023, RG351MP, RG351V, +2
+   CrossMix-OS, SD card                                        TrimUI Smart Pro
+   dArkOS, SD card                      Odroid Go Advance, RGB10, RG351MP, G350
+   EmuELEC, SD card                                                   Odroid Go
  1-19 of 34
  Enter Choose  Esc Back  / Filter  ? Help
 === folder 40x12
@@ -382,7 +382,7 @@
  4 files to download, 1.0 MB
  BIOS folder: ~/.co.../retroarch/system
  1 in place, 3 missing, 1 wrong copy
- Free space: 50.0 GB
+ 1 wrong copy: backed up, replaced.
  > Install
    Choose systems
    Copy from your old card or a folder
@@ -395,15 +395,15 @@
  4 files to download, 1.0 MB
  BIOS folder: ~/.co.../retroarch/system
  1 in place, 3 missing, 1 wrong copy
+ 1 wrong copy: backed up, replaced.
  Free space: 50.0 GB
- The 1 wrong copy is replaced, the old
-   one kept in a backup folder.
 
  > Install
    Choose systems
    Copy from your old card or a folder
    Options
    Quit
+
  Enter Install  Esc Back  o Options
 === plan 80x24
  RetroBIOS: RetroArch
@@ -411,8 +411,8 @@
  4 files to download, 1.0 MB
  BIOS folder: ~/.config/retroarch/system
  1 in place, 3 missing, 1 wrong copy
- Free space: 50.0 GB
  The 1 wrong copy is replaced, the old one kept in a backup folder.
+ Free space: 50.0 GB
 
  > Install
    Choose systems

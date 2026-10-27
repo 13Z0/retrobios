@@ -896,7 +896,10 @@ class AFolderAroundTheBiosFolder(FromFolder):
         argv = ["install.py", "--platform", "retroarch", "--dest", str(bios),
                 "--manifest", str(self.list), "--from", str(card), "--no-input", "--yes"]
         out = io.StringIO()
+        # The host's own system: on WSL the run turned drive letters on for
+        # every test after it.
         with mock.patch.object(sys, "argv", argv), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
                 mock.patch.dict(os.environ, {"RETROBIOS_INSTALL_OFFLINE": "1"}), \
                 mock.patch.object(os, "replace", refusing(real_replace)), \
                 mock.patch.object(os, "rename", refusing(real_rename)), \

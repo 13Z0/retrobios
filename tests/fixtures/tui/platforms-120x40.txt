@@ -2,7 +2,7 @@
 
  Choose the setup that will use the BIOS files.
 
-   Filter (/ to type)
+   Filter: setup or device (/)
  > RetroArch
    Batocera
    Recalbox
@@ -10,31 +10,31 @@
    EmuDeck
    Lakka
    RetroDECK
-   ROCKNIX, SD card
    RomM
    BizHawk
    MiSTer FPGA
    RetroPie
-   AmberELEC                                                                               PAN4ELEC
-   EmuELEC
-   KNULLI, SD card
-   MinUI, SD card
-   NextUI, SD card
-   MyMinUI, SD card
-   Allium, SD card                                                                  RetroArch files
+   Allium, SD card                                     Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip
+   AmberELEC, SD card                                                         Anbernic RG351, RG552
    Anbernic stock firmware, SD card                                                 RetroArch files
-   ArchR, SD card                                                                   RetroArch files
-   ArkOS, SD card                                                                   RetroArch files
-   CrossMix-OS, SD card                                                             RetroArch files
-   dArkOS, SD card                                                                  RetroArch files
+   ArchR, SD card         R36S, R33S, R36S Soysauce, Odroid Go Advance, Odroid Go Super, RG351V, +6
+   ArkOS, SD card                RG353M, RG353V, RG503, RGB30, RK2023, RG351MP, RG351V, R35S, RGB10
+   CrossMix-OS, SD card                                                            TrimUI Smart Pro
+   dArkOS, SD card                                          Odroid Go Advance, RGB10, RG351MP, G350
+   EmuELEC, SD card                                                                       Odroid Go
    JELOS, SD card                                                                   RetroArch files
-   KOLOS, SD card                                                                   RetroArch files
-   Koriki, SD card                                                                  RetroArch files
-   MiyooCFW, SD card                                                                RetroArch files
-   muOS, SD card                                                                    RetroArch files
-   Onion, SD card                                                                   RetroArch files
-   plumOS, SD card                                                                  RetroArch files
-   RetroOZ, SD card                                                                 RetroArch files
-   spruceOS, SD card                                                                RetroArch files
-   UnofficialOS, SD card                                                            RetroArch files
+   KNULLI, SD card   Anbernic RG-Arc-S, RG28XX, RG34XX, RG35XX Original, RG35XX Plus, RG35XX H, +16
+   KOLOS, SD card       RG353P, RG353M, RG353V, RG353VS, RG503, Powkiddy RK2023, RGB30, RGB10 Max 3
+   Koriki, SD card                                                                       Miyoo Mini
+   MinUI, SD card                                                           Anbernic, Miyoo, TrimUI
+   MiyooCFW, SD card  BittBoy, Pocket Go, PowKiddy Q90, PowKiddy V90, PowKiddy Q20 Mini, Sup M3, +1
+   muOS, SD card    RG35XX H, RG35XX Plus, RG35XX SP, RG35XX 2024, RG34XX H, RG40XX H, RG40XX V, +4
+   MyMinUI, SD card                                                                 Anbernic, Miyoo
+   NextUI, SD card                                                   TrimUI Brick, TrimUI Smart Pro
+   Onion, SD card                                                       Miyoo Mini, Miyoo Mini Plus
+   plumOS, SD card                                                                  MagicX XU20 V32
+   RetroOZ, SD card                                                   OGS, OGA, RGB10Max, RGB10Max2
+   ROCKNIX, SD card          Anbernic RG351, RG353, RG503, RG552, RG 55G1, RG ARC, RG35XX 2024, +38
+   spruceOS, SD card        Miyoo A30, Miyoo Flip, Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip, +5
+   UnofficialOS, SD card      R35S, R36S, RG351M, RG351P, RG351V, RG353M, RG353P, RG353V, RG503, +5
  A/Enter Choose  B/Esc Back  / Filter  ? Help

@@ -1,6 +1,6 @@
  RetroBIOS: Which setup?
 
-   Filter (/ to type)
+   Filter: setup or device (/)
  > RetroArch
    Batocera
    Recalbox
@@ -8,8 +8,8 @@
    EmuDeck
    Lakka
    RetroDECK
-   ROCKNIX, SD card
    RomM
    BizHawk
+   MiSTer FPGA
  1-10 of 34
  A Choose  B Back  / Filter  ? Help

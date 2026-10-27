@@ -3,7 +3,7 @@
  4 files to download, 1.0 MB
  BIOS folder: ~/.co.../retroarch/system
  1 in place, 3 missing, 1 wrong copy
- Free space: 50.0 GB
+ 1 wrong copy: backed up, replaced.
  > Install
    Choose systems
    Copy from your old card or a folder
