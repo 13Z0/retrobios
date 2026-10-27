@@ -467,6 +467,13 @@ def release_profile(
         "source_commit": source_commit,
         "upstream_commit": upstream_commit,
         "core_version": version,
+        # Where profile_sync reads it again: the makefile of the libretro/mame
+        # tree the platform builds, at source_commit.
+        "version_basis": {
+            "kind": "file",
+            "path": "makefile",
+            "pattern": '#define BARE_BUILD_VERSION "([^"]+)"',
+        },
         "display_name": f"Arcade (MAME {version})",
         "cores": cores,
         "built_by": built_by,

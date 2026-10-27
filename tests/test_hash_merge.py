@@ -592,7 +592,10 @@ class TestFbneoMerge(unittest.TestCase):
             self.assertEqual(len(archive_files), 1)
             self.assertNotIn("_upstream_removed", archive_files[0])
 
-    def test_merge_updates_core_version(self) -> None:
+    def test_merge_leaves_core_version_to_the_pin(self) -> None:
+        # The hashes are read at finalburnneo/FBNeo's tip, which the
+        # profile's libretro/FBNeo pin does not name: the version stays the
+        # one version_basis reads at that pin.
         with tempfile.TemporaryDirectory() as td:
             p = Path(td)
             profile_path = _write_yaml(p / "fbneo.yml", _make_fbneo_profile())
@@ -600,7 +603,7 @@ class TestFbneoMerge(unittest.TestCase):
 
             result = merge_fbneo_profile(profile_path, hashes_path)
 
-            self.assertEqual(result["core_version"], "v1.0.0.03")
+            self.assertEqual(result["core_version"], "v1.0.0.02")
 
 
 class TestDiff(unittest.TestCase):
@@ -849,7 +852,7 @@ class WritersPutTheValuesOnDisk(unittest.TestCase):
         merge_fbneo_profile(str(profile), hashes, write=True, add_new=False)
         written = yaml.safe_load(profile.read_text(encoding="utf-8"))
         entry = written["files"][0]
-        self.assertEqual(written["core_version"], "v1.0.0.03")
+        self.assertEqual(written["core_version"], "v1.0.0.02")
         self.assertEqual(entry["crc32"], "9036d879")
         self.assertEqual(entry["note"], "MVS Asia/Europe ver. 5")
         self.assertEqual(entry["source_ref"], "src/burn/drv/neogeo/d_neogeo.cpp:1625")
