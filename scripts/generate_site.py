@@ -83,6 +83,7 @@ from generate_readme import (
 )
 from provenance_report import build_report, distinct_missing
 import sitemarkup as markup
+import siteentries
 import sitestarlight
 from siteexports import generate_exports_page, load_export_reports
 from siteguides import (
@@ -5101,12 +5102,14 @@ def generate_provenance_page(
     # the public for 79 of them.
     derivable = derivable or {}
     derived_entries: dict[str, dict] = {}
-    for data in report.values():
+    derived_by_source: dict[str, int] = {}
+    for source, data in report.items():
         kept = []
         for entry in data["missing"]:
             sha1 = (entry.get("sha1") or "").lower()
             if sha1 in derivable:
                 derived_entries.setdefault(sha1, entry)
+                derived_by_source[source] = derived_by_source.get(source, 0) + 1
             else:
                 kept.append(entry)
         data["missing"] = kept
@@ -5134,7 +5137,19 @@ def generate_provenance_page(
             for dat in entry.get("dats") or [entry.get("dat", "")]:
                 by_dat.setdefault(dat, []).append(entry)
         lines.extend([f"### {label}", ""])
-        blocks: list[list[str]] = []
+        if moved is not None:
+            where = _list_pages(
+                f"provenance-{_slugify_anchor(source)}", f"Wanted from {label}",
+                f"Dumps {label} catalogues and the collection lacks. Part of "
+                f"[Dump provenance](provenance.md#{_slugify_anchor(label)}).",
+                [], [_wanted_list(source, label, data, by_dat, derived_by_source.get(source, 0))],
+                moved, parent=("Dump provenance", "/provenance/"),
+            )
+            lines.extend([
+                f"{_count(len(data['missing']), 'dump')} in {_count(len(by_dat), 'DAT')}: "
+                f"listed on {where}.", "",
+            ])
+            continue
         for dat in sorted(by_dat):
             entries = by_dat[dat]
             table = ["| Name | Description | SHA1 |", "|------|-------------|------|"]
@@ -5150,20 +5165,7 @@ def generate_provenance_page(
                         f"`{hit['archive']}` as `{hit['member']}`."
                     )
                 table.append(f"| `{name}` | {desc} | `{sha1}` |")
-            blocks.append(markup.details("note", f"{dat} ({len(entries)})", table))
-        if moved is None:
-            lines.extend(line for block in blocks for line in block)
-            continue
-        where = _list_pages(
-            f"provenance-{_slugify_anchor(source)}", f"Wanted from {label}",
-            f"Dumps {label} catalogues and the collection lacks, by DAT. Part of "
-            f"[Dump provenance](provenance.md#{_slugify_anchor(label)}).",
-            [], blocks, moved, parent=("Dump provenance", "/provenance/"),
-        )
-        lines.extend([
-            f"{_count(len(data['missing']), 'dump')} in {_count(len(by_dat), 'DAT')}: "
-            f"listed on {where}.", "",
-        ])
+            lines.extend(markup.details("note", f"{dat} ({len(entries)})", table))
 
     if derived_entries:
         lines.extend(
@@ -5187,6 +5189,69 @@ def generate_provenance_page(
 
     lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
+
+
+def _wanted_list(source: str, label: str, data: dict, by_dat: dict[str, list],
+                 derived: int) -> list[str]:
+    """A catalog's wanted page: the counts, then every missing dump in one
+    table folded under a filter box.
+
+    The page was one closed block per DAT, 46 for TOSEC: a name was found
+    by opening each in turn. The box filters the whole list by name, DAT,
+    description or SHA1, and says how many rows it keeps.
+    """
+    missing = data["missing"]
+    held = data["matched"]
+    reached = held + len(missing) + derived
+    dats = _count(len(data["covered_dats"]), "DAT")
+    lines = [
+        f"Held: **{held:,}** of {reached:,}, in the {dats} the collection reaches. "
+        f"Wanted: **{len(missing):,}**, from {_count(len(by_dat), 'DAT')}.",
+        "",
+    ]
+    if derived:
+        verb = "is" if derived == 1 else "are"
+        lines.extend([
+            f"{derived:,} more {verb} [derivable]"
+            "(provenance.md#derivable-dumps-the-collection-already-produces).", ""])
+    if data.get("out_of_scope"):
+        lines.extend([f"{data['out_of_scope']:,} more sit in DATs the collection does not reach.", ""])
+    counts = ["| DAT | Wanted |", "|-----|--------|",
+              *(f"| {dat.replace('|', '-')} | {len(entries):,} |"
+                for dat, entries in sorted(by_dat.items()))]
+    lines.extend(markup.details("note", f"Wanted by DAT ({len(by_dat):,})", counts))
+    rows = []
+    for entry in sorted(missing, key=lambda e: (e["name"], e.get("sha1") or "")):
+        desc = markup.inline_html(entry.get("description") or "")
+        for hit in entry.get("romsets", []):
+            desc += markup.inline_html(
+                f" Ships in {_ROMSET_SOURCES.get(hit['source'], hit['source'])} "
+                f"`{hit['archive']}` as `{hit['member']}`.")
+        in_dats = ", ".join(html.escape(d) for d in (entry.get("dats") or [entry.get("dat", "")]))
+        sha1 = html.escape(entry.get("sha1") or "-")
+        # The search reads the name alone. The DAT names are searched once, in
+        # the count table above, and the site search holds no hashes. With the
+        # descriptions indexed too, the TOSEC list matched "2" 556 times
+        # (years, versions) and put the PlayStation page ahead of the
+        # PlayStation 2 one for "playstation 2 bios". The name and the hash
+        # sit in their cells as text: a catalog name is words, and in code
+        # each word wore its own box on a narrow column.
+        skip = markup.search_exclude()
+        rows.append("<tr>"
+                    f"<td>{html.escape(entry['name'], quote=False)}</td>"
+                    f"<td {skip}>{in_dats}</td><td {skip}>{desc or '-'}</td>"
+                    f'<td class="rb-hash" {skip}>{sha1}</td></tr>')
+    heads = ["Name", "DAT", "Description", "SHA1"]
+    lines.extend([
+        siteentries.filter_box(f"rb-wanted-filter-{_slugify_anchor(source)}",
+                               "dumps", heads, len(rows)),
+        '<details class="rb-details rb-details-note">',
+        f"<summary>All {_count(len(rows), 'wanted dump')}</summary>",
+        '<table class="rb-wanted" data-rb-stack="true">',
+        "<thead><tr>" + "".join(f'<th scope="col">{h}</th>' for h in heads) + "</tr></thead>",
+        "<tbody>", *rows, "</tbody>", "</table>", "</details>", "",
+    ])
+    return lines
 
 
 _RELEASE_ASSET_NAMES: dict[str, str] | None = None
@@ -7462,12 +7527,15 @@ def _render_emulator_file(
     owner: str = "",
     alias: str = "",
     data_href: str = "#data-folder",
+    badges_apart: bool = False,
 ) -> list[str]:
     """Render one row of an emulator profile's file table.
 
     `anchor` is the card's id on the page, so one file can be cited by URL,
     and `alias` a second id it answers to. `data_href` links the data
     folder an app reads the entry under, from the page the card lands on.
+    `badges_apart`: the title holds the name alone, for a table whose
+    Status column shows the badges (siteentries.py).
 
     Split out of generate_emulator_page, where it was a 228-line loop body
     carrying most of that function's branching: thirty-odd optional fields,
@@ -7516,7 +7584,8 @@ def _render_emulator_file(
         system = system_name((profile.get("systems") or [""])[0])
         label = (f"a {system} BIOS (example: {_code(fname)})" if _named_example(str(fname))
                  else f"a {system} BIOS, any file name")
-    lines.append(_card_title(f"{marker}{label} {badge_str}", anchor, weight=5))
+    title = f"{marker}{label}" if badges_apart else f"{marker}{label} {badge_str}"
+    lines.append(_card_title(title, anchor, weight=5))
     lines.append("")
     if desc:
         lines.extend([data_root_words(_escape_tags(str(desc)), data_href), ""])
@@ -8522,6 +8591,10 @@ def _data_tree_page(ref: str, entry: dict, pages: list[tuple[str, list[str]]],
 # anchor. A count, not a size: system cards link to these cards and are
 # written before them. At 400 a part of MAME's cards was 805 KB of HTML.
 EMULATOR_CARDS_PER_PAGE = 220
+# The most cards a part of a split page holds. Each card is a table row
+# since siteentries.py, about five elements and 60 bytes more: at 220 a
+# part, MAME's first was 612 KB and 9,777 elements.
+EMULATOR_CARDS_PER_PART = 180
 
 
 # The headings an emulator's cards go under, in page order: what it needs
@@ -8556,10 +8629,57 @@ def emulator_parts(name: str, files: list) -> list[tuple[str, list[int]]]:
     if len(files) <= EMULATOR_CARDS_PER_PAGE:
         return []
     order = _display_order(files)
-    count = -(-len(files) // EMULATOR_CARDS_PER_PAGE)
+    count = -(-len(files) // EMULATOR_CARDS_PER_PART)
     size = -(-len(files) // count)
     return [(f"{name}-files-{index + 1}", order[start:start + size])
             for index, start in enumerate(range(0, len(files), size))]
+
+
+# From this many entries an unsplit emulator page lists them as one table,
+# each row opening to its card (siteentries.py), in place of a summary
+# table above the cards: GroovyMAME's 171 cards read 14,400 words open.
+# A split emulator's card pages always do.
+EMULATOR_TABLE_MIN = 150
+ENTRY_HEADS = ["File", "Contents", "Status", "Hash"]
+# The end of the badge _file_badges writes for an entry of each section.
+_SECTION_BADGE = {"required": ">required</span>", "optional": ">optional</span>",
+                  "with_app": ">comes with the app</span>"}
+
+
+def _entry_rows(files: list[dict], cards: list[list[str]], profile: dict,
+                available: Callable[[dict], bool]) -> list[siteentries.Row]:
+    """Each entry as a table row: its card's title and body, the number of
+    members an archive holds, its badges and its hash."""
+    many = len(profile.get("systems") or []) > 1
+    rows = []
+    for f, card in zip(files, cards):
+        title, body = siteentries.card_title_and_body(card)
+        for_system = system_name(str(f["system"])) if f.get("system") and many else ""
+        contents = f.get("contents") or []
+        badges = _file_badges(f, available(f), for_system)
+        # The first badge says whether the entry is needed: under Required,
+        # Optional or Comes with the app it repeats the section heading.
+        # One element and two words fewer on each of MAME's 1,563 rows.
+        if badges and badges[0].endswith(_SECTION_BADGE.get(_card_section(f), "\0")):
+            badges = badges[1:]
+        rows.append(siteentries.Row(title, body, [
+            f"{len(contents):,}" if contents else "",
+            " ".join(badges),
+            _hash_short(f),
+        ]))
+    return rows
+
+
+def _entries_table(files: list[dict], group: list[int], rows: list[siteentries.Row]) -> list[str]:
+    """The rows of ``group``, one section's entries, as one table."""
+    key = _card_section(files[group[0]])
+    heading = dict(CARD_SECTIONS)[key]
+    return siteentries.entry_table([rows[i] for i in group], ENTRY_HEADS,
+                                   f"rb-entry-filter-{key.replace('_', '-')}", heading,
+                                   # The badges hide themselves from the search
+                                   # but for the archive's name ("in pgm.zip"),
+                                   # how a ZIP name finds the cores reading it.
+                                   searched=frozenset({"Status"}))
 
 
 def _sectioned(files: list, indexes: list[int], render: Callable[[list[int]], list[str]],
@@ -8999,12 +9119,18 @@ def emulator_pages(
         aliases = emulator_file_aliases(files, anchors)
         parts = emulator_parts(name, files)
         data_href = f"{name}.md#data-folder" if parts else "#data-folder"
+        table_form = markup.starlight() and (bool(parts) or len(files) >= EMULATOR_TABLE_MIN)
         cards = [
             _render_emulator_file(f, profile, consumers, files, _file_available, anchor, name,
-                                  alias, data_href)
+                                  alias, data_href, badges_apart=table_form)
             for f, anchor, alias in zip(files, anchors, aliases)
         ]
-        if not parts:
+        rows = (_entry_rows(files, cards, profile, _file_available) if table_form else [])
+        if not parts and table_form:
+            lines.extend(held)
+            lines.extend(_sectioned(files, _display_order(files),
+                                    lambda group: _entries_table(files, group, rows)))
+        elif not parts:
             order = _display_order(files)
             indexed = len(files) >= EMULATOR_SUMMARY_MIN
             if indexed:
@@ -9026,7 +9152,8 @@ def emulator_pages(
             for number, (stem, entries) in enumerate(parts, 1):
                 part_pages[stem] = _emulator_part_page(
                     name, emu_name, number, parts, [cards[i] for i in entries],
-                    [files[i] for i in entries])
+                    [files[i] for i in entries],
+                    [rows[i] for i in entries] if table_form else None)
 
     lines.extend(sitemeasurements.tested_section(name, _MEASUREMENT_ITEMS.get(name, [])))
 
@@ -9156,9 +9283,16 @@ def _part_front_matter(parent: tuple[str, str], siblings: list[tuple[str, str]],
 
 def _emulator_part_page(
     name: str, emu_name: str, number: int, parts: list[tuple[str, range]],
-    cards: list[list[str]], files: list[dict],
+    cards: list[list[str]], files: list[dict], rows: list[siteentries.Row] | None = None,
 ) -> str:
-    """One page of a split emulator's cards."""
+    """One page of a split emulator's cards: with ``rows``, one table row
+    each, the card under its name."""
+    if rows is not None:
+        def render(group: list[int]) -> list[str]:
+            return _entries_table(files, group, rows)
+    else:
+        def render(group: list[int]) -> list[str]:
+            return [line for i in group for line in cards[i]]
     first = str(files[0].get("path") or files[0].get("name", ""))
     last = str(files[-1].get("path") or files[-1].get("name", ""))
     others = ", ".join(
@@ -9173,8 +9307,7 @@ def _emulator_part_page(
         f"This part holds {_count(len(files), 'entry', 'entries')}, "
         f"{_code(first)} to {_code(last)}. The other parts: {others}.",
         "",
-        *_sectioned(files, list(range(len(files))),
-                    lambda group: [line for i in group for line in cards[i]]),
+        *_sectioned(files, list(range(len(files))), render),
     ]
     lines.extend(_next_block([f"[{emu_name}]({name}.md), the profile and every entry"]))
     lines.extend(["", _date_line()])

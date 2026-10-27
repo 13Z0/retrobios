@@ -530,6 +530,44 @@ body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: var(--rb-grid-width
 }
 :is(.rb-sys-file, .rb-file-entry):has(> .rb-file-title:target) { background: var(--rb-surface); }
 
+/* Entries as table rows (scripts/siteentries.py): the name takes the room
+   and its card opens under it. On a phone the row stacks like any table
+   with a hash column, the name on the full width. */
+body:has(table.rb-entries) { --sl-content-width: var(--rb-grid-width); }
+/* A row the filter leaves out stays out on a phone, where a stacked row is
+   a block: `display: block` outweighed the hidden attribute, and every
+   stacked table showed all its rows under "11 of 1,037 rows". */
+.sl-markdown-content table[data-rb-stack] tr[hidden] { display: none; }
+@media (min-width: 50rem) {
+	.sl-markdown-content table.rb-wanted td.rb-hash { min-width: 10rem; }
+}
+.sl-markdown-content .rb-entries-wrap { container-type: inline-size; }
+.sl-markdown-content table.rb-entries { width: 100%; }
+@media (min-width: 50rem) {
+	.sl-markdown-content table.rb-entries { display: table; }
+	.sl-markdown-content table.rb-entries td:first-child { width: 100%; }
+	/* An open card takes the table's width, not its column's: the other
+	   cells of its row keep to one line, so the room under them is free. */
+	.sl-markdown-content table.rb-entries tr:has(> td > details[open]) > td:not(:first-child) { white-space: nowrap; }
+	.sl-markdown-content details.rb-entry[open] { contain: inline-size; }
+	.sl-markdown-content details.rb-entry[open] > :not(summary) { width: 100cqi; }
+}
+.sl-markdown-content details.rb-entry { border: 0; padding: 0; }
+.sl-markdown-content details.rb-entry > summary { min-height: 24px; font-weight: 400; }
+.sl-markdown-content details.rb-entry > summary > .rb-file-title { display: inline; margin: 0; }
+.sl-markdown-content details.rb-entry[open] > summary { margin-bottom: 0.4rem; }
+.sl-markdown-content details.rb-entry ul { margin: 0.3rem 0 0; padding-left: 1.2rem; font-size: 0.85rem; }
+.sl-markdown-content details.rb-entry li { margin: 0.1rem 0; }
+.sl-markdown-content details.rb-entry:has(.rb-file-title:target) { background: var(--rb-surface); }
+@media (max-width: 50rem) {
+	.sl-markdown-content table.rb-entries td:first-child { padding-left: 0.6rem; font-size: 1rem; }
+	.sl-markdown-content table.rb-entries td:first-child::before { content: none; }
+	/* "required for Data East DECO Cassette System" ran 12 px past a phone
+	   beside its label: a long badge wraps in its cell. */
+	.sl-markdown-content table.rb-entries .rb-badge { white-space: normal; }
+	.sl-markdown-content details.rb-entry ul { font-size: 0.75rem; }
+}
+
 /* Collapsible blocks are quiet: a closed block must not outweigh the
    command it explains. Colour is kept for caution and danger. */
 .sl-markdown-content details.rb-details {
