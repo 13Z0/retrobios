@@ -72,7 +72,7 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     "3ds bios": (("systems/nintendo-3ds/",), 1),
     # A console another one's name begins with, both ways: the longer name's
     # page holds every word of the shorter query. GBA, GBC and the
-    # PlayStation 3 are sections of their maker's page; Saturn.emu is an
+    # PlayStation 3 are sections of their maker's page. Saturn.emu is an
     # emulator named after its console.
     "playstation 2 bios": (("systems/sony-playstation-2/",), 1),
     "playstation 3 bios": (("systems/sony/",), 1),
