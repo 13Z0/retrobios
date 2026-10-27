@@ -33,18 +33,24 @@ cores:
       OpenBIOS, a wrong one logs "Firmware found but has invalid SHA1" and is
       loaded anyway (libretro.c:849, 856, 3504-3511 at 7fea57a5).
     error_patterns: []
-    error_screens: []
+    error_screens:
+      - sha1: dfbfc299250c0983f86bbf951efd187441306d92
+        shows: the Japanese BIOS main menu, the disc refused (a US disc under a Japanese BIOS)
   "Beetle PSX HW":
     note: The same code as Beetle PSX, built with the hardware renderers.
     error_patterns: []
-    error_screens: []
+    error_screens:
+      - sha1: dfbfc299250c0983f86bbf951efd187441306d92
+        shows: the Japanese BIOS main menu, the disc refused (a US disc under a Japanese BIOS)
   "SwanStation":
     note: >-
       "No BIOS image found for <region> region" is followed by the built-in
       OpenBIOS (src/core/host_interface.cpp:182, src/core/system.cpp:678-682
       at 631f0fb3).
     error_patterns: []
-    error_screens: []
+    error_screens:
+      - sha1: 167fb7b6527e295b12dca5806a29856f5f31d401
+        shows: the Japanese BIOS main menu, the disc refused (a US disc under a Japanese BIOS)
   "PCSX-ReARMed":
     note: >-
       Without a BIOS, or with one of the wrong size, it logs "Using HLE BIOS"
