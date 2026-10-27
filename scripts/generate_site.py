@@ -2834,6 +2834,36 @@ def emulator_file_aliases(files: list[dict], anchors: list[str]) -> list[str]:
     return aliases
 
 
+# A commit id: hexadecimal with a letter and a digit, 7 to 40 long. A version
+# that holds one (0.8.139-2-g25e1ee2fd5) names no release.
+_COMMIT_ID = re.compile(
+    r"(?<![0-9a-f])(?=[0-9a-f]*[a-f])(?=[0-9a-f]*[0-9])[0-9a-f]{7,40}(?![0-9a-f])", re.I)
+
+
+def release_versions(profile: dict) -> dict[str, str]:
+    """The `core_version` of a profile by build mode ("" when one covers
+    every build), kept only where it names a release: a number and no
+    commit id. A commit id of digits only reads as a number, so a run that
+    starts one of the profile's own pins is one too (supermodel3's
+    "0.3a-1481545-mm")."""
+    pins = [str(value).casefold()
+            for field in ("source_commit", "upstream_commit")
+            for value in (profile[field].values() if isinstance(profile.get(field), dict)
+                          else [profile.get(field)])
+            if value]
+
+    def names_a_commit(value: str) -> bool:
+        return bool(_COMMIT_ID.search(value)) or any(
+            pin.startswith(run) for run in re.findall(r"[0-9a-f]{7,40}", value.casefold())
+            for pin in pins)
+
+    stated = profile.get("core_version")
+    pairs = stated.items() if isinstance(stated, dict) else [("", stated)]
+    versions = {str(mode): str(value or "").strip() for mode, value in pairs}
+    return {mode: value for mode, value in versions.items()
+            if re.search(r"[0-9]", value) and not names_a_commit(value)}
+
+
 def emulator_structured_data(profile: dict) -> dict:
     """What an emulator page states, for a reader of its JSON-LD.
 
@@ -2841,27 +2871,26 @@ def emulator_structured_data(profile: dict) -> dict:
     the core loads, their hashes, the source read or when.
     """
     data: dict = {}
-    # Every repository the profile reads, each with its own pin: xemu's
-    # libretro build lives in another repository at another commit, and a
-    # port's upstream_commit was never published.
+    # Every repository the profile reads. The source repository carries the
+    # release the profile describes, never a commit id: a pin is no version.
+    # The upstream of a port is another code base and states none.
+    versions = release_versions(profile)
     about = []
     seen: set[str] = set()
     for field in ("source", "upstream"):
         urls = profile.get(field)
-        pins = profile.get(f"{field}_commit")
         for mode, url in (urls.items() if isinstance(urls, dict) else [("", urls)]):
             if not url or not str(url).startswith("http") or str(url) in seen:
                 continue
             seen.add(str(url))
-            pin = pins.get(mode) if isinstance(pins, dict) else pins
             entry = {
                 "@type": "SoftwareSourceCode",
                 "name": str(profile.get("emulator", "")),
                 "codeRepository": str(url),
-                "description": " ".join(filter(None, [mode, field])),
             }
-            if pin:
-                entry["version"] = str(pin)
+            version = (versions.get(mode) or versions.get("")) if field == "source" else None
+            if version:
+                entry["version"] = version
             about.append(entry)
     if about:
         data["about"] = about[0] if len(about) == 1 else about
@@ -3036,6 +3065,14 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
     """
     lastmod: dict[str, str] = {}
     terms = sitestarlight.glossary_terms(_REPO_ROOT / WIKI_SRC_DIR / "glossary.md")
+    # The console words of every system page, decorated or not: a console
+    # another page's words cover gets a search field of its own.
+    console_words: dict[str, set[str]] = {}
+    for path in sorted((docs / "systems").glob("*.md*")):
+        text = path.read_text(encoding="utf-8")
+        words = sitestarlight.page_console_words(_front_matter(text), text)
+        if words:
+            console_words[path.relative_to(docs).with_suffix("").as_posix()] = words
     for path in sorted(docs.rglob("*.md")):
         relative = path.relative_to(docs)
         if any(part in LOCAL_NOTE_DIRS for part in relative.parts[:-1]):
@@ -3083,6 +3120,10 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
             },
             **PAGE_DATA.get(relative.as_posix(), {}),
         }
+        if schema_type == "WebSite":
+            # The home page is the site: named as the site, part of nothing.
+            structured["name"] = SITE_NAME
+            del structured["isPartOf"]
         target, text = sitestarlight.finalize_page(
             relative.as_posix(), markdown, level=level,
             weight=search_weight(relative, level),
@@ -3092,6 +3133,7 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
             logo=str(authored.get("logo") or ""),
             parent=authored.get("parent"),
             authored=authored,
+            words_by_page=console_words,
         )
         write_decorated(docs / target, text)
         # One file per page: a page that gained or lost its components

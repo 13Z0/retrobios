@@ -291,8 +291,8 @@ class SearchFoldsPagesUnderAHash(unittest.TestCase):
 
     def test_search_fields_are_weighted_and_never_shown(self):
         config = _read(CONFIG)
-        self.assertIn("metaWeights: { title: 10, files: 0.5, aliases: 5, devices: 5, consoles: 10, terms: 30 },", config)
-        self.assertIn("const UNSHOWN_FIELDS = new Set(['files', 'aliases', 'devices', 'consoles', 'terms']);", _read(SITE_TS))
+        self.assertIn("metaWeights: { title: 10, files: 0.5, aliases: 10, devices: 5, consoles: 100, exact: 20, terms: 30 },", config)
+        self.assertIn("const UNSHOWN_FIELDS = new Set(['files', 'aliases', 'devices', 'consoles', 'exact', 'terms']);", _read(SITE_TS))
 
 
 class OsTabsNeverScrollThePage(unittest.TestCase):

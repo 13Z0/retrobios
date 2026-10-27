@@ -63,6 +63,26 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     "psx bios": (("systems/sony",), 3),
     "dc bios missing": (("systems/sega", "emulators/flycast/"), 3),
     "gba bios": (("systems/nintendo",), 3),
+    # A console whose page answers "No file needed" says BIOS only where the
+    # search does not read: its `terms` field carries "<name> BIOS".
+    "snes bios": (("systems/nintendo-snes/",), 1),
+    "nes bios": (("systems/nintendo-nes/",), 1),
+    "gamecube bios": (("systems/nintendo-gamecube/",), 1),
+    "game boy bios": (("systems/nintendo-game-boy/",), 1),
+    "3ds bios": (("systems/nintendo-3ds/",), 1),
+    # A console another one's name begins with, both ways: the longer name's
+    # page holds every word of the shorter query. GBA, GBC and the
+    # PlayStation 3 are sections of their maker's page; Saturn.emu is an
+    # emulator named after its console.
+    "playstation 2 bios": (("systems/sony-playstation-2/",), 1),
+    "playstation 3 bios": (("systems/sony/",), 1),
+    "game boy advance bios": (("systems/nintendo/",), 1),
+    "game boy color bios": (("systems/nintendo/",), 1),
+    "nintendo ds bios": (("systems/nintendo-nintendo-ds/",), 1),
+    "nintendo dsi bios": (("systems/nintendo-nintendo-dsi/",), 1),
+    "wii bios": (("systems/nintendo/",), 1),
+    "wii u bios": (("systems/nintendo-wii-u/",), 1),
+    "saturn bios": (("systems/sega-saturn/",), 1),
     # The words an emulator prints, and the page that answers them.
     "bios not found": (("wiki/troubleshooting/",), 3),
     "please insert playstation cd-rom": (("wiki/troubleshooting/",), 3),
@@ -74,12 +94,20 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     # Checking a dump is what the Find a file page does.
     "check my dump": (("files/",), 1),
     "md5 check": (("files/",), 1),
+    "is my bios correct": (("files/",), 3),
+    # A folder is checked by the setup's command, which troubleshooting runs.
+    "check my bios folder": (("wiki/troubleshooting/",), 3),
     # A tool author's words: the data reference or the installer's.
     "manifest": (("data/", "wiki/installer/"), 3),
     "events": (("data/", "wiki/installer/"), 3),
     "exit code": (("data/", "wiki/installer/"), 3),
     "rate limit": (("data/", "wiki/installer/"), 3),
-    "ios": (("wiki/faq/",), 3),
+    "schema": (("data/",), 3),
+    "json schema": (("data/",), 3),
+    "license": (("data/", "wiki/legal/"), 3),
+    "check bios folder script": (("data/",), 3),
+    # The iPhone and iPad answer: copy the files to the app, no terminal.
+    "ios": (("which-pack/", "wiki/faq/"), 3),
     # A device name: the guide of the handhelds that run it.
     "r36s": (("platforms/", "which-pack/"), 3),
     "steam deck": (("platforms/emudeck/", "platforms/retrodeck/", "which-pack/"), 1),

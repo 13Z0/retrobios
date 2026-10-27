@@ -784,11 +784,11 @@ const hashLookupRow = (drawer: HTMLElement, value: string) => {
 
 // Pagefind lists a page's title twice: once for the page and once for the
 // anchor of its h1 (#_top). The second title is hidden, its excerpt kept.
-// The `files`, `aliases`, `devices`, `consoles` and `terms` fields weigh in
+// The `files`, `aliases`, `devices`, `consoles`, `exact` and `terms` fields weigh in
 // the ranking and are never shown: a result is not a list of 120 names. Pagefind reuses
 // its nodes from one query to the next, so both are worked out again on
 // every change.
-const UNSHOWN_FIELDS = new Set(['files', 'aliases', 'devices', 'consoles', 'terms']);
+const UNSHOWN_FIELDS = new Set(['files', 'aliases', 'devices', 'consoles', 'exact', 'terms']);
 
 const tidyResults = (root: Element) => {
 	for (const title of root.querySelectorAll<HTMLElement>('.pagefind-ui__result-nested > .pagefind-ui__result-title')) {
