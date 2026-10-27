@@ -594,27 +594,23 @@ def _format_errors() -> list[str]:
 
 
 def _measurement_errors(root: Path | None = None) -> list[str]:
-    """Every record line and data file under measurements/, against their
-    schemas and the rules measurement_records.read_records applies."""
+    """Every record line under measurements/, against its schema and the
+    rules measurement_records.read_records applies."""
     import measurement_records as mr  # noqa: PLC0415
 
     root = root or ROOT
-    record_validator = _validator("core-probe-record.schema.json")
-    data_validator = _validator("core-probe-data.schema.json")
+    validator = _validator("core-probe-record.schema.json")
     out: list[str] = []
-    files = mr.tree_files(root)
-    for path in sorted(p for p in files if p.endswith(".jsonl")):
-        emulator = path[len(mr.RECORDS_DIR) + 1:].removesuffix(".jsonl")
-        for number, line in enumerate(files[path].read_text(encoding="utf-8").splitlines(), 1):
+    for path, file in sorted(mr.tree_files(root).items()):
+        if not path.endswith(".jsonl"):
+            continue
+        for number, line in enumerate(file.read_text(encoding="utf-8").splitlines(), 1):
             try:
                 record = json.loads(line)
             except json.JSONDecodeError as exc:
                 out.append(f"{path}:{number}: {exc}")
                 continue
-            out.extend(_errors(record_validator, record, f"{path}:{number}"))
-            data = mr.sidecar_path(emulator, str(record.get("id")))
-            if data in files:
-                out.extend(_errors(data_validator, mr.read_sidecar(files[data].read_bytes()), data))
+            out.extend(_errors(validator, record, f"{path}:{number}"))
     if not out:
         try:
             mr.read_records(root)

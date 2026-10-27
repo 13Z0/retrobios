@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://abdess.github.io/retrobios/api/v1/schemas/core-probe-record.schema.json",
   "title": "RetroBIOS core probe record",
-  "description": "One line of measurements/<emulator>.jsonl: one run of scripts/core_probe.py, a libretro core executed headless, with what is needed to judge and reproduce it. The bulky rest (every repetition, core logs, raw timings) is the gzip sidecar measurements/data/<emulator>/<id>.json.gz, valid against core-probe-data.schema.json, whose sha256 is in `data`.",
+  "description": "One line of measurements/<emulator>.jsonl: one run of scripts/core_probe.py, a libretro core executed headless, in full, with what is needed to judge and reproduce it. Every repetition, its core logs and per-frame hashes, and the raw timing values are in the line.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -18,12 +18,11 @@
     "host",
     "inputs",
     "variants",
-    "flags",
-    "data"
+    "flags"
   ],
   "properties": {
     "record_version": {
-      "const": 2
+      "const": 3
     },
     "id": {
       "type": "string",
@@ -361,13 +360,8 @@
         "required": [
           "label",
           "system_files",
-          "flags",
           "repetitions",
-          "loaded",
-          "observables",
-          "files_opened",
-          "files_probed_absent",
-          "tracing"
+          "flags"
         ],
         "properties": {
           "label": {
@@ -387,80 +381,18 @@
               ]
             }
           },
+          "repetitions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/$defs/repetition"
+            }
+          },
           "flags": {
             "type": "array",
             "items": {
               "type": "string"
             }
-          },
-          "repetitions": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Repetitions run. Each is in the sidecar."
-          },
-          "loaded": {
-            "type": "boolean",
-            "description": "Every repetition loaded the content."
-          },
-          "observables": {
-            "type": "object",
-            "description": "The first repetition's observables, frame_hashes left to the sidecar."
-          },
-          "files_opened": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "path",
-                    "sha1_after",
-                    "sha1_staged"
-                  ],
-                  "properties": {
-                    "path": {
-                      "type": "string"
-                    },
-                    "sha1_after": {
-                      "$ref": "#/$defs/sha1"
-                    },
-                    "sha1_staged": {
-                      "oneOf": [
-                        {
-                          "type": "null"
-                        },
-                        {
-                          "$ref": "#/$defs/sha1"
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          "files_probed_absent": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            ]
-          },
-          "tracing": {
-            "type": [
-              "string",
-              "null"
-            ]
           }
         }
       }
@@ -541,6 +473,7 @@
                 "type": "object",
                 "additionalProperties": false,
                 "required": [
+                  "value",
                   "variants"
                 ],
                 "properties": {
@@ -551,45 +484,11 @@
                     "items": {
                       "type": "string"
                     }
-                  },
-                  "value_sha1": {
-                    "$ref": "#/$defs/sha1",
-                    "description": "Stands for a list or object value kept in the sidecar's group_values."
                   }
-                },
-                "oneOf": [
-                  {
-                    "required": [
-                      "value"
-                    ]
-                  },
-                  {
-                    "required": [
-                      "value_sha1"
-                    ]
-                  }
-                ]
+                }
               }
             }
           }
-        }
-      }
-    },
-    "data": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "sha256",
-        "bytes"
-      ],
-      "description": "The sidecar data/<emulator>/<id>.json.gz: gzip (no name, mtime 0) of canonical JSON.",
-      "properties": {
-        "sha256": {
-          "$ref": "#/$defs/sha256"
-        },
-        "bytes": {
-          "type": "integer",
-          "minimum": 1
         }
       }
     }
@@ -666,7 +565,8 @@
         "mean",
         "stdev",
         "min",
-        "max"
+        "max",
+        "raw"
       ],
       "properties": {
         "median": {
@@ -684,13 +584,162 @@
         },
         "max": {
           "type": "number"
+        },
+        "raw": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "number"
+          }
         }
       },
-      "description": "Statistics over the repetitions. The raw values are in the sidecar."
+      "description": "Statistics over the repetitions, with the values they were computed from."
     },
     "slug": {
       "type": "string",
       "pattern": "^[a-z0-9]+(?:[-_][a-z0-9]+)*$"
+    },
+    "repetition": {
+      "type": "object",
+      "required": [
+        "loaded",
+        "library_name",
+        "logs"
+      ],
+      "properties": {
+        "loaded": {
+          "type": "boolean"
+        },
+        "library_name": {
+          "type": "string"
+        },
+        "library_version": {
+          "type": "string"
+        },
+        "fps_nominal": {
+          "type": "number"
+        },
+        "frames": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "warmup": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "wall_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "ms_per_frame": {
+          "type": "number",
+          "minimum": 0
+        },
+        "fps": {
+          "type": "number",
+          "minimum": 0
+        },
+        "observables": {
+          "type": "object"
+        },
+        "logs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "frame",
+              "level",
+              "text"
+            ],
+            "properties": {
+              "frame": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "level": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "options_declared": {
+          "type": "object"
+        },
+        "env_unanswered": {
+          "type": "object"
+        },
+        "last_frame_size": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "tracing": {
+          "type": "string"
+        },
+        "input_queries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input_pressed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_opened": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "sha1_after",
+                  "sha1_staged"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "sha1_after": {
+                    "$ref": "#/$defs/sha1"
+                  },
+                  "sha1_staged": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "$ref": "#/$defs/sha1"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "files_probed_absent": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      }
     }
   }
 }

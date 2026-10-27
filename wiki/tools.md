@@ -745,7 +745,7 @@ strace the record says that tracing was unavailable.
 | `--state-var SECTION.VAR` | a variable of a Mednafen save state, as an observable |
 | `--state-dir` | keep the save state taken at the end of the first repetition |
 | `--core-repo`, `--core-commit`, `--build-command` | where the core build comes from, copied into the record |
-| `--record [DIR]` | append the record to `measurements/` of the checkout `DIR`, by default this one: one line of `measurements/<emulator>.jsonl` and its sidecar `measurements/data/<emulator>/<id>.json.gz`. Commit both |
+| `--record [DIR]` | append the record as one line of `measurements/<emulator>.jsonl` in the checkout `DIR`, by default this one. Commit it |
 | `--emulator` | the profile the record is filed under. By default the profile whose `cores:` names the `.so`, else the core's library name |
 | `--subject` | a slug naming the test, shared by its reruns. By default derived from the claim and method, or from the inputs of a run or bench |
 | `--supersedes ID` | the id of an earlier record of the same emulator this one corrects |
@@ -766,27 +766,26 @@ host (CPU, kernel, Python, load before and after) and each input by hash.
 Core log lines arrive through the libretro log interface. Floating-point
 arguments of a log line cannot be read from Python and print as `<double>`.
 
-A record is stored in two parts by `measurement_records.py`. The line keeps
-the claim, method, result, timing statistics, host, core build, frontend
-commit, inputs by hash and, per variant, the first repetition's observables
-and files opened, under 20 KB. The sidecar keeps every repetition in full
-(per-frame hashes, core logs, declared options), the raw timing values and
-any compared value too large for a line, and its sha256 is in the line. The
-id is the date and the first 12 hex digits of the sha256 of the line without
-its id. Schemas: `core-probe-record.schema.json` for a line,
-`core-probe-data.schema.json` for a sidecar. `join` rebuilds the full record
-the run printed, `check_pair` checks a line against its sidecar.
+A record is stored whole, as one line (`measurement_records.py`): the claim,
+method, result, host, core build, frontend commit, inputs by hash, and every
+repetition of every variant in full (per-frame hashes, core logs, declared
+options), with the raw timing values the statistics come from. The id is the
+date and the first 12 hex digits of the sha256 of the record without its id,
+in canonical JSON. Schema: `core-probe-record.schema.json`.
 
 ### Measurement records
 
-The records live in `measurements/` of this repository:
-`measurements/<emulator>.jsonl`, one record per line in the order added, and
-`measurements/data/<emulator>/<id>.json.gz`, the sidecar of each. A line is
-never rewritten or removed: a new run is a new line at the end of its file,
-and a correction is a new line naming the record it `supersedes`. Every line
-must hash to its id and join its sidecar, which `validate_schemas.py` checks
-with both schemas. `tests/test_measurements.py` fails when a line or data
-file that HEAD holds has changed or gone. Two branches that each add a line
+The records live in `measurements/` of this repository, one file per
+emulator: `measurements/<emulator>.jsonl`, one full record per line in the
+order added. A line is never rewritten or removed: a new run is a new line at
+the end of its file, and a correction is a new line naming the record it
+`supersedes`. Every line must hash to its id and validate against the record
+schema, which `validate_schemas.py` checks. `tests/test_measurements.py`
+fails when a line that HEAD holds has changed or gone. The seven records of
+2026-10-27 were first written one JSON file per run, then split into a line
+and a gzip data file, then merged back into one line. Each keeps its first
+id, which hashes the first file (`migrated_from_version: 1`), so the line
+still proves it rebuilds that file. Two branches that each add a line
 merge cleanly: `.gitattributes` marks `measurements/*.jsonl` `merge=union`.
 
 `generate_site.py` compiles the records into files it never commits

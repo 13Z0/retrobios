@@ -10,10 +10,9 @@ Three modes share one runner:
 
 Each repetition runs in its own process, under strace when it is installed,
 so the files a core opened are read from the kernel rather than guessed.
-`--record` appends one record per invocation to measurements/ of this
-repository, carrying what is needed to reproduce it (core build, frontend
-commit, host, inputs by hash). measurement_records.py splits it into a slim
-line and a gzip sidecar.
+`--record` appends one record per invocation, as one line of
+measurements/<emulator>.jsonl in this repository, carrying what is needed to
+reproduce it (core build, frontend commit, host, inputs by hash).
 """
 
 from __future__ import annotations
@@ -771,9 +770,8 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument("--core-commit", help="commit the core was built from")
     common.add_argument("--build-command", help="command and flags that built the core")
     common.add_argument("--record", metavar="DIR", nargs="?", const=str(ROOT),
-                        help="append the record to measurements/<emulator>.jsonl and write "
-                             "its data file in measurements/data/<emulator>/ of the checkout "
-                             "DIR (default: this one)")
+                        help="append the record as one line of measurements/<emulator>.jsonl "
+                             "in the checkout DIR (default: this one)")
     common.add_argument("--emulator", help="profile the record is filed under (default: the "
                                            "profile whose cores: names the .so, else the "
                                            "core's library name)")
@@ -938,24 +936,19 @@ def default_subject(record: dict) -> str:
     return f"{record['kind']}-{slugify(content, 30)}-{digest}"
 
 
-def write_record(directory: Path, full: dict) -> tuple[Path, Path]:
-    """Append the record to its emulator's .jsonl and write its sidecar."""
-    from measurement_records import (  # noqa: PLC0415
-        line_text, parse_lines, records_path, seal, sidecar_path, split)
+def write_record(directory: Path, full: dict) -> Path:
+    """Append the record, with its id, to its emulator's .jsonl."""
+    from measurement_records import line_text, parse_lines, records_path, seal  # noqa: PLC0415
 
-    slim, sidecar = split(full)
-    sealed, blob = seal(slim, sidecar)
+    sealed = seal(full)
     lines = directory / records_path(sealed["emulator"])
     existing = parse_lines(lines.read_text(encoding="utf-8"), str(lines)) if lines.is_file() else []
     if sealed["supersedes"] and sealed["supersedes"] not in {r["id"] for r in existing}:
         raise ProbeError(f"--supersedes {sealed['supersedes']}: no such record in {lines}")
-    data = directory / sidecar_path(sealed["emulator"], sealed["id"])
-    data.parent.mkdir(parents=True, exist_ok=True)
-    data.write_bytes(blob)
     lines.parent.mkdir(parents=True, exist_ok=True)
     with lines.open("a", encoding="utf-8") as handle:
         handle.write(line_text(sealed) + "\n")
-    return lines, data
+    return lines
 
 
 def probe(args: argparse.Namespace) -> int:
@@ -1032,11 +1025,11 @@ def probe(args: argparse.Namespace) -> int:
     record["subject"] = args.subject or default_subject(record)
     if args.record:
         try:
-            lines, data = write_record(Path(args.record), record)
+            lines = write_record(Path(args.record), record)
         except ProbeError as exc:
             print(f"ERROR: {exc}", file=sys.stderr)
             return 2
-        print(f"recorded {lines} (line {sum(1 for _ in lines.open(encoding='utf-8'))}) and {data}",
+        print(f"recorded {lines} (line {sum(1 for _ in lines.open(encoding='utf-8'))})",
               file=sys.stderr)
     print(json.dumps(record, indent=2, sort_keys=False))
     return 0

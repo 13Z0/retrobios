@@ -23,7 +23,5 @@ bios/** -text
 data/** -text
 
 # Measurement records are append-only: two branches that each add a line to
-# the same file merge by keeping both. A data file is bytes its line vouches
-# for by sha256.
+# the same file merge by keeping both.
 measurements/*.jsonl text eol=lf merge=union
-measurements/data/** -text

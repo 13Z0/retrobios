@@ -261,28 +261,18 @@ class FakeCoreTests(unittest.TestCase):
             self.assertEqual(record["variants"][3]["repetitions"][0]["files_probed_absent"], ["card.bin"])
         self.assertEqual(first["frames"], 3)
         self.assertEqual(record["emulator"], "fake")
-        self.assertEqual(sorted(p.relative_to(record_dir).as_posix()
-                                for p in record_dir.rglob("*") if p.is_file()),
-                         sorted(["measurements/fake.jsonl",
-                                 f"measurements/data/fake/{self._only_id(record_dir)}.json.gz"]))
+        self.assertEqual([p.relative_to(record_dir).as_posix()
+                          for p in record_dir.rglob("*") if p.is_file()], ["measurements/fake.jsonl"])
         line = json.loads((record_dir / "measurements" / "fake.jsonl").read_text())
-        blob = (record_dir / "measurements" / "data" / "fake" / f"{line['id']}.json.gz").read_bytes()
         self.assertEqual(measurement_records.check_line(line), [])
-        self.assertEqual(measurement_records.check_pair(line, blob), [])
-        # The line and its sidecar give back the record the run printed.
-        self.assertEqual(measurement_records.join(line, measurement_records.read_sidecar(blob)), record)
+        # The line is the record the run printed, with its id.
+        self.assertEqual({k: v for k, v in line.items() if k != "id"}, record)
         try:
             from jsonschema import Draft202012Validator
         except ImportError:
             return
-        for name, document in (("core-probe-record", line),
-                               ("core-probe-data", measurement_records.read_sidecar(blob))):
-            schema = json.loads((REPO_ROOT / "schemas" / f"{name}.schema.json").read_text())
-            self.assertEqual(list(Draft202012Validator(schema).iter_errors(document)), [], name)
-
-    @staticmethod
-    def _only_id(record_dir: Path) -> str:
-        return json.loads((record_dir / "measurements" / "fake.jsonl").read_text())["id"]
+        schema = json.loads((REPO_ROOT / "schemas" / "core-probe-record.schema.json").read_text())
+        self.assertEqual(list(Draft202012Validator(schema).iter_errors(line)), [])
 
     def test_second_run_is_appended_beside_the_first(self) -> None:
         record_dir = self.tmp / "appended"

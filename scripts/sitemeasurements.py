@@ -1,8 +1,8 @@
 """The measurements the site shows, from the records under measurements/.
 
-The records are core probe runs, one append-only .jsonl per emulator with a
-gzip data file per record (measurement_records.py). From them the build
-writes, never committed:
+The records are core probe runs, one append-only .jsonl per emulator with one
+full record per line (measurement_records.py). From them the build writes,
+never committed:
 
   public/data/measurements/index.json        the compact index the explorer and
                                              the emulator pages read, one item
@@ -39,7 +39,9 @@ HOSTS_MARKER = "<!-- measurements-hosts -->"
 INDEX_PATH = Path("data") / "measurements" / "index.json"
 SQLITE_PATH = Path("downloads") / "measurements.sqlite"
 PER_EMULATOR_DIR = Path("downloads") / "measurements"
-SQLITE_SCHEMA_VERSION = "1"
+SQLITE_SCHEMA_VERSION = "2"
+# Observables the variants table leaves out: one value per sampled frame.
+BULKY_OBSERVABLES = ("frame_hashes",)
 INDEX_SCHEMA_VERSION = 1
 
 
@@ -109,7 +111,6 @@ def index_item(entry: mr.Stored, runs: int, source: dict, profiles: dict,
         "id": record["id"],
         "runs": runs,
         "record_url": permalink(source["repo"], source["commit"], mr.records_path(entry.emulator), entry.line),
-        "data_url": permalink(source["repo"], source["commit"], mr.sidecar_path(entry.emulator, record["id"])),
         "sqlite": f"downloads/measurements/{entry.emulator}.sqlite",
     }
 
@@ -164,8 +165,8 @@ SCHEMA_SQL = """
         superseded INTEGER NOT NULL, core_sha256 TEXT NOT NULL REFERENCES cores(sha256),
         host_id INTEGER NOT NULL REFERENCES hosts(id), load_before TEXT, load_after TEXT,
         max_load REAL, frontend_commit TEXT, script_sha256 TEXT NOT NULL,
-        script_modified INTEGER, flags TEXT NOT NULL, data_sha256 TEXT NOT NULL,
-        data_bytes INTEGER NOT NULL, record_url TEXT NOT NULL, line INTEGER NOT NULL,
+        script_modified INTEGER, flags TEXT NOT NULL, record_url TEXT NOT NULL,
+        line INTEGER NOT NULL,
         migrated_from_version INTEGER
     );
     CREATE TABLE inputs (
@@ -239,7 +240,7 @@ def write_sqlite(destination: Path, stored: list[mr.Stored], source: dict | None
             "measurements_repo": (source or {}).get("repo") or "",
             "measurements_commit": (source or {}).get("commit") or "",
             "license": "MIT",
-            "scope": "core probe records: the record lines, not their data files",
+            "scope": "core probe records, one per line of measurements/<emulator>.jsonl",
         }
         connection.executemany("INSERT INTO meta VALUES (?, ?)", sorted(meta.items()))
         cores = {s.record["core"]["sha256"]: s.record["core"] for s in stored}
@@ -268,13 +269,13 @@ def _insert_run(connection: sqlite3.Connection, entry: mr.Stored, source: dict,
     r = entry.record
     host, front, inputs = r["host"], r["frontend"], r["inputs"]
     rid = r["id"]
-    connection.execute("INSERT INTO runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (
+    connection.execute("INSERT INTO runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (
         rid, entry.emulator, r["subject"], r["kind"], r["recorded_at"], r.get("supersedes"),
         int(superseded), r["core"]["sha256"], hosts[_host_key(host)],
         json_text(host.get("load_before")), json_text(host.get("load_after")), host.get("max_load"),
         front.get("commit"), front["script_sha256"],
         None if front.get("script_modified") is None else int(front["script_modified"]),
-        json_text(r["flags"]), r["data"]["sha256"], r["data"]["bytes"],
+        json_text(r["flags"]),
         permalink(source.get("repo", ""), source.get("commit", ""), mr.records_path(entry.emulator), entry.line),
         entry.line, r.get("migrated_from_version")))
     content = inputs.get("content") or {}
@@ -293,15 +294,21 @@ def _insert_run(connection: sqlite3.Connection, entry: mr.Stored, source: dict,
             rid, check["claim"], check["method"], check["observable"], check["variable"],
             result["status"], result["statement"]))
         connection.executemany("INSERT INTO check_groups VALUES (?, ?, ?, ?, ?)", [
-            (rid, position, json_text(group["value"]) if "value" in group else None,
-             group.get("value_sha1"), json_text(group["variants"]))
+            (rid, position, json_text(group["value"]),
+             mr.value_sha1(group["value"]) if isinstance(group["value"], (list, dict)) else None,
+             json_text(group["variants"]))
             for position, group in enumerate(result["groups"])])
     for position, variant in enumerate(r["variants"]):
+        reps = variant["repetitions"]
+        first = reps[0]
+        # The first repetition stands for the variant, its per-frame hashes left out.
+        observables = {key: value for key, value in (first.get("observables") or {}).items()
+                       if key not in BULKY_OBSERVABLES}
         connection.execute("INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (
-            rid, position, variant["label"], variant["repetitions"], int(variant["loaded"]),
-            json_text(variant["flags"]), json_text(variant["observables"]),
-            json_text(variant["files_opened"]), json_text(variant["files_probed_absent"]),
-            json_text(variant["tracing"])))
+            rid, position, variant["label"], len(reps), int(all(rep.get("loaded") for rep in reps)),
+            json_text(variant["flags"]), json_text(observables),
+            json_text(first.get("files_opened")), json_text(first.get("files_probed_absent")),
+            json_text(first.get("tracing"))))
         connection.executemany("INSERT INTO system_files VALUES (?, ?, ?, ?)", [
             (rid, position, dest, sha1) for dest, sha1 in sorted(variant["system_files"].items())])
     for metric, stats in sorted((r.get("timing") or {}).items()):
@@ -411,7 +418,7 @@ def tested_item(item: dict) -> list[str]:
         + (f", {item['flags']} flag{'s' if item['flags'] != 1 else ''} raised" if item["flags"] else "")
         + ".",
         "",
-        f"    [Full record]({item['record_url']}), [its data]({item['data_url']}), {runs}.",
+        f"    [Full record]({item['record_url']}), {runs}.",
         "",
     ]
     return lines
@@ -503,8 +510,7 @@ def data_page_section(path: Path) -> list[str]:
         "`downloads/measurements/<emulator>.sqlite` the records of one emulator, linked "
         f"from its page. The [Measurements]({EXPLORER_PAGE}) page reads "
         "[`data/measurements/index.json`](data/measurements/index.json). A record line is "
-        "valid against [`core-probe-record.schema.json`](api/v1/schemas/core-probe-record.schema.json) "
-        "and its data file against [`core-probe-data.schema.json`](api/v1/schemas/core-probe-data.schema.json).",
+        "valid against [`core-probe-record.schema.json`](api/v1/schemas/core-probe-record.schema.json).",
         "",
         "| Table | Columns |",
         "|-------|---------|",

@@ -1,8 +1,7 @@
 """Core probe records under measurements/, and what the site makes of them.
 
-Synthetic record trees are built under tmp/tests: records split into a line
-and a sidecar, read from the tree, compiled into the index and the SQLite
-files. The append-only rule is checked against a commit, two branches that
+Synthetic record trees are built under tmp/tests: one full record per line,
+read from the tree, compiled into the index and the SQLite files. The append-only rule is checked against a commit, two branches that
 each add a line merge, and the records this repository holds are checked
 against HEAD.
 """
@@ -104,11 +103,7 @@ def git(cwd: Path, *args: str) -> str:
 
 
 def add_record(tree: Path, full: dict) -> dict:
-    slim, sidecar = mr.split(full)
-    sealed, blob = mr.seal(slim, sidecar)
-    data = tree / mr.sidecar_path(sealed["emulator"], sealed["id"])
-    data.parent.mkdir(parents=True, exist_ok=True)
-    data.write_bytes(blob)
+    sealed = mr.seal(full)
     lines = tree / mr.records_path(sealed["emulator"])
     lines.parent.mkdir(parents=True, exist_ok=True)
     with lines.open("a", encoding="utf-8") as handle:
@@ -152,67 +147,41 @@ class Workspace(unittest.TestCase):
         return commit_all(self.tree, "feat: first records")
 
 
-class RecordSplit(unittest.TestCase):
-    def test_round_trip(self) -> None:
+class RecordLine(unittest.TestCase):
+    def test_a_line_holds_the_whole_record(self) -> None:
         for kind in ("check", "bench"):
             full = full_record("alpha", "card", "2026-10-01T10:00:00+00:00", kind=kind)
-            slim, sidecar = mr.split(full)
-            sealed, blob = mr.seal(slim, sidecar)
+            sealed = mr.seal(full)
             with self.subTest(kind=kind):
-                self.assertEqual(mr.join(sealed, mr.read_sidecar(blob)), full)
+                self.assertEqual({k: v for k, v in sealed.items() if k != "id"}, full)
+                self.assertEqual(json.loads(mr.line_text(sealed)), sealed)
                 self.assertEqual(mr.check_line(sealed), [])
-                self.assertEqual(mr.check_pair(sealed, blob), [])
-                self.assertNotIn("logs", json.dumps(sealed["variants"]))
-                self.assertNotIn("frame_hashes", json.dumps(sealed["variants"]))
+                self.assertIn("frame_hashes", mr.line_text(sealed))
+                self.assertIn("card present", mr.line_text(sealed))
+                self.assertNotIn("\n", mr.line_text(sealed))
 
-    def test_bulky_compared_value_moves_to_the_sidecar(self) -> None:
-        full = full_record("alpha", "card", "2026-10-01T10:00:00+00:00", observable="frame_hashes")
-        slim, sidecar = mr.split(full)
-        groups = slim["check"]["result"]["groups"]
-        self.assertTrue(all("value" not in g and len(g["value_sha1"]) == 40 for g in groups))
-        sealed, blob = mr.seal(slim, sidecar)
-        self.assertEqual(mr.join(sealed, mr.read_sidecar(blob)), full)
-
-    def test_sidecar_bytes_and_id_are_reproducible(self) -> None:
+    def test_id_is_reproducible(self) -> None:
         full = full_record("alpha", "card", "2026-10-01T10:00:00+00:00")
-        one = mr.seal(*mr.split(full))
-        two = mr.seal(*mr.split(copy.deepcopy(full)))
-        self.assertEqual(one, two)
-        self.assertRegex(one[0]["id"], r"^2026-10-01-[0-9a-f]{12}$")
+        self.assertEqual(mr.seal(full), mr.seal(copy.deepcopy(full)))
+        self.assertRegex(mr.seal(full)["id"], r"^2026-10-01-[0-9a-f]{12}$")
 
     def test_tampering_is_named(self) -> None:
-        sealed, blob = mr.seal(*mr.split(full_record("alpha", "card", "2026-10-01T10:00:00+00:00")))
-        self.assertTrue(mr.check_pair(sealed, blob + b"x"))
-        changed = {**sealed, "subject": "other"}
-        self.assertTrue(any("does not hash" in p for p in mr.check_line(changed)))
-
-    def test_a_campaign_line_stays_under_20_kb(self) -> None:
-        """Eleven variants, two repetitions each, long logs: the line is what
-        a reader opens, the logs are in the sidecar."""
-        full = full_record("alpha", "card", "2026-10-01T10:00:00+00:00",
-                           values=tuple(f"{i:040x}" for i in range(11)))
-        for variant in full["variants"]:
-            for rep in variant["repetitions"]:
-                rep["logs"] = rep["logs"] * 200
-                rep["observables"]["frame_hashes"] = [[k, SHA1] for k in range(0, 3000, 150)]
-        sealed, _blob = mr.seal(*mr.split(full))
-        self.assertLess(len(mr.line_text(sealed).encode()), 20_000)
+        sealed = mr.seal(full_record("alpha", "card", "2026-10-01T10:00:00+00:00"))
+        for changed in ({**sealed, "subject": "other"},
+                        {**sealed, "variants": sealed["variants"][:1]}):
+            self.assertTrue(any("does not hash" in p for p in mr.check_line(changed)))
 
     def test_first_layout_record_keeps_its_id(self) -> None:
-        old = full_record("alpha", "card", "2026-10-01T10:00:00+00:00")
-        old = mr.first_layout(old)
+        old = mr.first_layout(full_record("alpha", "card", "2026-10-01T10:00:00+00:00"))
         rid = f"2026-10-01-{mr.sha256_hex(mr.canonical(old))[:12]}"
-        full = {**old, "record_version": 2, "emulator": "alpha", "subject": "card",
-                "supersedes": None, "migrated_from_version": 1}
-        sealed, blob = mr.seal(*mr.split(full), rid)
-        self.assertEqual(sealed["id"], rid)
-        self.assertEqual(mr.check_line(sealed), [])
-        self.assertEqual(mr.check_pair(sealed, blob), [])
-        self.assertEqual(mr.first_layout(mr.join(sealed, mr.read_sidecar(blob))), old)
-        forged = {**sealed, "id": "2026-10-01-000000000000"}
-        self.assertTrue(mr.check_pair(forged, blob))
-
-
+        line = {**old, "record_version": mr.RECORD_VERSION, "emulator": "alpha", "subject": "card",
+                "supersedes": None, "migrated_from_version": 1, "id": rid}
+        self.assertEqual(mr.check_line(line), [])
+        self.assertEqual(mr.first_layout(line), old)
+        self.assertTrue(mr.check_line({**line, "id": "2026-10-01-000000000000"}))
+        changed = copy.deepcopy(line)
+        changed["variants"][0]["repetitions"][0]["logs"] = []
+        self.assertTrue(any("first-layout" in p for p in mr.check_line(changed)))
 
 
 class ReadAndIndex(Workspace):
@@ -222,14 +191,17 @@ class ReadAndIndex(Workspace):
         self.assertEqual(mr.read_records(self.tmp / "empty"), [])
 
     def test_a_broken_tree_is_named(self) -> None:
-        stray = self.tree / mr.DATA_DIR / "beta" / "2026-10-02-000000000000.json.gz"
+        stray = self.tree / mr.RECORDS_DIR / "data" / "beta" / "2026-10-02-000000000000.json.gz"
+        stray.parent.mkdir(parents=True)
         stray.write_bytes(b"x")
-        (self.tree / mr.sidecar_path("alpha", self.bench["id"])).unlink()
+        lines = self.tree / mr.records_path("beta")
+        lines.write_text(lines.read_text() * 2)
         with self.assertRaises(mr.MeasurementsError) as caught:
             mr.read_records(self.tree)
         message = str(caught.exception)
-        self.assertIn(f"{mr.sidecar_path('alpha', self.bench['id'])} is missing", message)
-        self.assertIn(f"{mr.DATA_DIR}/beta/2026-10-02-000000000000.json.gz: no record line names it", message)
+        self.assertIn(f"{mr.RECORDS_DIR}/data/beta/2026-10-02-000000000000.json.gz: "
+                      f"{mr.RECORDS_DIR}/ holds <emulator>.jsonl files only", message)
+        self.assertIn(f"measurements/beta.jsonl:2: id {self.beta['id']} appears twice", message)
 
     def test_index_shape(self) -> None:
         index = self.built(self.tmp / "public").index
@@ -239,7 +211,7 @@ class ReadAndIndex(Workspace):
         keys = {"emulator", "emulator_name", "profiled", "systems", "system_names", "subject", "kind",
                 "claim", "method", "observable", "variable", "status", "statement", "content",
                 "variants", "repetitions", "flags", "date", "host", "core", "frontend_commit", "id",
-                "runs", "record_url", "data_url", "sqlite"}
+                "runs", "record_url", "sqlite"}
         for item in index["items"]:
             self.assertEqual(set(item), keys)
         alpha = {i["subject"]: i for i in index["items"] if i["emulator"] == "alpha"}
@@ -247,8 +219,6 @@ class ReadAndIndex(Workspace):
         self.assertEqual(alpha["card"]["system_names"], ["Sega Saturn"])
         self.assertEqual(alpha["card"]["record_url"],
                          f"{REPO_URL}/blob/{COMMIT}/measurements/alpha.jsonl#L1")
-        self.assertEqual(alpha["card"]["data_url"],
-                         f"{REPO_URL}/blob/{COMMIT}/measurements/data/alpha/{self.first['id']}.json.gz")
         self.assertEqual(alpha["speed"]["status"], "measured")
         self.assertIn("ms per frame", alpha["speed"]["statement"])
         self.assertIn("Test CPU", alpha["speed"]["host"])
@@ -353,19 +323,12 @@ class AppendOnly(Workspace):
         self.assertEqual(mr.append_only_problems(self.tree, "HEAD"),
                          ["measurements/alpha.jsonl: line 1 changed"])
 
-    def test_a_removed_line_or_data_file_is_named(self) -> None:
+    def test_a_removed_line_or_file_is_named(self) -> None:
         lines = self.tree / mr.records_path("alpha")
         lines.write_text(lines.read_text().splitlines()[0] + "\n")
-        (self.tree / mr.sidecar_path("beta", self.beta["id"])).unlink()
-        problems = mr.append_only_problems(self.tree, "HEAD")
-        self.assertIn("measurements/alpha.jsonl: line 2 removed", problems)
-        self.assertIn(f"{mr.sidecar_path('beta', self.beta['id'])}: removed", problems)
-
-    def test_a_rewritten_data_file_is_named(self) -> None:
-        data = self.tree / mr.sidecar_path("beta", self.beta["id"])
-        data.write_bytes(data.read_bytes() + b"x")
+        (self.tree / mr.records_path("beta")).unlink()
         self.assertEqual(mr.append_only_problems(self.tree, "HEAD"),
-                         [f"{mr.sidecar_path('beta', self.beta['id'])}: rewritten"])
+                         ["measurements/alpha.jsonl: line 2 removed", "measurements/beta.jsonl: removed"])
 
     def test_two_branches_adding_a_line_merge_cleanly(self) -> None:
         git(self.tree, "checkout", "-q", "-b", "left")
@@ -385,7 +348,7 @@ class AppendOnly(Workspace):
 class CommittedRecords(unittest.TestCase):
     """The records this repository holds."""
 
-    def test_no_line_or_data_file_changed_or_vanished_since_head(self) -> None:
+    def test_no_line_changed_or_vanished_since_head(self) -> None:
         if subprocess.run(["git", "-C", str(REPO_ROOT), "rev-parse", "--verify", "-q", "HEAD"],
                           capture_output=True, check=False).returncode != 0:
             self.skipTest("not a git checkout")
@@ -413,7 +376,6 @@ class SitePages(unittest.TestCase):
                                              "file": "x.so", "sha256": SHA256, "repo": None, "build": "make"},
         "frontend_commit": None, "id": "2026-10-27-43527b763ace", "runs": 2,
         "record_url": f"{REPO_URL}/blob/{'e' * 40}/measurements/beetle_saturn.jsonl#L4",
-        "data_url": f"{REPO_URL}/blob/{'e' * 40}/measurements/data/beetle_saturn/2026-10-27-43527b763ace.json.gz",
         "sqlite": "downloads/measurements/beetle_saturn.sqlite",
     }
 
@@ -422,7 +384,7 @@ class SitePages(unittest.TestCase):
         text = "\n".join(sm.tested_section("beetle_saturn", [self.ITEM]))
         self.assertTrue(text.startswith("## Tested\n"))
         for expected in ("**Result:** `same`", "**Method:** Twice per card. Every input fixed.", "**Ran on:** Test CPU, 12 CPUs",
-                         self.ITEM["record_url"], self.ITEM["data_url"], "1 flag raised", "2 runs",
+                         self.ITEM["record_url"], "1 flag raised", "2 runs",
                          "../downloads/measurements/beetle_saturn.sqlite", "../wiki/measurements.md",
                          "&lt;image>"):
             self.assertIn(expected, text)
