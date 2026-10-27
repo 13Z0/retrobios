@@ -706,6 +706,124 @@ python scripts/refresh_stale.py
 python scripts/refresh_stale.py --only platforms,targets --jobs 6
 ```
 
+### autorun.py
+
+Runs the unattended jobs declared in `automation/jobs.yml`, one at a time.
+The registry holds each job's commands, its gate, the artifacts computed
+twice, the paths each commit may carry and the schedule. Changing any of
+them is a reviewed commit.
+
+| Guard | Rule |
+|-------|------|
+| Lock | One host-wide `flock` on `~/.local/state/retrobios/auto.lock` (`RETROBIOS_AUTO_LOCK` moves it). A job that finds it held is `deferred`. |
+| Load | Waits while the 1-minute load is above a quarter of the CPUs, up to `max_load_wait` seconds, then `deferred`. |
+| Disk | Below the job's `min_free_gb` the job is `refused`. Under 100 GB free the `disk` alert is raised. |
+| Retry | Exit 139 (or signal 11), `SystemError` or "unknown opcode" is run again once on an idle host. A second failure is a failure. |
+| Double computation | Each `twice` entry recomputes an artifact the gate wrote and compares both, timestamps aside. A difference is recomputed once on an idle host, then the job fails with the `host-integrity` alert. |
+
+Jobs that commit run in `.cache/autorun/worktree`, on the branch `autorun`,
+never in the shared checkout and its index. The first run creates it and
+hard-links `.cache/large/`, `data/` and the gitignored `bios/` files from the
+main checkout. Before each job it is fast-forwarded, or rebased when it holds
+unpushed commits, onto `origin/main`. A job that finds anything uncommitted
+there stops as `blocked` and cleans nothing. Commits name their files
+(`git commit -- <paths>`), and their subjects are checked against the
+commit-msg hook when the registry loads. A job that leaves a change no commit
+rule takes fails.
+
+`--push` sends the batch: rebase on `origin/main` (a conflict keeps the batch
+and pushes nothing), the gate again when `origin/main` moved, then a push that
+never forces. It is off by default. A push waits while the previous automation
+push has no green CI. A red run on a pushed automation commit, read with
+`gh run list`, opens a circuit breaker: every committing job is `blocked`
+until a green run on `main` follows.
+
+State is `.cache/autorun/state.json`, logs are
+`.cache/autorun/logs/<job>/<date>.log`, kept 30 days. A job's `report` key
+names a JSON file one of its steps writes, and the runner keeps it in the
+job's status. Exit codes: 0 for `ok`,
+75 for `deferred`, 1 otherwise.
+
+| Job | Schedule | What it does |
+|-----|----------|--------------|
+| `nightly` | 02:00 | `check_freshness.py --json` saved to a file, `refresh_stale.py --findings` on its `data` and `catalogs` rows, the MAME and FBNeo hash scrapers, then `pipeline.py --offline` as the gate. `database.json` and `install/*.json` are computed a second time and compared. Commits the hash profiles, the recipes and the regenerated records |
+| `assets` | 04:30 | `sync_release_assets.py`, as a dry run |
+| `bios-integrity` | Sunday 08:30 | `bios_integrity.py --apply --json` in the main checkout, once the host is idle (up to four hours of waiting). Its report is kept in the job's status |
+| `cleanup` | 05:30 | `cleanup_disk.py --apply --hours 72` in the main checkout |
+| `disk-check` | hourly | `cleanup_disk.py --check`, without the lock |
+
+```bash
+python scripts/autorun.py run nightly --dry-run   # commands and the files each commit would take
+python scripts/autorun.py run nightly
+python scripts/autorun.py run nightly --push
+python scripts/autorun.py status
+python scripts/autorun.py status --json
+python scripts/autorun.py install-timers          # writes systemd user units, enables nothing
+python scripts/autorun.py install-timers --enable
+```
+
+`install-timers` writes `retrobios@.service` and one `retrobios-<job>.timer`
+per scheduled job into `--unit-dir` (default `~/.config/systemd/user`).
+`--enable` also runs `systemctl --user daemon-reload` and enables the timers.
+`--with-push` writes units whose jobs run with `--push`.
+
+### cleanup_disk.py
+
+Frees the space idle session worktrees and `tmp/` hold. The candidates are
+the linked worktrees placed inside the checkout, where sessions create
+theirs. One is removed only when no process uses it, it is older than
+`--hours`, and nothing tracked changed in it but generated files
+(`database.json`, `install/*.json`, `exports/*.json`, `README.md`,
+`mkdocs.yml`). One holding real changes is listed, never removed. Branches
+are always kept. A worktree elsewhere on disk and the automation worktree are
+never candidates. `tmp/` entries older than `--hours` that no process uses
+are removed, except `tmp/acquire`, `*.bundle` and an entry that holds a
+linked worktree.
+
+The last line gives free space, with an `ALERT` line under `--alert-gb`
+(default 100), and the exit code is then 1. `--check` reports space only.
+
+```bash
+python scripts/cleanup_disk.py                    # dry run
+python scripts/cleanup_disk.py --apply --hours 72
+python scripts/cleanup_disk.py --check
+```
+
+### bios_integrity.py
+
+A flipped bit keeps a file's size and mtime, so `git status` never shows it.
+This rehashes every file `database.json` names and compares the SHA-1. A
+mismatch is read a second time: two reads that disagree are a host misread
+and change nothing. A confirmed mismatch on a committed file that git sees as
+unmodified is restored from its blob in HEAD with `--apply`, once the blob's
+object id and its content SHA-1 both check out, then hashed again. A file git
+lists as modified is a working change and is left alone. A gitignored large
+file, an untracked one, or a HEAD blob holding other bytes than the database
+records is flagged, never repaired. The exit code is 1 while anything is
+flagged. Run it on an idle host, since a busy CPU here computes wrong hashes.
+
+```bash
+python scripts/bios_integrity.py                  # report only
+python scripts/bios_integrity.py --apply --json   # restore committed flips
+python scripts/bios_integrity.py --db database.json
+```
+
+### sync_release_assets.py
+
+Uploads the `large-files` assets that `check_release_assets.py` reports
+missing, at another size or with another sha256. A file goes out only when
+its SHA-1, read twice, gives the same value both times and equals the SHA-1
+`database.json` records for its path. The asset keeps the name
+`largefiles.asset_names()` gives it, a failed upload is tried once more, and
+the release is read again afterwards. The release description is never
+edited. Dry run by default. The exit code is 1 while an asset stays out of
+date or is refused, so the nightly `assets` job reports it.
+
+```bash
+python scripts/sync_release_assets.py
+python scripts/sync_release_assets.py --apply
+```
+
 ### core_probe.py
 
 Runs a libretro core with no window, no sound and no input device, and
@@ -845,6 +963,10 @@ it after a shallow fetch of the pinned commit.
 | `check_buildbot_system.py` | Detect stale data directories by comparing with buildbot |
 | `check_freshness.py` | One report on every upstream the repository transcribes (see above) |
 | `refresh_stale.py` | Run the refresher behind every stale row of that report (see above) |
+| `autorun.py` | Run the unattended jobs of `automation/jobs.yml` under one lock, in their own worktree (see above) |
+| `cleanup_disk.py` | Remove idle session worktrees and old `tmp/` entries, alert under 100 GB free (see above) |
+| `bios_integrity.py` | Rehash every file the database names, restore a confirmed bit flip of a committed file from HEAD (see above) |
+| `sync_release_assets.py` | Upload the `large-files` assets the release serves out of date, after a double SHA-1 check (see above) |
 | `migrate.py` | Migrate flat bios structure to Manufacturer/Console/ hierarchy |
 
 Further options, by script:
@@ -865,7 +987,7 @@ Further options, by script:
 | `mame_ref_audit.py` | `--write` points each stale ref at the line declaring its set, `--offline`, `--cache-dir` |
 | `migrate.py` | `--dry-run`, `--include-branches` also reads BIOS files from every remote branch |
 | `provenance_report.py` | `--provenance-dir`, `--write-derivable PATH` (with `--derive`, and the pipeline writes `derivable.json`) |
-| `refresh_stale.py` | `--freshness-arg FLAG` passes a flag through to `check_freshness.py`, repeatable |
+| `refresh_stale.py` | `--freshness-arg FLAG` passes a flag through to `check_freshness.py`, repeatable. `--findings FILE` reads a saved `check_freshness.py --json` report instead of running it, kept to the `--only` areas |
 | `bundled_only.py` | `--strict` (exit 1 while a collected file only an emulator install provides remains, pipeline step 4d), `--json`, `--install-dir`. Lists every copy of such a file, the database keeping one path per content |
 | `release_record.py` | `--install-dir` (manifests the archives are held against), `--platforms-dir` (registry the full pack names are rebuilt from: any other pack in the directory is refused), `--output` |
 | `release_notes.py` | `--whats-new FILE` (required, appended as written), `--record`, `--platforms-dir`, `--output` |
