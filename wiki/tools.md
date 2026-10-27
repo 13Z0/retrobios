@@ -1013,6 +1013,73 @@ its own rules, pushing only with `--push`.
 
 Schemas: `campaign-finding.schema.json` and `campaign-run.schema.json`.
 
+### region_check.py
+
+Proves the `region:` fields of a profile on a real run. For each test game
+of a region in `tests/campaign/content.yml`, it runs `core_probe.py` four
+times, each a record whose subject is `region-<core>-<game>-<variant>`.
+
+| Variant | BIOS staged |
+|---------|-------------|
+| `full` | every regional BIOS of the system the collection holds |
+| `own` | only the entries whose `region:` holds the game's region |
+| `others` | only the entries of the other regions |
+| `pack` | the files of `generate_pack.py --emulator E --region R`, where the pack puts them |
+
+```bash
+flock ~/.local/state/retrobios/probe.lock python scripts/region_check.py run \
+  --emulator beetle_psx --system sony-playstation --core-name mednafen_psx
+python scripts/region_check.py report        # the outcome of every region record, as JSON
+```
+
+The file the core opened in the `full` run, read from strace, settles the
+claim: `confirmed` when its `region:` holds the game's region, `contradicted`
+when it does not, `unread` when the core opened none of them. Each variant's
+result is the oracle verdict of its record. While the oracle has no reference
+frame for a game, a variant counts as booting when it samples the same frames
+as the `full` run, and the outcome says it was judged that way. The system
+pages show each outcome as a sentence ("the Japanese BIOS boots the Japanese
+game, the other regions' BIOS do not") with links to the four records. A
+maintainer starts each run under the probe lock. Nothing runs by itself.
+
+### standalone_probe.py
+
+Runs a platform's standalone emulator on a game and records it like
+`core_probe.py`, in the same `measurements/<emulator>.jsonl` and the same
+record schema (`frontend.script` names this script). No existing harness
+traces the files a standalone emulator opens or writes a record, so this is
+a thin layer over the emulator's own batch mode, Xvfb and core_probe's
+sandbox, oracle and record functions, imported and not copied.
+
+```bash
+python scripts/standalone_probe.py resolve duckstation   # the asset EmuDeck's installer picks
+python scripts/standalone_probe.py fetch duckstation     # download and unpack it, by sha256
+flock ~/.local/state/retrobios/probe.lock python scripts/standalone_probe.py run duckstation \
+  --content game.cue --content-label "Bust-A-Move 2 - Arcade Edition (USA)" \
+  --bios-file scph5501.bin=bios/Sony/PlayStation/scph5501.bin \
+  --samples 60 --interval 1.5 --require-sandbox --record
+flock ~/.local/state/retrobios/probe.lock python scripts/standalone_probe.py check pcsx2 \
+  --content game.bin --vary ps2-0230a-20080220.bin= \
+  --vary "ps2-0230a-20080220.bin=bios/Sony/PlayStation 2/ps2-0230a-20080220.bin" \
+  --claim "..." --method "..." --require-sandbox --record
+```
+
+| Step | What happens |
+|------|--------------|
+| Binary | The release asset the platform installs, chosen by its installer's own rule. EmuDeck's `getReleaseURLGH` takes the first asset, over GitHub's release list in its order, pre-releases included, whose name matches: `DuckStation-x64.AppImage` and `pcsx2-*-Qt.AppImage`. It is downloaded into `.cache/standalone/<emulator>/<sha256>/` and unpacked with `unsquashfs` at the offset the AppImage runtime computes, so the runtime is never run. The record names the asset, its release tag, its URL and its sha256 |
+| Settings | Written before each repetition in a scratch data folder, `$XDG_CONFIG_HOME/duckstation/settings.ini` and `$XDG_CONFIG_HOME/PCSX2/inis/PCSX2.ini`, the places the emulators read on Linux. The BIOS folder setting names the staged BIOS folder, as EmuDeck points it at `Emulation/bios`. Software rendering, no update check, no setup wizard. `--setting SECTION.KEY=VALUE` adds one. The record lists every setting |
+| Sandbox | The allowlist bubblewrap sandbox of `core_probe.py`: the unpacked emulator, the content folder and the staged BIOS folder read-only, the repetition's scratch folder the one writable path, no network. Xvfb runs inside it, on the sandbox's own `/tmp`, so the display is private to the run. `--require-sandbox` refuses to run without bubblewrap |
+| Screen | Xvfb keeps its screen as a file (`-fbdir`). The probe reads it every `--interval` seconds, `--samples` times, and hashes each sample's pixels. `--png-dir` writes each distinct sample as PNG for review |
+| Files | `strace -f` inside the sandbox: the files the emulator opened in the staged BIOS folder, and the ones it looked for there and did not find |
+| Verdict | `core_probe.judge` on each repetition, with the oracle of `tests/campaign/oracle.yml` looked up by the content's sha1 and the emulator's name, plus the emulator's own error strings this script lists (DuckStation's "No BIOS image found for", PCSX2's "Unable to auto locate a BIOS image"). An emulator that exits before the last sample is a crash |
+
+Supported: DuckStation and PCSX2. Dolphin, Flycast, PPSSPP, melonDS, xemu and
+MAME are installed by EmuDeck from Flathub, Ryujinx from a Codeberg tarball and
+RPCS3 from its own update server: each needs its installer's rule before it
+can be added. Cemu is an AppImage like the two supported ones, and waits for
+Wii U content, which no catalog romfetch reads holds. A maintainer starts each run under the probe lock. Nothing runs
+by itself.
+
 ### Other tools
 
 | Script | Purpose |
