@@ -142,7 +142,8 @@ EMULATORS: dict[str, Emulator] = {
             "Logging": {"EnableSystemConsole": "true", "EnableVerbose": "false"},
         },
         args=("-batch", "-nogui", "-fullscreen", "-earlyconsolelog", "--"),
-        error_patterns=("requires a PlayStation 2 BIOS in order to run", "Unable to auto locate a BIOS image", "BIOS image has not been selected",
+        error_patterns=("requires a PlayStation 2 BIOS in order to run",
+                        "Unable to auto locate a BIOS image", "BIOS image has not been selected",
                         "could not be read (permission denied?)"),
     ),
 }
