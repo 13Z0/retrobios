@@ -43,16 +43,21 @@ def repetition(value: str, frames: int = 3) -> dict:
         "last_frame_size": [4, 2], "tracing": "strace", "input_queries": 3, "input_pressed": 1,
         "files_opened": [{"path": "card.bin", "sha1_after": SHA1, "sha1_staged": SHA1}],
         "files_probed_absent": [],
+        "verdict": "boots",
+        "verdict_evidence": {"rule": "reference_frame", "detail": "reached the title", "frame": 150,
+                             "sha1": value, "stages": ["game"]},
     }
 
 
 def full_record(emulator: str, subject: str, when: str, kind: str = "check",
                 values: tuple[str, ...] = ("1" * 40, "2" * 40), observable: str = "video_sha1") -> dict:
     variants = [{"label": f"v{i}", "system_files": {"card.bin": SHA1},
-                 "repetitions": [repetition(v), repetition(v)], "flags": []}
+                 "repetitions": [repetition(v), repetition(v)], "flags": [], "verdict": "boots",
+                 "verdict_evidence": {"rule": "repetitions_agree", "detail": "both boot",
+                                      "repetitions": ["boots", "boots"]}}
                 for i, v in enumerate(values)]
     record = {
-        "record_version": mr.RECORD_VERSION, "emulator": emulator, "subject": subject,
+        "record_version": 4, "emulator": emulator, "subject": subject,
         "supersedes": None, "kind": kind, "recorded_at": when,
         "core": {"file": "fake_libretro.so", "sha256": SHA256, "repo": "https://example.org/fake",
                  "commit": "c" * 40, "build_command": "make", "compiler": ["GCC 13"],
@@ -67,7 +72,10 @@ def full_record(emulator: str, subject: str, when: str, kind: str = "check",
                    "options": {"fake_option": "a"}, "env": {}, "frames": 3, "warmup": 0,
                    "repetitions": 2 if kind == "check" else 5, "presses": [],
                    "observables": ["frame_sha1", "video_sha1", "audio_sha1", "state_sha1", "frame_hashes"],
-                   "frame_hash_every": 150, "joypad_ports": 2},
+                   "frame_hash_every": 150, "joypad_ports": 2,
+                   "oracle": {"file": "tests/campaign/oracle.yml", "sha256": SHA256,
+                              "references": [{"sha1": values[0], "stage": "game", "shows": "title"}],
+                              "error_patterns": ["BIOS not found"], "error_screens": []}},
         "variants": variants,
         "flags": [],
     }
@@ -81,7 +89,8 @@ def full_record(emulator: str, subject: str, when: str, kind: str = "check",
             "observable": observable, "variable": "card.bin",
             "result": {"status": "differs" if len(groups) > 1 else "same",
                        "statement": f"{observable} takes {len(groups)} values",
-                       "groups": [{"value": json.loads(k), "variants": v} for k, v in groups.items()]},
+                       "groups": [{"value": json.loads(k), "variants": v} for k, v in groups.items()],
+                       "verdicts": {v["label"]: v["verdict"] for v in variants}},
         }
     else:
         record["variants"] = record["variants"][:1]
@@ -303,6 +312,26 @@ class ReadAndIndex(Workspace):
         errors = validate_schemas._measurement_errors(self.tree)
         self.assertTrue(any("measurements/beta.jsonl:1" in e and "kind" in e for e in errors), errors)
         self.assertIsNotNone(Draft202012Validator)
+
+    def test_a_version_4_record_needs_its_verdicts(self) -> None:
+        try:
+            from jsonschema import Draft202012Validator  # noqa: F401
+        except ImportError:
+            self.skipTest("jsonschema is not installed")
+        import validate_schemas  # noqa: PLC0415
+
+        lines = self.tree / mr.records_path("beta")
+        record = json.loads(lines.read_text())
+        del record["variants"][0]["verdict"]
+        del record["variants"][0]["repetitions"][0]["verdict_evidence"]
+        lines.write_text(mr.line_text(record) + "\n")
+        errors = validate_schemas._measurement_errors(self.tree)
+        self.assertTrue(any("'verdict' is a required property" in e for e in errors), errors)
+        self.assertTrue(any("'verdict_evidence' is a required property" in e for e in errors), errors)
+        old = {**record, "record_version": 3}
+        lines.write_text(mr.line_text(old) + "\n")
+        self.assertFalse(any("required property" in e
+                             for e in validate_schemas._measurement_errors(self.tree)))
 
 
 class AppendOnly(Workspace):
