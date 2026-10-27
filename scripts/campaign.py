@@ -48,6 +48,7 @@ import json
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -65,6 +66,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import autorun
 import campaign_profiles
 import campaign_rules as rules
+import core_probe
 import measurement_records as mr
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -177,6 +179,27 @@ def is_bios(entry: dict) -> bool:
 # Host
 # --------------------------------------------------------------------------
 
+def run_group(argv: Sequence[str], *, timeout: float | None = None, check: bool = False,
+              capture_output: bool = False, **kwargs: object) -> subprocess.CompletedProcess:
+    """subprocess.run in a process group of its own, the whole group killed
+    on a timeout or an interruption: a hung core never outlives its run."""
+    if capture_output:
+        kwargs.setdefault("stdout", subprocess.PIPE)
+        kwargs.setdefault("stderr", subprocess.PIPE)
+    with subprocess.Popen(list(argv), start_new_session=True, **kwargs) as proc:
+        try:
+            out, err = proc.communicate(timeout=timeout)
+        except BaseException:
+            with contextlib.suppress(ProcessLookupError):
+                os.killpg(proc.pid, signal.SIGKILL)
+            proc.communicate()
+            raise
+    result = subprocess.CompletedProcess(list(argv), proc.returncode, out, err)
+    if check:
+        result.check_returncode()
+    return result
+
+
 @dataclass
 class Host:
     """What the campaign reads from the machine and the network, replaced in tests."""
@@ -187,7 +210,7 @@ class Host:
     cpu_count: int = os.cpu_count() or 1
     free_gb: Callable[[Path], float] = autorun.free_gb
     poll: float = 60.0
-    run: Callable[..., subprocess.CompletedProcess] = subprocess.run
+    run: Callable[..., subprocess.CompletedProcess] = run_group
     urlopen: Callable[..., object] = urllib.request.urlopen
 
     @property
@@ -240,6 +263,30 @@ class Paths:
         main = autorun.main_checkout()
         return cls(root=ROOT, home=main / ".cache" / "campaign",
                    content=main / ".cache" / "test-content", db=ROOT / "database.json")
+
+
+ROMFETCH_PASSED = ("XDG_CONFIG_HOME", "XDG_CACHE_HOME", "XDG_DATA_HOME")
+
+
+def child_env(romfetch: bool = False) -> dict[str, str]:
+    """What a program the campaign starts inherits: autorun's allowlist,
+    never a token or a password. romfetch also gets its own settings
+    (ROMFETCH_*), its account staying in its config file."""
+    names: list[str] = []
+    if romfetch:
+        names = [k for k in os.environ if k.startswith("ROMFETCH_")] + list(ROMFETCH_PASSED)
+    return autorun.safe_env(names)
+
+
+@contextlib.contextmanager
+def working_directory(path: Path) -> Iterator[None]:
+    """contextlib.chdir, which Python 3.9 lacks."""
+    before = Path.cwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(before)
 
 
 @contextlib.contextmanager
@@ -405,7 +452,7 @@ class ContentStore:
                 "--content-dir", str(self.c.paths.content)]
         for attempt, delay in enumerate((*self.c.settings.delays, None)):
             proc = self.c.host.run(argv, capture_output=True, text=True, check=False,
-                                   timeout=6 * 3600)
+                                   timeout=6 * 3600, env=child_env(romfetch=True))
             if proc.returncode == 0:
                 self.c.log(f"romfetch {content.name}: {proc.stdout.strip()[:300]}")
                 return
@@ -569,17 +616,23 @@ class Cores:
             if not self.c.settings.network:
                 raise Unavailable("core: not on the buildbot, offline, nothing built yet")
             try:
-                built = [self.compile(source, commit, out)]
+                so, command = self.compile(source, commit, out)
             except Unavailable as exc:
                 self.c.state["builds"][emulator] = {"commit": commit, "error": str(exc), "at": now_iso()}
                 raise
+            built = [so]
+            record["command"] = command
         command = record.get("command") or "make"
         self.c.state["builds"][emulator] = {"commit": commit, "command": command,
                                             "so": built[0].name, "at": now_iso()}
         return Core(built[0].name.removesuffix("_libretro.so"), built[0], file_sha256(built[0]),
                     repo=source, commit=commit, build_command=command)
 
-    def compile(self, source: str, commit: str, out: Path) -> Path:
+    def compile(self, source: str, commit: str, out: Path) -> tuple[Path, str]:
+        """Clone with git (trusted, networked), then run the project's make
+        under bubblewrap: no network, a read-only tree with the source
+        writable, the user's credentials masked. Returns the .so and the
+        command, with how it was isolated."""
         src = self.c.paths.home / "src" / slug(source)
         log = self.c.paths.logs / "builds" / f"{slug(source)}-{commit[:12]}.log"
         log.parent.mkdir(parents=True, exist_ok=True)
@@ -589,7 +642,7 @@ class Cores:
                 handle.write(f"$ {' '.join(argv)}\n")
                 handle.flush()
                 proc = self.c.host.run(argv, cwd=cwd, stdout=handle, stderr=subprocess.STDOUT,
-                                       check=False, timeout=timeout)
+                                       check=False, timeout=timeout, env=child_env())
             if proc.returncode != 0:
                 tail = log.read_text(encoding="utf-8", errors="replace").strip().splitlines()[-3:]
                 raise Unavailable(f"core: {argv[0]} {argv[1] if len(argv) > 1 else ''} exited "
@@ -603,13 +656,14 @@ class Cores:
         makefile = "Makefile.libretro" if (src / "Makefile.libretro").is_file() else "Makefile"
         jobs = str(max(1, (os.cpu_count() or 2) // 2))
         command = ["make", "-f", makefile, f"-j{jobs}", "platform=unix"]
-        step(command, cwd=src, timeout=BUILD_TIMEOUT)
+        prefix, isolation = core_probe.sandbox_argv([src], private_tmp=True)
+        step(prefix + command, cwd=src, timeout=BUILD_TIMEOUT)
         built = sorted(src.rglob("*_libretro.so"), key=lambda p: p.stat().st_mtime)
         if not built:
             raise Unavailable(f"core: {' '.join(command)} produced no *_libretro.so (log {log})")
         out.mkdir(parents=True, exist_ok=True)
         shutil.copy2(built[-1], out / built[-1].name)
-        return out / built[-1].name
+        return out / built[-1].name, f"{' '.join(command)} (isolation: {isolation})"
 
 
 # --------------------------------------------------------------------------
@@ -699,7 +753,7 @@ class Campaign:
 
         hint = entry.get("path") if isinstance(entry.get("path"), str) else ""
         # The database names files relative to the checkout it describes.
-        with contextlib.chdir(self.paths.root):
+        with working_directory(self.paths.root):
             path, status = resolve_local_file(entry, self.db, dest_hint=hint or "")
         if not path or status in ("not_found", "hash_mismatch"):
             return None
@@ -754,7 +808,7 @@ class Campaign:
             self.guard()
             try:
                 proc = self.host.run(command, capture_output=True, text=True, check=False,
-                                     timeout=budget, cwd=self.paths.root)
+                                     timeout=budget, cwd=self.paths.root, env=child_env())
             except subprocess.TimeoutExpired:
                 with log.open("a", encoding="utf-8") as handle:
                     handle.write(f"$ {' '.join(command)}\nkilled after {budget} s\n")
@@ -1492,6 +1546,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         campaign.run(only, args.system, dry_run=True)
         return 0
     campaign.dirty_at_start = set(autorun.changed_files(paths.root)) if args.commit else set()
+
+    def stop(signum: int, frame: object) -> None:
+        # A timer's TimeoutStartSec ends the pass like Ctrl-C: state saved, pass line written.
+        raise KeyboardInterrupt
+    signal.signal(signal.SIGTERM, stop)
     try:
         with host_lock(campaign.lock_path):
             current = campaign.run(only, args.system, commit_every=args.commit_every,

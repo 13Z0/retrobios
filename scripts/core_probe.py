@@ -18,6 +18,7 @@ reproduce it (core build, frontend commit, host, inputs by hash).
 from __future__ import annotations
 
 import argparse
+import contextlib
 import ctypes
 import datetime as dt
 import hashlib
@@ -26,6 +27,7 @@ import os
 import platform
 import re
 import shutil
+import signal
 import statistics
 import struct
 import subprocess
@@ -470,6 +472,9 @@ class Frontend:
 
 def run_worker(spec: dict) -> dict:
     """Load the core in this process and run it. Returns the measured result."""
+    # Nothing of the host's environment reaches the core: only what --env gave.
+    os.environ.clear()
+    os.environ.update(spec["env"])
     core = ctypes.CDLL(spec["core"])
     front = Frontend(spec)
     for name, fn in zip(("retro_set_environment", "retro_set_video_refresh", "retro_set_audio_sample",
@@ -646,6 +651,59 @@ def host_paths_hidden(text: str, places: Sequence[tuple[str, str]]) -> str:
     return text
 
 
+_BWRAP_WORKS: dict[str, bool] = {}
+
+
+def sandbox_argv(writable: Sequence[Path], private_tmp: bool = False) -> tuple[list[str], str]:
+    """The bubblewrap prefix a third-party program runs under, and its name.
+
+    The whole tree is read-only, the network and the other namespaces are
+    unshared, the user's credentials (~/.config, ~/.ssh, ~/.gnupg,
+    ~/.git-credentials, ~/.netrc) are masked, and only `writable` can be
+    written. Without a working bwrap the program still runs, with an empty
+    environment, and the returned name says so.
+    """
+    bwrap = shutil.which("bwrap")
+    if not bwrap:
+        return [], "environment only: bwrap not found"
+    base = [bwrap, "--ro-bind", "/", "/", "--dev", "/dev", "--tmpfs", "/dev/shm", "--proc", "/proc",
+            "--unshare-all", "--die-with-parent", "--new-session"]
+    if bwrap not in _BWRAP_WORKS:
+        probe_run = subprocess.run(base + ["true"], capture_output=True, check=False, env={})
+        _BWRAP_WORKS[bwrap] = probe_run.returncode == 0
+    if not _BWRAP_WORKS[bwrap]:
+        return [], "environment only: bwrap cannot create a sandbox here"
+    home = Path.home()
+    argv = list(base) + (["--tmpfs", "/tmp"] if private_tmp else [])
+    for hidden in (home / ".config", home / ".ssh", home / ".gnupg"):
+        if hidden.is_dir():
+            argv += ["--tmpfs", str(hidden)]
+    for secret in (home / ".git-credentials", home / ".netrc"):
+        if secret.exists():
+            argv += ["--ro-bind", "/dev/null", str(secret)]
+    for path in writable:
+        resolved = Path(path).resolve()
+        resolved.mkdir(parents=True, exist_ok=True)
+        argv += ["--bind", str(resolved), str(resolved)]
+    return argv, "bwrap"
+
+
+def run_group(command: list[str], timeout: float, env: dict[str, str]) -> subprocess.CompletedProcess:
+    """Run the worker in a process group of its own and kill the whole group
+    when it outlives the timeout. Killing strace alone left a hung core
+    spinning, detached from anything that would ever stop it."""
+    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                          env=env, start_new_session=True) as proc:
+        try:
+            out, err = proc.communicate(timeout=timeout)
+        except BaseException:
+            with contextlib.suppress(ProcessLookupError):
+                os.killpg(proc.pid, signal.SIGKILL)
+            proc.communicate()
+            raise
+    return subprocess.CompletedProcess(command, proc.returncode, out, err)
+
+
 def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_out: Path | None,
              png_dir: Path | None) -> dict:
     save_dir = scratch / "save"
@@ -664,6 +722,7 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
         "joypad_ports": args.joypad_ports,
         "png_dir": str(png_dir) if png_dir else None,
         "state_out": str(state_out) if state_out else None,
+        "env": dict(args.env),
     }
     spec_path, out_path, trace_path = scratch / "spec.json", scratch / "result.json", scratch / "strace.txt"
     spec_path.write_text(json.dumps(spec), encoding="utf-8")
@@ -671,9 +730,10 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
     strace = shutil.which("strace") if not args.no_trace else None
     if strace:
         command = [strace, "-f", "-qq", "-s", "4096", "-e", "trace=openat,open", "-o", str(trace_path)] + command
-    env = {**os.environ, **dict(args.env)}
-    proc = subprocess.run(command, check=False, capture_output=True, text=True,
-                          timeout=args.timeout, env=env)
+    writable = [scratch, system_dir] + [p for p in (png_dir, state_out.parent if state_out else None) if p]
+    prefix, isolation = sandbox_argv(writable)
+    # The core sees the variables it was given and nothing of the host's.
+    proc = run_group(prefix + command, args.timeout, dict(args.env))
     if proc.returncode != 0 or not out_path.exists():
         raise ProbeError(f"worker exited {proc.returncode}: {proc.stderr.strip()[-2000:]}")
     result = json.loads(out_path.read_text(encoding="utf-8"))
@@ -697,6 +757,7 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
     if result.get("wall_s") and result.get("frames"):
         result["ms_per_frame"] = result["wall_s"] * 1000 / result["frames"]
         result["fps"] = result["frames"] / result["wall_s"]
+    result["isolation"] = isolation
     return result
 
 
@@ -824,6 +885,20 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def not_a_checkout_root(directory: Path) -> str | None:
+    """Why --record DIR is refused, or None. DIR is the checkout, never its
+    measurements/ folder: that wrote measurements/measurements/<emulator>.jsonl."""
+    form = "--record names the root of a git checkout (the folder holding measurements/), e.g. --record ."
+    if not (directory / ".git").exists():
+        return f"--record {directory}: not a git checkout root. {form}"
+    proc = subprocess.run(["git", "-C", str(directory), "rev-parse", "--show-toplevel"],
+                          capture_output=True, text=True, check=False)
+    top = proc.stdout.strip()
+    if proc.returncode != 0 or not top or Path(top).resolve() != directory.resolve():
+        return f"--record {directory}: not a git checkout root (its root is {top or 'unknown'}). {form}"
+    return None
+
+
 def validate_args(args: argparse.Namespace) -> list[str]:
     problems: list[str] = []
     if not Path(args.core).is_file():
@@ -838,6 +913,9 @@ def validate_args(args: argparse.Namespace) -> list[str]:
     if args.png_dir and not args.frame_hash_every:
         problems.append("--png-dir needs --frame-hash-every")
     if args.record:
+        wrong = not_a_checkout_root(Path(args.record))
+        if wrong:
+            problems.append(wrong)
         if not args.emulator and Path(args.core).is_file():
             try:
                 default_emulator(Path(args.core), None)

@@ -686,6 +686,10 @@
         "tracing": {
           "type": "string"
         },
+        "isolation": {
+          "type": "string",
+          "description": "How the core ran: `bwrap` (read-only tree, no network, the user's credentials masked, an empty environment beside the --env values) or `environment only: ...` with the reason bubblewrap was not used."
+        },
         "input_queries": {
           "type": "integer",
           "minimum": 0

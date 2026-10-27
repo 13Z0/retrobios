@@ -20,6 +20,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 from types import MappingProxyType
 
@@ -95,12 +96,19 @@ bool retro_load_game(const void *g) {
   const char *dir = NULL; FILE *f; (void)g; env(9, &dir);
   f = try_open(dir, "bios.bin");
   if (!f) f = try_open(dir, "BIOS.BIN");
-  if (f) { fclose(f); booted = 1; } else booted = getenv("FAKE_HLE") != NULL;
+#ifdef FAKE_HLE
+  if (f) fclose(f);
+  booted = 1;
+#else
+  if (f) { fclose(f); booted = 1; } else booted = 0;
+#endif
   return true; }
 void retro_unload_game(void) {}
 void retro_run(void) {
   int16_t s[4] = {1, 2, 3, 4};
-  if (getenv("FAKE_HANG")) for (;;) {}
+#ifdef FAKE_HANG
+  for (;;) {}
+#endif
   for (int i = 0; i < 8; i++) pixels[i] = booted ? (uint16_t)(frame / 2 + i) : 0;
   frame++;
   video(pixels, 4, 2, 8); batch(s, 2); }
@@ -284,6 +292,7 @@ class Workspace(unittest.TestCase):
         self.tmp = Path(tempfile.mkdtemp(dir=TMP))
         self.root = self.tmp / "repo"
         (self.root / "emulators").mkdir(parents=True)
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
         (self.root / "emulators" / "fake.yml").write_text(PROFILE, encoding="utf-8")
         bios = self.root / "bios" / "Fake" / "bios.bin"
         bios.parent.mkdir(parents=True)
@@ -390,6 +399,34 @@ class Guards(Workspace):
                     pass
             finally:
                 del os.environ[campaign.LOCK_HELD_ENV]
+
+
+class ChildEnvironment(unittest.TestCase):
+    def test_probes_builds_and_romfetch_get_no_secret(self) -> None:
+        host = {"GITHUB_TOKEN": "t", "GH_TOKEN": "t", "ROMSTATION_USER": "u", "ROMSTATION_PASS": "p",
+                "ROMFETCH_CONTENT_DIR": "/c", "SSH_AUTH_SOCK": "/s", "PATH": "/usr/bin"}
+        with unittest.mock.patch.dict(os.environ, host):
+            probe, fetch = campaign.child_env(), campaign.child_env(romfetch=True)
+        for env in (probe, fetch):
+            self.assertFalse({"GITHUB_TOKEN", "GH_TOKEN", "ROMSTATION_USER", "ROMSTATION_PASS",
+                              "SSH_AUTH_SOCK"} & set(env))
+            self.assertEqual(env["PATH"], "/usr/bin")
+        self.assertNotIn("ROMFETCH_CONTENT_DIR", probe)
+        self.assertEqual(fetch["ROMFETCH_CONTENT_DIR"], "/c")
+
+    def test_the_probe_is_started_with_that_environment(self) -> None:
+        seen: list[dict] = []
+        host = FakeHost()
+        host.run = lambda argv, **kw: (seen.append(kw.get("env")),
+                                       subprocess.CompletedProcess([], 0, '{"id": "x"}', ""))[1]
+        with tempfile.TemporaryDirectory(dir=TMP) as tmp:
+            paths = campaign.Paths(root=Path(tmp), home=Path(tmp) / "h", content=Path(tmp) / "c",
+                                   db=Path(tmp) / "db.json", content_file=campaign.CONTENT_FILE)
+            c = campaign.Campaign(paths, campaign.Settings(echo=False), host, lock_path=Path(tmp) / "l")
+            c.deadline = 10_000
+            with unittest.mock.patch.dict(os.environ, {"GITHUB_TOKEN": "t"}):
+                c.probe(["run"], "x")
+        self.assertNotIn("GITHUB_TOKEN", seen[0])
 
 
 class ProbeRuns(Workspace):
@@ -649,9 +686,32 @@ class SitePage(unittest.TestCase):
         page = "\n".join(sitemeasurements.campaign_section(summary))
         self.assertIn("12 tests done, 1 failed, 3 waiting", page)
         self.assertIn("| standalone | 3 |", page)
-        self.assertIn("the profile says `true`, the run shows `false`", page)
+        self.assertIn("the profile says <code>true</code>, the run shows <code>false</code>", page)
         self.assertIn("[2026-10-27-aaaaaaaaaaaa](https://x/l#L1)", page)
         self.assertEqual(sitemeasurements.campaign_section({"last_run": None}), [])
+
+    def test_observed_values_cannot_leave_their_place(self) -> None:
+        # A value comes from a core's output or a romfetch error: it may hold
+        # backticks, MDX braces and HTML.
+        hostile = "``}{import x}<script>alert(1)</script>`` | [a](javascript:x) *b*"
+        summary = {
+            "last_run": {"ended_at": "2026-10-27T10:00:00+00:00", "result": "paused", "detail": hostile,
+                         "counts": {"done": 0, "failed": 1, "pending": 1},
+                         "pending_reasons": {hostile: 1},
+                         "failed": [{"emulator": hostile, "check": hostile, "reason": hostile}]},
+            "passes": 1, "applied": 0,
+            "open": [{"emulator": "fake", "file": hostile, "field": hostile, "status": "open",
+                      "profile_says": {"k": hostile}, "run_shows": [hostile], "statement": hostile,
+                      "evidence": ["2026-10-27-aaaaaaaaaaaa"], "links": [None]}],
+        }
+        page = "\n".join(sitemeasurements.campaign_section(summary))
+        for raw in ("<script", "{import", "}{", "``", "](javascript", "*b*", "| [a]"):
+            self.assertNotIn(raw, page)
+        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", page)
+        self.assertIn("&#123;import x&#125;", page)
+        # The JSON dumps are escaped too: no brace reaches the page as syntax.
+        self.assertNotIn("{", page)
+        self.assertNotIn("}", page)
 
 
 @unittest.skipUnless(shutil.which("cc") and shutil.which("strace"), "no C compiler or no strace")
@@ -664,35 +724,33 @@ class FakeCorePasses(Workspace):
         cls.build = Path(tempfile.mkdtemp(dir=TMP))
         source = cls.build / "fake.c"
         source.write_text(FAKE_CORE, encoding="utf-8")
-        cls.core = cls.build / "fake_libretro.so"
-        subprocess.run(["cc", "-shared", "-fPIC", "-o", str(cls.core), str(source)], check=True)
+        # The core sees no variable of the host, so its behaviour is compiled in.
+        cls.cores = {}
+        for kind, flags in (("plain", []), ("hle", ["-DFAKE_HLE"]), ("hang", ["-DFAKE_HANG"])):
+            cls.cores[kind] = cls.build / f"fake_{kind}_libretro.so"
+            subprocess.run(["cc", "-shared", "-fPIC", *flags, "-o", str(cls.cores[kind]), str(source)],
+                           check=True)
 
     @classmethod
     def tearDownClass(cls) -> None:
         shutil.rmtree(cls.build, ignore_errors=True)
 
-    def passing(self, env: dict[str, str] | None = None, core: Path | None = None,
+    def passing(self, kind: str = "plain", core: Path | None = None,
                 **settings: object) -> campaign.Campaign:
         self.put_game()
         # The core_probe threshold follows the host: a test never waits on the real load.
         host = campaign.Host(loadavg=lambda: (0.0, 0.0, 0.0), free_gb=lambda path: 500.0,
                              cpu_count=1_000_000)
-        extra = env or {}
-
-        def run(argv: list[str], **kwargs: object) -> subprocess.CompletedProcess:
-            check = bool(kwargs.pop("check", False))
-            return subprocess.run(argv, check=check, env={**os.environ, **extra}, **kwargs)
-        host.run = run
         values = {"bench_warmup": 2, "bench_frames": 4, "check_repeat": 2, "probe_timeout": 30,
                   "delays": (1,), "echo": False, **settings}
         c = campaign.Campaign(self.paths, campaign.Settings(**values), host,
                               lock_path=self.tmp / "auto.lock")
-        so = core or self.core
+        so = core or self.cores[kind]
         c.unit_cores = lambda *a, **k: [campaign.Core("fake", so, campaign.file_sha256(so))]
         return c
 
     def test_a_stand_in_is_proven_and_written(self) -> None:
-        c = self.passing({"FAKE_HLE": "1"})
+        c = self.passing("hle")
         current = c.run(set(), None)
         self.assertEqual(current.result, "complete")
         records = [s.record for s in mr.read_records(self.root)]
@@ -712,15 +770,15 @@ class FakeCorePasses(Workspace):
         self.assertTrue(self.game.is_dir())
 
         # A second pass on the same core and profile runs nothing.
-        again = self.passing({"FAKE_HLE": "1"})
+        again = self.passing("hle")
         self.assertEqual(again.run(set(), None).records, [])
 
         # A new build of the core runs everything again.
         rebuilt = self.build / "fake2_libretro.so"
-        shutil.copy2(self.core, rebuilt)
+        shutil.copy2(self.cores["hle"], rebuilt)
         with rebuilt.open("ab") as handle:
             handle.write(b"\0")
-        third = self.passing({"FAKE_HLE": "1"}, core=rebuilt)
+        third = self.passing("hle", core=rebuilt)
         # BIOS.BIN is declared now, so no alias run follows the boot test.
         self.assertEqual(len(third.run(set(), None).records), 3)
 
@@ -735,8 +793,11 @@ class FakeCorePasses(Workspace):
         self.assertEqual(alias[0]["status"], "applied")
 
     def test_a_hung_core_is_killed_and_the_pass_moves_on(self) -> None:
-        c = self.passing({"FAKE_HANG": "1"}, probe_timeout=2)
+        c = self.passing("hang", probe_timeout=2)
         c.run(set(), None)
+        # The whole process group went with the run: no worker spins on.
+        left = subprocess.run(["pgrep", "-f", str(self.cores["hang"])], capture_output=True, check=False)
+        self.assertEqual(left.stdout, b"")
         checks = c.state["checks"]["fake"]
         self.assertTrue(checks)
         self.assertEqual({entry["status"] for entry in checks.values()}, {"failed"})
