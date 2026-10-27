@@ -7341,8 +7341,10 @@ class LineModeAndScreenDecideAlike(_LineModeFindings, _OutsideTextFindings,
                  self.entry("x/keys.txt", b"k", ["nintendo-3ds"], root="save")]
         listing = self.listing("retroarch", files, base_destination="RetroArch",
                                save_directory={"folder": "saves", "by_core": False})
-        text, _asked = self.line_run(_args(manifest=listing, dest=onion, declared_only=False,
-                                           offline=False), [], mounts=[onion])
+        text, _asked = self.line_run(_args(manifest=listing, declared_only=False,
+                                           offline=False), [""], mounts=[onion])
+        self.assertIn("Install for:", text)
+        self.assertIn("save directory left out", text)
         self.assertNotIn("Onion's save directory", text)
         self.assertIn("RetroArch's save directory", text)
 
