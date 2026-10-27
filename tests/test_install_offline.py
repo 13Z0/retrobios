@@ -967,7 +967,8 @@ class AuditFifteenOffline(Scratch):
         # The screen reads that summary as missing files, not failures.
         state = install.TuiState()
         state.summary = summary
-        with unittest.mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: install.OFFLINE_FLAG_VALUE}):
+        with unittest.mock.patch.dict(os.environ,
+                                      {install.OFFLINE_VARIABLE: install.OFFLINE_FLAG_VALUE}):
             title, lines = install.tui_outcome(state)
         self.assertEqual(title, "Finished with files missing")
         self.assertIn("1 installed, 3 not fetched (--offline).", lines[0])

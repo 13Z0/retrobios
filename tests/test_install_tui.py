@@ -5289,8 +5289,6 @@ class TheTerminalComesBack(unittest.TestCase):
         """code_audit_17 P2-1: Ctrl-Z stopped the installer alone. install.sh,
         which runs it as a child, kept waiting, the shell never got its prompt
         back, and the install run behind the screen kept writing."""
-        import signal
-
         repo = self.repo(GameDataRepository, slow=True)
         env = {**self.env, "PS1": "PROMPT$ ",
                "PATH": f"{Path(sys.executable).parent}{os.pathsep}{self.env['PATH']}"}
@@ -6622,7 +6620,371 @@ def screen_plan(args: argparse.Namespace, manifest: dict, events: list[dict],
     return state, " ".join(" ".join(install.tui_view(state, 120, 40)).split())
 
 
-class LineModeAndScreenDecideAlike(unittest.TestCase):
+class _CardFixtures:
+    """Drives, lists and packs of code_audit_18 and tui_audit_11, for the
+    classes that test them on the screen and in line mode."""
+
+    ABOUT = "system/configs/emulationstation/about.info"
+
+    def drive(self, name: str, files: dict) -> Path:
+        root = self.root / "media" / name
+        root.mkdir(parents=True)
+        for path, text in files.items():
+            (root / path).parent.mkdir(parents=True, exist_ok=True)
+            (root / path).write_text(text, encoding="utf-8")
+        return root
+
+    def renamed(self) -> dict:
+        """The drives code_audit_18 P1-1 names: KNULLI and Batocera each
+        renamed in its own menu, with and without the file KNULLI alone
+        writes, and Recalbox's share."""
+        conf = "system/batocera.conf"
+        return {
+            "KNULLI renamed": self.drive("K1", {self.ABOUT: "KNULLI\n",
+                                                conf: "system.hostname=RG40XXH\n"}),
+            "KNULLI as shipped": self.drive("K2", {self.ABOUT: "KNULLI\n",
+                                                   conf: "system.hostname=KNULLI\n"}),
+            "renamed, no about.info": self.drive("K3", {conf: "system.hostname=RG40XXH\n"}),
+            "Batocera as shipped": self.drive("B1", {conf: "system.hostname=BATOCERA\n"}),
+            "Batocera, no hostname": self.drive("B2", {conf: "# system.hostname=X\n"}),
+            "Recalbox": self.drive("R1", {"system/recalbox.conf": "a=1\n"}),
+            "two shares": self.drive("T1", {conf: "system.hostname=BATOCERA\n",
+                                            "system/recalbox.conf": ""}),
+        }
+
+    def minui(self, plat: str = "minui", systems: bool = False, cores: bool = True,
+              regions: bool = True) -> tuple[Path, Path, dict]:
+        """A list of plat's shape (the MinUI family records cores and regions,
+        no system), the pack built from it and the files' payloads."""
+        from test_install_offline import GBA, JP, US  # noqa: PLC0415
+
+        payloads = {"Bios/MGBA/gba_bios.bin": (GBA, "nintendo-gba", "mgba", None),
+                    "Bios/PS/scph5501.bin": (US, "sony-playstation", "pcsx_rearmed",
+                                             "north-america"),
+                    "Bios/PS/scph5500.bin": (JP, "sony-playstation", "pcsx_rearmed", "japan")}
+        files = []
+        for dest, (data, system, core, region) in payloads.items():
+            entry = {"dest": dest, "sha1": hashlib.sha1(data).hexdigest(), "size": len(data),
+                     "repo_path": f"bios/{dest}", "cores": [core] if cores else None}
+            if systems:
+                entry["systems"] = [system]
+            if regions and region:
+                entry.update(regions=[region], region_groups=["ps"])
+            files.append(entry)
+        listing = self.root / f"{plat}.json"
+        install_list = {"manifest_version": 2, "platform": plat, "files": files}
+        listing.write_text(json.dumps(install_list))
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        self.addCleanup(sys.path.remove, str(REPO_ROOT / "scripts"))
+        import generate_pack  # noqa: PLC0415
+
+        pack_list = {"files": [{"path": dest, "sha1": entry["sha1"], "size": entry["size"]}
+                               for dest, entry in zip(payloads, files)]}
+        generate_pack.annotate_pack_systems(pack_list, generate_pack.pack_systems(install_list))
+        name = {"minui": "MinUI", "misterfpga": "MiSTer_FPGA"}[plat]
+        pack = self.root / f"{name}_v1_BIOS_Pack.zip"
+        with zipfile.ZipFile(pack, "w") as archive:
+            for dest, (data, *_rest) in payloads.items():
+                archive.writestr(dest, data)
+            archive.writestr("manifest.json", json.dumps(pack_list))
+        return listing, pack, pack_list
+
+    def narrowed(self, plat: str, **given) -> tuple[int, str, list]:
+        """(exit code, what was said, the files kept) of a --dry-run narrowed
+        as given."""
+        dest = self.root / "dest"
+        if not dest.exists():
+            make_card(dest, "MinUI")
+        stream = io.StringIO()
+        code = 0
+        with mock.patch.object(install.EVENTS, "stream", stream), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            try:
+                install._install(_args(platform=plat, dest=dest, dry_run=True, events=True,
+                                       no_input=True, declared_only=False, **given),
+                                 io.StringIO())
+            except SystemExit as stop:
+                code = stop.code
+            finally:
+                install.LOCAL.reset()
+        kept = [json.loads(line)["dest"] for line in stream.getvalue().splitlines()
+                if '"event": "file"' in line]
+        return code, out.getvalue() + err.getvalue(), kept
+
+
+
+class _LineModeFindings(_CardFixtures):
+    """The line-mode findings of code_audit_18 and tui_audit_11, run by
+    LineModeAndScreenDecideAlike."""
+
+    def test_a_drive_two_systems_fit_is_taken_as_named_and_said(self):
+        """code_audit_18 P1-1: --platform knulli is never refused on a
+        drive whose only evidence is a batocera.conf, --platform batocera
+        takes its bios folder, and the doubt is said. Recalbox refuses it
+        with words for a SHARE drive (P3-4)."""
+        drives = self.renamed()
+        for name in ("renamed, no about.info", "Batocera as shipped"):
+            drive = drives[name]
+            with self.subTest(drive=name):
+                choice = install.card_choice("knulli", "knulli", drive)
+                self.assertEqual((choice.plat, choice.folder, choice.refused),
+                                 ("knulli", drive / "bios", ""))
+                self.assertIn("Taken as KNULLI's, as named", choice.note)
+        drive = drives["renamed, no about.info"]
+        choice = install.card_choice("batocera", "batocera", drive)
+        self.assertEqual((choice.plat, choice.folder), ("batocera", drive / "bios"))
+        self.assertIn("names the host RG40XXH", choice.note)
+        refused = install.card_choice("recalbox", "recalbox", drive)
+        self.assertIn("could be a KNULLI card or a Batocera SHARE drive", refused.refused)
+        words = install._dest_refusal_words(refused, None)
+        self.assertIn("Connect the Recalbox SHARE drive", words)
+        self.assertNotIn("Insert", words)
+        other = install.card_choice("recalbox", "recalbox", drives["Batocera as shipped"])
+        words = install._dest_refusal_words(other, None)
+        self.assertIn("Connect the Recalbox SHARE drive, or name that drive's own system: "
+                      "--platform batocera", words)
+
+    def test_the_first_screen_and_line_mode_say_the_doubt(self):
+        """code_audit_18 P1-1: the screen's first row was "Batocera SHARE
+        drive (KNULLI2)". A renamed card with about.info is KNULLI's, one
+        without is listed by neither and said."""
+        drives = self.renamed()
+        knulli, doubt = drives["KNULLI renamed"], drives["renamed, no about.info"]
+        with mock.patch.object(install, "_mounted_cards", return_value=[knulli, doubt]), \
+                mock.patch.object(install, "detect_platforms", return_value=[]), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            setups, _mounted = install.found_setups("linux")
+        self.assertEqual([(plat, path) for plat, path, _label in setups],
+                         [("knulli", knulli / "bios")])
+        self.assertIn("KNULLI SD card", setups[0][2])
+        text = out.getvalue()
+        self.assertIn(f"{doubt} could be a KNULLI card or a Batocera SHARE drive", text)
+        self.assertIn(f"--platform knulli --dest {doubt} or --platform batocera --dest {doubt}",
+                      text)
+        with mock.patch.object(install, "_mounted_cards", return_value=[knulli, doubt]), \
+                mock.patch.object(install, "detect_platforms", return_value=[]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                contextlib.redirect_stdout(io.StringIO()):
+            state, _effects = install.tui_start(_args(), "linux")
+        self.assertTrue(any("could be a KNULLI card" in note for note in state.notes))
+        self.assertEqual([setup[0] for setup in state.setups], ["knulli"])
+
+    def test_a_list_without_systems_narrows_by_what_it_records(self):
+        """tui_audit_11 P2-1: install/minui.json records cores and regions,
+        no system, and all three options were refused with a remedy that
+        fetched the same list."""
+        listing, _pack, _listed = self.minui()
+        code, text, kept = self.narrowed("minui", manifest=listing, core=["mgba"])
+        self.assertEqual(code, 0, text)
+        self.assertEqual(kept, ["Bios/MGBA/gba_bios.bin"])
+        code, text, kept = self.narrowed("minui", manifest=listing, region=["us"])
+        self.assertEqual(code, 0, text)
+        self.assertNotIn("Bios/PS/scph5500.bin", kept)
+        code, text, _kept = self.narrowed("minui", manifest=listing,
+                                          system=["nintendo-gba"])
+        self.assertEqual(code, 1)
+        self.assertIn("records no systems, so --system cannot narrow it", text)
+        self.assertIn("Run it without --system, or narrow with --core and --region", text)
+        self.assertNotIn("one-line installer", text)
+        # The remedy followed: what it names works.
+        code, text, _kept = self.narrowed("minui", manifest=listing, core=["mgba"],
+                                          region=["us"])
+        self.assertEqual(code, 0, text)
+
+    def test_a_pack_names_its_list_only_when_that_list_records_it(self):
+        """tui_audit_11 P2-1: a MinUI pack sent --core to install/minui.json,
+        refused the same way, and a MiSTer pack to install/misterfpga.json,
+        which records no core. The pack now records what its list narrows
+        by, and each remedy changes the outcome."""
+        listing, pack, listed = self.minui()
+        self.assertEqual(listed["list_records"], ["cores", "regions"])
+        code, text, _kept = self.narrowed("minui", from_pack=[pack], core=["mgba"])
+        self.assertEqual(code, 1)
+        self.assertIn("Add --manifest FILE, a copy of install/minui.json, which records them",
+                      text)
+        code, text, kept = self.narrowed("minui", from_pack=[pack], manifest=listing,
+                                         core=["mgba"])
+        self.assertEqual((code, kept), (0, ["Bios/MGBA/gba_bios.bin"]), text)
+        mister_list, mister, listed = self.minui("misterfpga", systems=True, cores=False,
+                                                 regions=False)
+        self.assertEqual(listed["list_records"], ["regions", "systems"])
+        code, text, _kept = self.narrowed("misterfpga", from_pack=[mister], core=["x"])
+        self.assertEqual(code, 1)
+        self.assertIn("MiSTer FPGA's own file list records no cores either. Run it without "
+                      "--core, or narrow with --system.", text)
+        self.assertNotIn("--manifest", text)
+        code, text, kept = self.narrowed("misterfpga", from_pack=[mister],
+                                         system=["nintendo-gba"])
+        self.assertEqual((code, kept), (0, ["Bios/MGBA/gba_bios.bin"]), text)
+        self.assertTrue(mister_list.exists())
+
+    def test_line_mode_offers_what_can_be_chosen(self):
+        """tui_audit_11 P3-10: "c) choose systems, cores and regions" with a
+        pack that records systems only, and "Cores: 1) azahar" asked with
+        one answer."""
+        _listing, _pack, listed = self.minui("misterfpga", systems=True, cores=False,
+                                             regions=False)
+        files = [{"dest": f["path"], "sha1": f["sha1"], "size": f["size"],
+                  "repo_path": "x", "systems": f["systems"]} for f in listed["files"]]
+        self.assertEqual(install.narrowing_words(files, []), "systems")
+        listing, _pack, _listed = self.minui()
+        minui = json.loads(listing.read_text())["files"]
+        self.assertEqual(install.narrowing_words(minui, []), "cores and regions")
+        one_core = [{**entry, "systems": ["nintendo-3ds"], "cores": ["azahar"]}
+                    for entry in minui[:1]]
+        with mock.patch.object(install, "_ask", side_effect=["", ""]) as asked, \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            install._choose_narrowing(one_core, [], {}, None)
+        self.assertNotIn("Cores:", out.getvalue())
+        self.assertEqual(asked.call_count, 0)
+
+    # code_audit_18 P3-2, P3-3, tui_audit_11 P3-1: the remedies of a card.
+
+    def test_a_full_card_is_freed_never_left_for_another_drive(self):
+        with mock.patch.object(install.shutil, "disk_usage",
+                               return_value=mock.Mock(free=10)), \
+                contextlib.redirect_stderr(io.StringIO()) as err, \
+                self.assertRaises(SystemExit):
+            install._check_free_space(self.root, 1000, "retroarch", card=True)
+        said = err.getvalue()
+        self.assertIn("on the card, then run it again", said)
+        self.assertNotIn("--platform", said)
+        self.assertNotIn("another drive", said)
+
+    def test_line_mode_names_the_way_to_another_folder(self):
+        hint = install.Invocation()
+        with mock.patch.object(install, "_folder_writable", return_value=False), \
+                mock.patch.object(install, "_on_read_only_mount", return_value=False):
+            lines = install.folder_warnings("retroarch", self.root, [], hint, True, False)
+        self.assertIn("You cannot write to this folder: run it again with another --dest.",
+                      lines)
+        self.assertNotIn("choose another one", " ".join(lines))
+        with mock.patch.object(install, "_folder_writable", return_value=False), \
+                mock.patch.object(install, "_on_read_only_mount", return_value=True):
+            lines = install.folder_warnings("retroarch", self.root, [], hint, True, True)
+        self.assertEqual(lines, [install.read_only_words(self.root)])
+
+
+
+class _OutsideTextFindings:
+    """code_audit_18 P2-1: a pack's member path, a --manifest dest, the
+    names a list records, a card's label and a retroarch.cfg folder reached
+    line mode, the events and the disk with their control characters. Each
+    source is fed escape sequences, and none comes out raw."""
+
+    OSC = "\x1b]0;PWNED\x07"
+    CSI = "\x1b[41m"
+
+    @property
+    def dest(self) -> Path:
+        dest = self.root / "dest"
+        dest.mkdir(exist_ok=True)
+        return dest
+
+    def assertClean(self, text: str, where: str) -> None:
+        self.assertNotIn("\x1b", text, where)
+        self.assertNotIn("\x07", text, where)
+
+    def assertNothingRawOnDisk(self) -> None:
+        for path in self.root.rglob("*"):
+            self.assertIsNone(install._CONTROLS.search(path.name), path)
+
+    def run_install(self, args: argparse.Namespace, mounts: list = (),
+                    env: dict | None = None) -> str:
+        events = io.StringIO()
+        install.LOCAL.reset()
+        self.addCleanup(install.LOCAL.reset)
+        with mock.patch.object(install, "_UNNAMEABLE", []), \
+                mock.patch.object(install, "_mounted_cards", return_value=list(mounts)), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(install.EVENTS, "stream", events), \
+                mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1", **(env or {})}), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                contextlib.redirect_stderr(io.StringIO()) as err, \
+                contextlib.suppress(SystemExit):
+            install._install(args, io.StringIO())
+        return out.getvalue() + err.getvalue() + events.getvalue()
+
+    def test_a_pack_member_path_is_refused(self):
+        from test_install_offline import _pack, GBA  # noqa: PLC0415
+
+        pack = _pack(self.root, "RetroArch_v1_BIOS_Pack.zip", {f"x{self.OSC}.bin": GBA})
+        text = self.run_install(_args(platform="retroarch", dest=self.dest,
+                                      from_pack=[pack], no_input=True, declared_only=False))
+        self.assertClean(text, "pack")
+        self.assertIn("is not valid: unsafe", text)
+        self.assertEqual(list(self.dest.iterdir()), [])
+        self.assertNothingRawOnDisk()
+
+    def test_a_list_dest_and_its_names_are_refused_or_shown(self):
+        files = [{"dest": f"x{self.CSI}BAD.bin", "sha1": "0" * 40, "size": 1,
+                  "repo_path": "bios/x", "cores": None, "systems": ["a"]}]
+        listing = self.root / "list.json"
+        listing.write_text(json.dumps({"manifest_version": 2, "platform": "retroarch",
+                                       "files": files}))
+        text = self.run_install(_args(platform="retroarch", dest=self.dest, manifest=listing,
+                                      no_input=True, dry_run=True, verbose=True,
+                                      declared_only=False))
+        self.assertClean(text, "--manifest dest")
+        self.assertIn("unsafe", text)
+        named = {"manifest_version": 2, "platform": "retroarch", "files": [
+            {**files[0], "dest": "a.bin", "systems": [f"a{self.CSI}"],
+             "cores": [f"core{self.OSC}"]}],
+            "system_titles": {f"a{self.CSI}": f"Title{self.OSC}"}}
+        cleaned = install._validate_manifest(named, "retroarch")
+        self.assertClean(json.dumps(cleaned, ensure_ascii=False), "names")
+        self.assertNothingRawOnDisk()
+
+    def test_a_card_label_is_shown_and_never_obeyed(self):
+        card = self.root / "media" / f"S{self.CSI}RED"
+        (card / "system").mkdir(parents=True)
+        (card / "system" / "batocera.conf").write_text("system.hostname=BATOCERA\n")
+        listing = self.root / "batocera.json"
+        listing.write_text(json.dumps({"manifest_version": 2, "platform": "batocera",
+                                       "files": []}))
+        with mock.patch.object(install, "detect_platforms", return_value=[]):
+            text = self.run_install(_args(platform="batocera", manifest=listing,
+                                          no_input=True, dry_run=True, events=True,
+                                          declared_only=False), [card])
+        self.assertIn("S?[41mRED", text)
+        self.assertClean(text, "card label")
+        self.assertClean(install.card_line(card), "card row")
+
+    def test_a_folder_a_config_names_is_refused(self):
+        home = self.root / "home"
+        weird = home / f"sys{self.OSC}x"
+        weird.mkdir(parents=True)
+        cfg = home / ".config" / "retroarch" / "retroarch.cfg"
+        cfg.parent.mkdir(parents=True)
+        cfg.write_text(f'system_directory = "{weird}"\n')
+        listing = self.root / "retroarch.json"
+        listing.write_text(json.dumps({"manifest_version": 2, "platform": "retroarch",
+                                       "files": []}))
+        text = self.run_install(
+            _args(manifest=listing, no_input=True, dry_run=True, events=True,
+                  declared_only=False),
+            env={"HOME": str(home), "XDG_CONFIG_HOME": str(home / ".config"),
+                 "RETROBIOS_OS": "linux"})
+        self.assertClean(text, "retroarch.cfg")
+        self.assertIn("holds a control character", text)
+        self.assertNotIn("using default path", text)
+        self.assertNotIn(str(home / ".config" / "retroarch" / "system"), text)
+
+    def test_a_path_with_a_control_character_is_no_relative_path(self):
+        for value in ("a\x1bb.bin", "a\x07.bin", "a\x9bb.bin", "a\nb.bin"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                install._safe_relative_path(value, "dest")
+        self.assertEqual(install.shown_path(Path("/a/b\x1b[2Jc")), "/a/b?[2Jc")
+
+
+
+class LineModeAndScreenDecideAlike(_LineModeFindings, _OutsideTextFindings,
+                                   unittest.TestCase):
     """tui_audit_8 P1-1, P2-1 and code_audit_15 P2-2: line mode looked at
     this machine alone, took this computer's default folder with a card in
     the reader or nothing found, and the screen put RetroArch under A for a
@@ -8746,7 +9108,7 @@ class EdgesTheMutantsFound(unittest.TestCase):
 
 
 
-class AuditEighteenAndEleven(unittest.TestCase):
+class AuditEighteenAndEleven(_CardFixtures, unittest.TestCase):
     """code_audit_18 and tui_audit_11: what the cards, the screens and the
     docs answer, line mode's parity being in LineModeAndScreenDecideAlike."""
 
@@ -8760,34 +9122,6 @@ class AuditEighteenAndEleven(unittest.TestCase):
                         mock.patch.object(install, "_mount_points", return_value=frozenset())):
             patcher.start()
             self.addCleanup(patcher.stop)
-
-    def drive(self, name: str, files: dict) -> Path:
-        root = self.root / "media" / name
-        root.mkdir(parents=True)
-        for path, text in files.items():
-            (root / path).parent.mkdir(parents=True, exist_ok=True)
-            (root / path).write_text(text, encoding="utf-8")
-        return root
-
-    ABOUT = "system/configs/emulationstation/about.info"
-
-    def renamed(self) -> dict:
-        """The drives code_audit_18 P1-1 names: KNULLI and Batocera each
-        renamed in its own menu, with and without the file KNULLI alone
-        writes, and Recalbox's share."""
-        conf = "system/batocera.conf"
-        return {
-            "KNULLI renamed": self.drive("K1", {self.ABOUT: "KNULLI\n",
-                                                conf: "system.hostname=RG40XXH\n"}),
-            "KNULLI as shipped": self.drive("K2", {self.ABOUT: "KNULLI\n",
-                                                   conf: "system.hostname=KNULLI\n"}),
-            "renamed, no about.info": self.drive("K3", {conf: "system.hostname=RG40XXH\n"}),
-            "Batocera as shipped": self.drive("B1", {conf: "system.hostname=BATOCERA\n"}),
-            "Batocera, no hostname": self.drive("B2", {conf: "# system.hostname=X\n"}),
-            "Recalbox": self.drive("R1", {"system/recalbox.conf": "a=1\n"}),
-            "two shares": self.drive("T1", {conf: "system.hostname=BATOCERA\n",
-                                            "system/recalbox.conf": ""}),
-        }
 
     def test_a_renamed_card_is_named_by_the_file_no_menu_writes(self):
         """code_audit_18 P1-1: a KNULLI card whose hostname was changed in
@@ -8814,58 +9148,6 @@ class AuditEighteenAndEleven(unittest.TestCase):
                          ("knulli", "batocera"))
         self.assertEqual(install.share_doubt(drives["two shares"])[0],
                          ("batocera", "recalbox"))
-
-    def test_a_drive_two_systems_fit_is_taken_as_named_and_said(self):
-        """code_audit_18 P1-1: --platform knulli is never refused on a
-        drive whose only evidence is a batocera.conf, --platform batocera
-        takes its bios folder, and the doubt is said. Recalbox refuses it
-        with words for a SHARE drive (P3-4)."""
-        drives = self.renamed()
-        for name in ("renamed, no about.info", "Batocera as shipped"):
-            drive = drives[name]
-            with self.subTest(drive=name):
-                choice = install.card_choice("knulli", "knulli", drive)
-                self.assertEqual((choice.plat, choice.folder, choice.refused),
-                                 ("knulli", drive / "bios", ""))
-                self.assertIn("Taken as KNULLI's, as named", choice.note)
-        drive = drives["renamed, no about.info"]
-        choice = install.card_choice("batocera", "batocera", drive)
-        self.assertEqual((choice.plat, choice.folder), ("batocera", drive / "bios"))
-        self.assertIn("names the host RG40XXH", choice.note)
-        refused = install.card_choice("recalbox", "recalbox", drive)
-        self.assertIn("could be a KNULLI card or a Batocera SHARE drive", refused.refused)
-        words = install._dest_refusal_words(refused, None)
-        self.assertIn("Connect the Recalbox SHARE drive", words)
-        self.assertNotIn("Insert", words)
-        other = install.card_choice("recalbox", "recalbox", drives["Batocera as shipped"])
-        words = install._dest_refusal_words(other, None)
-        self.assertIn("Connect the Recalbox SHARE drive, or name that drive's own system: "
-                      "--platform batocera", words)
-
-    def test_the_first_screen_and_line_mode_say_the_doubt(self):
-        """code_audit_18 P1-1: the screen's first row was "Batocera SHARE
-        drive (KNULLI2)". A renamed card with about.info is KNULLI's, one
-        without is listed by neither and said."""
-        drives = self.renamed()
-        knulli, doubt = drives["KNULLI renamed"], drives["renamed, no about.info"]
-        with mock.patch.object(install, "_mounted_cards", return_value=[knulli, doubt]), \
-                mock.patch.object(install, "detect_platforms", return_value=[]), \
-                contextlib.redirect_stdout(io.StringIO()) as out:
-            setups, _mounted = install.found_setups("linux")
-        self.assertEqual([(plat, path) for plat, path, _label in setups],
-                         [("knulli", knulli / "bios")])
-        self.assertIn("KNULLI SD card", setups[0][2])
-        text = out.getvalue()
-        self.assertIn(f"{doubt} could be a KNULLI card or a Batocera SHARE drive", text)
-        self.assertIn(f"--platform knulli --dest {doubt} or --platform batocera --dest {doubt}",
-                      text)
-        with mock.patch.object(install, "_mounted_cards", return_value=[knulli, doubt]), \
-                mock.patch.object(install, "detect_platforms", return_value=[]), \
-                mock.patch.object(install, "detect_frontends", return_value=[]), \
-                contextlib.redirect_stdout(io.StringIO()):
-            state, _effects = install.tui_start(_args(), "linux")
-        self.assertTrue(any("could be a KNULLI card" in note for note in state.notes))
-        self.assertEqual([setup[0] for setup in state.setups], ["knulli"])
 
     def test_a_share_drive_is_never_called_a_card(self):
         """code_audit_18 P3-4, tui_audit_11 P3-14: "is a Batocera card"
@@ -8896,163 +9178,6 @@ class AuditEighteenAndEleven(unittest.TestCase):
                           "Onion SD card (OLDONION, 6 BIOS files)"])
 
     # tui_audit_11 P2-1: a list or a pack that records some axes only.
-
-    def minui(self, plat: str = "minui", systems: bool = False, cores: bool = True,
-              regions: bool = True) -> tuple[Path, Path, dict]:
-        """A list of plat's shape (the MinUI family records cores and regions,
-        no system), the pack built from it and the files' payloads."""
-        from test_install_offline import GBA, JP, US  # noqa: PLC0415
-
-        payloads = {"Bios/MGBA/gba_bios.bin": (GBA, "nintendo-gba", "mgba", None),
-                    "Bios/PS/scph5501.bin": (US, "sony-playstation", "pcsx_rearmed",
-                                             "north-america"),
-                    "Bios/PS/scph5500.bin": (JP, "sony-playstation", "pcsx_rearmed", "japan")}
-        files = []
-        for dest, (data, system, core, region) in payloads.items():
-            entry = {"dest": dest, "sha1": hashlib.sha1(data).hexdigest(), "size": len(data),
-                     "repo_path": f"bios/{dest}", "cores": [core] if cores else None}
-            if systems:
-                entry["systems"] = [system]
-            if regions and region:
-                entry.update(regions=[region], region_groups=["ps"])
-            files.append(entry)
-        listing = self.root / f"{plat}.json"
-        install_list = {"manifest_version": 2, "platform": plat, "files": files}
-        listing.write_text(json.dumps(install_list))
-        sys.path.insert(0, str(REPO_ROOT / "scripts"))
-        self.addCleanup(sys.path.remove, str(REPO_ROOT / "scripts"))
-        import generate_pack  # noqa: PLC0415
-
-        pack_list = {"files": [{"path": dest, "sha1": entry["sha1"], "size": entry["size"]}
-                               for dest, entry in zip(payloads, files)]}
-        generate_pack.annotate_pack_systems(pack_list, generate_pack.pack_systems(install_list))
-        name = {"minui": "MinUI", "misterfpga": "MiSTer_FPGA"}[plat]
-        pack = self.root / f"{name}_v1_BIOS_Pack.zip"
-        with zipfile.ZipFile(pack, "w") as archive:
-            for dest, (data, *_rest) in payloads.items():
-                archive.writestr(dest, data)
-            archive.writestr("manifest.json", json.dumps(pack_list))
-        return listing, pack, pack_list
-
-    def narrowed(self, plat: str, **given) -> tuple[int, str, list]:
-        """(exit code, what was said, the files kept) of a --dry-run narrowed
-        as given."""
-        dest = self.root / "dest"
-        if not dest.exists():
-            make_card(dest, "MinUI")
-        stream = io.StringIO()
-        code = 0
-        with mock.patch.object(install.EVENTS, "stream", stream), \
-                mock.patch.object(install, "detect_os", return_value="linux"), \
-                mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}), \
-                contextlib.redirect_stdout(io.StringIO()) as out, \
-                contextlib.redirect_stderr(io.StringIO()) as err:
-            try:
-                install._install(_args(platform=plat, dest=dest, dry_run=True, events=True,
-                                       no_input=True, declared_only=False, **given),
-                                 io.StringIO())
-            except SystemExit as stop:
-                code = stop.code
-            finally:
-                install.LOCAL.reset()
-        kept = [json.loads(line)["dest"] for line in stream.getvalue().splitlines()
-                if '"event": "file"' in line]
-        return code, out.getvalue() + err.getvalue(), kept
-
-    def test_a_list_without_systems_narrows_by_what_it_records(self):
-        """tui_audit_11 P2-1: install/minui.json records cores and regions,
-        no system, and all three options were refused with a remedy that
-        fetched the same list."""
-        listing, _pack, _listed = self.minui()
-        code, text, kept = self.narrowed("minui", manifest=listing, core=["mgba"])
-        self.assertEqual(code, 0, text)
-        self.assertEqual(kept, ["Bios/MGBA/gba_bios.bin"])
-        code, text, kept = self.narrowed("minui", manifest=listing, region=["us"])
-        self.assertEqual(code, 0, text)
-        self.assertNotIn("Bios/PS/scph5500.bin", kept)
-        code, text, _kept = self.narrowed("minui", manifest=listing,
-                                          system=["nintendo-gba"])
-        self.assertEqual(code, 1)
-        self.assertIn("records no systems, so --system cannot narrow it", text)
-        self.assertIn("Run it without --system, or narrow with --core and --region", text)
-        self.assertNotIn("one-line installer", text)
-        # The remedy followed: what it names works.
-        code, text, _kept = self.narrowed("minui", manifest=listing, core=["mgba"],
-                                          region=["us"])
-        self.assertEqual(code, 0, text)
-
-    def test_a_pack_names_its_list_only_when_that_list_records_it(self):
-        """tui_audit_11 P2-1: a MinUI pack sent --core to install/minui.json,
-        refused the same way, and a MiSTer pack to install/misterfpga.json,
-        which records no core. The pack now records what its list narrows
-        by, and each remedy changes the outcome."""
-        listing, pack, listed = self.minui()
-        self.assertEqual(listed["list_records"], ["cores", "regions"])
-        code, text, _kept = self.narrowed("minui", from_pack=[pack], core=["mgba"])
-        self.assertEqual(code, 1)
-        self.assertIn("Add --manifest FILE, a copy of install/minui.json, which records them",
-                      text)
-        code, text, kept = self.narrowed("minui", from_pack=[pack], manifest=listing,
-                                         core=["mgba"])
-        self.assertEqual((code, kept), (0, ["Bios/MGBA/gba_bios.bin"]), text)
-        mister_list, mister, listed = self.minui("misterfpga", systems=True, cores=False,
-                                                 regions=False)
-        self.assertEqual(listed["list_records"], ["regions", "systems"])
-        code, text, _kept = self.narrowed("misterfpga", from_pack=[mister], core=["x"])
-        self.assertEqual(code, 1)
-        self.assertIn("MiSTer FPGA's own file list records no cores either. Run it without "
-                      "--core, or narrow with --system.", text)
-        self.assertNotIn("--manifest", text)
-        code, text, kept = self.narrowed("misterfpga", from_pack=[mister],
-                                         system=["nintendo-gba"])
-        self.assertEqual((code, kept), (0, ["Bios/MGBA/gba_bios.bin"]), text)
-        self.assertTrue(mister_list.exists())
-
-    def test_line_mode_offers_what_can_be_chosen(self):
-        """tui_audit_11 P3-10: "c) choose systems, cores and regions" with a
-        pack that records systems only, and "Cores: 1) azahar" asked with
-        one answer."""
-        _listing, _pack, listed = self.minui("misterfpga", systems=True, cores=False,
-                                             regions=False)
-        files = [{"dest": f["path"], "sha1": f["sha1"], "size": f["size"],
-                  "repo_path": "x", "systems": f["systems"]} for f in listed["files"]]
-        self.assertEqual(install.narrowing_words(files, []), "systems")
-        listing, _pack, _listed = self.minui()
-        minui = json.loads(listing.read_text())["files"]
-        self.assertEqual(install.narrowing_words(minui, []), "cores and regions")
-        one_core = [{**entry, "systems": ["nintendo-3ds"], "cores": ["azahar"]}
-                    for entry in minui[:1]]
-        with mock.patch.object(install, "_ask", side_effect=["", ""]) as asked, \
-                contextlib.redirect_stdout(io.StringIO()) as out:
-            install._choose_narrowing(one_core, [], {}, None)
-        self.assertNotIn("Cores:", out.getvalue())
-        self.assertEqual(asked.call_count, 0)
-
-    # code_audit_18 P3-2, P3-3, tui_audit_11 P3-1: the remedies of a card.
-
-    def test_a_full_card_is_freed_never_left_for_another_drive(self):
-        with mock.patch.object(install.shutil, "disk_usage",
-                               return_value=mock.Mock(free=10)), \
-                contextlib.redirect_stderr(io.StringIO()) as err, \
-                self.assertRaises(SystemExit):
-            install._check_free_space(self.root, 1000, "retroarch", card=True)
-        said = err.getvalue()
-        self.assertIn("on the card, then run it again", said)
-        self.assertNotIn("--platform", said)
-        self.assertNotIn("another drive", said)
-
-    def test_line_mode_names_the_way_to_another_folder(self):
-        hint = install.Invocation()
-        with mock.patch.object(install, "_folder_writable", return_value=False), \
-                mock.patch.object(install, "_on_read_only_mount", return_value=False):
-            lines = install.folder_warnings("retroarch", self.root, [], hint, True, False)
-        self.assertIn("You cannot write to this folder: run it again with another --dest.",
-                      lines)
-        self.assertNotIn("choose another one", " ".join(lines))
-        with mock.patch.object(install, "_folder_writable", return_value=False), \
-                mock.patch.object(install, "_on_read_only_mount", return_value=True):
-            lines = install.folder_warnings("retroarch", self.root, [], hint, True, True)
-        self.assertEqual(lines, [install.read_only_words(self.root)])
 
     def test_a_card_plan_offers_one_remedy_first(self):
         for facts, locked in (({"free": 50 * 1024 ** 3, "writable": False, "cores": []}, True),
@@ -9310,120 +9435,6 @@ class TheAndroidResultReadsWhole(unittest.TestCase):
         self.assertIn("files a game or a game engine reads", said)
         self.assertNotIn("Needed to start an emulator", said)
 
-
-class NothingFromOutsideReachesTheTerminalRaw(unittest.TestCase):
-    """code_audit_18 P2-1: a pack's member path, a --manifest dest, the
-    names a list records, a card's label and a retroarch.cfg folder reached
-    line mode, the events and the disk with their control characters. Each
-    source is fed escape sequences, and none comes out raw."""
-
-    OSC = "\x1b]0;PWNED\x07"
-    CSI = "\x1b[41m"
-
-    def setUp(self):
-        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
-        self.root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
-        self.addCleanup(shutil.rmtree, self.root, True)
-        install.LOCAL.reset()
-        self.addCleanup(install.LOCAL.reset)
-        install._UNNAMEABLE.clear()
-        self.addCleanup(install._UNNAMEABLE.clear)
-        self.dest = self.root / "dest"
-        self.dest.mkdir()
-
-    def assertClean(self, text: str, where: str) -> None:
-        self.assertNotIn("\x1b", text, where)
-        self.assertNotIn("\x07", text, where)
-
-    def assertNothingRawOnDisk(self) -> None:
-        for path in self.root.rglob("*"):
-            self.assertIsNone(install._CONTROLS.search(path.name), path)
-
-    def run_install(self, args: argparse.Namespace, mounts: list = (),
-                    env: dict | None = None) -> str:
-        events = io.StringIO()
-        with mock.patch.object(install, "_mounted_cards", return_value=list(mounts)), \
-                mock.patch.object(install, "_mount_points", return_value=frozenset()), \
-                mock.patch.object(install, "detect_frontends", return_value=[]), \
-                mock.patch.object(install, "detect_os", return_value="linux"), \
-                mock.patch.object(install.EVENTS, "stream", events), \
-                mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1", **(env or {})}), \
-                contextlib.redirect_stdout(io.StringIO()) as out, \
-                contextlib.redirect_stderr(io.StringIO()) as err, \
-                contextlib.suppress(SystemExit):
-            install._install(args, io.StringIO())
-        return out.getvalue() + err.getvalue() + events.getvalue()
-
-    def test_a_pack_member_path_is_refused(self):
-        from test_install_offline import _pack, GBA  # noqa: PLC0415
-
-        pack = _pack(self.root, "RetroArch_v1_BIOS_Pack.zip", {f"x{self.OSC}.bin": GBA})
-        text = self.run_install(_args(platform="retroarch", dest=self.dest,
-                                      from_pack=[pack], no_input=True, declared_only=False))
-        self.assertClean(text, "pack")
-        self.assertIn("is not valid: unsafe", text)
-        self.assertEqual(list(self.dest.iterdir()), [])
-        self.assertNothingRawOnDisk()
-
-    def test_a_list_dest_and_its_names_are_refused_or_shown(self):
-        files = [{"dest": f"x{self.CSI}BAD.bin", "sha1": "0" * 40, "size": 1,
-                  "repo_path": "bios/x", "cores": None, "systems": ["a"]}]
-        listing = self.root / "list.json"
-        listing.write_text(json.dumps({"manifest_version": 2, "platform": "retroarch",
-                                       "files": files}))
-        text = self.run_install(_args(platform="retroarch", dest=self.dest, manifest=listing,
-                                      no_input=True, dry_run=True, verbose=True,
-                                      declared_only=False))
-        self.assertClean(text, "--manifest dest")
-        self.assertIn("unsafe", text)
-        named = {"manifest_version": 2, "platform": "retroarch", "files": [
-            {**files[0], "dest": "a.bin", "systems": [f"a{self.CSI}"],
-             "cores": [f"core{self.OSC}"]}],
-            "system_titles": {f"a{self.CSI}": f"Title{self.OSC}"}}
-        cleaned = install._validate_manifest(named, "retroarch")
-        self.assertClean(json.dumps(cleaned, ensure_ascii=False), "names")
-        self.assertNothingRawOnDisk()
-
-    def test_a_card_label_is_shown_and_never_obeyed(self):
-        card = self.root / "media" / f"S{self.CSI}RED"
-        (card / "system").mkdir(parents=True)
-        (card / "system" / "batocera.conf").write_text("system.hostname=BATOCERA\n")
-        listing = self.root / "batocera.json"
-        listing.write_text(json.dumps({"manifest_version": 2, "platform": "batocera",
-                                       "files": []}))
-        with mock.patch.object(install, "detect_platforms", return_value=[]):
-            text = self.run_install(_args(platform="batocera", manifest=listing,
-                                          no_input=True, dry_run=True, events=True,
-                                          declared_only=False), [card])
-        self.assertIn("S?[41mRED", text)
-        self.assertClean(text, "card label")
-        self.assertClean(install.card_line(card), "card row")
-
-    def test_a_folder_a_config_names_is_refused(self):
-        home = self.root / "home"
-        weird = home / f"sys{self.OSC}x"
-        weird.mkdir(parents=True)
-        cfg = home / ".config" / "retroarch" / "retroarch.cfg"
-        cfg.parent.mkdir(parents=True)
-        cfg.write_text(f'system_directory = "{weird}"\n')
-        listing = self.root / "retroarch.json"
-        listing.write_text(json.dumps({"manifest_version": 2, "platform": "retroarch",
-                                       "files": []}))
-        text = self.run_install(
-            _args(manifest=listing, no_input=True, dry_run=True, events=True,
-                  declared_only=False),
-            env={"HOME": str(home), "XDG_CONFIG_HOME": str(home / ".config"),
-                 "RETROBIOS_OS": "linux"})
-        self.assertClean(text, "retroarch.cfg")
-        self.assertIn("holds a control character", text)
-        self.assertNotIn("using default path", text)
-        self.assertNotIn(str(home / ".config" / "retroarch" / "system"), text)
-
-    def test_a_path_with_a_control_character_is_no_relative_path(self):
-        for value in ("a\x1bb.bin", "a\x07.bin", "a\x9bb.bin", "a\nb.bin"):
-            with self.subTest(value=value), self.assertRaises(ValueError):
-                install._safe_relative_path(value, "dest")
-        self.assertEqual(install.shown_path(Path("/a/b\x1b[2Jc")), "/a/b?[2Jc")
 
 if __name__ == "__main__":
     unittest.main()
