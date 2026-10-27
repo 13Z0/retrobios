@@ -9194,6 +9194,15 @@ class AuditEighteenAndEleven(_CardFixtures, unittest.TestCase):
                 self.assertNotIn("choose another one", text)
                 self.assertEqual(effects, [("run", "check")])
 
+    def test_options_offer_no_downloads_when_nothing_is_downloaded(self):
+        """P3-16: Parallel downloads offered for an install from a pack."""
+        state = checked_state()
+        state.stack.append("options")
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: ""}):
+            self.assertIn("jobs", [row.action for row in install.tui_rows(state)])
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            self.assertNotIn("jobs", [row.action for row in install.tui_rows(state)])
+
     def test_nothing_installable_focuses_the_copy(self):
         """tui_audit_11 P3-8: offline with nothing to copy, the plan focused
         Choose systems, whose systems need the internet too."""

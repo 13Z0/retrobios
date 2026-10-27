@@ -176,7 +176,7 @@ install starts.
 | Back | Esc, Backspace | B, Select (B alone with muxterm's own keys, where Select shows its keyboard) |
 | Options | `o`, Tab | Y |
 | Filter a long list | `/` then type, Enter on a lone match chooses it | muxterm: Select shows a keyboard. Elsewhere none (the setup list puts the SD cards after RetroArch) |
-| Keys of the screen | `?`, F1 | |
+| Keys of the screen | `?`, F1 (F1 alone while typing a filter, where the help lists the keys that do not type) | |
 | Stop an install | Esc, `q`, Ctrl+C | B, Select+Start (B alone with muxterm's own keys) |
 | Quit | `q`, Ctrl+C | B on the first screen |
 | Pause, back with `fg` (Linux, macOS) | Ctrl+Z | |
@@ -205,7 +205,9 @@ folder was named, the backup folder and the save directory included
 (`/sdcard/RetroArch` on Android, not the `/storage/emulated/0` it links to).
 
 It opens only for an install, at a terminal of at least 40 columns and 12 rows
-(a smaller window says so, with its size) whose `TERM` is set, is not `dumb`
+(a smaller window says so, with its size, before the first question:
+`The window is 39x12: questions come line by line (40x12 for the full
+screen).`) whose `TERM` is set, is not `dumb`
 and can draw it: where the terminal's description
 (terminfo) has no way to move the cursor, or moves it with other sequences
 than the ANSI ones the screen writes (`TERM=vt52`), the questions come line by
@@ -775,7 +777,7 @@ what the options name, everything by default.
 | <span id="option-list-cores"></span>`--list-cores` | Print the cores whose extra files a platform installs |
 | <span id="option-list-emulators"></span>`--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
 | <span id="option-romm-firmware"></span>`--romm-firmware TEMPLATE` | RomM: where each platform's firmware goes in the library, as `filesystem.structure.firmware` in RomM's `config.yml` says (`{platform}/bios` for a library laid out as `{platform}/roms`). Read from `config.yml` beside the library when it is there. See [RomM firmware layout](#romm-firmware-layout) |
-| <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal. A run whose output goes to a file or a pipe asks nothing either, and says so on stderr |
+| <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal. A run whose output goes to a file or a pipe asks nothing either, and says so on stderr. It finds the setups and the mounted cards the screen finds: one is taken, as Enter takes it, and two stop the run with an `error` event (`stage` `detect`, `reason` `conflict`) naming each with its `--platform` and `--dest` |
 | <span id="option-check"></span>`--check` | Report and exit without writing |
 | <span id="option-dry-run"></span>`--dry-run` | Show what would be downloaded, the totals first, then by system and with sizes, without writing anything. A plan taller than the screen names the ten largest systems, and `--verbose` lists every system and file |
 | <span id="option-yes"></span>`--yes`, `-y` | Do not ask before a download of 1 GB or more, nor anything else. Implies `--no-input`, so a run that needs an answer (nothing found here, two setups found) stops on what to name instead |
@@ -1576,7 +1578,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 |----------|--------|
 | `RETROBIOS_REF` | Branch or tag the file list and the files committed to the repository are read from. Defaults to `main`. Files the manifest marks `release_asset` always come from the `large-files` release, whatever the ref, and that release replaces an asset in place when it is rebuilt. Each release deletes the previous release tags, so a tag holds a file list until the next release. For contributors: [release process](release-process.md#cutting-a-release) |
 | `RETROBIOS_BASE_URL` | Base URL for the manifest and the files it declares. HTTPS only, plain HTTP allowed to loopback for end-to-end tests. Whoever controls this base controls the expected hashes, hence the check. A file list that cannot be fetched names the address, and this variable when it is set |
-| `RETROBIOS_INSTALL_OFFLINE` | Set to anything but `0`: no network request, as with `--offline`. The runs the full-screen interface starts inherit it. `RETROBIOS_OFFLINE` is the build scripts' own and leaves the installer alone |
+| `RETROBIOS_INSTALL_OFFLINE` | Set to anything but `0`: no network request, as with `--offline`. The runs the full-screen interface starts inherit it. The words then name the variable (`not fetched (RETROBIOS_INSTALL_OFFLINE=1)`, `run it with RETROBIOS_INSTALL_OFFLINE unset`), and `--offline` where the option was given. `RETROBIOS_OFFLINE` is the build scripts' own and leaves the installer alone |
 | `RETROBIOS_OS` | Names the host outright (`linux`, `wsl`, `windows`, `darwin`, `android`) instead of detecting it |
 | `EXTERNAL_STORAGE` | Android only, the shared storage root RetroArch builds its default directories from. Defaults to `/storage/emulated/0` |
 | `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |
