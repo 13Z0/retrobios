@@ -44,6 +44,8 @@ files:
     validation: [size]
     source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[1])"
     note: "Preferred US BIOS, searched first by exact filename. The US slot is the detector's default: a disc takes it for both America licence strings and for any licence that is neither \"Inc.\" (JP) nor \"Euro pe\" (EU), and content without a disc boots it too (libpcsxcore/misc.c:422-453, frontend/libretro.c:2167-2171)."
+    evidence:
+      hle_fallback: ["2026-10-27-e9eeba54945e"]
 
   # -- Region: Europe (PSX_REGION_EU = 2) --
 

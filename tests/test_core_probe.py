@@ -11,12 +11,14 @@ import argparse
 import contextlib
 import io
 import json
+import os
 import shutil
 import struct
 import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -99,6 +101,13 @@ def mednafen_state(sections: dict[str, dict[str, bytes]]) -> bytes:
     return b"MDFNSVST".ljust(32, b"\0") + body
 
 
+def checkout(path: Path) -> Path:
+    """A folder made the root of a git checkout, as --record requires."""
+    path.mkdir(parents=True, exist_ok=True)
+    subprocess.run(["git", "init", "-q", str(path)], check=True)
+    return path
+
+
 class ParsingTests(unittest.TestCase):
     def test_assignment(self) -> None:
         self.assertEqual(core_probe.parse_assignment("a=b=c", "--option"), ("a", "b=c"))
@@ -153,6 +162,12 @@ class ParsingTests(unittest.TestCase):
         described = core_probe.describe_env_value(str(library))
         self.assertEqual(described, f"{library.name} sha256:{core_probe.file_digest(library, 'sha256')}")
         self.assertEqual(core_probe.describe_env_value("2000-01-01 00:00:00"), "2000-01-01 00:00:00")
+
+    def test_uniform_frame(self) -> None:
+        self.assertTrue(core_probe.uniform_frame(b"", 2))
+        self.assertTrue(core_probe.uniform_frame(b"\x01\x02" * 8, 2))
+        self.assertFalse(core_probe.uniform_frame(b"\x01\x02" * 7 + b"\x01\x03", 2))
+        self.assertFalse(core_probe.uniform_frame(b"\x00\x00\x00\x00\x00\x00\x00\x01", 4))
 
     def test_cue_tracks(self) -> None:
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp" / "tests") as tmp:
@@ -238,7 +253,7 @@ class FakeCoreTests(unittest.TestCase):
         return code, json.loads(out.getvalue()) if code == 0 else None
 
     def test_run_record(self) -> None:
-        record_dir = self.tmp / "records"
+        record_dir = checkout(self.tmp / "records")
         code, record = self.probe(["check", "--core", str(self.core), "--frames", "3",
                                    "--vary", f"card.bin={self.cards[0]}", "--vary", f"card.bin={self.cards[1]}",
                                    "--vary", f"card.bin={self.cards[2]}", "--vary", "card.bin=",
@@ -262,11 +277,12 @@ class FakeCoreTests(unittest.TestCase):
         self.assertEqual(first["frames"], 3)
         self.assertEqual(record["emulator"], "fake")
         self.assertEqual([p.relative_to(record_dir).as_posix()
-                          for p in record_dir.rglob("*") if p.is_file()], ["measurements/fake.jsonl"])
+                          for p in record_dir.rglob("*") if p.is_file() and ".git" not in p.parts],
+                         ["measurements/fake.jsonl"])
         line = json.loads((record_dir / "measurements" / "fake.jsonl").read_text())
         self.assertEqual(measurement_records.check_line(line), [])
-        # The line is the record the run printed, with its id.
-        self.assertEqual({k: v for k, v in line.items() if k != "id"}, record)
+        # The line is the record the run printed, id included.
+        self.assertEqual(line, record)
         try:
             from jsonschema import Draft202012Validator
         except ImportError:
@@ -275,7 +291,7 @@ class FakeCoreTests(unittest.TestCase):
         self.assertEqual(list(Draft202012Validator(schema).iter_errors(line)), [])
 
     def test_second_run_is_appended_beside_the_first(self) -> None:
-        record_dir = self.tmp / "appended"
+        record_dir = checkout(self.tmp / "appended")
         argv = ["run", "--core", str(self.core), "--frames", "1", "--no-trace", "--max-load", "1000",
                 "--record", str(record_dir), "--subject", "smoke"]
         self.assertEqual(self.probe(argv)[0], 0)
@@ -307,10 +323,99 @@ class FakeCoreTests(unittest.TestCase):
         self.assertEqual(record["flags"], [])
 
     def test_busy_machine_refused(self) -> None:
+        refused = checkout(self.tmp / "refused")
         code, _ = self.probe(["run", "--core", str(self.core), "--frames", "1", "--record",
-                              str(self.tmp / "refused"), "--max-load", "-1"])
+                              str(refused), "--max-load", "-1"])
         self.assertEqual(code, 3)
-        self.assertFalse((self.tmp / "refused").exists())
+        self.assertFalse((refused / "measurements").exists())
+
+    def test_record_names_a_checkout_root(self) -> None:
+        # --record measurements wrote measurements/measurements/<emulator>.jsonl.
+        root = checkout(self.tmp / "rooted")
+        (root / "measurements").mkdir()
+        for wrong in (root / "measurements", self.tmp / "plain"):
+            wrong.mkdir(exist_ok=True)
+            err = io.StringIO()
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(err):
+                code = core_probe.main(["run", "--core", str(self.core), "--frames", "1", "--no-trace",
+                                        "--record", str(wrong), "--work-dir", str(self.tmp / "work")])
+            self.assertEqual(code, 2)
+            self.assertIn("not a git checkout root", err.getvalue())
+            self.assertIn("--record .", err.getvalue())
+            self.assertFalse((wrong / "measurements" / "fake.jsonl").exists())
+        self.assertIsNone(core_probe.not_a_checkout_root(root))
+        self.assertIsNone(core_probe.not_a_checkout_root(REPO_ROOT))
+
+    def test_the_core_sees_only_the_env_it_was_given(self) -> None:
+        os.environ["CORE_PROBE_TEST_TAG"] = "from-the-host"
+        os.environ["GITHUB_TOKEN"] = "secret"
+        try:
+            code, record = self.probe(["run", "--core", str(self.core), "--frames", "1",
+                                       "--no-trace"])
+        finally:
+            del os.environ["CORE_PROBE_TEST_TAG"]
+            del os.environ["GITHUB_TOKEN"]
+        self.assertEqual(code, 0)
+        rep = record["variants"][0]["repetitions"][0]
+        self.assertEqual(rep["logs"][1]["text"], "tag unset")
+        self.assertTrue(rep["isolation"] == "bwrap" or rep["isolation"].startswith("environment only"))
+
+
+class Sandbox(unittest.TestCase):
+    """What a core run under bubblewrap can reach: an allowlist."""
+
+    def setUp(self) -> None:
+        if not core_probe.sandbox_argv([])[0]:
+            self.skipTest("no working bwrap on this host")
+        self.tmp = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp" / "tests"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.out = self.tmp / "out"
+        self.inputs = self.tmp / "inputs"
+        self.inputs.mkdir()
+        (self.inputs / "bios.bin").write_text("BIOS")
+        self.elsewhere = self.tmp / "elsewhere"
+        self.elsewhere.mkdir()
+
+    def inside(self, script: str, **kwargs: object) -> subprocess.CompletedProcess:
+        prefix, isolation = core_probe.sandbox_argv([self.out], [self.inputs], **kwargs)
+        self.assertEqual(isolation, core_probe.SANDBOX)
+        return subprocess.run(prefix + ["/bin/sh", "-c", script], capture_output=True, text=True,
+                              check=False, env={"PATH": "/usr/bin:/bin"})
+
+    def test_nothing_of_the_user_or_the_checkout_is_reachable(self) -> None:
+        home = Path.home()
+        hidden = [home / ".config", home / ".ssh", home / ".git-credentials", home / ".netrc",
+                  home / ".gitconfig", REPO_ROOT / ".git", REPO_ROOT / "scripts", REPO_ROOT / "bios",
+                  REPO_ROOT / "emulators", self.elsewhere,
+                  Path("/mnt/c"), Path("/root"), Path("/var"), Path("/etc/shadow"), Path("/opt")]
+        script = "; ".join(f'test -e "{path}" && echo "LEAK {path}"' for path in hidden)
+        # The checkout exists only as the path down to the bound folders.
+        script += f'; ls -A /mnt /tmp; ls -A ~ 2>/dev/null; ls -A "{REPO_ROOT}"; echo end'
+        proc = self.inside(script)
+        self.assertNotIn("LEAK", proc.stdout)
+        self.assertEqual(proc.stdout.split(), ["/mnt:", "/tmp:", "tmp", "end"])
+
+    def test_inputs_read_only_work_dir_writable(self) -> None:
+        proc = self.inside(f'cat "{self.inputs}/bios.bin"; echo; echo x > "{self.inputs}/bios.bin" 2>/dev/null '
+                           f'|| echo refused; echo ok > "{self.out}/w"; echo no > "{self.elsewhere}/w" '
+                           f'2>/dev/null || echo gone')
+        self.assertEqual(proc.stdout.split(), ["BIOS", "refused", "gone"])
+        self.assertEqual((self.inputs / "bios.bin").read_text(), "BIOS")
+        self.assertEqual((self.out / "w").read_text(), "ok\n")
+        self.assertFalse((self.elsewhere / "w").exists())
+
+    def test_no_network_unless_asked(self) -> None:
+        devices = "tail -n +3 /proc/net/dev | cut -d: -f1"
+        self.assertEqual(self.inside(devices).stdout.split(), ["lo"])
+        self.assertNotEqual(self.inside(devices, network=True).stdout.split(), ["lo"])
+
+    def test_a_probe_can_require_the_sandbox(self) -> None:
+        args = core_probe.build_parser().parse_args(
+            ["run", "--core", sys.executable, "--require-sandbox"])
+        self.assertEqual([p for p in core_probe.validate_args(args) if "sandbox" in p], [])
+        with unittest.mock.patch.object(core_probe.shutil, "which", return_value=None):
+            problems = core_probe.validate_args(args)
+        self.assertIn("--require-sandbox: environment only: bwrap not found", problems)
 
 
 if __name__ == "__main__":

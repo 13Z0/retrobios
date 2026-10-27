@@ -81,6 +81,47 @@ def records_path(emulator: str) -> str:
     return f"{RECORDS_DIR}/{emulator}.jsonl"
 
 
+# The campaign's own files beside the records: append-only like them, one
+# line per finding or per pass, each line hashed to its id. No profile takes
+# these names (tests/test_campaign.py checks it).
+FINDINGS = "findings"
+CAMPAIGN_RUNS = "campaign-runs"
+CAMPAIGN_FILES = {
+    FINDINGS: ("found_at", "campaign-finding.schema.json"),
+    CAMPAIGN_RUNS: ("started_at", "campaign-run.schema.json"),
+}
+
+
+def line_id(line: dict, date_key: str) -> str:
+    body = {key: value for key, value in line.items() if key != "id"}
+    return f"{line[date_key][:10]}-{sha256_hex(canonical(body))[:12]}"
+
+
+def seal_line(line: dict, date_key: str) -> dict:
+    return {**line, "id": line_id(line, date_key)}
+
+
+def read_campaign(root: Path, name: str) -> list[dict]:
+    """The lines of one campaign file, each checked against its id."""
+    path = root / records_path(name)
+    if not path.is_file():
+        return []
+    date_key = CAMPAIGN_FILES[name][0]
+    lines = parse_lines(path.read_text(encoding="utf-8"), records_path(name))
+    problems = []
+    seen: set[str] = set()
+    for number, line in enumerate(lines, 1):
+        rid = str(line.get("id", ""))
+        if not ID_PATTERN.match(rid) or date_key not in line or line_id(line, date_key) != rid:
+            problems.append(f"{records_path(name)}:{number}: id {rid!r} does not hash the line")
+        if rid in seen:
+            problems.append(f"{records_path(name)}:{number}: id {rid} appears twice")
+        seen.add(rid)
+    if problems:
+        raise MeasurementsError("\n  ".join(problems))
+    return lines
+
+
 IDENTITY = ("id", "emulator", "subject", "supersedes", "migrated_from_version")
 
 
@@ -176,6 +217,8 @@ def read_records(root: Path) -> list[Stored]:
         emulator = path[len(RECORDS_DIR) + 1:].removesuffix(".jsonl")
         if not path.endswith(".jsonl") or "/" in emulator:
             problems.append(f"{path}: {RECORDS_DIR}/ holds <emulator>.jsonl files only")
+            continue
+        if emulator in CAMPAIGN_FILES:
             continue
         seen: set[str] = set()
         try:

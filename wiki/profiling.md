@@ -601,6 +601,7 @@ does not look.
 | `aliases` | alternate filenames for the same file |
 | `mode` | `libretro`, `standalone`, or `both` |
 | `hle_fallback` | true if a high-level emulation path exists |
+| `evidence` | by field (`required`, `hle_fallback`, `path`, `aliases`), the ids of the records in `measurements/<emulator>.jsonl` whose runs settled it. Written by `campaign.py` from its rule table, never by hand |
 | `category` | `bios` (default), `game_data`, `bios_zip` |
 | `region` | always a list of territory slugs from the schema enum (`[north-america]`, `[japan, asia-ntsc]`). The region the code selects the file **for**, never the region of the dump. See step 3b |
 | `region_check` | true if the core refuses to boot a game whose region does not match the BIOS |

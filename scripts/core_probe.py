@@ -18,6 +18,7 @@ reproduce it (core build, frontend commit, host, inputs by hash).
 from __future__ import annotations
 
 import argparse
+import contextlib
 import ctypes
 import datetime as dt
 import hashlib
@@ -26,6 +27,7 @@ import os
 import platform
 import re
 import shutil
+import signal
 import statistics
 import struct
 import subprocess
@@ -269,6 +271,14 @@ def render_printf(fmt: bytes, args: Sequence[int]) -> str:
     return "".join(out).rstrip("\n")
 
 
+def uniform_frame(frame: bytes, pixel_bytes: int) -> bool:
+    """True for a frame of one colour, an empty one included: a screen that
+    shows nothing of the game."""
+    if len(frame) <= pixel_bytes:
+        return True
+    return frame == frame[:pixel_bytes] * (len(frame) // pixel_bytes)
+
+
 def png_bytes(width: int, height: int, rgb: bytes) -> bytes:
     def chunk(tag: bytes, body: bytes) -> bytes:
         return struct.pack(">I", len(body)) + tag + body + struct.pack(">I", zlib.crc32(tag + body))
@@ -359,6 +369,7 @@ class Frontend:
         self.video = hashlib.sha1()
         self.audio = hashlib.sha1()
         self.frame_hashes: list[list] = []
+        self.uniform: set[str] = set()
         self.logs: list[dict] = []
         self.presses: list[tuple[int, int, int]] = [tuple(p) for p in spec["presses"]]
         self.unanswered: dict[int, int] = {}
@@ -433,7 +444,10 @@ class Frontend:
         self.video.update(struct.pack("<II", *self.last_size) + hashlib.sha1(self.last_frame).digest())
         every = self.spec["frame_hash_every"]
         if every and self.frame % every == 0:
-            self.frame_hashes.append([self.frame, hashlib.sha1(self.last_frame).hexdigest()])
+            digest = hashlib.sha1(self.last_frame).hexdigest()
+            self.frame_hashes.append([self.frame, digest])
+            if digest not in self.uniform and uniform_frame(self.last_frame, PIXEL_BYTES[self.pixel_format]):
+                self.uniform.add(digest)
             png_dir = self.spec.get("png_dir")
             if png_dir and self.last_frame:
                 rgb = to_rgb(self.pixel_format, *self.last_size, self.last_frame)
@@ -458,6 +472,9 @@ class Frontend:
 
 def run_worker(spec: dict) -> dict:
     """Load the core in this process and run it. Returns the measured result."""
+    # Nothing of the host's environment reaches the core: only what --env gave.
+    os.environ.clear()
+    os.environ.update(spec["env"])
     core = ctypes.CDLL(spec["core"])
     front = Frontend(spec)
     for name, fn in zip(("retro_set_environment", "retro_set_video_refresh", "retro_set_audio_sample",
@@ -514,6 +531,7 @@ def run_worker(spec: dict) -> dict:
         observables[f"state:{name}"] = state_vars.get(name)
     if spec["frame_hash_every"]:
         observables["frame_hashes"] = front.frame_hashes
+        observables["uniform_frames"] = sorted(front.uniform)
     core.retro_unload_game()
     core.retro_deinit()
     return {
@@ -584,7 +602,7 @@ def frontend_identity() -> dict:
 
 def core_identity(args: argparse.Namespace) -> dict:
     core = Path(args.core)
-    return {
+    identity = {
         "file": core.name,
         "sha256": file_digest(core, "sha256"),
         "repo": args.core_repo,
@@ -592,6 +610,9 @@ def core_identity(args: argparse.Namespace) -> dict:
         "build_command": args.build_command,
         "compiler": elf_comment(core) or None,
     }
+    if args.core_artifact:
+        identity["artifact"] = args.core_artifact
+    return identity
 
 
 # --------------------------------------------------------------------------
@@ -630,6 +651,84 @@ def host_paths_hidden(text: str, places: Sequence[tuple[str, str]]) -> str:
     return text
 
 
+_BWRAP_WORKS: dict[str, bool] = {}
+
+
+SANDBOX = "bwrap"
+# What a core or a build sees of the host, read-only: the system's programs
+# and libraries, and the parts of /etc the dynamic loader, fonts, TLS, the
+# clock and user lookups read. Nothing else of the tree exists inside.
+SANDBOX_SYSTEM = ("/usr", "/lib", "/lib32", "/lib64", "/libx32", "/bin", "/sbin")
+SANDBOX_ETC = ("/etc/ld.so.cache", "/etc/ld.so.conf", "/etc/ld.so.conf.d", "/etc/fonts",
+               "/etc/ssl", "/etc/ca-certificates", "/etc/localtime", "/etc/nsswitch.conf",
+               "/etc/passwd", "/etc/group", "/etc/alternatives")
+
+
+def _bwrap_base(bwrap: str, network: bool) -> list[str]:
+    argv = [bwrap, "--unshare-all", "--die-with-parent", "--new-session"]
+    if network:
+        argv.append("--share-net")
+    for path in SANDBOX_SYSTEM:
+        if os.path.islink(path):
+            # usrmerge: /lib -> usr/lib is a link, made again inside.
+            argv += ["--symlink", os.readlink(path), path]
+        elif os.path.isdir(path):
+            argv += ["--ro-bind", path, path]
+    for path in SANDBOX_ETC:
+        argv += ["--ro-bind-try", path, path]
+    argv += ["--ro-bind-try", "/sys/devices/system/cpu", "/sys/devices/system/cpu",
+             "--proc", "/proc", "--dev", "/dev", "--tmpfs", "/dev/shm", "--tmpfs", "/tmp",
+             "--tmpfs", "/mnt", "--tmpfs", str(Path.home())]
+    return argv
+
+
+def sandbox_argv(writable: Sequence[Path], readonly: Sequence[Path] = (),
+                 network: bool = False) -> tuple[list[str], str]:
+    """The bubblewrap prefix a third-party program runs under, and its name.
+
+    An allowlist: the system's programs and libraries and a few files of
+    /etc read-only, an empty home, empty /tmp and /mnt, the `readonly` paths
+    (the core, the content, the staged system directory) read-only, and only
+    `writable` writable. Every namespace is unshared, the network too unless
+    `network` asks for it. Without a working bwrap the returned prefix is
+    empty and the name says why, so the caller can refuse to run.
+    """
+    bwrap = shutil.which("bwrap")
+    if not bwrap:
+        return [], "environment only: bwrap not found"
+    if bwrap not in _BWRAP_WORKS:
+        probe_run = subprocess.run(_bwrap_base(bwrap, False) + ["/bin/true"], capture_output=True,
+                                   check=False, env={})
+        _BWRAP_WORKS[bwrap] = probe_run.returncode == 0
+    if not _BWRAP_WORKS[bwrap]:
+        return [], "environment only: bwrap cannot create a sandbox here"
+    argv = _bwrap_base(bwrap, network)
+    for path in readonly:
+        resolved = Path(path).resolve()
+        argv += ["--ro-bind", str(resolved), str(resolved)]
+    for path in writable:
+        resolved = Path(path).resolve()
+        resolved.mkdir(parents=True, exist_ok=True)
+        argv += ["--bind", str(resolved), str(resolved)]
+    return argv, SANDBOX
+
+
+def run_group(command: list[str], timeout: float, env: dict[str, str]) -> subprocess.CompletedProcess:
+    """Run the worker in a process group of its own and kill the whole group
+    when it outlives the timeout. Killing strace alone left a hung core
+    spinning, detached from anything that would ever stop it."""
+    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                          env=env, start_new_session=True) as proc:
+        try:
+            out, err = proc.communicate(timeout=timeout)
+        except BaseException:
+            with contextlib.suppress(ProcessLookupError):
+                os.killpg(proc.pid, signal.SIGKILL)
+            proc.communicate()
+            raise
+    return subprocess.CompletedProcess(command, proc.returncode, out, err)
+
+
 def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_out: Path | None,
              png_dir: Path | None) -> dict:
     save_dir = scratch / "save"
@@ -648,6 +747,7 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
         "joypad_ports": args.joypad_ports,
         "png_dir": str(png_dir) if png_dir else None,
         "state_out": str(state_out) if state_out else None,
+        "env": dict(args.env),
     }
     spec_path, out_path, trace_path = scratch / "spec.json", scratch / "result.json", scratch / "strace.txt"
     spec_path.write_text(json.dumps(spec), encoding="utf-8")
@@ -655,9 +755,16 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
     strace = shutil.which("strace") if not args.no_trace else None
     if strace:
         command = [strace, "-f", "-qq", "-s", "4096", "-e", "trace=openat,open", "-o", str(trace_path)] + command
-    env = {**os.environ, **dict(args.env)}
-    proc = subprocess.run(command, check=False, capture_output=True, text=True,
-                          timeout=args.timeout, env=env)
+    writable = [scratch] + [p for p in (png_dir, state_out.parent if state_out else None) if p]
+    readonly = [Path(__file__), Path(args.core), system_dir]
+    if args.content:
+        readonly.append(Path(args.content).resolve().parent)
+    readonly += [Path(value) for _, value in args.env if Path(value).is_absolute() and Path(value).exists()]
+    prefix, isolation = sandbox_argv(writable, readonly)
+    if args.require_sandbox and isolation != SANDBOX:
+        raise ProbeError(f"refused to run the core outside a sandbox: {isolation}")
+    # The core sees the variables it was given and nothing of the host's.
+    proc = run_group(prefix + command, args.timeout, dict(args.env))
     if proc.returncode != 0 or not out_path.exists():
         raise ProbeError(f"worker exited {proc.returncode}: {proc.stderr.strip()[-2000:]}")
     result = json.loads(out_path.read_text(encoding="utf-8"))
@@ -681,6 +788,7 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
     if result.get("wall_s") and result.get("frames"):
         result["ms_per_frame"] = result["wall_s"] * 1000 / result["frames"]
         result["fps"] = result["frames"] / result["wall_s"]
+    result["isolation"] = isolation
     return result
 
 
@@ -769,6 +877,8 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument("--core-repo", help="source repository URL of the core build")
     common.add_argument("--core-commit", help="commit the core was built from")
     common.add_argument("--build-command", help="command and flags that built the core")
+    common.add_argument("--core-artifact", metavar="URL",
+                        help="where the .so was downloaded from, such as a buildbot nightly")
     common.add_argument("--record", metavar="DIR", nargs="?", const=str(ROOT),
                         help="append the record as one line of measurements/<emulator>.jsonl "
                              "in the checkout DIR (default: this one)")
@@ -786,6 +896,8 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument("--work-dir", default=str(DEFAULT_WORK_DIR), help="scratch directory")
     common.add_argument("--timeout", type=int, default=1800, help="seconds per repetition")
     common.add_argument("--no-trace", action="store_true", help="do not run the worker under strace")
+    common.add_argument("--require-sandbox", action="store_true",
+                        help="refuse to run the core unless bubblewrap can isolate it")
 
     sub.add_parser("run", parents=[common], help="one execution")
     bench = sub.add_parser("bench", parents=[common], help="timed repetitions")
@@ -806,6 +918,20 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def not_a_checkout_root(directory: Path) -> str | None:
+    """Why --record DIR is refused, or None. DIR is the checkout, never its
+    measurements/ folder: that wrote measurements/measurements/<emulator>.jsonl."""
+    form = "--record names the root of a git checkout (the folder holding measurements/), e.g. --record ."
+    if not (directory / ".git").exists():
+        return f"--record {directory}: not a git checkout root. {form}"
+    proc = subprocess.run(["git", "-C", str(directory), "rev-parse", "--show-toplevel"],
+                          capture_output=True, text=True, check=False)
+    top = proc.stdout.strip()
+    if proc.returncode != 0 or not top or Path(top).resolve() != directory.resolve():
+        return f"--record {directory}: not a git checkout root (its root is {top or 'unknown'}). {form}"
+    return None
+
+
 def validate_args(args: argparse.Namespace) -> list[str]:
     problems: list[str] = []
     if not Path(args.core).is_file():
@@ -817,9 +943,16 @@ def validate_args(args: argparse.Namespace) -> list[str]:
             problems.append(f"--system-file {dest}={src}: not a file")
     if args.frames < 1 or args.warmup < 0:
         problems.append("--frames must be >= 1 and --warmup >= 0")
+    if args.require_sandbox:
+        isolation = sandbox_argv([])[1]
+        if isolation != SANDBOX:
+            problems.append(f"--require-sandbox: {isolation}")
     if args.png_dir and not args.frame_hash_every:
         problems.append("--png-dir needs --frame-hash-every")
     if args.record:
+        wrong = not_a_checkout_root(Path(args.record))
+        if wrong:
+            problems.append(wrong)
         if not args.emulator and Path(args.core).is_file():
             try:
                 default_emulator(Path(args.core), None)
@@ -841,7 +974,7 @@ def validate_args(args: argparse.Namespace) -> list[str]:
                 problems.append(f"--vary {dest}={src}: not a file")
         names = set(BASE_OBSERVABLES) | {f"state:{v}" for v in args.state_var}
         if args.frame_hash_every:
-            names.add("frame_hashes")
+            names.update(("frame_hashes", "uniform_frames"))
         if args.observable not in names:
             problems.append(f"--observable {args.observable}: not one of {', '.join(sorted(names))}")
     return problems
@@ -936,8 +1069,9 @@ def default_subject(record: dict) -> str:
     return f"{record['kind']}-{slugify(content, 30)}-{digest}"
 
 
-def write_record(directory: Path, full: dict) -> Path:
-    """Append the record, with its id, to its emulator's .jsonl."""
+def write_record(directory: Path, full: dict) -> tuple[Path, dict]:
+    """Append the record, with its id, to its emulator's .jsonl. Returns the
+    file and the record as written."""
     from measurement_records import line_text, parse_lines, records_path, seal  # noqa: PLC0415
 
     sealed = seal(full)
@@ -948,7 +1082,7 @@ def write_record(directory: Path, full: dict) -> Path:
     lines.parent.mkdir(parents=True, exist_ok=True)
     with lines.open("a", encoding="utf-8") as handle:
         handle.write(line_text(sealed) + "\n")
-    return lines
+    return lines, sealed
 
 
 def probe(args: argparse.Namespace) -> int:
@@ -999,7 +1133,7 @@ def probe(args: argparse.Namespace) -> int:
             "repetitions": repetitions,
             "presses": [{"frame": f, "button": b, "length": n} for f, b, n in args.press],
             "observables": list(BASE_OBSERVABLES) + [f"state:{v}" for v in args.state_var]
-                           + (["frame_hashes"] if args.frame_hash_every else []),
+                           + (["frame_hashes", "uniform_frames"] if args.frame_hash_every else []),
             "frame_hash_every": args.frame_hash_every,
             "joypad_ports": args.joypad_ports,
         },
@@ -1025,7 +1159,7 @@ def probe(args: argparse.Namespace) -> int:
     record["subject"] = args.subject or default_subject(record)
     if args.record:
         try:
-            lines = write_record(Path(args.record), record)
+            lines, record = write_record(Path(args.record), record)
         except ProbeError as exc:
             print(f"ERROR: {exc}", file=sys.stderr)
             return 2
@@ -1050,7 +1184,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    # The worker runs under -I, which leaves the script directory off sys.path.
+    if sys.argv[1:2] == ["_worker"]:
+        # The worker runs in the sandbox, where this file is all of the
+        # repository there is: it imports nothing beside the standard library.
+        sys.exit(main())
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from common import run_cli
 

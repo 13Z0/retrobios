@@ -4,9 +4,14 @@
 # Commands run in the automation worktree (.cache/autorun/worktree) unless
 # `worktree: false`, which runs them in the main checkout and forbids
 # commits. `python` names the interpreter running autorun.py. A step is a
-# command list, or a mapping with `run`, `ok_codes` and `stdout` (a file
-# the command's output is written to). `twice` recomputes an artifact the
-# gate wrote into `{out}` and compares both, timestamps aside. Each commit
+# command list, or a mapping with `run`, `ok_codes`, `stdout` (a file the
+# command's output is written to) and `env` (variables passed through
+# beside PATH, HOME, LANG, LC_*, TZ and TMPDIR). A step never sees a password.
+# GITHUB_TOKEN goes to the push, to gh, and to a step marked `github_token:
+# true`, which autorun accepts only on check_freshness.py, refresh_stale.py and
+# `-m scripts.scraper.*`, tracked here, never in the campaign job. `twice`
+# recomputes an artifact the gate wrote into `{out}` and compares both,
+# timestamps aside. Each commit
 # takes only the changed files its `paths` globs match, and a job that
 # leaves any other change behind fails. `report` names a JSON file a step
 # writes, kept in the job's status.
@@ -44,10 +49,14 @@ jobs:
       - run: [python, scripts/check_freshness.py, --json]
         ok_codes: [0, 1]
         stdout: tmp/autorun/freshness.json
-      - [python, scripts/refresh_stale.py, --findings, tmp/autorun/freshness.json,
-         --only, "data,catalogs"]
-      - [python, -m, scripts.scraper.mame_hash_scraper]
-      - [python, -m, scripts.scraper.fbneo_hash_scraper]
+        github_token: true
+      - run: [python, scripts/refresh_stale.py, --findings, tmp/autorun/freshness.json,
+              --only, "data,catalogs"]
+        github_token: true
+      - run: [python, -m, scripts.scraper.mame_hash_scraper]
+        github_token: true
+      - run: [python, -m, scripts.scraper.fbneo_hash_scraper]
+        github_token: true
     gate:
       - [python, scripts/pipeline.py, --offline]
     twice:
@@ -84,6 +93,35 @@ jobs:
       - run: [python, scripts/bios_integrity.py, --apply, --json]
         stdout: tmp/autorun/bios-integrity.json
     report: tmp/autorun/bios-integrity.json
+
+  campaign:
+    schedule: "*-*-* 06:00"
+    network: true
+    max_load_wait: 7200
+    timeout: 12600
+    steps:
+      - run: [python, scripts/campaign.py, run, --budget, 150m]
+        ok_codes: [0, 75]
+        stdout: tmp/autorun/campaign.json
+        env: [RETROBIOS_ROMFETCH, RETROBIOS_AUTO_LOCK, ROMFETCH_CONTENT_DIR, ROMFETCH_CACHE_DIR,
+              ROMFETCH_DATS_DIR, ROMFETCH_RETOOL_DIR, ROMFETCH_MIN_INTERVAL, ROMFETCH_MAX_SIZE,
+              ROMFETCH_DISABLED_SOURCES, XDG_CONFIG_HOME]
+    gate:
+      - [python, scripts/campaign.py, gate]
+    commits:
+      - subject: "chore: add campaign measurements"
+        body: >-
+          Core probe records, findings and the pass summary written by
+          campaign.py, behind the measurement tests and the schemas.
+        paths: [measurements/*.jsonl]
+      - subject: "chore: apply fields the campaign proved"
+        body: >-
+          Fields the campaign's rule table settled from real runs, each with
+          the record ids in evidence:, behind verify and an emulator pack of
+          every changed profile.
+        paths: [emulators/*.yml]
+    report: tmp/autorun/campaign.json
+    scratch: [tmp/autorun, tmp/core_probe]
 
   assets:
     schedule: "*-*-* 04:30"

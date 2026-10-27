@@ -19,6 +19,14 @@ the emulator's page shows a **Tested** block. Every result is on the
 - It compares what the emulator showed, played or saved, by fingerprint (a hash).
 - Each version runs at least twice, each time from a fresh start.
 
+## When tests run
+
+Tests run by themselves each night on an idle computer. A clear result updates
+the emulator's page and names the test as proof.
+
+Anything else waits on the [Measurements](../measurements.md) page for someone
+to read the code.
+
 ## What a result says
 
 - **same**: the file changed nothing that was compared.

@@ -53,6 +53,7 @@ JOBS_FILE = REPO_ROOT / "automation" / "jobs.yml"
 AUTORUN_DIR = Path(".cache") / "autorun"
 DEFAULT_LOCK = Path.home() / ".local" / "state" / "retrobios" / "auto.lock"
 LOCK_ENV = "RETROBIOS_AUTO_LOCK"
+LOCK_HELD_ENV = "RETROBIOS_AUTO_LOCK_HELD"
 
 BRANCH = "autorun"
 REMOTE = "origin"
@@ -99,6 +100,10 @@ class Step:
     argv: tuple[str, ...]
     ok_codes: tuple[int, ...] = (0,)
     stdout: str = ""
+    # Variables passed through beside the allowlist (romfetch's settings).
+    env: tuple[str, ...] = ()
+    # GITHUB_TOKEN for a first-party script that calls the GitHub API.
+    github_token: bool = False
 
 
 @dataclass(frozen=True)
@@ -191,17 +196,61 @@ def check_subject(subject: str, body: str = "") -> list[str]:
     return problems(f"{subject}\n\n{body}" if body else subject)
 
 
-def _step(raw: object, where: str) -> Step:
+# The first-party scripts that call the GitHub API and may receive
+# GITHUB_TOKEN: run as `python <script>` or `python -m <module>`, and tracked
+# by git in this repository. Nothing else ever gets it, third-party code least.
+TOKEN_SCRIPTS = ("scripts/check_freshness.py", "scripts/refresh_stale.py")
+TOKEN_MODULE_PREFIX = "scripts.scraper."
+NO_TOKEN_JOBS = frozenset({"campaign"})
+
+
+def tracked(path: str, repo: Path = REPO_ROOT) -> bool:
+    proc = subprocess.run(["git", "-C", str(repo), "ls-files", "--error-unmatch", "--", path],
+                          capture_output=True, check=False)
+    return proc.returncode == 0
+
+
+def token_script(argv: Sequence[str], repo: Path = REPO_ROOT) -> str:
+    """The tracked first-party script a step runs, or '' when it runs anything else."""
+    if len(argv) < 2 or argv[0] != "python":
+        return ""
+    if argv[1] in TOKEN_SCRIPTS:
+        path = argv[1]
+    elif argv[1] == "-m" and len(argv) > 2 and argv[2].startswith(TOKEN_MODULE_PREFIX) \
+            and re.fullmatch(r"[a-z0-9_.]+", argv[2]):
+        path = argv[2].replace(".", "/") + ".py"
+    else:
+        return ""
+    return path if tracked(path, repo) else ""
+
+
+def _step(raw: object, where: str, job: str = "") -> Step:
     if isinstance(raw, list):
         return Step(argv=tuple(str(a) for a in raw))
     if isinstance(raw, dict) and isinstance(raw.get("run"), list):
-        unknown = set(raw) - {"run", "ok_codes", "stdout"}
+        unknown = set(raw) - {"run", "ok_codes", "stdout", "env", "github_token"}
         if unknown:
             raise ValueError(f"{where}: unknown step key {sorted(unknown)}")
+        names = tuple(str(n) for n in raw.get("env") or ())
+        secret = [n for n in names if is_secret(n)]
+        if secret:
+            raise ValueError(f"{where}: a step never receives {', '.join(secret)}")
+        argv = tuple(str(a) for a in raw["run"])
+        token = raw.get("github_token", False)
+        if token is not False:
+            if token is not True:
+                raise ValueError(f"{where}: github_token is true or absent")
+            if job in NO_TOKEN_JOBS:
+                raise ValueError(f"{where}: job {job} never receives GITHUB_TOKEN")
+            if not token_script(argv):
+                raise ValueError(f"{where}: github_token only goes to {', '.join(TOKEN_SCRIPTS)} "
+                                 f"or python -m {TOKEN_MODULE_PREFIX}*, tracked in this repository")
         return Step(
-            argv=tuple(str(a) for a in raw["run"]),
+            argv=argv,
             ok_codes=tuple(int(c) for c in raw.get("ok_codes", (0,))),
             stdout=str(raw.get("stdout") or ""),
+            env=names,
+            github_token=token is True,
         )
     raise ValueError(f"{where}: a step is a command list or a mapping with 'run'")
 
@@ -236,8 +285,8 @@ def parse_jobs(data: dict) -> dict[str, Job]:
             raise ValueError(f"job {name}: a job that commits runs in the worktree")
         jobs[name] = Job(
             name=name,
-            steps=tuple(_step(s, f"job {name}") for s in raw.get("steps") or ()),
-            gate=tuple(_step(s, f"job {name} gate") for s in raw.get("gate") or ()),
+            steps=tuple(_step(s, f"job {name}", name) for s in raw.get("steps") or ()),
+            gate=tuple(_step(s, f"job {name} gate", name) for s in raw.get("gate") or ()),
             twice=tuple(twice),
             commits=tuple(commits),
             schedule=str(raw.get("schedule") or ""),
@@ -438,9 +487,10 @@ def twice(
 # Git
 
 
-def git(cwd: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess:
+def git(cwd: Path, *args: str, check: bool = True,
+        env: dict[str, str] | None = None) -> subprocess.CompletedProcess:
     proc = subprocess.run(
-        ["git", "-C", str(cwd), *args], capture_output=True, text=True, check=False,
+        ["git", "-C", str(cwd), *args], capture_output=True, text=True, check=False, env=env,
     )
     if check and proc.returncode != 0:
         raise AutorunError(
@@ -565,7 +615,7 @@ def push_batch(worktree: Path, gate_base: str, regate: Callable[[], bool]) -> st
             raise AutorunError(BLOCKED, f"rebase onto {upstream} conflicts, batch kept")
     if git(worktree, "rev-parse", upstream).stdout.strip() != gate_base and not regate():
         raise AutorunError(FAILED, f"gate failed on the batch rebased onto {upstream}")
-    git(worktree, "push", "--quiet", REMOTE, f"HEAD:{TARGET}")
+    git(worktree, "push", "--quiet", REMOTE, f"HEAD:{TARGET}", env=token_env())
     return git(worktree, "rev-parse", "HEAD").stdout.strip()
 
 
@@ -577,6 +627,7 @@ def gh_json(args: list[str]) -> object:
     try:
         proc = subprocess.run(
             ["gh", *args], capture_output=True, text=True, timeout=120, check=False,
+            env=token_env(),
         )
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -699,14 +750,54 @@ def set_alert(state: dict, name: str, active: bool, detail: str, now: str) -> No
 # Running a job
 
 
-def job_env(job: Job) -> dict[str, str]:
-    env = os.environ.copy()
-    env["RETROBIOS_AUTO"] = "1"
-    if job.network:
-        sys.path.insert(0, str(REPO_ROOT / "scripts"))
-        from common import github_token
+# What a job step inherits. A step can run third-party code (a buildbot
+# core, a scraped page, a downloaded tool), so it gets the variables a
+# program needs to run and nothing it could leak: no token, no password.
+SAFE_ENV = frozenset({"PATH", "HOME", "LANG", "TZ", "TMPDIR"})
+SECRET_NAMES = frozenset({"GITHUB_TOKEN", "GH_TOKEN", "ROMSTATION_USER", "ROMSTATION_PASS"})
+SECRET_MARKERS = ("TOKEN", "SECRET", "PASS")
 
-        token = github_token()
+
+def is_secret(name: str) -> bool:
+    upper = name.upper()
+    return name in SECRET_NAMES or any(marker in upper for marker in SECRET_MARKERS)
+
+
+def safe_env(names: Sequence[str] = (), add: dict[str, str] | None = None,
+             source: dict[str, str] | None = None) -> dict[str, str]:
+    """The allowlisted environment, plus the variables a step names
+    explicitly. A secret is dropped even when named."""
+    source = dict(os.environ) if source is None else source
+    wanted = set(names)
+    env = {key: value for key, value in source.items()
+           if (key in SAFE_ENV or key.startswith("LC_") or key in wanted) and not is_secret(key)}
+    env.update({key: value for key, value in (add or {}).items() if not is_secret(key)})
+    return env
+
+
+def token_env() -> dict[str, str]:
+    """The environment of the phases that need GitHub: the push and gh."""
+    sys.path.insert(0, str(REPO_ROOT / "scripts"))
+    from common import github_token
+
+    env = dict(os.environ)
+    token = github_token()
+    if token:
+        env["GITHUB_TOKEN"] = token
+    return env
+
+
+def job_env(job: Job, step: Step | None = None) -> dict[str, str]:
+    """A step's environment: the allowlist, the runner's own markers and the
+    variables the step names. GITHUB_TOKEN only for a step that declares
+    github_token, which the registry allows on first-party scripts alone."""
+    add = {"RETROBIOS_AUTO": "1"}
+    if job.lock:
+        # A step that takes the host lock itself (campaign.py) runs under ours.
+        add[LOCK_HELD_ENV] = "1"
+    env = safe_env(step.env if step else (), add)
+    if step is not None and step.github_token and job.name not in NO_TOKEN_JOBS:
+        token = token_env().get("GITHUB_TOKEN")
         if token:
             env["GITHUB_TOKEN"] = token
     return env
@@ -744,7 +835,6 @@ class Runner:
         self.cwd = ctx.worktree if job.worktree else ctx.repo
         self.log = ctx.home / "logs" / job.name / f"{dt.date.today().isoformat()}.log"
         self.deadline = ctx.host.clock() + job.timeout
-        self.env: dict[str, str] = {}
         self.commits: list[str] = []
         self.retried: list[str] = []
         self.report: object = None
@@ -766,7 +856,7 @@ class Runner:
             left = self.deadline - self.ctx.host.clock()
             if left <= 0:
                 return Outcome(124, "job timeout reached")
-            return execute(argv, self.cwd, self.log, self.env, left, stdout)
+            return execute(argv, self.cwd, self.log, job_env(self.job, step), left, stdout)
 
         outcome = run_with_retry(once, step.ok_codes, self.wait_idle)
         if outcome.retried:
@@ -856,7 +946,6 @@ class Runner:
             refresh_breaker(self.state, ctx.gh, now_iso())
         if job.commits and self.state.get("breaker", {}).get("open"):
             return BLOCKED, "circuit breaker open: a pushed automation commit failed CI"
-        self.env = job_env(job)
         base = ""
         if job.worktree:
             ensure_worktree(ctx.repo, ctx.worktree)
@@ -940,6 +1029,11 @@ def run_job(ctx: Context, name: str) -> tuple[str, str]:
         else previous.get("consecutive_failures", 0) + 1,
     }
     state["jobs"][name] = record
+    # A job's report can raise an alert of its own: campaign.py refusing to
+    # run third-party code outside its sandbox.
+    alert = runner.report.get("alert") if isinstance(runner.report, dict) else None
+    if result != DEFERRED:
+        set_alert(state, f"job:{name}", bool(alert), str(alert or ""), now_iso())
     prune_logs(ctx.home / "logs")
     save_state(ctx.state_path, state)
     return result, detail
