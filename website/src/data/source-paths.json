@@ -85,7 +85,7 @@
   "Makefile",
   "libretro-radio.c"
  ],
- "git.libretro.com/libretro/rust-dos@163ce1e28da82307185eaa8287a813e8e52cc94c": [
+ "git.libretro.com/libretro/rust-dos@b53562f080b667c0fcbb2f54bab7be549cce46b9": [
   "crates/gus/build.rs",
   "crates/gus/src/builtin.rs",
   "crates/mt32/src/lib.rs",
@@ -2654,7 +2654,7 @@
   "Source/zx81/zx81.cpp",
   "Source/zx81config.cpp"
  ],
- "github.com/chernandezba/zesarux@e14e9b2796a7c1137d83f1ad14cdeb4efbb4557f": [
+ "github.com/chernandezba/zesarux@fd354296d851edc24ad1411b8f9342a66d07d460": [
   "src/ALTERNATEROMS",
   "src/configure",
   "src/copy_interfaces/defcon.c",
@@ -2840,7 +2840,7 @@
  "github.com/digarok/gsplus@41e71031debbde98e66ea5c5c67498e9b4726a6d": [
   "gsplus/src/config.c"
  ],
- "github.com/dividebysandwich/rust-dos@b53562f080b667c0fcbb2f54bab7be549cce46b9": [
+ "github.com/dividebysandwich/rust-dos@e1a01b94f6f229082a7555380b5193c78104bb6f": [
   "crates/gus/build.rs",
   "crates/gus/src/builtin.rs",
   "crates/mt32/src/lib.rs",
@@ -3105,10 +3105,6 @@
  ],
  "github.com/ekeeke/Genesis-Plus-GX@c16a3ac716aead3e892b240ddeab8211f9c3a281": [
   "README.md",
-  "core/cart_hw/areplay.c",
-  "core/cart_hw/ggenie.c",
-  "core/cart_hw/md_cart.c",
-  "core/cart_hw/sms_cart.c",
   "core/loadrom.c",
   "libretro/libretro.c"
  ],
@@ -3122,6 +3118,14 @@
   "libretro/libretro.c"
  ],
  "github.com/ekeeke/Genesis-Plus-GX@e366ca817f5b750ad06a8e2c5976d79b3758ea0a": [
+  "core/cart_hw/areplay.c",
+  "core/cart_hw/ggenie.c",
+  "core/cart_hw/md_cart.c",
+  "core/cart_hw/sms_cart.c",
+  "core/loadrom.c",
+  "libretro/libretro.c"
+ ],
+ "github.com/ekeeke/Genesis-Plus-GX@f3cb0a5115a2b29426495ae35c2d45c404e650df": [
   "core/cart_hw/areplay.c",
   "core/cart_hw/ggenie.c",
   "core/cart_hw/md_cart.c",
@@ -6065,7 +6069,7 @@
   "core/nullDC.cpp",
   "core/reios/reios.cpp"
  ],
- "github.com/libretro/parallel-n64@eace19113ab201ae724dc58d530e2db2b4ab93cc": [
+ "github.com/libretro/parallel-n64@bc7ba1d175890638e995e3e8ca6dcf385b3041b6": [
   "libretro/libretro.c",
   "mupen64plus-core/src/device/pif/bootrom_hle.c"
  ],
@@ -9165,7 +9169,7 @@
   "src/core/gba/gba.cpp",
   "src/libretro/libretro.cpp"
  ],
- "github.com/vpinball/vpinball@d858a1f30d12d78fb92e2da0548ca0719ca5baca": [
+ "github.com/vpinball/vpinball@704f603039bb0e41850d7f3def1fe31d28ed9fd7": [
   "lib/src/WebServer.cpp",
   "make/CMakeLists_app.txt",
   "make/CMakeLists_plugin_FlexDMD.txt",
@@ -9401,7 +9405,7 @@
   "ui/xui/main-menu.cc",
   "winpcap-loader/loader.c"
  ],
- "github.com/xenia-canary/xenia-canary@b71ddd72fae5adbd1182b6ad99b26cda8718a2b8": [
+ "github.com/xenia-canary/xenia-canary@72c2afa3ba2b1b232f89de71577251d6edafb1bd": [
   "src/xenia/emulator.cc"
  ],
  "github.com/xenios-jp/XeniOS@87b176a078c316fde3adf67a217f0c44615b0e0d": [

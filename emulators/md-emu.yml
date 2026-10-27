@@ -5,7 +5,7 @@ source: "https://github.com/Rakashazi/emu-ex-plus-alpha"
 upstream: "https://github.com/ekeeke/Genesis-Plus-GX"
 profiled_date: "2026-08-12"
 source_commit: "1c12fac5ce49badaadff2e2f210dcc30b89f4943"
-upstream_commit: "c16a3ac716aead3e892b240ddeab8211f9c3a281"
+upstream_commit: "f3cb0a5115a2b29426495ae35c2d45c404e650df"
 core_version: "1.5.85"
 display_name: "Sega - MS/MD/CD (MD.emu)"
 mode: standalone

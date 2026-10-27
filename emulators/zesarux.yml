@@ -3,7 +3,7 @@ type: standalone
 core_classification: other
 source: "https://github.com/chernandezba/zesarux"
 upstream: "https://github.com/chernandezba/zesarux"
-source_commit: "e14e9b2796a7c1137d83f1ad14cdeb4efbb4557f"
+source_commit: "fd354296d851edc24ad1411b8f9342a66d07d460"
 prose_written_at: "e1fc8db2957c360c8ff584a2c4d147f70861c3aa"
 profiled_date: "2026-10-26"
 core_version: "13.1-SN"

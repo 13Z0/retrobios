@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/vpinball/vpinball"
 upstream: "https://github.com/vpinball/vpinball"
 profiled_date: "2026-10-26"
-source_commit: "d858a1f30d12d78fb92e2da0548ca0719ca5baca"
+source_commit: "704f603039bb0e41850d7f3def1fe31d28ed9fd7"
 core_version: "10.8.1"
 display_name: "Visual Pinball X"
 cores:
