@@ -29,7 +29,8 @@ or holds under another path.
 
 Each core_probe run holds the host's probe lock (~/.local/state/retrobios/
 probe.lock, RETROBIOS_PROBE_LOCK) and releases it before the next: other
-probes run between ours. Building and extracting the pack take no lock.
+probes run between ours. core_probe is told it is held
+(RETROBIOS_PROBE_LOCK_HELD). Building and extracting the pack take no lock.
 
 Usage:
     python scripts/pack_probe.py run --platform retroarch [--system sony-playstation]
@@ -85,7 +86,9 @@ VERDICTS = ("boots", "bios_error", "crash", "hang", "unknown")
 MAX_ROUNDS = 6
 PROBE_TIMEOUT = 900
 IDLE_WAIT = 1800
-PROBE_LOCK = Path(os.environ.get("RETROBIOS_PROBE_LOCK")
+PROBE_LOCK_ENV = "RETROBIOS_PROBE_LOCK"
+PROBE_LOCK_HELD_ENV = "RETROBIOS_PROBE_LOCK_HELD"
+PROBE_LOCK = Path(os.environ.get(PROBE_LOCK_ENV)
                   or Path.home() / ".local" / "state" / "retrobios" / "probe.lock")
 EXIT_BUSY = 3
 
@@ -484,8 +487,10 @@ def core_probe(argv: list[str], staged: set[str], layout: Layout, work: Path) ->
     with probe_lock():
         if "--record" in argv:
             wait_idle()
+        # core_probe takes the same lock unless told its caller holds it.
         proc = subprocess.run(command, capture_output=True, text=True, check=False, cwd=ROOT,
-                              timeout=PROBE_TIMEOUT * 2 + 120)
+                              timeout=PROBE_TIMEOUT * 2 + 120,
+                              env={**os.environ, PROBE_LOCK_HELD_ENV: "1", PROBE_LOCK_ENV: str(PROBE_LOCK)})
     record = None
     if proc.returncode == 0:
         try:

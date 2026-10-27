@@ -270,6 +270,8 @@ class Lock(unittest.TestCase):
 
         def fake_run(command, **kwargs):
             held.append(try_lock())
+            self.assertEqual(kwargs["env"]["RETROBIOS_PROBE_LOCK_HELD"], "1")
+            self.assertEqual(kwargs["env"]["RETROBIOS_PROBE_LOCK"], str(lock))
             return subprocess.CompletedProcess(command, 2, "", "refused")
 
         lay = layout({"a.bin": 1})

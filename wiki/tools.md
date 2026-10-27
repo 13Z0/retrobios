@@ -1081,7 +1081,8 @@ installs it, starts that platform's games. A maintainer starts it, nothing
 runs it on a schedule. It takes the host's probe lock
 (`~/.local/state/retrobios/probe.lock`, `RETROBIOS_PROBE_LOCK`) around each
 `core_probe` run and releases it before the next, so other probes run between
-its runs. Never wrap the whole command in `flock`:
+its runs, and tells `core_probe` it holds it (`RETROBIOS_PROBE_LOCK_HELD=1`).
+Never wrap the whole command in `flock`:
 
 ```bash
 python scripts/pack_probe.py run --platform retroarch
