@@ -12588,7 +12588,15 @@ _PASTE_END = "\x1b[201~"
 # Turned on by the interface, so a pasted path arrives as one piece and its
 # newline does not submit it half typed.
 _SCREEN_ON = "\x1b[?1049h\x1b[?25l\x1b[?2004h\x1b[2J"
-_SCREEN_OFF = "\x1b[?2004l\x1b[0m\x1b[?25h\x1b[?1049l"
+# The mouse modes are turned off on every way out, turned on or not: a
+# shell left with them on reads each click as a line of garbage.
+_SCREEN_OFF = "\x1b[?1006l\x1b[?1000l\x1b[?2004l\x1b[0m\x1b[?25h\x1b[?1049l"
+# Presses and releases (1000), reported in SGR form (1006): a column past
+# 223 does not fit the legacy form's byte. Never 1003 (every motion): a
+# touch screen has no hover, and nothing here depends on one.
+_MOUSE_ON = "\x1b[?1000h\x1b[?1006h"
+_MOUSE_OFF = "\x1b[?1006l\x1b[?1000l"
+TUI_MOUSE_ENV = "RETROBIOS_NO_MOUSE"
 # How a line is drawn without colour: the screen's title and a headline
 # bold, the row in focus reversed, the bar and secondary text dim.
 _STYLES = {"title": "\x1b[1m", "head": "\x1b[1m", "focus": "\x1b[7m", "dim": "\x1b[2m",
@@ -12607,6 +12615,40 @@ class TuiKey(NamedTuple):
 
     name: str
     text: str = ""
+
+
+class TuiMouse(NamedTuple):
+    """One mouse report: the button (0 left, 1 middle, 2 right, 3 a legacy
+    release, 64 and 65 the wheel, plus 4, 8 and 16 for Shift, Meta and
+    Ctrl), the cell counted from 1, and whether the button went up."""
+
+    button: int
+    col: int
+    row: int
+    release: bool = False
+    name: str = "mouse"
+    text: str = ""
+
+
+def _sgr_mouse(params: str, final: str) -> TuiMouse | None:
+    """An SGR report: ESC [ < button ; column ; row, M pressed, m released."""
+    parts = params[1:].split(";")
+    if len(parts) != 3 or not all(part.isdigit() for part in parts):
+        return None
+    button, col, row = (int(part) for part in parts)
+    return TuiMouse(button, col, row, final == "m")
+
+
+def _x10_mouse(data: str) -> TuiMouse | None:
+    """A legacy report: three characters, each 32 plus its value. A
+    position past 95 is a byte UTF-8 cannot read, and the report is dropped."""
+    codes = [ord(char) - 32 for char in data]
+    if any(not 0 <= code <= 223 for code in codes):
+        return None
+    button, col, row = codes
+    if col < 1 or row < 1:
+        return None
+    return TuiMouse(button, col, row, button & 3 == 3 and not button & 64)
 
 
 _CSI_KEYS = {"A": "up", "B": "down", "C": "right", "D": "left", "H": "home", "F": "end",
@@ -12632,7 +12674,9 @@ def _plain_key(char: str) -> TuiKey | None:
     return TuiKey("char", char)
 
 
-def _csi_key(params: str, final: str) -> TuiKey | None:
+def _csi_key(params: str, final: str) -> TuiKey | TuiMouse | None:
+    if params.startswith("<"):
+        return _sgr_mouse(params, final) if final in "Mm" else None
     if final == "~":
         if params == "200":
             return TuiKey("paste-start")
@@ -12648,15 +12692,16 @@ def _csi_key(params: str, final: str) -> TuiKey | None:
     return None
 
 
-def _escape(buffer: str) -> tuple[int, TuiKey | None]:
+def _escape(buffer: str) -> tuple[int, TuiKey | TuiMouse | None]:
     """The sequence at the start of buffer: the characters it takes and its
     key (None for one nobody bound), or 0 while more are needed to tell."""
     if len(buffer) < 2:
         return 0, None
     if buffer[1] == "[":
         if buffer[2:3] == "M":
-            # An X10 mouse report: three bytes of position follow.
-            return (6, None) if len(buffer) >= 6 else (0, None)
+            # A legacy mouse report: three bytes of button and position
+            # follow, read as a report and never as keys.
+            return (6, _x10_mouse(buffer[3:6])) if len(buffer) >= 6 else (0, None)
         for end in range(2, len(buffer)):
             code = ord(buffer[end])
             if 0x40 <= code <= 0x7E:
@@ -12675,7 +12720,8 @@ def _escape(buffer: str) -> tuple[int, TuiKey | None]:
 class KeyDecoder:
     """Keys from what a terminal sends, however the reads split it.
 
-    Unknown sequences (F13, mouse reports) are dropped, never taken as text.
+    Unknown sequences (F13) are dropped, never taken as text. A mouse
+    report, SGR or legacy, comes out as a TuiMouse.
     """
 
     def __init__(self) -> None:
@@ -12872,9 +12918,14 @@ def _wrap(text: str, width: int, indent: str = "  ", whole: str = "") -> list[st
 
 class TuiLine(str):
     """A screen line and how it is drawn: "head" (the screen's title),
-    "title", "focus", "dim", "hint" (the bar), "refusal" or plain."""
+    "title", "focus", "dim", "hint" (the bar), "refusal" or plain.
+
+    mark is what a click on the line reaches (tui_hits): ("row", index,
+    (action, value)) for a row of the list, ("scroll", kind, rows) for the
+    line saying which lines are in view, ("bar",) for the bar."""
 
     style = ""
+    mark: tuple | None = None
 
 
 def _styled(text: str, style: str = "") -> TuiLine:
@@ -13008,6 +13059,12 @@ class TuiState:
         self.card_note: str = ""
         # The rows the last view drew in its list, what a page moves by.
         self.page_rows: int = 0
+        # The targets of the frame on screen (tui_hits), the target a
+        # button went down on, and per screen the first row of a list the
+        # wheel scrolled.
+        self.hits: TuiHits | None = None
+        self.pressed: tuple | None = None
+        self.list_top: dict = {}
         # The mounted cards of that system, as last looked for.
         self.cards: list | None = None
         # (width and text, lines) of the last pager wrapped.
@@ -13468,6 +13525,52 @@ def tui_blocker(
             io.UnsupportedOperation) as exc:
         return f"single key presses cannot be read here ({exc})"
     return ""
+
+
+# TERM values of terminals that report no mouse the xterm way: the Linux
+# console (gpm is its own protocol), the DEC VTs and BSD consoles.
+_NO_MOUSE_TERMS = ("linux", "vt", "cons", "ansi")
+
+
+def tui_mouse_blocker(
+    stdin: TextIO | None = None, stdout: TextIO | None = None,
+    env: Mapping[str, str] | None = None,
+) -> str:
+    """Why the full screen leaves the mouse to the terminal, "" when it
+    asks for clicks. A pad route has no pointer and its mapper may send
+    anything a report would be confused with, and RETROBIOS_NO_MOUSE keeps
+    the terminal's own selection everywhere."""
+    env = os.environ if env is None else env
+    stdin = stdin or sys.stdin
+    stdout = stdout or sys.stdout
+    if _env_on(env, TUI_MOUSE_ENV):
+        return f"{TUI_MOUSE_ENV} is set"
+    if env.get(TUI_PAD_ENV, "").strip():
+        return f"{TUI_PAD_ENV} names a controller route"
+    if os.name == "nt":
+        # msvcrt.getwch reads keys, never a console mouse record.
+        return "a Windows console reports no clicks as keys"
+    for name, stream in (("input", stdin), ("output", stdout)):
+        isatty = getattr(stream, "isatty", None)
+        if not (isatty and isatty()):
+            return f"the {name} is not a terminal"
+    term = env.get("TERM", "").strip().lower()
+    if term in ("", "dumb", "unknown") or term.startswith(_NO_MOUSE_TERMS):
+        return f"TERM={term} reports no clicks" if term else "TERM is not set"
+    return ""
+
+
+def tui_wants_mouse(state: TuiState, lines: list[str]) -> bool:
+    """Whether the frame takes clicks: not where a command or the result is
+    shown, so the terminal's own selection copies it as it always has, nor
+    where a path is typed, which a middle or right click pastes into."""
+    if state.help:
+        return True
+    if state.screen in ("result", "command", "path"):
+        return False
+    hint = tui_hint(state)
+    text = " ".join(" ".join(str(line).split()) for line in lines)
+    return not any(launcher in text for launcher in (hint.launcher(), hint.launcher(True)))
 
 
 def tui_flags(state: TuiState) -> list[tuple[str, str | None]]:
@@ -15410,6 +15513,8 @@ def _pager_last(state: TuiState, items: list) -> int:
 
 def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
     """What a key does on the current screen, and the work it starts."""
+    if key.name == "mouse":
+        return tui_mouse(state, key)  # type: ignore[arg-type]
     if key.name in ("ctrl-c", "ctrl-d"):
         return tui_interrupt(state)
     if state.cols < TUI_MIN_COLS or state.rows < TUI_MIN_ROWS:
@@ -15538,6 +15643,103 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
         return _activate(state, row)
     state.focus[screen] = focus
     return []
+
+
+# Lines one notch of the wheel moves.
+TUI_WHEEL_LINES = 3
+
+
+def tui_mouse(state: TuiState, event: TuiMouse) -> list[tuple]:
+    """What a click, a tap or the wheel does, read against the frame on
+    screen when it came (state.hits): a frame drawn for another screen, or
+    a row no longer where it was drawn, does nothing.
+
+    A tap acts when the button goes up, on the target it went down on: a
+    swipe that ends elsewhere does nothing. On a row it focuses the row,
+    and on the row in focus it does what Enter does: one terminal row is
+    far smaller than a finger, and a single tap acting on it would act on
+    a near miss. On a bar entry it presses that entry's key. The right and
+    middle buttons do nothing, nor a click with Shift, Meta or Ctrl held,
+    which the terminal keeps for its own selection and links.
+    """
+    hits = state.hits
+    if (event.button & 32 or hits is None or hits.screen != state.screen
+            or hits.help != state.help or hits.size != (state.cols, state.rows)
+            or state.cols < TUI_MIN_COLS or state.rows < TUI_MIN_ROWS or state.app_running):
+        state.pressed = None
+        return []
+    target = hits.at(event.col - 1, event.row - 1)
+    if event.button & 64:
+        if event.release or event.button & 3 > 1 or state.help:
+            return []
+        return _wheel(state, hits, 1 if event.button & 1 else -1)
+    if event.button & 28:
+        state.pressed = None
+        return []
+    button = event.button & 3
+    if not event.release:
+        state.pressed = (state.screen, state.help, target) if button == 0 else None
+        return []
+    pressed, state.pressed = state.pressed, None
+    if button not in (0, 3) or pressed != (state.screen, state.help, target):
+        return []
+    if state.help:
+        # Any key closes the help, a tap too.
+        state.help = False
+        return []
+    if target is None:
+        return []
+    if target[0] == "key":
+        return tui_update(state, target[1])
+    if target[0] == "scroll":
+        return _scroll_tap(state, target[1])
+    rows = tui_rows(state)
+    index = target[1]
+    if index >= len(rows) or (rows[index].action, rows[index].value) != target[2]:
+        return []
+    screen = state.screen
+    if state.editing:
+        state.editing = ""
+    elif max(0, min(state.focus.get(screen, 0), len(rows) - 1)) == index:
+        return tui_update(state, TuiKey("enter"))
+    state.status = state.status_more = ""
+    state.focus[screen] = index
+    return []
+
+
+def _wheel(state: TuiState, hits: TuiHits, step: int) -> list[tuple]:
+    """A notch of the wheel: the list, the message or the text moves, and
+    the focus moves only when it would leave the rows in view."""
+    screen = state.screen
+    lines = step * TUI_WHEEL_LINES
+    if hits.listing is not None:
+        first, shown, total = hits.listing
+        top = max(0, min(first + lines, total - shown))
+        state.list_top[screen] = top
+        rows = tui_rows(state)
+        focus = max(0, min(state.focus.get(screen, 0), len(rows) - 1))
+        state.focus[screen] = max(top, min(focus, top + shown - 1))
+    elif hits.scroll == "error":
+        state.focus["error_text"] = max(0, state.focus.get("error_text", 0) + lines)
+    elif hits.scroll == "pager":
+        last = _pager_last(state, _pager_items(state))
+        state.focus[screen] = max(0, min(state.focus.get(screen, 0) + lines, last))
+    return []
+
+
+def _scroll_tap(state: TuiState, kind: str) -> list[tuple]:
+    """A tap on the line saying which lines are in view: the next page,
+    and from the last one the first."""
+    before = (dict(state.focus), dict(state.list_top))
+    effects = tui_update(state, TuiKey("pgdn"))
+    # The view keeps a scroll inside the text: measured, not guessed.
+    tui_view(state, state.cols, state.rows)
+    if (dict(state.focus), dict(state.list_top)) != before:
+        return effects
+    if kind == "error":
+        state.focus["error_text"] = 0
+        return effects
+    return effects + tui_update(state, TuiKey("home"))
 
 
 # The routes inside muxterm, where no button sends PgUp or PgDn.
@@ -15867,6 +16069,12 @@ def _text_lines(items: list, width: int, whole: bool = False) -> list[TuiLine]:
     lines: list[TuiLine] = []
     for item in items:
         style = getattr(item, "style", "")
+        if getattr(item, "mark", None) is not None:
+            # A line saying which lines are in view keeps what a click on it does.
+            line = _styled(fit(str(item), width), style)
+            line.mark = item.mark
+            lines.append(line)
+            continue
         if style == "path" and not whole:
             # One line, cut in its middle: the end of a path tells it apart.
             lines.append(_styled(middle(str(item), width)))
@@ -15925,14 +16133,25 @@ def _compose(
         return top_lines + _compose(state, width, room, before, rows, after) + footer_lines
     focus = max(0, min(state.focus.get(state.screen, 0), len(rows) - 1)) if rows else 0
     row_lines = [_row_line(row, index == focus, width) for index, row in enumerate(rows)]
+    for index, (row, line) in enumerate(zip(rows, row_lines)):
+        line.mark = ("row", index, (row.action, row.value))
     # What L1/R1 move by: the rows drawn. Six fewer than the window's height
     # skipped rows the intro left no room for at 40x12, muOS among them.
     state.page_rows = max(1, min(len(row_lines), room - 1))
     if len(row_lines) >= room:
         first = focus - (room - 1) // 2
+        # Scrolled by the wheel, the list stays where it was put while the
+        # focus is in view: centred again, the row under the pointer moved.
+        top = state.list_top.get(state.screen)
+        if top is not None and top <= focus < top + max(1, room - 1):
+            first = top
+        else:
+            state.list_top.pop(state.screen, None)
         lead = next((i for i, row in enumerate(rows)
                      if row.action not in ("all", "none", "filter")), 0)
         body = _scrolled(row_lines, first, room, lead)
+        if len(row_lines) > room:
+            body[-1].mark = ("scroll", "list", len(rows))
     else:
         budget = room - len(row_lines)
         top: list[TuiLine] = []
@@ -15979,7 +16198,9 @@ def _pager(
     skip = starts[lead] if lead else 0
     start = max(1, first + 1 - skip)
     end = max(start, first + room - skip)
-    return lines[offset:offset + room] + [_styled(f"{start}-{end} of {total - skip}", "dim")]
+    where = _styled(f"{start}-{end} of {total - skip}", "dim")
+    where.mark = ("scroll", "pager", total)
+    return lines[offset:offset + room] + [where]
 
 
 def _pager_starts(state: TuiState, items: list, width: int) -> list[int]:
@@ -17019,6 +17240,7 @@ def _view_error(state: TuiState, width: int, height: int) -> tuple:
         first = max(0, min(state.focus.get("error_text", 0), len(text) - (room - 1)))
         state.focus["error_text"] = first
         text = _scrolled(text, first, room)
+        text[-1].mark = ("scroll", "error", 0)
         page = (TUI_ROUTES.get(state.pad, TUI_ROUTES["both"]).help["page"]
                 or "PgUp/PgDn").split(", ")[0]
         hint += (f"{page} Scroll",)
@@ -17195,12 +17417,92 @@ def tui_view(state: TuiState, cols: int, rows: int) -> list[str]:
     lines = [_styled(fit(f" RetroBIOS: {title}", cols), "head"), _styled("")]
     # A long line is drawn whole, the terminal folding it into the rows
     # after it (_text_lines): cut to the width, a copied path lost its end.
-    lines += [_styled(" " + line if line.style == "long" else fit(" " + line, cols), line.style)
-              for line in body[:height]]
+    for line in body[:height]:
+        drawn = _styled(" " + line if line.style == "long" else fit(" " + line, cols),
+                        line.style)
+        drawn.mark = line.mark
+        lines.append(drawn)
     lines += [_styled("")] * (rows - 1 - len(lines))
     # Never the last cell of the screen: a terminal may scroll when it is written.
-    lines.append(_styled(fit(" " + _hint(width, *hint), cols - 1), "hint"))
+    bar = _styled(fit(" " + _hint(width, *hint), cols - 1), "hint")
+    bar.mark = ("bar",)
+    lines.append(bar)
     return lines
+
+
+class TuiHits(NamedTuple):
+    """What a click reaches on one drawn frame (tui_hits): each target is
+    (line, first column, column past the last, what it does), lines and
+    columns counted from 0. listing is (first row shown, rows shown, rows)
+    for a list taller than its room, scroll "pager" or "error" for a text
+    that scrolls."""
+
+    screen: str
+    help: bool
+    size: tuple[int, int]
+    targets: tuple
+    listing: tuple | None = None
+    scroll: str = ""
+
+    def at(self, col: int, line: int) -> tuple | None:
+        return next((target for row, first, end, target in self.targets
+                     if row == line and first <= col < end), None)
+
+
+# The keys the bar's entries name, as a click on the entry presses them. A
+# pair of keys (Left/Right, PgUp/PgDn) is no button: which one is meant
+# cannot be told.
+_BAR_CLICKS = {
+    "A/Enter": TuiKey("enter"), "A": TuiKey("enter"), "Enter": TuiKey("enter"),
+    "Start": TuiKey("enter"), "B/Esc": TuiKey("esc"), "B": TuiKey("esc"),
+    "Esc": TuiKey("esc"), "X/Space": TuiKey("char", " "), "X": TuiKey("char", " "),
+    "Space": TuiKey("char", " "), "Y/o": TuiKey("char", "o"), "Y": TuiKey("char", "o"),
+    "o": TuiKey("char", "o"), "/": TuiKey("char", "/"), "Ctrl-U": TuiKey("ctrl-u"),
+    "Ctrl-C": TuiKey("ctrl-c"),
+    # F1 and not ?, which the path screen types into the path.
+    "?": TuiKey("f1"),
+}
+_BAR_ENTRY = re.compile(r"\S+(?: \S+)*")
+
+
+def _bar_click(state: TuiState, name: str) -> TuiKey | None:
+    """The key a bar entry's name stands for, on the route the bar names."""
+    route = TUI_ROUTES.get(state.pad)
+    if route is not None and name not in _BAR_CLICKS:
+        name = next((key for key, mine in route.bar.items() if mine == name), name)
+    return _BAR_CLICKS.get(name)
+
+
+def tui_hits(state: TuiState, lines: list[str]) -> TuiHits:
+    """The targets of the frame tui_view drew: a row of the list across
+    the whole width, its text or not, each entry of the bar that names a
+    key, and the line saying which lines are in view."""
+    cols = max([state.cols, *(cell_width(str(line)) for line in lines)])
+    targets: list[tuple] = []
+    shown: list[int] = []
+    listed = None
+    scroll = ""
+    for number, line in enumerate(lines):
+        mark = getattr(line, "mark", None)
+        if not mark:
+            continue
+        if mark[0] == "row":
+            targets.append((number, 0, cols, mark))
+            shown.append(mark[1])
+        elif mark[0] == "scroll":
+            targets.append((number, 0, cols, mark))
+            if mark[1] == "list":
+                listed = mark[2]
+            else:
+                scroll = mark[1]
+        elif mark[0] == "bar" and not state.help:
+            for entry in _BAR_ENTRY.finditer(str(line)):
+                key = _bar_click(state, entry.group().split(" ", 1)[0])
+                if key is not None:
+                    targets.append((number, entry.start(), entry.end(), ("key", key)))
+    rows = (min(shown), len(shown), listed) if listed is not None and shown else None
+    return TuiHits(state.screen, state.help, (state.cols, state.rows), tuple(targets),
+                   rows, scroll)
 
 
 def _setup_label(plat: str, path: Path) -> str:
@@ -17600,6 +17902,18 @@ class _TuiTerminal:
         self.heard = 0.0
         self.frame: list[tuple[str, str]] = []
         self.entered = False
+        # Whether clicks may be asked for here (tui_mouse_blocker), and
+        # whether they are now: off on a screen whose text is copied.
+        self.mouse_allowed = not tui_mouse_blocker(stdin, stdout)
+        self.mouse = False
+
+    def set_mouse(self, on: bool) -> None:
+        """Ask for clicks or give them back to the terminal, written only
+        when that changes."""
+        on = on and getattr(self, "mouse_allowed", False) and self.entered
+        if on != getattr(self, "mouse", False):
+            self.mouse = on
+            self.write(_MOUSE_ON if on else _MOUSE_OFF)
 
     def enter(self) -> None:
         if os.name != "nt":
@@ -17627,6 +17941,9 @@ class _TuiTerminal:
             # the cursor are as they were, nothing is written over them.
             if getattr(self, "entered", True):
                 self.entered = False
+                # The mouse modes go with the screen (_SCREEN_OFF), and come
+                # back with the next frame once entered again.
+                self.mouse = False
                 self.write(_SCREEN_OFF)
         finally:
             if self.saved is not None:
@@ -18009,7 +18326,11 @@ def run_tui(args: argparse.Namespace) -> int:
                 state.cols, state.rows = cols, rows
                 terminal.frame = []
             state.now = time.monotonic()
-            terminal.draw(tui_view(state, cols, rows), cols)
+            lines = tui_view(state, cols, rows)
+            # A click is read against the frame it was made on.
+            state.hits = tui_hits(state, lines)
+            terminal.draw(lines, cols)
+            terminal.set_mouse(tui_wants_mouse(state, lines))
             for key in terminal.keys(TUI_FRAME):
                 if key.name == "ctrl-z":
                     # ISIG is off, so Ctrl-Z comes as a key: it stops what
