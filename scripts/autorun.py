@@ -1006,6 +1006,11 @@ def run_job(ctx: Context, name: str) -> tuple[str, str]:
         else previous.get("consecutive_failures", 0) + 1,
     }
     state["jobs"][name] = record
+    # A job's report can raise an alert of its own: campaign.py refusing to
+    # run third-party code outside its sandbox.
+    alert = runner.report.get("alert") if isinstance(runner.report, dict) else None
+    if result != DEFERRED:
+        set_alert(state, f"job:{name}", bool(alert), str(alert or ""), now_iso())
     prune_logs(ctx.home / "logs")
     save_state(ctx.state_path, state)
     return result, detail

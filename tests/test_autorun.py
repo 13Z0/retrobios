@@ -236,6 +236,19 @@ class StepEnvironment(Scratch):
         self.assertEqual(given["GITHUB_TOKEN"], "t1")
 
 
+class ReportAlert(Scratch):
+    def test_a_report_alert_is_raised_then_cleared(self):
+        write = "import json, sys; json.dump({'alert': sys.argv[1]} if sys.argv[1] else {}, open('r.json', 'w'))"
+        for message, expected in (("no sandbox", True), ("", False)):
+            ctx = self.context({"x": {"worktree": False, "min_free_gb": 0, "report": "r.json",
+                                      "steps": [[PY, "-c", write, message]]}})
+            ar.run_job(ctx, "x")
+            alerts = self.state(ctx).get("alerts", {})
+            self.assertEqual("job:x" in alerts, expected)
+            if expected:
+                self.assertEqual(alerts["job:x"]["detail"], "no sandbox")
+
+
 class Retry(Scratch):
     def _runs(self, *outcomes: ar.Outcome):
         queue = list(outcomes)

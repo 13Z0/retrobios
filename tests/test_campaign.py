@@ -429,6 +429,45 @@ class ChildEnvironment(unittest.TestCase):
         self.assertNotIn("GITHUB_TOKEN", seen[0])
 
 
+class FailClosed(Workspace):
+    """No core and no build runs outside the sandbox unless asked."""
+
+    def test_a_pass_without_a_sandbox_is_refused(self) -> None:
+        host = FakeHost()
+        host.results = [subprocess.CompletedProcess([], 0, "{}", "")]
+        c = self.make(host)
+        with unittest.mock.patch.object(campaign.core_probe.shutil, "which", return_value=None):
+            current = c.run(set(), None)
+        self.assertEqual(current.result, "refused")
+        self.assertIn("bwrap not found", current.detail)
+        self.assertEqual(host.calls, [])
+        self.assertEqual(mr.read_campaign(self.root, mr.CAMPAIGN_RUNS)[-1]["result"], "refused")
+
+    def test_the_override_lets_it_run(self) -> None:
+        c = self.make(allow_unsandboxed=True)
+        c.unit_cores = lambda *a, **k: []
+        with unittest.mock.patch.object(campaign.core_probe.shutil, "which", return_value=None):
+            self.assertEqual(c.run(set(), None).result, "complete")
+
+    def test_every_probe_requires_the_sandbox(self) -> None:
+        core = campaign.Core("fake", self.tmp / "x.so", "a" * 64)
+        self.assertIn("--require-sandbox", self.make().probe_args("run", core, "fake", "s", None, None))
+        self.assertNotIn("--require-sandbox", self.make(allow_unsandboxed=True).probe_args(
+            "run", core, "fake", "s", None, None))
+
+    def test_a_build_without_a_sandbox_is_refused(self) -> None:
+        c = self.make()
+        src = c.paths.home / "src" / campaign.slug("https://example.invalid/x")
+        (src / ".git").mkdir(parents=True)
+        (src / "Makefile").write_text("all:\n")
+        host = c.host
+        host.results = [subprocess.CompletedProcess([], 0, "", "")]
+        with unittest.mock.patch.object(campaign.core_probe.shutil, "which", return_value=None), \
+                self.assertRaisesRegex(campaign.Unavailable, "refused: no sandbox"):
+            c.cores.compile("https://example.invalid/x", "a" * 40, self.tmp / "out")
+        self.assertFalse(any(call[0] == "make" for call in host.calls))
+
+
 class ProbeRuns(Workspace):
     def completed(self, code: int, stdout: str = "", stderr: str = "") -> subprocess.CompletedProcess:
         return subprocess.CompletedProcess([], code, stdout, stderr)
@@ -754,6 +793,8 @@ class FakeCorePasses(Workspace):
         current = c.run(set(), None)
         self.assertEqual(current.result, "complete")
         records = [s.record for s in mr.read_records(self.root)]
+        isolations = {rep["isolation"] for r in records for v in r["variants"] for rep in v["repetitions"]}
+        self.assertEqual(isolations, {campaign.core_probe.SANDBOX})
         kinds = sorted(r["subject"].split("-")[0] for r in records)
         self.assertEqual(kinds, ["alias", "bench", "boot", "files"])
         boot = next(r for r in records if r["subject"].startswith("boot"))

@@ -13,8 +13,8 @@
     "started_at": { "type": "string", "format": "date-time" },
     "ended_at": { "type": "string", "format": "date-time" },
     "result": {
-      "enum": ["complete", "budget", "paused", "stopped"],
-      "description": "complete: nothing runnable was left. budget: the time budget ended the pass. paused: a busy host or a full disk ended it, the next pass resumes. stopped: interrupted."
+      "enum": ["complete", "budget", "paused", "stopped", "refused"],
+      "description": "complete: nothing runnable was left. budget: the time budget ended the pass. paused: a busy host or a full disk ended it, the next pass resumes. stopped: interrupted. refused: no sandbox for third-party code, nothing ran."
     },
     "detail": { "type": "string" },
     "counts": {

@@ -91,6 +91,7 @@ PROBE_TIMEOUT = 900
 BUILD_TIMEOUT = 3600
 LOG_DAYS = 30
 ROMFETCH_TRANSIENT = 3
+EXIT_REFUSED = 3
 
 
 class Pause(RuntimeError):
@@ -233,6 +234,9 @@ class Settings:
     network: bool = True
     delays: tuple[float, ...] = NETWORK_DELAYS
     echo: bool = True
+    # Third-party code (a nightly core, a project's Makefile) runs only under
+    # bubblewrap unless this is set.
+    allow_unsandboxed: bool = False
 
 
 @dataclass
@@ -656,7 +660,10 @@ class Cores:
         makefile = "Makefile.libretro" if (src / "Makefile.libretro").is_file() else "Makefile"
         jobs = str(max(1, (os.cpu_count() or 2) // 2))
         command = ["make", "-f", makefile, f"-j{jobs}", "platform=unix"]
-        prefix, isolation = core_probe.sandbox_argv([src], private_tmp=True)
+        prefix, isolation = core_probe.sandbox_argv([src])
+        if isolation != core_probe.SANDBOX and not self.c.settings.allow_unsandboxed:
+            raise Unavailable(f"refused: no sandbox to build {source} in ({isolation}), "
+                              f"--allow-unsandboxed overrides")
         step(prefix + command, cwd=src, timeout=BUILD_TIMEOUT)
         built = sorted(src.rglob("*_libretro.so"), key=lambda p: p.stat().st_mtime)
         if not built:
@@ -842,6 +849,8 @@ class Campaign:
                 "--emulator", emulator, "--subject", subject,
                 "--max-load", str(self.host.max_load), "--timeout", str(self.settings.probe_timeout),
                 "--work-dir", str(self.paths.root / "tmp" / "core_probe")]
+        if not self.settings.allow_unsandboxed:
+            argv.append("--require-sandbox")
         if core.artifact:
             argv += ["--core-artifact", core.artifact]
         if core.repo:
@@ -1232,6 +1241,16 @@ class Campaign:
         if dry_run:
             self.describe(units, system)
             return current
+        isolation = core_probe.sandbox_argv([])[1]
+        if isolation != core_probe.SANDBOX and not self.settings.allow_unsandboxed:
+            # Fail closed: no core and no build runs outside the sandbox.
+            current.result = "refused"
+            current.detail = (f"no sandbox for third-party code ({isolation}). Install bubblewrap, "
+                              f"or pass --allow-unsandboxed")
+            self.log(f"pass refused: {current.detail}")
+            self.write_run_line(current)
+            save_state(self.paths.state, self.state)
+            return current
         for unit in units:
             for content in self.unit_contents(unit, system):
                 self.store.hold(content, unit.emulator)
@@ -1500,6 +1519,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     run_p.add_argument("--romfetch", default="",
                        help=f"romfetch command (default: ${ROMFETCH_ENV}, else romfetch on PATH)")
     run_p.add_argument("--offline", action="store_true", help="no buildbot, no romfetch, no build")
+    run_p.add_argument("--allow-unsandboxed", action="store_true",
+                       help="run cores and builds without bubblewrap when it is missing (refused by default)")
     run_p.add_argument("--dry-run", action="store_true", help="print the plan, run nothing")
     run_p.add_argument("--commit", action="store_true",
                        help="commit records, findings and each changed profile behind the gate")
@@ -1535,7 +1556,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "run":
         settings = Settings(budget=args.budget, max_load_wait=args.max_load_wait,
                             min_free_gb=args.min_free_gb, cache_cap_gb=args.cache_cap_gb,
-                            romfetch=args.romfetch, network=not args.offline)
+                            romfetch=args.romfetch, network=not args.offline,
+                            allow_unsandboxed=args.allow_unsandboxed)
     campaign = Campaign(paths, settings)
     if args.command == "status":
         report = status_report(campaign)
@@ -1559,8 +1581,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"campaign: deferred, {exc}", file=sys.stderr)
         return 75
     counts, _, _ = campaign.counts()
-    print(json.dumps({"result": current.result, "detail": current.detail, "counts": counts,
-                      "records": len(current.records), "findings": current.findings}))
+    report = {"result": current.result, "detail": current.detail, "counts": counts,
+              "records": len(current.records), "findings": current.findings}
+    if current.result == "refused":
+        # autorun raises an alert from this key of a job's report.
+        report["alert"] = current.detail
+    print(json.dumps(report))
+    if current.result == "refused":
+        return EXIT_REFUSED
     return 75 if current.result == "paused" else 0
 
 
