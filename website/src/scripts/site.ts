@@ -1,8 +1,8 @@
 // Progressive enhancement of the generated pages: table captions, filters
 // and keyboard scrolling, the hash lookup on files/ (a pasted hash or a file
 // hashed on this device), moved cards, a hash typed in the search, glossary
-// terms on a tap, the OS tab of the visitor's system, the current page in
-// the sidebar, and the 404 page's hints.
+// terms on a tap, hash copy buttons, the OS tab of the visitor's system, the
+// current page in the sidebar, and the 404 page's hints.
 // Which tables stack on a phone is decided when the page is built
 // (src/plugins/rehype-stack-tables.mjs), so the layout is right on first paint.
 
@@ -931,6 +931,35 @@ const glossaryTerms = () => {
 	document.addEventListener('click', close);
 };
 
+// A hash cut short on a button (button.rb-copy): a click copies the whole
+// value from data-copy, says so to a screen reader, and marks the button
+// for two seconds. The full value is also in the row's details, so a
+// browser without the clipboard API loses nothing.
+const copyButtons = () => {
+	if (!document.querySelector('button.rb-copy')) return;
+	let status: HTMLElement | null = null;
+	document.addEventListener('click', async (event) => {
+		const button = (event.target as Element | null)?.closest<HTMLButtonElement>('button.rb-copy');
+		const value = button?.dataset.copy;
+		if (!button || !value || !navigator.clipboard) return;
+		try {
+			await navigator.clipboard.writeText(value);
+		} catch {
+			// Clipboard refused (no permission, insecure context): nothing copied.
+			return;
+		}
+		if (!status) {
+			status = document.createElement('p');
+			status.className = 'rb-visually-hidden';
+			status.setAttribute('role', 'status');
+			document.body.append(status);
+		}
+		status.textContent = `Copied ${value}`;
+		button.dataset.copied = '';
+		setTimeout(() => delete button.dataset.copied, 2000);
+	});
+};
+
 // The 404 page: a search button, and the list a moved page belongs to.
 const notFound = () => {
 	document.querySelector('[data-rb-open-search]')?.addEventListener('click', () => {
@@ -952,6 +981,7 @@ enhanceTables();
 breakPaths();
 hashSearch();
 glossaryTerms();
+copyButtons();
 osTabs();
 showCurrentPage();
 notFound();

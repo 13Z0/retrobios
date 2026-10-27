@@ -551,6 +551,67 @@ body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: var(--rb-grid-width
 .sl-markdown-content details.rb-details > summary::before { background-color: var(--rb-text-secondary); }
 .sl-markdown-content details.rb-details[open] > summary { margin-bottom: 0.6rem; }
 
+/* A platform file row: a short hash on a button that copies it whole
+   (site.ts), and the row's evidence in a details cell. */
+.sl-markdown-content button.rb-copy {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3em;
+	min-height: 24px;
+	padding: 0 0.35em;
+	border: 1px solid var(--rb-border-strong);
+	border-radius: 3px;
+	background: var(--rb-surface);
+	color: var(--sl-color-white);
+	font: 0.8125rem/1.4 var(--sl-font-mono);
+	cursor: pointer;
+	white-space: nowrap;
+}
+.sl-markdown-content button.rb-copy::after {
+	content: '';
+	width: 0.9em;
+	height: 0.9em;
+	background: var(--rb-text-secondary);
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5 1h8a2 2 0 0 1 2 2v8h-2V3H5zM3 5h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 2v7h7V7z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.sl-markdown-content button.rb-copy[data-copied]::after {
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6 11.2 2.8 8 1.4 9.4 6 14l8.6-8.6-1.4-1.4z'/%3E%3C/svg%3E");
+	background: var(--rb-ok-fg);
+}
+.sl-markdown-content button.rb-copy:hover { border-color: var(--rb-link); }
+/* The file name and its destination, written as plain text to spare an
+   element per cell. */
+.sl-markdown-content table:has(:is(button.rb-copy, details.rb-row-details)) td:is(:nth-child(1), :nth-child(2)) {
+	font-family: var(--sl-font-mono);
+	font-size: 0.8125rem;
+	overflow-wrap: anywhere;
+}
+.sl-markdown-content details.rb-row-details {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.sl-markdown-content details.rb-row-details > summary {
+	min-height: 24px;
+	color: var(--rb-link);
+	font-size: 0.875rem;
+	cursor: pointer;
+}
+.sl-markdown-content details.rb-row-details[open] {
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	overflow-wrap: anywhere;
+}
+/* Open beside four narrow columns, the evidence keeps a readable width:
+   the other cells give up their side padding for it. */
+@media (min-width: 50rem) {
+	.sl-markdown-content table:has(details.rb-row-details) :is(th, td) { padding-inline: 0.5rem; }
+	/* A long name or path wraps before the table outgrows the column. */
+	.sl-markdown-content table:has(details.rb-row-details) td:first-child { min-width: 9rem; }
+	.sl-markdown-content table:has(details.rb-row-details) td:nth-child(2) { min-width: 4rem; }
+	.sl-markdown-content details.rb-row-details[open] { min-width: 15rem; }
+}
+
 /* Asides: a neutral box for notes and tips, no side stripe, no icon.
    Caution and danger keep their colour, as a 1 px border all round. */
 .sl-markdown-content .starlight-aside {

@@ -3253,13 +3253,16 @@ PLATFORM_REFERENCE_BUDGET = 250_000
 def _file_runs(body: list[str], budget: int) -> list[list[str]]:
     """A system's file list in runs of at most ``budget`` characters.
 
-    The lines before the first file (counts, emulators) open every run. A
-    file is never cut from its hash and evidence lines.
+    The lines before the first file (counts, emulators, a table's header)
+    open every run. A file is never cut from its hash and evidence lines,
+    and a table row is one line.
     """
-    first = next((i for i, line in enumerate(body) if line.startswith("- ")), len(body))
+    rows = next((i + 1 for i, line in enumerate(body) if line.startswith("|--")), None)
+    first = rows if rows is not None else next(
+        (i for i, line in enumerate(body) if line.startswith("- ")), len(body))
     head, items = body[:first], []
     for line in body[first:]:
-        if line.startswith("- ") or not items:
+        if line.startswith(("- ", "| ")) or not items:
             items.append([line])
         else:
             items[-1].append(line)
@@ -3423,6 +3426,139 @@ def _launcher_refs(platform: str, config: dict) -> dict[str, list[str]]:
     return found
 
 
+PLATFORM_FILE_HEADER = [
+    "| File | Path | Status | Hash | Details |",
+    "|---|---|---|---|---|",
+]
+# The characters of a hash a row shows, as many as the served copy's sha1.
+SHORT_HASH = 8
+# The hash a row shows first, when the list does not say which it checks.
+_ROW_HASHES = ("sha1", "md5", "sha256", "crc32")
+# An untested entry whose reason is a hash the bytes do not match.
+_WRONG_HASH = re.compile(r"hash|mismatch|expected|must match", re.IGNORECASE)
+
+
+def _status_chip(f: dict) -> str:
+    """The row's status as a chip, its word and its colour saying the same."""
+    status = f.get("status")
+    if status == "ok":
+        word, tone = "OK", "success"
+    elif status == "missing":
+        word, tone = "Missing", "danger"
+    elif status == "untested":
+        word = "Wrong hash" if _WRONG_HASH.search(str(f.get("reason") or "")) else "Untested"
+        tone = "warning"
+    else:
+        word, tone = str(status), "muted"
+    return f'<span class="rb-badge rb-badge-{tone}">{word}</span>'
+
+
+def _copy_hash(algorithm: str, value: str | list) -> str:
+    """A declared hash cut to SHORT_HASH characters on a button that copies it whole.
+    A list of accepted values (Recalbox) shows its first and how many more."""
+    from hashing import parse_hash_list  # noqa: PLC0415
+
+    values = parse_hash_list(value)
+    if not values:
+        return ""
+    first = html.escape(values[0])
+    more = f" +{len(values) - 1}" if len(values) > 1 else ""
+    return (f'<button type="button" class="rb-copy" data-copy="{first}" '
+            f'aria-label="Copy {algorithm.upper()} {first[:SHORT_HASH]}">'
+            f'{first[:SHORT_HASH]}</button>{more}')
+
+
+def _cell(text: str) -> str:
+    """Text for one cell of a Markdown table: a pipe would end the cell."""
+    return text.replace("|", "\\|")
+
+
+_MARKDOWN_PUNCTUATION = re.compile(r"([\\`*_\[\]~])")
+_CODE_LINK = re.compile(r"\[`([^`]+)`\]\(")
+_SHORT_SHA1 = re.compile(r"\(sha1 `([0-9a-f]+)`\)")
+
+
+def _plain(text: str) -> str:
+    """Text written as itself in Markdown: no emphasis, link or tag."""
+    return _MARKDOWN_PUNCTUATION.sub(r"\\\1", html.escape(text, quote=False))
+
+
+def _uncoded(text: str) -> str:
+    """A linked path as plain link text, a short sha1 as plain text.
+
+    Each code element is one more element of the page. With one in every
+    name, path and reference, Batocera's page measured 10,479 elements, over
+    validate_site's budget of 10,000. The link and the value say the same
+    without it.
+    """
+    text = _CODE_LINK.sub(lambda m: f"[{_plain(m[1])}](", text)
+    return _SHORT_SHA1.sub(r"(sha1 \1)", text)
+
+
+def _platform_file_row(f: dict, cfg_entry: dict, hash_type: str = "",
+                       launched: list[str] | None = None) -> str:
+    """One file of a platform's list as a table row: its name, where it goes,
+    its status and a short hash at a glance. The details hold every hash the
+    platform declares, the size, the copy that serves it and its readers.
+    """
+    fname = f["name"]
+    hashes = {
+        "sha1": cfg_entry.get("sha1", f.get("sha1", "")),
+        "md5": cfg_entry.get("md5", f.get("expected_md5", "")),
+        # The crc32 is what System.dat and clrmamepro print. RetroDECK
+        # declares sha256 too (dsifirmware.bin).
+        "crc32": str(cfg_entry.get("crc32") or ""),
+        "sha256": str(cfg_entry.get("sha256") or ""),
+    }
+    size = cfg_entry.get("size", f.get("size", 0))
+    shown = next((alg for alg in (hash_type, *_ROW_HASHES) if alg in hashes and hashes[alg]), "")
+
+    facts: list[str] = []
+    # One code element per value: Recalbox lists accepted md5s joined by
+    # commas, and each is a value a reader compares a dump with.
+    facts.extend(f"{alg.upper()}: {_hash_spans(hashes[alg])}"
+                 for alg in ("sha1", "md5", "crc32", "sha256") if hashes[alg])
+    # The size closes the hash lines: a line of its own was one more
+    # element per row.
+    if size and facts:
+        facts[-1] += f" ({_fmt_size(size)})"
+    elif size:
+        facts.append(f"Size: {_fmt_size(size)}")
+    if f.get("status") == "untested" and f.get("reason"):
+        facts.append(f"Not confirmed: {f['reason']}")
+    # Not every entry is firmware: the platform may list a game's data or a
+    # file no core it runs opens.
+    kind = {"game_data": "Game data, not firmware",
+            "unread": "No core the platform runs opens it"}.get(f.get("category", ""))
+    if kind:
+        facts.append(kind)
+    served = _served_line(f)
+    if served:
+        facts.append(_uncoded(served))
+    if f.get("category_evidence"):
+        facts.append(_uncoded(_category_evidence_md(f["category_evidence"], launched)))
+
+    # Where the file goes: three GameCube IPL.bin differ only by GC/USA,
+    # GC/EUR and GC/JAP. A destination that ends with the name shows its
+    # folder only, the name being in the cell before it. Both are plain
+    # text set in the code font by the table's style: a code element in
+    # each cell was two more elements per row.
+    destination = str(cfg_entry.get("destination") or "")
+    if destination == fname or destination.endswith("/" + fname):
+        destination = destination[:len(destination) - len(fname)]
+    summary = f'<summary aria-label="Details of {html.escape(fname)}">Details</summary>'
+    details = (f'<details class="rb-row-details">{summary}{"<br>".join(facts)}</details>'
+               if facts else "")
+    cells = [
+        _plain(fname),
+        _plain(destination),
+        _status_chip(f),
+        _copy_hash(shown, hashes[shown]) if shown else "",
+        details,
+    ]
+    return "| " + " | ".join(_cell(cell) for cell in cells) + " |"
+
+
 def _render_platform_systems(
     by_system: dict, config_files: dict, emulator_files: dict,
     platform: tuple[str, str] | None = None, moved: dict[str, str] | None = None,
@@ -3457,81 +3593,20 @@ def _render_platform_systems(
             body.append(f"Emulators: {emu_links}")
         body.append("")
 
-        # File listing. The sort is stable, so same-named entries keep the
-        # order verify reported them in, which is the declaration order.
+        # One row per file, the evidence in its details. The sort is stable,
+        # so same-named entries keep the order verify reported them in,
+        # which is the declaration order.
+        body.extend(PLATFORM_FILE_HEADER)
         seen_names: dict[str, int] = {}
         for f in sorted(files, key=lambda x: x["name"]):
-            status = f["status"]
             fname = f["name"]
             declared = config_files.get((sys_id, fname), [])
             nth = seen_names.get(fname, 0)
             seen_names[fname] = nth + 1
             cfg_entry = declared[nth] if nth < len(declared) else {}
-            sha1 = cfg_entry.get("sha1", f.get("sha1", ""))
-            md5 = cfg_entry.get("md5", f.get("expected_md5", ""))
-            size = cfg_entry.get("size", f.get("size", 0))
-
-            if status == "ok":
-                status_display = "OK"
-            elif status == "untested":
-                reason = f.get("reason", "")
-                status_display = f"untested: {reason}" if reason else "untested"
-            elif status == "missing":
-                status_display = "**missing**"
-            else:
-                status_display = status
-            # Not every entry is firmware: the platform may list a game's data
-            # or a file no core it runs opens.
-            kind = {"game_data": "game data",
-                    "unread": "no core the platform runs opens it"}.get(f.get("category", ""))
-            if kind:
-                status_display += f", {kind}"
-
-            size_str = _fmt_size(size) if size else ""
-            details = [status_display]
-            if size_str:
-                details.append(size_str)
-
-            # Where the file goes, when its name alone does not say: three
-            # GameCube IPL.bin differ only by GC/USA, GC/EUR and GC/JAP.
-            destination = str(cfg_entry.get("destination") or "")
-            where = f" at `{destination}`" if destination and destination != fname else ""
-            body.append(f"- `{fname}`{where} - {', '.join(details)}")
-            item_line = len(body) - 1
-            facts: list[str] = []
-            # Every hash the platform declares, whole: the crc32 is what
-            # System.dat and clrmamepro print, and pasting it found nothing
-            # for a pinned file the collection holds under other bytes.
-            crc32 = str(cfg_entry.get("crc32") or "")
-            # RetroDECK declares sha256 too: dsifirmware.bin's was in the CSV
-            # exports only, and pasting it into the search found nothing.
-            sha256 = str(cfg_entry.get("sha256") or "")
-            if sha1 or md5 or crc32 or sha256:
-                hash_parts = []
-                # One code span per value: Recalbox lists accepted md5s joined
-                # by commas, and the search indexed the joined run as a single
-                # word, so the second and later values were never found.
-                if sha1:
-                    hash_parts.append(f"SHA1: {_hash_spans(sha1)}")
-                if md5:
-                    hash_parts.append(f"MD5: {_hash_spans(md5)}")
-                if crc32:
-                    hash_parts.append(f"CRC32: `{crc32}`")
-                if sha256:
-                    hash_parts.append(f"SHA256: `{sha256}`")
-                facts.append(" | ".join(hash_parts))
-            served = _served_line(f)
-            if served:
-                facts.append(served)
-            if f.get("category_evidence"):
-                facts.append(_category_evidence_md(
-                    f["category_evidence"], launched.get(fname.rsplit("/", 1)[-1].casefold())))
-            # One line each, hashes, the copy that serves it, its readers: as
-            # continuation lines they ran into one paragraph.
-            if facts:
-                body[item_line] += "\\"
-            body.extend(f"    {fact}" + ("\\" if n < len(facts) - 1 else "")
-                        for n, fact in enumerate(facts))
+            body.append(_platform_file_row(
+                f, cfg_entry, str((config or {}).get("hash_type") or ""),
+                launched.get(fname.rsplit("/", 1)[-1].casefold())))
 
         # Measured as the Markdown the split was tuned on, a collapsible
         # block indented by four, so both engines split the same systems.
@@ -3591,15 +3666,18 @@ def _render_platform_systems(
                     *([""] + [", ".join(
                         f"[part {i}]({other}.md)" if other != stem else f"part {i}"
                         for i, other in enumerate(stems, 1))] if len(runs) > 1 else []),
-                    "", "## Files", "",
+                    "", "## Files", "", *markup.details("note", ROLE_LEGEND_TITLE, [ROLE_LEGEND]),
                     *search_excluded(run),
                     "", _date_line(),
                 ]) + "\n"
-            where = (f"[a page of their own]({stems[0]}.md)" if len(stems) == 1 else
-                     "pages of their own: " + ", ".join(
-                         f"[part {i}]({stem}.md)" for i, stem in enumerate(stems, 1)))
+            # The count and status a folded system shows in its summary,
+            # linked to the page that lists the files.
+            tag = "OK" if ok_count == total else _count(total - ok_count, "issue")
+            count = f"{_count(total, 'file')} ({tag})"
             lines.extend([
-                f"{_count(total, 'file')}, {ok_count} verified: listed on {where}.", "",
+                f"[{count}]({stems[0]}.md)" if len(stems) == 1 else f"{count}: " + ", ".join(
+                    f"[part {i}]({stem}.md)" for i, stem in enumerate(stems, 1)),
+                "",
             ])
             continue
         # The section's heading stays searchable, its file list with every
@@ -3635,6 +3713,40 @@ def _site_profiles() -> dict[str, dict]:
     return load_emulator_profiles(str(_REPO_ROOT / "emulators"))
 
 
+# Whose code a source reference cites, in one word: a platform page names
+# each role once in ROLE_LEGEND. Written after every reference, "(emulator
+# code, libretro port)" ran through Batocera's 14,000 words.
+ROLE_WORDS = {
+    "libretro glue": "glue",
+    "emulator code, libretro port": "port",
+    "upstream emulator": "upstream",
+    "this build": "build",
+}
+ROLE_LEGEND_TITLE = "Source reference words"
+ROLE_LEGEND = (
+    "In a file's details, a word before its source references says whose code they are. "
+    "**glue** means libretro glue, **port** means emulator code in the libretro port, "
+    "**upstream** means the upstream emulator and **build** means this build's own code."
+)
+
+
+def _refs_by_role(profile: dict, value: str | dict | None) -> str:
+    """A source_ref's parts grouped by whose code they cite, each role named
+    once by its ROLE_WORDS word: `glue a.c:1, b.c:2 and port c.c:3`."""
+    from sitesources import source_ref_items
+
+    texts = []
+    for label, items in source_ref_items(profile, value):
+        by_role: dict[str, list[str]] = {}
+        for part, role in items:
+            by_role.setdefault(role, []).append(part)
+        text = " and ".join(
+            (f"{ROLE_WORDS.get(role, role)} " if role else "") + ", ".join(parts)
+            for role, parts in by_role.items())
+        texts.append(f"**{label}:** {text}" if label else text)
+    return ", ".join(texts)
+
+
 def _category_evidence_md(evidence: dict, launched: list[str] | None = None) -> str:
     """What establishes an entry's category, as the page shows it.
 
@@ -3650,7 +3762,7 @@ def _category_evidence_md(evidence: dict, launched: list[str] | None = None) -> 
             # plain code with the role word ("source") left in front.
             profile = profiles.get(reader["emulator"], {})
             refs = [
-                (f"`{e['name']}` at {_source_ref_markdown(profile, e['source_ref'])}"
+                (f"`{e['name']}` at {_refs_by_role(profile, e['source_ref'])}"
                  if e.get("source_ref") else f"`{e['name']}`")
                 + (" (by name)" if e.get("by") == "name" else "")
                 for e in reader.get("entries", [])
@@ -4173,8 +4285,7 @@ def generate_platform_page(
         "",
         level_label("reference"),
         "",
-        "For checking the work: the counts, where the list comes from, and "
-        "every file with its hashes.",
+        "For checking the work: counts, the list's source and each file's hashes.",
         "",
         *(line for note in (GUIDES[name].reference_notes if name in GUIDES else ())
           for line in (note, "")),
@@ -4305,6 +4416,8 @@ def generate_platform_page(
             f"| <span data-pagefind-ignore>{ok_count}/{total}</span> | {status} | {emu_str} |"
         )
     lines.append("")
+    if by_system:
+        lines.extend(markup.details("note", ROLE_LEGEND_TITLE, [ROLE_LEGEND]))
 
     lines.extend(
         _render_platform_systems(by_system, config_files, emulator_files,

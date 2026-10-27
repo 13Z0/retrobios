@@ -377,7 +377,7 @@ class PlatformPagesPrintTheDeclaredCrc32(unittest.TestCase):
             path.read_text(encoding="utf-8") for path in sitepages.pages()
             if sitepages.name(path) == "platforms/retroarch.md"
             or sitepages.name(path).startswith("platforms/retroarch-"))
-        self.assertIn("CRC32: `91e93107`", text)
+        self.assertIn('CRC32: <code class="rb-hash">91e93107</code>', text)
 
 
 class PlainHouseStyle(unittest.TestCase):
