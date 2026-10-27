@@ -5,7 +5,12 @@ source: "https://github.com/ikemen-engine/Ikemen-GO"
 upstream: "https://github.com/ikemen-engine/Ikemen-GO"
 profiled_date: "2026-10-04"
 source_commit: "e9bfe1125dea88769b265e57bcfaefdb22fa4322"
-core_version: ~
+core_version: "v1.0.0-rc.1-545-ge9bfe11"
+version_basis:
+  kind: tag
+  match: "v*"
+  tag: "v1.0.0-rc.1"
+  distance: 545
 display_name: "Ikemen GO"
 cores: [ikemen]
 systems: []

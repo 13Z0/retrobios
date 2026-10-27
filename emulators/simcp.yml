@@ -5,7 +5,11 @@ source: "https://github.com/libretro/libretro-simcoupe"
 upstream: "https://github.com/simonowen/simcoupe"
 profiled_date: "2026-03-25"
 source_commit: "c28046241ac6a4d79e55326b6e354dc02f92fa34"
-core_version: "Git"
+core_version: "v1.1 alpha"
+version_basis:
+  kind: file
+  path: "SimCoupe/Base/GUIDlg.cpp"
+  pattern: 'szVersion\[128\] = "SimCoupe (v[^"]+)"'
 display_name: "SAM Coupe (SimCoupe)"
 cores:
   - simcp

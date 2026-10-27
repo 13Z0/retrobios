@@ -214,12 +214,14 @@ def rule_validation(zeros: Run | None, half: Run | None, none: Run, present: Run
         if size is False and "size" in declared:
             problems.append(f"the first half of {name} is run, the profile declares a size check")
     statement = f"the core {' and '.join(shown)} of {name}"
+    # What the runs show, for a finding beside what the profile says.
+    checks = {"content": content, "size": size}
     if problems:
-        return Verdict("validation_contradicted", "validation", said,
+        return Verdict("validation_contradicted", "validation", checks,
                        f"{statement}: {'; '.join(problems)}", evidence)
     if missing_size:
         if not editable:
-            return Verdict("validation_contradicted", "validation", said,
+            return Verdict("validation_contradicted", "validation", checks,
                            f"{statement}: the per-build validation has no size check", evidence)
         value = [*(entry.get("validation") or []), "size"]
         return Verdict("validation_size_added", "validation", value,

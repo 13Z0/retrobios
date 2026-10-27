@@ -7,7 +7,11 @@ author: "rfandango"
 profiled_date: "2026-09-17"
 source_commit: "779680ade075d2d2a4c589c6a8d57a8e26c116c0"
 upstream_commit: "d881a29125978b4eea6bf44f6ed8c33f8aea8c33"
-core_version: "0b11201"
+core_version: "XenDroid-0b11201-2-g779680a"
+version_basis:
+  kind: tag
+  tag: "XenDroid-0b11201"
+  distance: 2
 display_name: "Microsoft - Xbox 360 (XenDroid)"
 cores:
   - "xendroid"

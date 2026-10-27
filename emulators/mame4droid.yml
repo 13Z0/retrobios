@@ -8,6 +8,10 @@ profiled_date: "2026-08-11"
 source_commit: "9e4f9a36a65dd355ca9e28b1df3ef22a2c81d3a1"
 upstream_commit: "f4f24ba7274010fb8ccb84548b5ca95c2be2f85b"
 core_version: "0.139u1"
+version_basis:
+  kind: file
+  path: "src/version.c"
+  pattern: 'build_version\[\]\s*=\s*"([^" ]+)'
 display_name: "Arcade (MAME4droid)"
 mame_version: "0.139u1"
 

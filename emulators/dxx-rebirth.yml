@@ -5,7 +5,12 @@ source: "https://github.com/dxx-rebirth/dxx-rebirth"
 upstream: ~
 profiled_date: "2026-10-04"
 source_commit: "6943b924bea749543ef5729f31a28345e79716d2"
-core_version: "git"
+core_version: "0.61.0"
+version_basis:
+  kind: file
+  path: "SConstruct"
+  pattern: 'VERSION_MAJOR: typing.Final\[int\] = (\d+)\s+VERSION_MINOR: typing.Final\[int\] = (\d+)\s+VERSION_MICRO: typing.Final\[int\] = (\d+)'
+  format: "{1}.{2}.{3}"
 display_name: "Descent 1 & 2 (DXX-Rebirth)"
 cores: [dxx-rebirth, d1x-rebirth, d2x-rebirth]
 systems: [descent, descent2]

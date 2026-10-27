@@ -7,6 +7,10 @@ profiled_date: "2026-10-20"
 source_commit: "ab743653ed110eeb7b1fe64d00cc5f9279c2bfec"
 prose_written_at: "1e0de94dc7e669c0925a22c0fccf6cdc837af0a0"
 core_version: "1.0.1-pre"
+version_basis:
+  kind: file
+  path: "version.inc"
+  pattern: '#define\s+BLASTEM_VERSION\s+"([^"]+)'
 display_name: "Sega - Mega Drive - Genesis (BlastEm)"
 cores:
   - blastem

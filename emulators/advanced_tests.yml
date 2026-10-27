@@ -6,6 +6,10 @@ upstream: "https://github.com/libretro/libretro-samples"
 profiled_date: "2026-03-22"
 source_commit: "7c2ad112d7a5176de2191e473369668da8946b16"
 core_version: "v1"
+version_basis:
+  kind: file
+  path: "audio/audio_callback/libretro-test.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Test Core - Advanced Test"
 cores:
   - advanced_tests

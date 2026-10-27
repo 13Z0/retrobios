@@ -7,6 +7,11 @@ logo: "https://raw.githubusercontent.com/SourMesen/Mesen2/master/UI/Assets/Mesen
 profiled_date: "2026-03-24"
 source_commit: "0102910c39ad1a62bc3f784466f3f67ca9eae335"
 core_version: "0.9.9"
+version_basis:
+  kind: file
+  path: "Core/EmulationSettings.cpp"
+  pattern: '_versionMajor = (\d+);\s*\n[^\n]*_versionMinor = (\d+);\s*\n[^\n]*_versionRevision = (\d+);'
+  format: "{1}.{2}.{3}"
 display_name: "Nintendo - NES / Famicom (Mesen)"
 cores: [mesen, mesens]
 systems: [nintendo-nes, nintendo-fds]

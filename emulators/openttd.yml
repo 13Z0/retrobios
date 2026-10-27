@@ -5,6 +5,10 @@ source: "https://github.com/OpenTTD/OpenTTD"
 profiled_date: "2026-10-20"
 source_commit: "61342620bc4c0971b28b3578379b53d04d2f11f1"
 core_version: "14.1"
+version_basis:
+  kind: tag
+  tag: "14.1"
+  distance: 0
 display_name: "Transport Tycoon Deluxe (OpenTTD)"
 mode: standalone
 cores:

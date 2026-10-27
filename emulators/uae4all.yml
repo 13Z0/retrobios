@@ -8,6 +8,10 @@ profiled_date: "2026-10-20"
 source_commit: "5c514dd6d8bb374bd22e2ee423bad99539207cbd"
 upstream_commit: "0f919a32b6d41a04cbc766c0e6076cda9fa7a63b"
 core_version: "2.3.6.2"
+version_basis:
+  kind: file
+  path: "AndroidAppSettings.cfg"
+  pattern: '^AppVersionName="([^"]+)"'
 display_name: "Commodore - Amiga (UAE4All2)"
 cores: [uae4all]
 systems: [commodore-amiga]

@@ -6,7 +6,11 @@ upstream: "https://github.com/shinovon/KEmulator"
 author: "shinovon"
 profiled_date: "2026-08-11"
 source_commit: "1ab219907cfcac0e6313d1b6ccba13ad74015d08"
-core_version: "v2.22"
+core_version: "2.22"
+version_basis:
+  kind: file
+  path: "src/main/emulator/Emulator.java"
+  pattern: 'public static String version = "([^"]+)"'
 display_name: "Mobile - J2ME (KEmulator nnmod)"
 cores:
   - kemulator

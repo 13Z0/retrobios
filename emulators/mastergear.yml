@@ -10,6 +10,10 @@ version_source:
 author: "Marat Fayzullin (Garage Research)"
 profiled_date: "2026-08-12"
 core_version: "4.9"
+version_basis:
+  kind: package
+  url: "https://play.google.com/store/apps/details?id=com.fms.mg"
+  artifact: "com.fms.mg APK versionName (versionCode 4900)"
 display_name: "Sega - Master System / Game Gear (MasterGear)"
 cores:
   - mastergear

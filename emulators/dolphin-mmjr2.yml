@@ -7,6 +7,10 @@ profiled_date: "2026-08-11"
 source_commit: "4d0fdb8eea616320e967408cf5547c72a95196f3"
 upstream_commit: "3eb30c7620b4475b2e0404228ba0d2b238a132f1"
 core_version: "2.0-18025"
+version_basis:
+  kind: file
+  path: "Source/Android/app/build.gradle"
+  pattern: 'def getVersion\(\)\s*\{\s*return \u0027([^\u0027]+)\u0027'
 display_name: "Nintendo - GameCube / Wii (Dolphin MMJR2)"
 cores:
   - dolphin-mmjr2

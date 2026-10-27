@@ -6,6 +6,10 @@ upstream: "https://sourceforge.net/projects/dice/"
 profiled_date: "2026-03-23"
 source_commit: "4b4596b8dd2252b9d08bd6aaa02afda4be834db3"
 core_version: "v0.4.3"
+version_basis:
+  kind: tag
+  tag: "v0.4.3"
+  distance: 0
 display_name: "Arcade (DICE)"
 cores:
   - dice

@@ -32,6 +32,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
+from collections import Counter
 from collections.abc import Callable, Iterator
 from datetime import datetime, timezone
 from pathlib import Path
@@ -83,6 +84,7 @@ from generate_readme import (
 )
 from provenance_report import build_report, distinct_missing
 import sitemarkup as markup
+import siteentries
 import sitestarlight
 from siteexports import generate_exports_page, load_export_reports
 from siteguides import (
@@ -2510,7 +2512,9 @@ def _emulator_description(markdown: str, key: str, title: str, intro: str) -> st
         row = {name: _plain_markdown(value) for name, value in re.findall(
             r"^\| (Type|Classification|Version) \| (.+?) \|$", markdown, re.M)}
         kind = row.get("Classification") or row.get("Type") or "emulator"
-        version = row.get("Version", "")
+        # The cell goes on to say where the version is read: the intro
+        # keeps the version alone.
+        version = row.get("Version", "").split(", ")[0]
         known = f", version {version}" if version and version[0].isdigit() else ""
         intro = f"{title}: {kind.lower()}{known}."
     elif title not in intro:
@@ -3238,41 +3242,35 @@ def with_setup_table(page: str, coverages: dict, registry: dict | None = None) -
     return f"{page.rstrip()}\n\n{table}"
 
 
-# A platform system whose file list passes this much Markdown gets a page
-# of its own: RetroDECK's arcade list was 750 KB of a 1.1 MB page.
-PLATFORM_SECTION_BUDGET = 200_000
-# A system's own page in runs of at most this much Markdown: RetroDECK's
-# arcade list, each file with its served copy and pinned readers, rendered
-# 1.4 MB of HTML on one page.
-PLATFORM_PART_BUDGET = 350_000
-# The Markdown of a platform page's file lists, past which the largest
+# A platform's file lists are split by the share of a page they render to,
+# in thousandths: their elements against validate_site's MAX_PAGE_ELEMENTS,
+# their bytes against the 600,000 of test_site_r2_gate, whichever is
+# larger. Measured in Markdown characters, the lists split anew whenever
+# their markup changed: rows written as tables moved 38 more systems to
+# pages of their own.
+PAGE_ELEMENTS = 10_000
+PAGE_BYTES = 600_000
+# A system whose list passes this share gets a page of its own.
+PLATFORM_SECTION_BUDGET = 400
+# A system's own page in runs of at most this share.
+PLATFORM_PART_BUDGET = 700
+# The share of a platform page's file lists, past which the largest
 # systems move to pages of their own.
-PLATFORM_REFERENCE_BUDGET = 250_000
+PLATFORM_REFERENCE_BUDGET = 600
 
 
-def _file_runs(body: list[str], budget: int) -> list[list[str]]:
-    """A system's file list in runs of at most ``budget`` characters.
+# Every part page a platform list has had, with the system it held:
+# platforms/batocera-atari-st.md -> platforms/batocera.md#atari-st. When a
+# budget or a list changes, a part can fold back into its platform page,
+# and its address then redirects there instead of ending on the 404 page.
+PLATFORM_PARTS_FILE = (Path(__file__).resolve().parent.parent
+                       / "website" / "src" / "data" / "platform-parts.json")
 
-    The lines before the first file (counts, emulators) open every run. A
-    file is never cut from its hash and evidence lines.
-    """
-    first = next((i for i, line in enumerate(body) if line.startswith("- ")), len(body))
-    head, items = body[:first], []
-    for line in body[first:]:
-        if line.startswith("- ") or not items:
-            items.append([line])
-        else:
-            items[-1].append(line)
-    runs: list[list[str]] = [[]]
-    size = 0
-    for item in items:
-        weight = sum(len(line) + 1 for line in item)
-        if runs[-1] and size + weight > budget:
-            runs.append([])
-            size = 0
-        runs[-1].extend(item)
-        size += weight
-    return [head + run for run in runs]
+
+def _published_platform_parts() -> dict[str, str]:
+    if not PLATFORM_PARTS_FILE.is_file():
+        return {}
+    return json.loads(PLATFORM_PARTS_FILE.read_text(encoding="utf-8"))
 
 
 # A list moved off a reference page (gaps, provenance) is cut in parts of
@@ -3280,13 +3278,18 @@ def _file_runs(body: list[str], budget: int) -> list[list[str]]:
 LIST_PART_BUDGET = 300_000
 
 
-def _blocks_in_runs(blocks: list[list[str]], budget: int) -> list[list[str]]:
-    """Blocks (table rows, folded lists) in runs of at most ``budget``
-    characters, a block never cut."""
+def _characters(lines: list[str]) -> int:
+    return sum(len(line) + 1 for line in lines)
+
+
+def _blocks_in_runs(blocks: list[list[str]], budget: int,
+                    weigh: Callable[[list[str]], int] = _characters) -> list[list[str]]:
+    """Blocks (table rows, folded lists) in runs of at most ``budget``, by
+    default in characters, a block never cut."""
     runs: list[list[str]] = [[]]
     size = 0
     for block in blocks:
-        weight = sum(len(line) + 1 for line in block)
+        weight = weigh(block)
         if runs[-1] and size + weight > budget:
             runs.append([])
             size = 0
@@ -3423,6 +3426,186 @@ def _launcher_refs(platform: str, config: dict) -> dict[str, list[str]]:
     return found
 
 
+# The hash a row shows first, when the list does not say which it checks.
+_ROW_HASHES = ("sha1", "md5", "sha256", "crc32")
+# An untested entry whose reason is a hash the bytes do not match.
+_WRONG_HASH = re.compile(r"hash|mismatch|expected|must match", re.IGNORECASE)
+# A list this long gets a filter box above it, as a table of RECORD_ROWS
+# rows does (website/src/plugins/rehype-stack-tables.mjs).
+FILTER_ROWS = 20
+
+
+def _status_chip(f: dict) -> str:
+    """The row's status as a chip, its word and its colour saying the same."""
+    status = f.get("status")
+    if status == "ok":
+        word, tone = "OK", "success"
+    elif status == "missing":
+        word, tone = "Missing", "danger"
+    elif status == "untested":
+        word = "Wrong hash" if _WRONG_HASH.search(str(f.get("reason") or "")) else "Untested"
+        tone = "warning"
+    else:
+        word, tone = str(status), "muted"
+    return f'<span class="rb-badge rb-badge-{tone}">{html.escape(word)}</span>'
+
+
+def _copy_hash(algorithm: str, value: str | list) -> str:
+    """A declared hash cut to SHORT_HASH characters on a button that copies
+    it whole. A list of accepted values (Recalbox) copies its first. Outside
+    a form a button submits nothing, so it carries no type."""
+    from hashing import parse_hash_list  # noqa: PLC0415
+
+    values = parse_hash_list(value)
+    if not values:
+        return ""
+    first = html.escape(values[0])
+    more = f" +{len(values) - 1}" if len(values) > 1 else ""
+    return (f'<button class="rb-copy" data-copy="{first}" '
+            f'aria-label="Copy {algorithm.upper()} {first[:SHORT_HASH]}{more}">'
+            f'{first[:SHORT_HASH]}{more}</button>')
+
+
+# Characters Markdown or MDX would read inside the raw HTML of a row: an
+# MDX page parses the text of its HTML as Markdown, a .md page does not.
+_INERT = str.maketrans({"*": "&#42;", "_": "&#95;", "`": "&#96;", "[": "&#91;", "]": "&#93;"})
+_INLINE_MD = re.compile(
+    r"\[(?P<label>(?:`[^`]*`|[^\]`])+)\]\((?P<url>[^)\s]+)\)"
+    r"|`(?P<code>[^`]+)`"
+    r"|\*\*(?P<bold>[^*]+)\*\*"
+)
+
+
+def _text_html(text: str) -> str:
+    """Plain text as HTML that neither Markdown nor MDX rewrites."""
+    return html.escape(html.unescape(text), quote=False).translate(_INERT)
+
+
+def _inline_html(markdown: str) -> str:
+    """The inline Markdown of a row's evidence (links, code, bold) as HTML.
+
+    Code spans become plain text and a linked path loses its code element:
+    one per reference and per reader was the bulk of the elements of a
+    platform page, and the words say the same without them.
+    """
+    out: list[str] = []
+    position = 0
+    for match in _INLINE_MD.finditer(markdown):
+        out.append(_text_html(markdown[position:match.start()]))
+        if match["url"]:
+            out.append(f'<a href="{html.escape(match["url"])}">'
+                       f'{_text_html(match["label"].replace("`", ""))}</a>')
+        elif match["code"]:
+            out.append(_text_html(match["code"]))
+        else:
+            out.append(f"<strong>{_text_html(match['bold'])}</strong>")
+        position = match.end()
+    out.append(_text_html(markdown[position:]))
+    return "".join(out)
+
+
+def _row_path(fname: str, cfg_entry: dict) -> str:
+    """Where the file goes, when its name alone does not say: three GameCube
+    IPL.bin differ only by GC/USA, GC/EUR and GC/JAP. A destination that is
+    the name says nothing, and one that ends with it shows its folder."""
+    destination = str(cfg_entry.get("destination") or "")
+    if destination.endswith("/" + fname):
+        return destination[:len(destination) - len(fname)]
+    return "" if destination == fname else destination
+
+
+def _platform_file_row(f: dict, cfg_entry: dict, hash_type: str = "",
+                       launched: list[str] | None = None) -> str:
+    """One file of a platform's list as one row, written as HTML.
+
+    The row is a details element whose summary holds the name, the folder
+    when there is one and the status, followed by the short hash on its copy
+    button: a button cannot sit in a summary, which is itself a control.
+    The details hold every hash the platform declares, the size, the copy
+    that serves it and its readers, across the width of the list.
+    """
+    fname = f["name"]
+    hashes = {
+        "sha1": cfg_entry.get("sha1", f.get("sha1", "")),
+        "md5": cfg_entry.get("md5", f.get("expected_md5", "")),
+        # The crc32 is what System.dat and clrmamepro print. RetroDECK
+        # declares sha256 too (dsifirmware.bin).
+        "crc32": str(cfg_entry.get("crc32") or ""),
+        "sha256": str(cfg_entry.get("sha256") or ""),
+    }
+    size = cfg_entry.get("size", f.get("size", 0))
+    shown = next((alg for alg in (hash_type, *_ROW_HASHES) if alg in hashes and hashes[alg]), "")
+
+    facts: list[str] = []
+    # One code element per value: Recalbox lists accepted md5s joined by
+    # commas, and each is a value a reader compares a dump with.
+    facts.extend(f"{alg.upper()}: {_hash_spans(hashes[alg])}"
+                 for alg in ("sha1", "md5", "crc32", "sha256") if hashes[alg])
+    # The size closes the hash lines: a line of its own was one more
+    # element per row.
+    if size and facts:
+        facts[-1] += f" ({_fmt_size(size)})"
+    elif size:
+        facts.append(f"Size: {_fmt_size(size)}")
+    if f.get("status") == "untested" and f.get("reason"):
+        facts.append(_text_html(f"Not confirmed: {f['reason']}"))
+    # Not every entry is firmware: the platform may list a game's data or a
+    # file no core it runs opens.
+    kind = {"game_data": "Game data, not firmware",
+            "unread": "No core the platform runs opens it"}.get(f.get("category", ""))
+    if kind:
+        facts.append(kind)
+    served = _served_line(f)
+    if served:
+        facts.append(_inline_html(served))
+    if f.get("category_evidence"):
+        facts.append(_inline_html(_category_evidence_md(f["category_evidence"], launched)))
+
+    path = _row_path(fname, cfg_entry)
+    summary = (_text_html(fname) + (f"<code>{_text_html(path)}</code>" if path else "")
+               + _status_chip(f))
+    copy = _copy_hash(shown, hashes[shown]) if shown else ""
+    return (f'<details class="rb-file"><summary>{summary}</summary>'
+            f'{"<br>".join(facts)}</details>{copy}')
+
+
+def _platform_file_list(rows: list[str], has_path: bool, anchor: str) -> list[str]:
+    """A system's rows as one HTML block, with a filter box when long.
+
+    The list drops its path column when no row has one, so a blank cell
+    never reads as missing data.
+    """
+    lines: list[str] = []
+    if len(rows) >= FILTER_ROWS:
+        field = f"rb-files-filter-{anchor}"
+        lines += [
+            '<div class="rb-table-filter">'
+            f'<label for="{field}">Filter files</label>'
+            f'<input id="{field}" type="search" autocomplete="off" placeholder="File, path, status, hash...">'
+            f'<span class="rb-table-filter-count" aria-live="polite">{len(rows):,} rows</span></div>',
+            "",
+        ]
+    kind = "rb-files rb-files-path" if has_path else "rb-files"
+    return [*lines, f'<div class="{kind}">', *rows, "</div>"]
+
+
+# The elements a line puts on the page: its HTML tags, and the links and
+# code spans of the Markdown before a list.
+_ELEMENT = re.compile(r"<[a-zA-Z]|\]\(|`[^`]+`")
+
+
+def _element_weight(lines: list[str]) -> int:
+    """How many elements the lines render to."""
+    return sum(len(_ELEMENT.findall(line)) for line in lines)
+
+
+def _page_share(lines: list[str]) -> float:
+    """The share of a page the lines render to, in thousandths: the rows
+    are HTML already, so their length is their weight in bytes."""
+    return max(_element_weight(lines) * 1000 / PAGE_ELEMENTS,
+               _characters(lines) * 1000 / PAGE_BYTES)
+
+
 def _render_platform_systems(
     by_system: dict, config_files: dict, emulator_files: dict,
     platform: tuple[str, str] | None = None, moved: dict[str, str] | None = None,
@@ -3450,102 +3633,42 @@ def _render_platform_systems(
 
         sys_emus = _system_emulators(sys_id, emulator_files, by_system_declared.get(sys_id))
         anchor = sys_id.replace(" ", "-")
-        body = [f"{ok_count}/{total} files verified"]
+        head = [f"{ok_count}/{total} files verified"]
         if sys_emus:
             emu_links = ", ".join(_emulator_named_link(e, "../") for e in sorted(sys_emus))
-            body[-1] += "\\"
-            body.append(f"Emulators: {emu_links}")
-        body.append("")
+            head[-1] += "\\"
+            head.append(f"Emulators: {emu_links}")
+        head.append("")
 
-        # File listing. The sort is stable, so same-named entries keep the
-        # order verify reported them in, which is the declaration order.
+        # One row per file, the evidence in its details. The sort is stable,
+        # so same-named entries keep the order verify reported them in,
+        # which is the declaration order.
+        rows: list[str] = []
+        has_path = False
         seen_names: dict[str, int] = {}
         for f in sorted(files, key=lambda x: x["name"]):
-            status = f["status"]
             fname = f["name"]
             declared = config_files.get((sys_id, fname), [])
             nth = seen_names.get(fname, 0)
             seen_names[fname] = nth + 1
             cfg_entry = declared[nth] if nth < len(declared) else {}
-            sha1 = cfg_entry.get("sha1", f.get("sha1", ""))
-            md5 = cfg_entry.get("md5", f.get("expected_md5", ""))
-            size = cfg_entry.get("size", f.get("size", 0))
+            has_path = has_path or bool(_row_path(fname, cfg_entry))
+            rows.append(_platform_file_row(
+                f, cfg_entry, str((config or {}).get("hash_type") or ""),
+                launched.get(fname.rsplit("/", 1)[-1].casefold())))
+        body = head + _platform_file_list(rows, has_path, anchor)
 
-            if status == "ok":
-                status_display = "OK"
-            elif status == "untested":
-                reason = f.get("reason", "")
-                status_display = f"untested: {reason}" if reason else "untested"
-            elif status == "missing":
-                status_display = "**missing**"
-            else:
-                status_display = status
-            # Not every entry is firmware: the platform may list a game's data
-            # or a file no core it runs opens.
-            kind = {"game_data": "game data",
-                    "unread": "no core the platform runs opens it"}.get(f.get("category", ""))
-            if kind:
-                status_display += f", {kind}"
-
-            size_str = _fmt_size(size) if size else ""
-            details = [status_display]
-            if size_str:
-                details.append(size_str)
-
-            # Where the file goes, when its name alone does not say: three
-            # GameCube IPL.bin differ only by GC/USA, GC/EUR and GC/JAP.
-            destination = str(cfg_entry.get("destination") or "")
-            where = f" at `{destination}`" if destination and destination != fname else ""
-            body.append(f"- `{fname}`{where} - {', '.join(details)}")
-            item_line = len(body) - 1
-            facts: list[str] = []
-            # Every hash the platform declares, whole: the crc32 is what
-            # System.dat and clrmamepro print, and pasting it found nothing
-            # for a pinned file the collection holds under other bytes.
-            crc32 = str(cfg_entry.get("crc32") or "")
-            # RetroDECK declares sha256 too: dsifirmware.bin's was in the CSV
-            # exports only, and pasting it into the search found nothing.
-            sha256 = str(cfg_entry.get("sha256") or "")
-            if sha1 or md5 or crc32 or sha256:
-                hash_parts = []
-                # One code span per value: Recalbox lists accepted md5s joined
-                # by commas, and the search indexed the joined run as a single
-                # word, so the second and later values were never found.
-                if sha1:
-                    hash_parts.append(f"SHA1: {_hash_spans(sha1)}")
-                if md5:
-                    hash_parts.append(f"MD5: {_hash_spans(md5)}")
-                if crc32:
-                    hash_parts.append(f"CRC32: `{crc32}`")
-                if sha256:
-                    hash_parts.append(f"SHA256: `{sha256}`")
-                facts.append(" | ".join(hash_parts))
-            served = _served_line(f)
-            if served:
-                facts.append(served)
-            if f.get("category_evidence"):
-                facts.append(_category_evidence_md(
-                    f["category_evidence"], launched.get(fname.rsplit("/", 1)[-1].casefold())))
-            # One line each, hashes, the copy that serves it, its readers: as
-            # continuation lines they ran into one paragraph.
-            if facts:
-                body[item_line] += "\\"
-            body.extend(f"    {fact}" + ("\\" if n < len(facts) - 1 else "")
-                        for n, fact in enumerate(facts))
-
-        # Measured as the Markdown the split was tuned on, a collapsible
-        # block indented by four, so both engines split the same systems.
-        size = sum(len(line) + 1 for line in body)
+        # Measured in the share of a page the list renders to.
+        size = _page_share(body)
         if use_collapsible:
             status_tag = "OK" if ok_count == total else _count(total - ok_count, "issue")
-            title = f"{_count(total, 'file')} ({status_tag})"
-            size += len(f'??? note "{title}"') + 2 + 4 * sum(1 for line in body if line)
-            block = markup.details("note", title, body)
+            block = markup.details("note", f"{_count(total, 'file')} ({status_tag})", body)
             while block and not block[-1]:
                 block.pop()
         else:
             block = body
-        sections.append({"sys_id": sys_id, "anchor": anchor, "body": body, "block": block,
+        sections.append({"sys_id": sys_id, "anchor": anchor, "head": head, "rows": rows,
+                         "has_path": has_path, "block": block,
                          "size": size, "total": total, "ok": ok_count})
 
     # A list longer than its budget goes to a page of its own, then the
@@ -3564,7 +3687,7 @@ def _render_platform_systems(
                 kept -= sec["size"]
 
     for sec in sections:
-        sys_id, anchor, body = sec["sys_id"], sec["anchor"], sec["body"]
+        sys_id, anchor = sec["sys_id"], sec["anchor"]
         total, ok_count = sec["total"], sec["ok"]
         # Every system is a heading with the same anchor in both layouts:
         # emulator cards link here, and the site search splits a page at its
@@ -3574,7 +3697,9 @@ def _render_platform_systems(
         lines.append("")
         if moved is not None and platform and sys_id in own_page:
             key, display = platform
-            runs = _file_runs(body, PLATFORM_PART_BUDGET)
+            runs = [sec["head"] + _platform_file_list(run, sec["has_path"], anchor)
+                    for run in _blocks_in_runs([[row] for row in sec["rows"]],
+                                               PLATFORM_PART_BUDGET, _page_share)]
             stems = [f"{key}-{anchor}" + (f"-{n}" if n > 1 else "")
                      for n in range(1, len(runs) + 1)]
             for n, (stem, run) in enumerate(zip(stems, runs), 1):
@@ -3591,15 +3716,18 @@ def _render_platform_systems(
                     *([""] + [", ".join(
                         f"[part {i}]({other}.md)" if other != stem else f"part {i}"
                         for i, other in enumerate(stems, 1))] if len(runs) > 1 else []),
-                    "", "## Files", "",
+                    "", "## Files", "", *markup.details("note", ROLE_LEGEND_TITLE, [ROLE_LEGEND]),
                     *search_excluded(run),
                     "", _date_line(),
                 ]) + "\n"
-            where = (f"[a page of their own]({stems[0]}.md)" if len(stems) == 1 else
-                     "pages of their own: " + ", ".join(
-                         f"[part {i}]({stem}.md)" for i, stem in enumerate(stems, 1)))
+            # The count and status a folded system shows in its summary,
+            # linked to the page that lists the files.
+            tag = "OK" if ok_count == total else _count(total - ok_count, "issue")
+            count = f"{_count(total, 'file')} ({tag})"
             lines.extend([
-                f"{_count(total, 'file')}, {ok_count} verified: listed on {where}.", "",
+                f"[{count}]({stems[0]}.md)" if len(stems) == 1 else f"{count}: " + ", ".join(
+                    f"[part {i}]({stem}.md)" for i, stem in enumerate(stems, 1)),
+                "",
             ])
             continue
         # The section's heading stays searchable, its file list with every
@@ -3635,6 +3763,40 @@ def _site_profiles() -> dict[str, dict]:
     return load_emulator_profiles(str(_REPO_ROOT / "emulators"))
 
 
+# Whose code a source reference cites, in one word: a platform page names
+# each role once in ROLE_LEGEND. Written after every reference, "(emulator
+# code, libretro port)" ran through Batocera's 14,000 words.
+ROLE_WORDS = {
+    "libretro glue": "glue",
+    "emulator code, libretro port": "port",
+    "upstream emulator": "upstream",
+    "this build": "build",
+}
+ROLE_LEGEND_TITLE = "Source reference words"
+ROLE_LEGEND = (
+    "In a file's details, a word before its source references says whose code they are. "
+    "**glue** means libretro glue, **port** means emulator code in the libretro port, "
+    "**upstream** means the upstream emulator and **build** means this build's own code."
+)
+
+
+def _refs_by_role(profile: dict, value: str | dict | None) -> str:
+    """A source_ref's parts grouped by whose code they cite, each role named
+    once by its ROLE_WORDS word: `glue a.c:1, b.c:2 and port c.c:3`."""
+    from sitesources import source_ref_items
+
+    texts = []
+    for label, items in source_ref_items(profile, value):
+        by_role: dict[str, list[str]] = {}
+        for part, role in items:
+            by_role.setdefault(role, []).append(part)
+        text = " and ".join(
+            (f"{ROLE_WORDS.get(role, role)} " if role else "") + ", ".join(parts)
+            for role, parts in by_role.items())
+        texts.append(f"**{label}:** {text}" if label else text)
+    return ", ".join(texts)
+
+
 def _category_evidence_md(evidence: dict, launched: list[str] | None = None) -> str:
     """What establishes an entry's category, as the page shows it.
 
@@ -3650,7 +3812,7 @@ def _category_evidence_md(evidence: dict, launched: list[str] | None = None) -> 
             # plain code with the role word ("source") left in front.
             profile = profiles.get(reader["emulator"], {})
             refs = [
-                (f"`{e['name']}` at {_source_ref_markdown(profile, e['source_ref'])}"
+                (f"`{e['name']}` at {_refs_by_role(profile, e['source_ref'])}"
                  if e.get("source_ref") else f"`{e['name']}`")
                 + (" (by name)" if e.get("by") == "name" else "")
                 for e in reader.get("entries", [])
@@ -4173,8 +4335,7 @@ def generate_platform_page(
         "",
         level_label("reference"),
         "",
-        "For checking the work: the counts, where the list comes from, and "
-        "every file with its hashes.",
+        "For checking the work: counts, the list's source and each file's hashes.",
         "",
         *(line for note in (GUIDES[name].reference_notes if name in GUIDES else ())
           for line in (note, "")),
@@ -4306,6 +4467,8 @@ def generate_platform_page(
             f"| <span data-pagefind-ignore>{ok_count}/{total}</span> | {status} | {emu_str} |"
         )
     lines.append("")
+    if by_system:
+        lines.extend(markup.details("note", ROLE_LEGEND_TITLE, [ROLE_LEGEND]))
 
     lines.extend(
         _render_platform_systems(by_system, config_files, emulator_files,
@@ -5102,12 +5265,14 @@ def generate_provenance_page(
     # the public for 79 of them.
     derivable = derivable or {}
     derived_entries: dict[str, dict] = {}
-    for data in report.values():
+    derived_by_source: dict[str, int] = {}
+    for source, data in report.items():
         kept = []
         for entry in data["missing"]:
             sha1 = (entry.get("sha1") or "").lower()
             if sha1 in derivable:
                 derived_entries.setdefault(sha1, entry)
+                derived_by_source[source] = derived_by_source.get(source, 0) + 1
             else:
                 kept.append(entry)
         data["missing"] = kept
@@ -5135,7 +5300,19 @@ def generate_provenance_page(
             for dat in entry.get("dats") or [entry.get("dat", "")]:
                 by_dat.setdefault(dat, []).append(entry)
         lines.extend([f"### {label}", ""])
-        blocks: list[list[str]] = []
+        if moved is not None:
+            where = _list_pages(
+                f"provenance-{_slugify_anchor(source)}", f"Wanted from {label}",
+                f"Dumps {label} catalogues and the collection lacks. Part of "
+                f"[Dump provenance](provenance.md#{_slugify_anchor(label)}).",
+                [], [_wanted_list(source, label, data, by_dat, derived_by_source.get(source, 0))],
+                moved, parent=("Dump provenance", "/provenance/"),
+            )
+            lines.extend([
+                f"{_count(len(data['missing']), 'dump')} in {_count(len(by_dat), 'DAT')}: "
+                f"listed on {where}.", "",
+            ])
+            continue
         for dat in sorted(by_dat):
             entries = by_dat[dat]
             table = ["| Name | Description | SHA1 |", "|------|-------------|------|"]
@@ -5151,20 +5328,7 @@ def generate_provenance_page(
                         f"`{hit['archive']}` as `{hit['member']}`."
                     )
                 table.append(f"| `{name}` | {desc} | `{sha1}` |")
-            blocks.append(markup.details("note", f"{dat} ({len(entries)})", table))
-        if moved is None:
-            lines.extend(line for block in blocks for line in block)
-            continue
-        where = _list_pages(
-            f"provenance-{_slugify_anchor(source)}", f"Wanted from {label}",
-            f"Dumps {label} catalogues and the collection lacks, by DAT. Part of "
-            f"[Dump provenance](provenance.md#{_slugify_anchor(label)}).",
-            [], blocks, moved, parent=("Dump provenance", "/provenance/"),
-        )
-        lines.extend([
-            f"{_count(len(data['missing']), 'dump')} in {_count(len(by_dat), 'DAT')}: "
-            f"listed on {where}.", "",
-        ])
+            lines.extend(markup.details("note", f"{dat} ({len(entries)})", table))
 
     if derived_entries:
         lines.extend(
@@ -5188,6 +5352,69 @@ def generate_provenance_page(
 
     lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
+
+
+def _wanted_list(source: str, label: str, data: dict, by_dat: dict[str, list],
+                 derived: int) -> list[str]:
+    """A catalog's wanted page: the counts, then every missing dump in one
+    table folded under a filter box.
+
+    The page was one closed block per DAT, 46 for TOSEC: a name was found
+    by opening each in turn. The box filters the whole list by name, DAT,
+    description or SHA1, and says how many rows it keeps.
+    """
+    missing = data["missing"]
+    held = data["matched"]
+    reached = held + len(missing) + derived
+    dats = _count(len(data["covered_dats"]), "DAT")
+    lines = [
+        f"Held: **{held:,}** of {reached:,}, in the {dats} the collection reaches. "
+        f"Wanted: **{len(missing):,}**, from {_count(len(by_dat), 'DAT')}.",
+        "",
+    ]
+    if derived:
+        verb = "is" if derived == 1 else "are"
+        lines.extend([
+            f"{derived:,} more {verb} [derivable]"
+            "(provenance.md#derivable-dumps-the-collection-already-produces).", ""])
+    if data.get("out_of_scope"):
+        lines.extend([f"{data['out_of_scope']:,} more sit in DATs the collection does not reach.", ""])
+    counts = ["| DAT | Wanted |", "|-----|--------|",
+              *(f"| {dat.replace('|', '-')} | {len(entries):,} |"
+                for dat, entries in sorted(by_dat.items()))]
+    lines.extend(markup.details("note", f"Wanted by DAT ({len(by_dat):,})", counts))
+    rows = []
+    for entry in sorted(missing, key=lambda e: (e["name"], e.get("sha1") or "")):
+        desc = markup.inline_html(entry.get("description") or "")
+        for hit in entry.get("romsets", []):
+            desc += markup.inline_html(
+                f" Ships in {_ROMSET_SOURCES.get(hit['source'], hit['source'])} "
+                f"`{hit['archive']}` as `{hit['member']}`.")
+        in_dats = ", ".join(html.escape(d) for d in (entry.get("dats") or [entry.get("dat", "")]))
+        sha1 = html.escape(entry.get("sha1") or "-")
+        # The search reads the name alone. The DAT names are searched once, in
+        # the count table above, and the site search holds no hashes. With the
+        # descriptions indexed too, the TOSEC list matched "2" 556 times
+        # (years, versions) and put the PlayStation page ahead of the
+        # PlayStation 2 one for "playstation 2 bios". The name and the hash
+        # sit in their cells as text: a catalog name is words, and in code
+        # each word wore its own box on a narrow column.
+        skip = markup.search_exclude()
+        rows.append("<tr>"
+                    f"<td>{html.escape(entry['name'], quote=False)}</td>"
+                    f"<td {skip}>{in_dats}</td><td {skip}>{desc or '-'}</td>"
+                    f'<td class="rb-hash" {skip}>{sha1}</td></tr>')
+    heads = ["Name", "DAT", "Description", "SHA1"]
+    lines.extend([
+        siteentries.filter_box(f"rb-wanted-filter-{_slugify_anchor(source)}",
+                               "dumps", heads, len(rows)),
+        '<details class="rb-details rb-details-note">',
+        f"<summary>All {_count(len(rows), 'wanted dump')}</summary>",
+        '<table class="rb-wanted" data-rb-stack="true">',
+        "<thead><tr>" + "".join(f'<th scope="col">{h}</th>' for h in heads) + "</tr></thead>",
+        "<tbody>", *rows, "</tbody>", "</table>", "</details>", "",
+    ])
+    return lines
 
 
 _RELEASE_ASSET_NAMES: dict[str, str] | None = None
@@ -5324,6 +5551,17 @@ def _places_lines(places: list[Place]) -> list[str]:
         + ", ".join(links)
         for dests, links in ordered
     ]
+
+
+def _places_markdown(places: list[Place]) -> list[str]:
+    """_places_lines in Markdown, for a card written as a list: the places
+    as code spans, which the glossary and the line breaks treat as code."""
+    by_place: dict[tuple[str, ...], list[str]] = {}
+    for name, href, dests in places:
+        by_place.setdefault(tuple(dests), []).append(f"[{name}]({href})")
+    ordered = sorted(by_place.items(), key=lambda item: (not item[0], -len(item[1]), item[0]))
+    return [(" and ".join(_code(d) for d in dests) + ": " if dests else "") + ", ".join(links)
+            for dests, links in ordered]
 
 
 def _inline_card_html(text: str) -> str:
@@ -5592,8 +5830,11 @@ def _system_file_card(
     for label, value in (("SHA1", sha1_full), ("MD5", md5_full),
                          ("CRC32", f.get("crc32")), ("SHA256", f.get("sha256"))):
         if value and value != "unknown":
-            facts.append((label, [f'<span class="rb-hash">{html.escape(str(value))}</span>'],
-                          False))
+            # Starlight writes the value bare: its cell carries the hash
+            # style and the copy button (_fact_list).
+            shown = (html.escape(str(value)) if markup.starlight()
+                     else f'<span class="rb-hash">{html.escape(str(value))}</span>')
+            facts.append((label, [shown], False))
 
     if not markup.starlight():
         # The size yardstick pages are cut by: the list a card was when the
@@ -5601,23 +5842,107 @@ def _system_file_card(
         lines.extend(search_excluded([f"- {label}: {', '.join(values)}"
                                       for label, values, _searched in facts]))
     else:
-        # A grid of facts, label then value: two bullet lists of code chips
-        # read as a dump. What the search skips is one list with one
-        # attribute: on each row it was 77 KB of the Sony page.
-        read = [fact for fact in facts if fact[2] and searchable]
-        skipped = [fact for fact in facts if fact not in read]
-        for group, attributes in ((read, ""), (skipped, f" {skip}")):
-            if group:
-                lines.append(f'<dl class="rb-facts"{attributes}>')
-                # One value cell per label: the grid pairs each dt with one dd.
-                # A searched value keeps its label out: the excerpt ran the two
-                # together, "On the setup's listAmberELEC".
-                label_skip = f" {skip}" if not attributes else ""
-                lines.extend(f"<dt{label_skip}>{label}</dt><dd>"
-                             + "<br>".join(_inline_card_html(v) for v in values) + "</dd>"
-                             for label, values, _searched in group)
-                lines.append("</dl>")
+        lines.extend(_card_fact_groups(facts, sha1_full, searchable))
     lines.extend(["", "</div>", ""])
+    return lines
+
+
+# What a system card shows at a glance: who lists the file and who reads it.
+# Its fingerprints and the rest open on demand, so a page of 250 cards reads
+# as a list of files, not a wall of hashes.
+_CARD_KEY_FACTS = ("On the setup's list", "Packed for its emulators by", "Emulators")
+_CARD_HASHES = ("SHA1", "MD5", "CRC32", "SHA256")
+# The words a card's fold names its other facts by.
+_CARD_MORE_WORDS = {"Romset": "romset", "Collection path": "collection path",
+                    "Catalogued": "catalogues"}
+# A hash shown short, in a card, a platform row or an emulator table: as long
+# as the card's own address (sha1-<12 hex>), one length across the site.
+SHORT_HASH = 12
+
+
+def _listed_words(words: list[str]) -> str:
+    """"a", "a and b", "a, b and c", first letter capital."""
+    text = words[0] if len(words) == 1 else f"{', '.join(words[:-1])} and {words[-1]}"
+    return text[:1].upper() + text[1:]
+
+
+def _fact_list(facts: list[tuple[str, list[str], bool]], skip: str,
+               copy: dict[str, str] | None = None) -> list[str]:
+    """Facts as a grid, label then value, one value cell per label.
+
+    A label in *copy* holds one hash: its cell takes the hash style, and
+    the site script a copy button (site.ts). *copy* gives the cell's
+    classes. One element, where a span in the cell was one more per hash.
+    """
+    if not facts:
+        return []
+    copy = copy or {}
+
+    def cell(label: str, values: list[str]) -> str:
+        if label in copy:
+            return f'<dd class="{copy[label]}">{values[0]}</dd>'
+        return "<dd>" + "<br>".join(_inline_card_html(v) for v in values) + "</dd>"
+
+    return [f'<dl class="rb-facts"{skip}>',
+            *(f"<dt>{label}</dt>{cell(label, values)}" for label, values, _searched in facts),
+            "</dl>"]
+
+
+def card_fold(summary: str, body: list[str], skip: bool = True) -> list[str]:
+    """A fold of a file card: closed, its summary naming what it holds.
+
+    Native details: no script needed, and the text inside stays in the page
+    (and in the search, unless *skip*). No class: the card styles its folds,
+    and a class was 21 bytes on each of 250 cards."""
+    attribute = f" {markup.search_exclude()}" if skip else ""
+    summary_line = f"<summary>{html.escape(summary, quote=False)}</summary>"
+    # Each tag on a line of its own, or MDX reads the fold as a paragraph
+    # left open. Markdown inside also takes a blank line around it.
+    gap = [] if body and body[0].startswith("<") else [""]
+    return [f"<details{attribute}>", summary_line, *gap, *body, *gap, "</details>"]
+
+
+def _card_fact_groups(facts: list[tuple[str, list[str], bool]], sha1: str,
+                      searchable: bool) -> list[str]:
+    """A system card's facts under Starlight: the key ones open, a short
+    SHA1 first, then the hashes and the rest in one closed fold.
+
+    The search skips all of them, as it did when they were one list: on
+    each row the attribute was 77 KB of the Sony page. Hashes are found by
+    files/?hash=, which the search box offers for a pasted hash.
+    """
+    skip = f" {markup.search_exclude()}"
+    key = [fact for fact in facts if fact[0] in _CARD_KEY_FACTS]
+    hashes = [fact for fact in facts if fact[0] in _CARD_HASHES]
+    more = [fact for fact in facts if fact not in key and fact not in hashes]
+    searched = [fact for fact in facts if fact[2] and searchable]
+    lines: list[str] = []
+    if searched:
+        # No fact is searched today. One that is keeps its label out: the
+        # excerpt ran the two together, "On the setup's listAmberELEC".
+        lines += ['<dl class="rb-facts">',
+                  *(f"<dt{skip}>{label}</dt><dd>"
+                    + "<br>".join(_inline_card_html(v) for v in values) + "</dd>"
+                    for label, values, _searched in searched),
+                  "</dl>"]
+        key = [fact for fact in key if fact not in searched]
+        more = [fact for fact in more if fact not in searched]
+    glance = []
+    if sha1 and sha1 != "unknown":
+        # The first characters, enough to tell two dumps apart at a glance.
+        # Its button copies the whole value, read from the fold below: the
+        # value twice was 54 bytes more on each card.
+        glance.append(("SHA1", [html.escape(sha1[:SHORT_HASH])], False))
+    lines += _fact_list(glance + key, skip, {"SHA1": "rb-hash"})
+    # One fold: two were four more elements on each of 250 cards.
+    folded = hashes + more
+    if folded:
+        words = (["hashes"] if hashes else []) + [
+            _CARD_MORE_WORDS.get(label, label.lower()) for label, _values, _searched in more]
+        # On one line: nothing reads it as Markdown, and a page cut by size
+        # holds its cards in the same bytes.
+        lines += card_fold(_listed_words(words),
+                           ["".join(_fact_list(folded, "", dict.fromkeys(_CARD_HASHES, "rb-hash")))])
     return lines
 
 
@@ -7463,12 +7788,15 @@ def _render_emulator_file(
     owner: str = "",
     alias: str = "",
     data_href: str = "#data-folder",
+    badges_apart: bool = False,
 ) -> list[str]:
     """Render one row of an emulator profile's file table.
 
     `anchor` is the card's id on the page, so one file can be cited by URL,
     and `alias` a second id it answers to. `data_href` links the data
     folder an app reads the entry under, from the page the card lands on.
+    `badges_apart`: the title holds the name alone, for a table whose
+    Status column shows the badges (siteentries.py).
 
     Split out of generate_emulator_page, where it was a 228-line loop body
     carrying most of that function's branching: thirty-odd optional fields,
@@ -7517,7 +7845,8 @@ def _render_emulator_file(
         system = system_name((profile.get("systems") or [""])[0])
         label = (f"a {system} BIOS (example: {_code(fname)})" if _named_example(str(fname))
                  else f"a {system} BIOS, any file name")
-    lines.append(_card_title(f"{marker}{label} {badge_str}", anchor, weight=5))
+    title = f"{marker}{label}" if badges_apart else f"{marker}{label} {badge_str}"
+    lines.append(_card_title(title, anchor, weight=5))
     lines.append("")
     if desc:
         lines.extend([data_root_words(_escape_tags(str(desc)), data_href), ""])
@@ -7565,15 +7894,18 @@ def _render_emulator_file(
         if fmax:
             bounds.append(f"max {_fmt_size(fmax)}")
         details.append(f"Size: {', '.join(bounds)}")
+    # Starlight folds the hashes and gives each a copy button.
+    copyable = markup.starlight()
     if fsha1:
-        details.append(f"SHA1: {_hash_spans(fsha1)}")
+        details.append(f"SHA1: {_hash_spans(fsha1, copyable)}")
     if fmd5:
-        details.append(f"MD5: {_hash_spans(fmd5)}")
+        details.append(f"MD5: {_hash_spans(fmd5, copyable)}")
     if fcrc32:
         crcs = fcrc32 if isinstance(fcrc32, list) else [fcrc32]
-        details.append("CRC32: " + ", ".join(f"`{crc}`" for crc in crcs))
+        details.append("CRC32: " + ", ".join(
+            markup.hash_value(crc, True) if copyable else f"`{crc}`" for crc in crcs))
     if fsha256:
-        details.append(f"SHA256: {_hash_spans(fsha256)}")
+        details.append(f"SHA256: {_hash_spans(fsha256, copyable)}")
     if fadler32:
         # Printed as the downloads spell a hash, one per code span: the list
         # repr read `['0x66f334fe', ...]`. Dolphin hashes its DSP ROMs over
@@ -7640,7 +7972,14 @@ def _render_emulator_file(
             if copy:
                 details.append(_held_copy_line(copy, consumers))
         plat_links = _platform_links(sha1, consumers) if sha1 else []
-        if plat_links:
+        if plat_links and markup.starlight():
+            # Grouped by where the setups put the file, as the system card
+            # says it: twelve setups repeating scph5502.bin took twelve
+            # names and twelve paths where a few say it. One sentence a
+            # place: a list or a line break was one more element a place.
+            places = _places_markdown(_platform_places(sha1, consumers))
+            details.append("Platforms: " + ". ".join(places))
+        elif plat_links:
             details.append(f"Platforms: {', '.join(plat_links)}")
 
     if dest and dest != fname and dest != fpath:
@@ -7656,6 +7995,11 @@ def _render_emulator_file(
     if size_range:
         details.append(f"Size range: {size_range}")
 
+    if markup.starlight():
+        lines.extend(_emulator_card_folds(f, details, fnote, profile, in_repo, contents,
+                                          data_href))
+        lines.extend(["", "</div>", ""])
+        return lines
     if details:
         for d in details:
             lines.append(f"- {d}")
@@ -7668,30 +8012,153 @@ def _render_emulator_file(
             f"- Not collectable: {_escape_tags(str(f['unsourceable']))} "
             "([acknowledged gaps](../gaps.md#acknowledged-gaps))"
         )
-    if contents:
-        # Every member with the hashes the emulator checks: MAME and FBNeo
-        # verify the members, never the archive, so a member's crc32 is the
-        # value a reader compares a set against.
-        lines.append(f"- Contents ({len(contents)} members):")
-        for c in contents:
-            if isinstance(c, dict):
-                parts = []
-                if c.get("description"):
-                    parts.append(_escape_tags(str(c["description"])))
-                if c.get("size"):
-                    parts.append(_fmt_size(c["size"]))
-                if c.get("crc32"):
-                    parts.append(f"CRC32 `{c['crc32']}`")
-                if c.get("sha1"):
-                    parts.append(f"SHA1 `{c['sha1']}`")
-                extra = f": {', '.join(parts)}" if parts else ""
-                lines.append(f"    - `{c.get('name', '')}`{extra}")
-            else:
-                lines.append(f"    - {c}")
+    lines.extend(_contents_lines(contents))
     lines[body_start:] = _search_skipped_apart(lines[body_start:])
     lines.append("")
     lines.append("</div>")
     lines.append("")
+    return lines
+
+
+def _contents_lines(contents: list) -> list[str]:
+    """Every member with the hashes the emulator checks: MAME and FBNeo
+    verify the members, never the archive, so a member's crc32 is the
+    value a reader compares a set against."""
+    if not contents:
+        return []
+    lines = [f"- Contents ({len(contents)} members):"]
+    for c in contents:
+        if isinstance(c, dict):
+            parts = []
+            if c.get("description"):
+                parts.append(_escape_tags(str(c["description"])))
+            if c.get("size"):
+                parts.append(_fmt_size(c["size"]))
+            if c.get("crc32"):
+                parts.append(f"CRC32 `{c['crc32']}`")
+            if c.get("sha1"):
+                parts.append(f"SHA1 `{c['sha1']}`")
+            extra = f": {', '.join(parts)}" if parts else ""
+            lines.append(f"    - `{c.get('name', '')}`{extra}")
+        else:
+            lines.append(f"    - {c}")
+    return lines
+
+
+# What an emulator card shows at a glance: where the file goes, how big it
+# is, which setups list it and which copy answers it. Fingerprints and the
+# reading details open on demand.
+_ENTRY_KEY_FACTS = ("Path:", "Standalone path:", "Read from:", "Found by:", "System:",
+                    "Size:", "Aliases:", "Collection copy:", "Collection copies:",
+                    "Platforms", "Destination:")
+_ENTRY_HASHES = ("SHA1:", "MD5:", "CRC32:", "SHA256:", "Adler32")
+# The words the fold of an emulator card names its facts by.
+_ENTRY_MORE_WORDS = (
+    ("Priority", "priority"), ("Fast boot", "fast boot"), ("Validation", "validation"),
+    ("On a failed", "failed check"), ("Installed by the platform's own package", "packages"),
+    ("Not in the platform's package", "packages"), ("Never opened", "unread setups"),
+    ("Asked for by", "source"), ("Source", "source"), ("Config key", "config key"),
+    ("Pattern", "pattern"), ("Region check", "region check"), ("Size note", "size note"),
+    ("Size range", "size range"),
+)
+
+
+def _more_words(lines: list[str]) -> list[str]:
+    """The words a fold names its facts by, once each, in their order."""
+    words: list[str] = []
+    for line in lines:
+        text = re.sub(r"<[^>]+>", "", line.removeprefix("- "))
+        word = next((w for prefix, w in _ENTRY_MORE_WORDS if text.startswith(prefix)),
+                    text.split(":", 1)[0].lower())
+        if word not in words:
+            words.append(word)
+    return words
+
+
+def _short_hash_line(f: dict) -> str:
+    """The entry's strongest declared hash, cut to SHORT_HASH characters,
+    with a copy button for the whole value. "" when it declares none."""
+    from hashing import parse_hash_list  # noqa: PLC0415
+
+    for field, label in (("sha1", "SHA1"), ("md5", "MD5"), ("sha256", "SHA256"), ("crc32", "CRC32")):
+        values = parse_hash_list(f.get(field) or "")
+        if values:
+            value = str(values[0])
+            more = f" and {len(values) - 1} more" if len(values) > 1 else ""
+            return (f'{label}: <span class="rb-hash" data-copy="{html.escape(value)}">'
+                    f"{html.escape(value[:SHORT_HASH])}</span>{more}")
+    return ""
+
+
+def _emulator_card_folds(
+    f: dict, details: list[str], fnote: object, profile: dict, in_repo: bool,
+    contents: list, data_href: str,
+) -> list[str]:
+    """An emulator card's body under Starlight: the key facts and the notes
+    open, the hashes and the rest in one closed fold.
+
+    Lines the search reads and lines it skips are kept in two runs: mixed,
+    each change of side was one more list and one more block, five lists
+    on a card of a dozen lines.
+    """
+    def skipped(line: str) -> bool:
+        return f"- {line}".startswith(SEARCH_SKIPPED)
+
+    key = [d for d in details if d.startswith(_ENTRY_KEY_FACTS)]
+    hashes = [d for d in details if d.startswith(_ENTRY_HASHES)]
+    more = [d for d in details if d not in key and d not in hashes]
+    short = _short_hash_line(f)
+    shut_open = [d for d in key if skipped(d)]
+    sized = next((i for i, d in enumerate(shut_open) if d.startswith("Size:")), None)
+    if short and sized is not None:
+        # On the size's line: what tells this dump from another, one list
+        # item fewer on each card.
+        shut_open[sized] += ", " + short.replace(": ", " ", 1)
+    elif short:
+        shut_open.insert(0, short)
+    # What the search reads first, the notes included, then what it skips:
+    # one list each.
+    open_lines = [d for d in key if not skipped(d)]
+    if fnote:
+        open_lines.append(data_root_words(
+            _escape_tags(link_prose_citations(profile, str(fnote))), data_href))
+    if not in_repo and f.get("unsourceable"):
+        # The badge alone sent readers after a dump that cannot exist, and the
+        # reason was only on the gaps page, which the card did not link.
+        open_lines.append(
+            f"Not collectable: {_escape_tags(str(f['unsourceable']))} "
+            "([acknowledged gaps](../gaps.md#acknowledged-gaps))"
+        )
+    lines = [f"- {d}" for d in open_lines]
+    shut_fold = [f"- {d}" for d in hashes + [m for m in more if skipped(m)]]
+    read_fold = [f"- {m}" for m in more if not skipped(m)]
+    # The members of an archive, a list of their own under the fold's
+    # summary, which counts them: a "Contents" item holding them was two
+    # more elements and 44 bytes on each of 200 MAME cards.
+    members = [f"* {line.removeprefix('    - ')}" for line in _contents_lines(contents)[1:]]
+    fold: list[str] = []
+    if shut_fold or read_fold or members:
+        words = (["hashes"] if hashes else []) + _more_words(
+            [line for line in shut_fold + read_fold if not line.startswith(
+                tuple(f"- {h}" for h in _ENTRY_HASHES))])
+        words = words if len(words) <= 3 else [*words[:3], "more"]
+        if members:
+            words.append(_count(len(members), "member"))
+        hidden_part = [*shut_fold, "", *members] if members else shut_fold
+        body = (hidden_part if not read_fold else [
+            "", markup.block_open("div", f'class="rb-search-skip" {markup.search_exclude()}'),
+            "", *hidden_part, "", "</div>", "", *read_fold])
+        fold = card_fold(_listed_words(words), body, skip=False)
+    # A fold the search skips whole sits in the skipped block before it, with
+    # no attribute of its own: on a page of 200 MAME cards the attribute, the
+    # class and a block each were 12 KB.
+    hidden = bool(fold) and not read_fold
+    shut = [f"- {d}" for d in shut_open] + (["", *fold] if hidden else [])
+    if shut:
+        lines += ["", markup.block_open("div", f'class="rb-search-skip" {markup.search_exclude()}'),
+                  "", *shut, "", "</div>", ""]
+    if fold and not hidden:
+        lines += ["", *fold, ""]
     return lines
 
 
@@ -7758,13 +8225,122 @@ def emulator_romset(profile: dict) -> str:
     version = str(profile.get("core_version") or "")
     if profile.get("mame_version"):
         return f"MAME {profile['mame_version']}"
-    if "MAME" in emulator and _MAME_RELEASE.match(version):
+    # HBMAME's sets are its own homebrew sets, whatever MAME it is based on.
+    if "MAME" in emulator and "HBMAME" not in emulator and _MAME_RELEASE.match(version):
         return f"MAME {version}"
     if emulator.startswith("FinalBurn Neo") and version:
         return f"FinalBurn Neo {version}"
     if (emulator.startswith("FB Alpha") or "FBA" in emulator) and version:
         return f"FB Alpha {version}"
     return ""
+
+
+def _version_said(value: object, basis: dict) -> str:
+    """One build's version and where the profile reads it."""
+    kind = basis.get("kind")
+    if kind == "none":
+        return "none stated in the source"
+    if value is None:
+        if kind == "unverified":
+            return f"unknown: {_UNVERIFIED.get(str(basis.get('why')), 'unread')}"
+        return "none published"
+    value = str(value)
+    if kind == "file":
+        return f"{value}, stated in `{basis.get('path')}`"
+    if kind == "tag":
+        distance = int(basis.get("distance") or 0)
+        if not distance:
+            return f"{value}, the tag at this revision"
+        return f"{value}, {distance} commit{'s' if distance != 1 else ''} after tag `{basis.get('tag')}`"
+    if kind == "package":
+        return f"{value}, read from {basis.get('artifact')}"
+    if kind == "unverified":
+        return f"{value}, not confirmed: {_UNVERIFIED.get(str(basis.get('why')), 'unread')}"
+    return value
+
+
+# Why a profile's version could not be read, said to a reader.
+_UNVERIFIED = {
+    "no_pin": "no revision recorded",
+    "host_unsupported": "its host cannot be read",
+    "host_gone": "its source is gone",
+    "host_unreachable": "its host did not answer",
+    "pin_off_branch": "its recorded revision is not the build described",
+    "no_artifact": "no build recorded as read",
+    "no_source": "no source declared",
+}
+
+
+def version_markdown(profile: dict) -> str:
+    """The Version cell: core_version and where version_basis reads it.
+
+    A null version said "none published" whether the code states none or
+    nobody looked. Keyed by build mode like source, each build is named,
+    where the page printed the dict's Python repr.
+    """
+    if "core_version" not in profile and not profile.get("version_basis"):
+        return "unknown"
+    value = profile.get("core_version")
+    basis = profile.get("version_basis") if isinstance(profile.get("version_basis"), dict) else {}
+    if isinstance(value, dict) or (basis and "kind" not in basis):
+        values = value if isinstance(value, dict) else {}
+        modes = list(dict.fromkeys([*values, *basis]))
+        return ", ".join(
+            f"{_version_said(values.get(mode), basis.get(mode) or {})} ({mode})"
+            for mode in modes
+        )
+    return _version_said(value, basis)
+
+
+ROMSET_FAQ_PAGE = Path(WIKI_SRC_DIR) / "technical-faq.md"
+_ROMSET_BLOCK = re.compile(
+    r"(<!-- generated: romsets -->\n)(.*?)(<!-- /generated: romsets -->)", re.S)
+
+
+def _retroarch_label(profile: dict) -> str:
+    """"Arcade (MAME 2003)" gives "MAME 2003", "Arcade (FinalBurn Neo)
+    (Neo-Geo)" gives "FinalBurn Neo (Neo-Geo)"."""
+    inner = str(profile.get("display_name") or profile.get("emulator") or "").split("(", 1)[-1]
+    return inner.replace(")", "", 1).strip()
+
+
+def romset_table(profiles: dict) -> list[str]:
+    """The FAQ's arcade table: each MAME and FinalBurn libretro core and the
+    romset its profile reads at its pin.
+
+    Written by hand, it told readers to collect MAME 0.160 sets for a core
+    whose src/version.c states 0.159, and FinalBurn Neo 1.0.0.2 for a source
+    at 1.0.0.03. A core whose name gives its version (Recalbox's MAME 0.258)
+    needs no row.
+    """
+    rows: dict[str, list[str]] = {}
+    for key, profile in sorted(profiles.items()):
+        if not re.match(r"(mame|fbneo|fbalpha)", key) or \
+                "libretro" not in str(profile.get("type", "")):
+            continue
+        romset = emulator_romset(profile)
+        label = _retroarch_label(profile)
+        if not romset or romset.split(" ", 1)[1].lstrip("v") in label:
+            continue
+        rows.setdefault(romset, []).append(label)
+
+    def order(romset: str) -> tuple:
+        family = 0 if romset.startswith("MAME") else 1 if romset.startswith("FB Alpha") else 2
+        numbers = tuple(int(n) for n in re.findall(r"\d+", romset.split(" (", 1)[0]))
+        return family, numbers
+
+    lines = ["| Emulator, as RetroArch names it | Sets from |", "|---|---|"]
+    for romset in sorted(rows, key=order):
+        lines.append(f"| {', '.join(sorted(rows[romset]))} | {romset} |")
+    return lines
+
+
+def with_romset_table(page: str, profiles: dict) -> str:
+    """The FAQ page with its romset table read from the profiles."""
+    table = "\n".join(romset_table(profiles)) + "\n"
+    if not _ROMSET_BLOCK.search(page):
+        raise ValueError(f"{ROMSET_FAQ_PAGE}: no romsets block to write the table in")
+    return _ROMSET_BLOCK.sub(lambda m: f"{m.group(1)}{table}{m.group(3)}", page, count=1)
 
 
 def _render_metadata_rows(profile: dict) -> list[str]:
@@ -8171,6 +8747,85 @@ def _ps_quote(value: str) -> str:
     return value if re.fullmatch(r"[\w.+-]+", value) else "'" + value.replace("'", "''") + "'"
 
 
+# The OS tabs of a system's install box: labels the site's other command
+# tabs use, so the reader's choice carries from page to page.
+INSTALL_PICKER_OSES = ("windows", "macos", "linux", "steamdeck")
+
+
+def _install_args(platform: str, system: str, shell: str) -> str:
+    quoted = _ps_quote(system) if shell == "powershell" else shlex.quote(system)
+    return f"--platform {platform} --system {quoted}"
+
+
+def _install_picker(declared: list[tuple[str, str]]) -> list[str]:
+    """One command, for the setup the reader picks, under the OS tabs.
+
+    Every setup's command for a console was written out, twice: 12 long
+    lines for the PSP, about 360 page elements once highlighted. The
+    picker shows one and the script (site.ts) rewrites it for the setup
+    chosen, remembered from page to page. Without the script the picker
+    stays hidden and the plain list of every command shows, open.
+    """
+    def attribute(text: str) -> str:
+        # Quotes kept as written: a system id quoted for the shell ('Neo Geo').
+        return html.escape(text, quote=False).replace('"', "&quot;")
+
+    names = Counter(platform for platform, _system in declared)
+    options = "".join(
+        f'<option value="{attribute(platform)}" '
+        f'data-sh="{attribute(_install_args(platform, system, "sh"))}" '
+        f'data-ps="{attribute(_install_args(platform, system, "powershell"))}">'
+        + html.escape(_platform_display(platform) + (f" ({system})" if names[platform] > 1 else ""),
+                      quote=False)
+        + "</option>"
+        for platform, system in declared)
+    lead = declared[0]
+    args = {key: _install_args(*lead, TERMINALS[key][2]) for key in INSTALL_PICKER_OSES}
+    return [
+        "Each platform names the system its own way.",
+        "",
+        '<div class="rb-install" data-rb-install="" hidden>',
+        "",
+        f'<label class="rb-install-setup">Your setup <select>{options}</select></label>',
+        "",
+        *terminal_tabs(INSTALL_PICKER_OSES, args, steps=False),
+        "",
+        "</div>",
+        "",
+        # Each command as inline code, no highlighting: the list is the
+        # fallback and the reference, and highlighted it was most of the
+        # box's elements.
+        '<details class="rb-install-all" open>',
+        "<summary>Every setup's command</summary>",
+        "",
+        *_command_list("Terminal (Linux, macOS, Steam Deck):", declared, "sh"),
+        *_command_list("PowerShell (Windows):", declared, "powershell"),
+        "</details>",
+    ]
+
+
+def _command_list(label: str, declared: list[tuple[str, str]], shell: str) -> list[str]:
+    """Every setup's command for one shell, a line each, with a copy button.
+
+    Inline HTML code, so no break element is added at each slash. A break
+    point follows the URL's scheme: the Markdown around the code made the
+    bare URL a link inside the command, and a scheme with nothing after it
+    is no link. The break adds no character to a copy."""
+    def command(platform: str, system: str) -> str:
+        text = html.escape(install_command(shell, _install_args(platform, system, shell)), quote=False)
+        return text.replace("://", "://<wbr>")
+
+    # One HTML line: the glossary leaves HTML alone, and it marked a word
+    # inside a command.
+    names = Counter(platform for platform, _system in declared)
+    items = "".join(
+        f"<li>{html.escape(_platform_display(platform), quote=False)}"
+        + (f" ({html.escape(system, quote=False)})" if names[platform] > 1 else "")
+        + f': <code data-copy="">{command(platform, system)}</code></li>'
+        for platform, system in declared)
+    return [label, "", f"<ul>{items}</ul>", ""]
+
+
 def _console_install_block(console: str, declared: list[tuple[str, str]]) -> list[str]:
     """Each platform's command for one console, by the system id it gives it,
     for a terminal and for PowerShell, each under its setup's name: RetroBat
@@ -8188,6 +8843,8 @@ def _console_install_block(console: str, declared: list[tuple[str, str]]) -> lis
     # the files of Other arcade files".
     summary = ("Install these files" if console.casefold().endswith(" files")
                else f"Install the files of {console}")
+    if markup.starlight() and len(declared) > 1:
+        return search_excluded(markup.details("tip", summary, _install_picker(declared)))
     return search_excluded(markup.details("tip", summary, [
         "Each platform names the system its own way.",
         "",
@@ -8306,8 +8963,9 @@ def _render_structured_blocks(profile: dict) -> list[str]:
     return lines
 
 
-def _hash_spans(value: str | list) -> str:
-    """Each hash a profile accepts, in full.
+def _hash_spans(value: str | list, copy: bool = False) -> str:
+    """Each hash a profile accepts, in full, each with a copy button when
+    *copy*.
 
     Cut to 12 characters with the rest in a title attribute, 208 hashes
     that only a profile declares were out of reach of the site search: it
@@ -8316,7 +8974,7 @@ def _hash_spans(value: str | list) -> str:
     from hashing import parse_hash_list  # noqa: PLC0415
 
     return ", ".join(
-        markup.hash_value(v) for v in parse_hash_list(value)
+        markup.hash_value(v, copy) for v in parse_hash_list(value)
     )
 
 
@@ -8525,6 +9183,10 @@ def _data_tree_page(ref: str, entry: dict, pages: list[tuple[str, list[str]]],
 # anchor. A count, not a size: system cards link to these cards and are
 # written before them. At 400 a part of MAME's cards was 805 KB of HTML.
 EMULATOR_CARDS_PER_PAGE = 220
+# The most cards a part of a split page holds. Each card is a table row
+# since siteentries.py, about five elements and 60 bytes more: at 220 a
+# part, MAME's first was 612 KB and 9,777 elements.
+EMULATOR_CARDS_PER_PART = 180
 
 
 # The headings an emulator's cards go under, in page order: what it needs
@@ -8559,10 +9221,57 @@ def emulator_parts(name: str, files: list) -> list[tuple[str, list[int]]]:
     if len(files) <= EMULATOR_CARDS_PER_PAGE:
         return []
     order = _display_order(files)
-    count = -(-len(files) // EMULATOR_CARDS_PER_PAGE)
+    count = -(-len(files) // EMULATOR_CARDS_PER_PART)
     size = -(-len(files) // count)
     return [(f"{name}-files-{index + 1}", order[start:start + size])
             for index, start in enumerate(range(0, len(files), size))]
+
+
+# From this many entries an unsplit emulator page lists them as one table,
+# each row opening to its card (siteentries.py), in place of a summary
+# table above the cards: GroovyMAME's 171 cards read 14,400 words open.
+# A split emulator's card pages always do.
+EMULATOR_TABLE_MIN = 150
+ENTRY_HEADS = ["File", "Contents", "Status", "Hash"]
+# The end of the badge _file_badges writes for an entry of each section.
+_SECTION_BADGE = {"required": ">required</span>", "optional": ">optional</span>",
+                  "with_app": ">comes with the app</span>"}
+
+
+def _entry_rows(files: list[dict], cards: list[list[str]], profile: dict,
+                available: Callable[[dict], bool]) -> list[siteentries.Row]:
+    """Each entry as a table row: its card's title and body, the number of
+    members an archive holds, its badges and its hash."""
+    many = len(profile.get("systems") or []) > 1
+    rows = []
+    for f, card in zip(files, cards):
+        title, body = siteentries.card_title_and_body(card)
+        for_system = system_name(str(f["system"])) if f.get("system") and many else ""
+        contents = f.get("contents") or []
+        badges = _file_badges(f, available(f), for_system)
+        # The first badge says whether the entry is needed: under Required,
+        # Optional or Comes with the app it repeats the section heading.
+        # One element and two words fewer on each of MAME's 1,563 rows.
+        if badges and badges[0].endswith(_SECTION_BADGE.get(_card_section(f), "\0")):
+            badges = badges[1:]
+        rows.append(siteentries.Row(title, body, [
+            f"{len(contents):,}" if contents else "",
+            " ".join(badges),
+            _hash_short(f),
+        ]))
+    return rows
+
+
+def _entries_table(files: list[dict], group: list[int], rows: list[siteentries.Row]) -> list[str]:
+    """The rows of ``group``, one section's entries, as one table."""
+    key = _card_section(files[group[0]])
+    heading = dict(CARD_SECTIONS)[key]
+    return siteentries.entry_table([rows[i] for i in group], ENTRY_HEADS,
+                                   f"rb-entry-filter-{key.replace('_', '-')}", heading,
+                                   # The badges hide themselves from the search
+                                   # but for the archive's name ("in pgm.zip"),
+                                   # how a ZIP name finds the cores reading it.
+                                   searched=frozenset({"Status"}))
 
 
 def _sectioned(files: list, indexes: list[int], render: Callable[[list[int]], list[str]],
@@ -8859,15 +9568,7 @@ def emulator_pages(
     upstream_raw = profile.get("upstream", "")
     upstream_none = "upstream" in profile and upstream_raw is None
     upstream = str(upstream_raw) if isinstance(upstream_raw, str) else ""
-    version_raw = profile.get("core_version", "unknown")
-    if version_raw is None:
-        version = "none published"
-    elif isinstance(version_raw, dict):
-        # Keyed by build mode like source: each build's version, named,
-        # where the page printed the dict's Python repr.
-        version = ", ".join(f"{v} ({mode})" for mode, v in version_raw.items() if v)
-    else:
-        version = version_raw
+    version = version_markdown(profile)
     profiled = profile.get("profiled_date", "unknown")
     systems = profile.get("systems", [])
     cores = profile.get("cores", [name])
@@ -9002,12 +9703,18 @@ def emulator_pages(
         aliases = emulator_file_aliases(files, anchors)
         parts = emulator_parts(name, files)
         data_href = f"{name}.md#data-folder" if parts else "#data-folder"
+        table_form = markup.starlight() and (bool(parts) or len(files) >= EMULATOR_TABLE_MIN)
         cards = [
             _render_emulator_file(f, profile, consumers, files, _file_available, anchor, name,
-                                  alias, data_href)
+                                  alias, data_href, badges_apart=table_form)
             for f, anchor, alias in zip(files, anchors, aliases)
         ]
-        if not parts:
+        rows = (_entry_rows(files, cards, profile, _file_available) if table_form else [])
+        if not parts and table_form:
+            lines.extend(held)
+            lines.extend(_sectioned(files, _display_order(files),
+                                    lambda group: _entries_table(files, group, rows)))
+        elif not parts:
             order = _display_order(files)
             indexed = len(files) >= EMULATOR_SUMMARY_MIN
             if indexed:
@@ -9029,7 +9736,8 @@ def emulator_pages(
             for number, (stem, entries) in enumerate(parts, 1):
                 part_pages[stem] = _emulator_part_page(
                     name, emu_name, number, parts, [cards[i] for i in entries],
-                    [files[i] for i in entries])
+                    [files[i] for i in entries],
+                    [rows[i] for i in entries] if table_form else None)
 
     lines.extend(sitemeasurements.tested_section(name, _MEASUREMENT_ITEMS.get(name, [])))
 
@@ -9159,9 +9867,16 @@ def _part_front_matter(parent: tuple[str, str], siblings: list[tuple[str, str]],
 
 def _emulator_part_page(
     name: str, emu_name: str, number: int, parts: list[tuple[str, range]],
-    cards: list[list[str]], files: list[dict],
+    cards: list[list[str]], files: list[dict], rows: list[siteentries.Row] | None = None,
 ) -> str:
-    """One page of a split emulator's cards."""
+    """One page of a split emulator's cards: with ``rows``, one table row
+    each, the card under its name."""
+    if rows is not None:
+        def render(group: list[int]) -> list[str]:
+            return _entries_table(files, group, rows)
+    else:
+        def render(group: list[int]) -> list[str]:
+            return [line for i in group for line in cards[i]]
     first = str(files[0].get("path") or files[0].get("name", ""))
     last = str(files[-1].get("path") or files[-1].get("name", ""))
     others = ", ".join(
@@ -9176,8 +9891,7 @@ def _emulator_part_page(
         f"This part holds {_count(len(files), 'entry', 'entries')}, "
         f"{_code(first)} to {_code(last)}. The other parts: {others}.",
         "",
-        *_sectioned(files, list(range(len(files))),
-                    lambda group: [line for i in group for line in cards[i]]),
+        *_sectioned(files, list(range(len(files))), render),
     ]
     lines.extend(_next_block([f"[{emu_name}]({name}.md), the profile and every entry"]))
     lines.extend(["", _date_line()])
@@ -11200,6 +11914,7 @@ def _generate(args: argparse.Namespace) -> None:
     )
     if HANDHELD_GUIDE:
         write_if_changed(str(docs / HANDHELD_GUIDE.path), generate_handheld_guide(HANDHELD_GUIDE))
+    published_parts = _published_platform_parts()
     for name, cov in coverages.items():
         # The emulators this platform runs, not every one of the system.
         runs = resolve_platform_cores(cov["config"], profiles)
@@ -11214,6 +11929,9 @@ def _generate(args: argparse.Namespace) -> None:
             if stem in coverages:
                 raise RuntimeError(f"a system page takes the platform {stem}'s address")
             PART_PAGES.add(f"platforms/{stem}.md")
+            anchor = re.search(rf"\]\({re.escape(name)}\.md#([^)\s]+)\)", page)
+            if anchor:
+                published_parts[f"platforms/{stem}.md"] = f"platforms/{name}.md#{anchor[1]}"
             # One console of one setup's list, a reference: "playstation
             # bios" found five setups' lists before the console's page.
             # Weighed down, they still won on their title, which the page
@@ -11339,6 +12057,11 @@ def _generate(args: argparse.Namespace) -> None:
     wiki_dest = docs / "wiki"
     wiki_dest.mkdir(parents=True, exist_ok=True)
     wiki_src = Path(WIKI_SRC_DIR)
+    # The romset table is the profiles' versions, never typed: the source
+    # page is rewritten before it is copied, as the README is.
+    faq = _REPO_ROOT / ROMSET_FAQ_PAGE
+    if faq.is_file():
+        write_if_changed(str(faq), with_romset_table(faq.read_text(encoding="utf-8"), profiles))
     if wiki_src.is_dir():
         for src_file in wiki_src.glob("*.md"):
             shutil.copy2(src_file, wiki_dest / src_file.name)
@@ -11380,6 +12103,8 @@ def _generate(args: argparse.Namespace) -> None:
     stale += _sweep_top_pages(docs)
 
     print("Adding page metadata and structured data...")
+    write_if_changed(str(PLATFORM_PARTS_FILE),
+                     json.dumps(dict(sorted(published_parts.items())), indent=1) + "\n")
     lastmod = decorate_markdown_pages(docs)
 
     nav = generate_nav(coverages, manufacturers, profiles, registry,
@@ -11396,7 +12121,7 @@ def _generate(args: argparse.Namespace) -> None:
                      json.dumps(sitestarlight.sidebar(nav, present, _overview_anchors(nav, docs)),
                                 indent=1) + "\n")
     write_if_changed(str(generated / "redirects.json"),
-                     json.dumps(sitestarlight.redirects(profiles, present), indent=1,
+                     json.dumps(sitestarlight.redirects(profiles, present, published_parts), indent=1,
                                 sort_keys=True) + "\n")
     write_if_changed(str(generated / "lastmod.json"),
                      json.dumps(dict(sorted(lastmod.items())), indent=1) + "\n")

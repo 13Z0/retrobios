@@ -790,16 +790,6 @@ class FaqRegressions(unittest.TestCase):
     existence platform. Readers act on all three.
     """
 
-    _MAME_GENERATIONS = {
-        "MAME 2000": "mame2000",
-        "MAME 2003": "mame2003",
-        "MAME 2009": "mame2009",
-        "MAME 2010": "mame2010",
-        "MAME 2015": "mame2015",
-        "MAME 2016": "mame2016",
-        "current MAME": "mame",
-    }
-
     @staticmethod
     def _faq() -> str:
         # The questions about hashes and checks moved to the technical FAQ.
@@ -813,17 +803,23 @@ class FaqRegressions(unittest.TestCase):
         with (ROOT / "emulators" / f"{key}.yml").open(encoding="utf-8") as handle:
             return yaml.safe_load(handle)
 
-    def test_mame_versions_match_their_profiles(self):
-        # The list is wrapped, so a label and its version can straddle a line.
-        faq = " ".join(self._faq().split())
-        for label, key in self._MAME_GENERATIONS.items():
-            match = re.search(rf"{re.escape(label)} \(([^)]+)\)", faq)
-            self.assertIsNotNone(match, f"FAQ no longer states a version for {label}")
-            self.assertEqual(
-                match.group(1),
-                self._profile(key)["core_version"],
-                f"FAQ version for {label} has drifted from emulators/{key}.yml",
-            )
+    def test_the_romset_table_is_written_from_the_profiles(self):
+        # Typed by hand, the table and the prose under it kept MAME 0.160
+        # and FinalBurn Neo 1.0.0.2, versions no source at the pins states,
+        # and the test holding them to the profiles kept the errors in step.
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import generate_site  # noqa: PLC0415
+        from common import load_emulator_profiles  # noqa: PLC0415
+
+        profiles = load_emulator_profiles(str(ROOT / "emulators"), skip_aliases=False)
+        page = (ROOT / "wiki" / "technical-faq.md").read_text(encoding="utf-8")
+        self.assertEqual(
+            page, generate_site.with_romset_table(page, profiles),
+            "wiki/technical-faq.md romset table is stale: run scripts/generate_site.py",
+        )
+        prose = page.split("### How this is known", 1)[1].split("\n## ", 1)[0]
+        self.assertIsNone(re.search(r"\(0\.\d", prose),
+                          "the prose under the table types a version again")
 
     def test_adler32_is_attributed_to_the_files_that_carry_it(self):
         dolphin = self._profile("dolphin")
@@ -2078,6 +2074,59 @@ def _git_paths(*args: str, stdin: list[str] | None = None) -> set[str] | None:
     if result.returncode not in answered:
         return None
     return {p for p in result.stdout.split("\0") if p}
+
+
+class ManifestVersionIsThePlatformsOwn(unittest.TestCase):
+    """Every install manifest named its list "1.0", and an inheriting YAML
+    took its parent's version: Lakka was published as RetroArch v1.22.2.
+    The installer compares the list's version with the one a machine runs,
+    so each manifest states the version its own platform YAML records."""
+
+    def setUp(self):
+        from scripts.common import _platform_config_cache
+        _platform_config_cache.clear()
+
+    def test_committed_manifests_state_their_platform_version(self):
+        from scripts.common import load_platform_config
+        manifests = sorted((ROOT / "install").glob("*.json"))
+        self.assertTrue(manifests)
+        for path in manifests:
+            with self.subTest(manifest=path.name):
+                data = json.loads(path.read_text())
+                config = load_platform_config(data["platform"], str(ROOT / "platforms"))
+                self.assertTrue(config.get("version"))
+                self.assertEqual(data["version"], str(config["version"]))
+
+    def test_no_child_shows_its_parents_version(self):
+        from scripts.common import load_platform_config
+        platforms = ROOT / "platforms"
+        children = {}
+        for path in sorted(platforms.glob("*.yml")):
+            raw = yaml.safe_load(path.read_text()) or {}
+            if isinstance(raw, dict) and raw.get("inherits"):
+                children[path.stem] = raw
+        self.assertIn("lakka", children)
+        for name, raw in children.items():
+            with self.subTest(platform=name):
+                parent = yaml.safe_load(
+                    (platforms / f"{raw['inherits']}.yml").read_text())
+                version = load_platform_config(name, str(platforms)).get("version")
+                self.assertEqual(version, raw.get("version"))
+                self.assertNotEqual(version, parent.get("version"))
+
+    def test_an_unversioned_child_has_no_version(self):
+        from scripts.common import load_platform_config
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            Path(tmp, "parent.yml").write_text("platform: P\nversion: '2.0'\nsystems: {}\n")
+            Path(tmp, "child.yml").write_text("inherits: parent\nplatform: C\n")
+            self.assertNotIn("version", load_platform_config("child", tmp))
+
+    def test_lakka_names_the_release_its_cores_are_read_at(self):
+        platforms = ROOT / "platforms"
+        lakka = yaml.safe_load((platforms / "lakka.yml").read_text())
+        targets = yaml.safe_load((platforms / "targets" / "lakka.yml").read_text())
+        tag = re.search(r"/blob/([^/]+)/", targets["source"]).group(1)
+        self.assertEqual(lakka["version"], tag)
 
 
 class EveryManifestEntryIsFetchable(unittest.TestCase):
@@ -5000,7 +5049,7 @@ class CollectionCardsCarryFullHashes(unittest.TestCase):
                  "crc32": "504086c1", "sha256": "b" * 64}
         text = "\n".join(_system_file_card(entry, FileConsumers({}, {})))
         for value in (entry["sha1"], entry["md5"], entry["crc32"], entry["sha256"]):
-            self.assertIn(f'<span class="rb-hash">{value}</span>', text)
+            self.assertIn(f'<dd class="rb-hash">{value}</dd>', text)
 
 
 

@@ -5,6 +5,10 @@ source: "https://github.com/UZDoom/UZDoom"
 profiled_date: "2026-10-20"
 source_commit: "7910df7102033fd7754a317f3254f24101135926"
 core_version: "5.0.3"
+version_basis:
+  kind: tag
+  tag: "5.0.3"
+  distance: 0
 display_name: "UZDoom"
 cores:
   - uzdoom

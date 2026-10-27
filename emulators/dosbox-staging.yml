@@ -6,6 +6,11 @@ upstream: "https://github.com/dosbox-staging/dosbox-staging"
 source_commit: "fa1856c057902be3e08856675d6cc1e7ffe43db6"
 profiled_date: "2026-10-26"
 core_version: "0.84.0-alpha"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'project\(dosbox-staging[^)]*?VERSION\s+([0-9.]+)[^)]*\)\s*\n\s*set\(DOSBOX_VERSION \$\{PROJECT_VERSION\}(\S*)\)'
+  format: "{1}{2}"
 display_name: "DOS (DOSBox Staging)"
 cores:
   - dosbox-staging

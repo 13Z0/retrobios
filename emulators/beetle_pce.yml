@@ -6,6 +6,10 @@ upstream: "https://mednafen.github.io/"
 profiled_date: "2026-03-24"
 source_commit: "b96c11e095b6a40a412d2da02766ae1c3f4fd539"
 core_version: "v1.29.0"
+version_basis:
+  kind: file
+  path: "libretro.cpp"
+  pattern: '#define\s+MEDNAFEN_CORE_VERSION\s+"([^"]+)'
 display_name: "NEC - PC Engine / SuperGrafx / CD (Beetle PCE)"
 cores: [beetle_pce, mednafen_pce, pce, beetle-pce]
 systems: [nec-pc-engine]

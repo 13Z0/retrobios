@@ -10,8 +10,17 @@ source_commit:
   standalone: "fe439e98abc555c243a8a197850c71777ff664f4"
   libretro: "8174cbbeea4070654841cdd4604361b3eee8fdd1"
 core_version:
-  standalone: "v0.4.1-84-gfe439e98"
-  libretro: "libretro branch"
+  standalone: "0.4.2"
+  libretro: "0.4.0"
+version_basis:
+  standalone:
+    kind: file
+    path: "CMakeLists.txt"
+    pattern: '^project\(Ymir VERSION ([0-9][^ )]*)\)'
+  libretro:
+    kind: file
+    path: "CMakeLists.txt"
+    pattern: '^project\(Ymir VERSION ([0-9][^ )]*)\)'
 display_name: "Sega - Saturn (Ymir)"
 cores:
   - ymir

@@ -21,6 +21,7 @@ import argparse
 import contextlib
 import ctypes
 import datetime as dt
+import fcntl
 import hashlib
 import json
 import os
@@ -35,7 +36,7 @@ import sys
 import tempfile
 import time
 import zlib
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -71,6 +72,39 @@ STRACE_LINE = re.compile(
 )
 PRINTF_SPEC = re.compile(r"%(?P<flags>[-+ #0]*)(?P<width>\*|\d+)?(?:\.(?P<prec>\*|\d+))?"
                          r"(?P<len>hh|h|ll|l|j|z|t|L)?(?P<conv>[diouxXeEfFgGaAcspn%])")
+
+
+# One measurement at a time on the host: each core_probe execution takes this
+# lock itself, its load check included, and releases it when it ends. A pass
+# of many runs never holds it between them, so two passes interleave.
+PROBE_LOCK_ENV = "RETROBIOS_PROBE_LOCK"
+PROBE_LOCK_HELD_ENV = "RETROBIOS_PROBE_LOCK_HELD"
+DEFAULT_PROBE_LOCK = Path.home() / ".local" / "state" / "retrobios" / "probe.lock"
+
+
+def probe_lock_path() -> Path:
+    return Path(os.environ.get(PROBE_LOCK_ENV) or DEFAULT_PROBE_LOCK)
+
+
+@contextlib.contextmanager
+def host_probe_lock() -> Iterator[None]:
+    """The host's probe lock for one execution. A caller that already holds
+    it for this run says so with RETROBIOS_PROBE_LOCK_HELD."""
+    if os.environ.get(PROBE_LOCK_HELD_ENV):
+        yield
+        return
+    path = probe_lock_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a") as handle:
+        try:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            print(f"waiting for {path}: another measurement is running", file=sys.stderr)
+            fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 class ProbeError(RuntimeError):
@@ -732,6 +766,30 @@ def _bwrap_base(bwrap: str, network: bool) -> list[str]:
     return argv
 
 
+def interpreter_paths() -> list[Path]:
+    """The trees the worker's Python lives in, when the sandbox's system
+    binds do not hold them: CI's setup-python under /opt/hostedtoolcache, a
+    venv, pyenv or uv. Each link on the way to the interpreter is a path too:
+    a venv's python points at uv's unversioned name, itself a link to the
+    versioned tree. Without them the worker could not start in the sandbox,
+    and every run crashed."""
+    system = ("/usr/", "/bin/", "/lib")
+    found: list[Path] = []
+    candidates = [Path(sys.prefix), Path(sys.base_prefix)]
+    hop = Path(sys.executable)
+    for _ in range(16):
+        candidates.append(hop.parent.parent)
+        if not hop.is_symlink():
+            break
+        target = Path(os.readlink(hop))
+        hop = target if target.is_absolute() else hop.parent / target
+    for path in candidates:
+        path = Path(os.path.abspath(path))
+        if not str(path).startswith(system) and path not in found and path.exists():
+            found.append(path)
+    return found
+
+
 def sandbox_argv(writable: Sequence[Path], readonly: Sequence[Path] = (),
                  network: bool = False) -> tuple[list[str], str]:
     """The bubblewrap prefix a third-party program runs under, and its name.
@@ -754,8 +812,10 @@ def sandbox_argv(writable: Sequence[Path], readonly: Sequence[Path] = (),
         return [], "environment only: bwrap cannot create a sandbox here"
     argv = _bwrap_base(bwrap, network)
     for path in readonly:
-        resolved = Path(path).resolve()
-        argv += ["--ro-bind", str(resolved), str(resolved)]
+        # Mounted at the path as the caller names it: a link's own path stays
+        # usable inside, its target's bytes behind it.
+        resolved, named = Path(path).resolve(), Path(os.path.abspath(path))
+        argv += ["--ro-bind", str(resolved), str(named)]
     for path in writable:
         resolved = Path(path).resolve()
         resolved.mkdir(parents=True, exist_ok=True)
@@ -846,7 +906,7 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
     if strace:
         command = [strace, "-f", "-qq", "-s", "4096", "-e", "trace=openat,open", "-o", str(trace_path)] + command
     writable = [scratch] + [p for p in (png_dir, state_out.parent if state_out else None) if p]
-    readonly = [Path(__file__), Path(args.core), system_dir]
+    readonly = [Path(__file__), Path(args.core), system_dir, *interpreter_paths()]
     if args.content:
         readonly.append(Path(args.content).resolve().parent)
     readonly += [Path(value) for _, value in args.env if Path(value).is_absolute() and Path(value).exists()]
@@ -1355,6 +1415,11 @@ def probe(args: argparse.Namespace) -> int:
         for problem in problems:
             print(f"ERROR: {problem}", file=sys.stderr)
         return 2
+    with host_probe_lock():
+        return _probe(args)
+
+
+def _probe(args: argparse.Namespace) -> int:
     max_load = args.max_load if args.max_load is not None else (os.cpu_count() or 1) / 4
     load_before = load_average()
     if args.record and load_before and load_before[0] > max_load:

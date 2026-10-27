@@ -6,7 +6,12 @@ upstream: "https://github.com/simias/rustation"
 profiled_date: "2026-03-25"
 source_commit: "3e328e3967e312e1f239aeeecd479a7b4bfda850"
 upstream_commit: "1daf4faaade3c0fd1e9deace8e309e91303f1b46"
-core_version: "v1"
+core_version: "0.0.1"
+version_basis:
+  kind: file
+  repo: upstream
+  path: "Cargo.toml"
+  pattern: '^version\s*=\s*"([^"]+)"'
 display_name: "Sony - PlayStation (Rustation)"
 cores: [rustation]
 found_by: content

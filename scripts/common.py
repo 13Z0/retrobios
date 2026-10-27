@@ -235,6 +235,10 @@ def _inherited_yaml(platform_name: str, platforms_dir: str) -> tuple[dict, list[
         return config, [platform_name]
 
     merged, chain = _inherited_yaml(config["inherits"], platforms_dir)
+    # A version names one platform's release, never its parent's: Lakka
+    # read as RetroArch v1.22.2 in its manifest, pack name and site page.
+    # dat_version stays, it is the version of the inherited list itself.
+    merged.pop("version", None)
     merged.update(
         {k: v for k, v in config.items() if k not in ("inherits", "overrides")}
     )

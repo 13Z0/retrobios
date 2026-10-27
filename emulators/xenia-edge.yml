@@ -12,6 +12,15 @@ profiled_date: "2026-10-27"
 core_version:
   standalone: "7180422"
   libretro: "8dc77b0"
+version_basis:
+  standalone:
+    kind: tag
+    tag: "7180422"
+    distance: 0
+  libretro:
+    kind: file
+    path: "upstream.version"
+    pattern: '\A([0-9a-f]{7,40})\s*$'
 display_name: "Xenia Edge (Xbox 360)"
 cores:
   - "xenia-edge"

@@ -6,6 +6,11 @@ upstream: "https://github.com/openmoh/openmohaa"
 profiled_date: "2026-10-04"
 source_commit: "a2f340195975f4f042e28a60b62561dd9a0b2700"
 upstream_commit: "a2f340195975f4f042e28a60b62561dd9a0b2700"
+core_version: "0.83.0"
+version_basis:
+  kind: file
+  path: "cmake/identity.cmake"
+  pattern: 'set\(PROJECT_VERSION\s+([0-9][^)\s]*)\)'
 display_name: "OpenMoHAA"
 cores: []
 systems: [mohaa, mohaa-spearhead, mohaa-breakthrough]

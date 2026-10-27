@@ -7,6 +7,10 @@ profiled_date: "2026-03-25"
 source_commit: "ddc06a142398ee9755894b3f0bb17c8dc428151d"
 upstream_commit: "ecee6594c5b953966ee0515f3edac4032c7ed40f"
 core_version: "0.1b"
+version_basis:
+  kind: file
+  path: "src/libretro/libretro.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "PICO-8 (Retro8)"
 cores:
   - retro8

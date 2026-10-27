@@ -31,6 +31,7 @@ import yaml
 sys.path.insert(0, os.path.dirname(__file__))
 
 import upstream
+import version_basis
 from common import (
     _norm_system_id,
     github_token,
@@ -2670,6 +2671,129 @@ def apply_edit(path: Path, new_text: str, expected: dict) -> None:
         raise YamlWriteError(f"{path}: structure changed beyond the intended field")
 
 
+# Key order of a written version_basis, as a reader expects it.
+_BASIS_ORDER = ("kind", "why", "repo", "url", "commit", "path", "pattern", "format",
+                "match", "tag", "distance", "of", "artifact")
+
+
+def _top_block(lines: list[str], key: str) -> tuple[int, int] | None:
+    """Line span of a top-level key and the indented lines under it."""
+    indices = _top_level_indices(lines, key)
+    if not indices:
+        return None
+    if len(indices) > 1:
+        raise YamlWriteError(f"{key}: expected one top-level line, found {len(indices)}")
+    end = indices[0] + 1
+    while end < len(lines) and (lines[end].startswith((" ", "\t")) or not lines[end].strip()):
+        end += 1
+    # Blank lines closing the block belong to the document, not to it.
+    while end > indices[0] + 1 and not lines[end - 1].strip():
+        end -= 1
+    return indices[0], end
+
+
+def _render_version(value: object) -> list[str]:
+    if isinstance(value, dict):
+        return ["core_version:"] + [
+            f"  {mode}: {'null' if v is None else _double_quoted(str(v))}"
+            for mode, v in value.items()
+        ]
+    return [f"core_version: {'null' if value is None else _double_quoted(str(value))}"]
+
+
+def _render_basis(basis: dict) -> list[str]:
+    def ordered(entry: dict) -> dict:
+        rank = {key: i for i, key in enumerate(_BASIS_ORDER)}
+        return dict(sorted(entry.items(), key=lambda item: rank.get(item[0], len(rank))))
+
+    def scalar(value: object) -> str:
+        # Every string quoted: a tag 2407 or 0.10 read back as a number. A
+        # pattern keeps its backslashes readable in single quotes.
+        if isinstance(value, bool) or not isinstance(value, str):
+            return str(value).lower() if isinstance(value, bool) else str(value)
+        if "\\" in value or '"' in value:
+            return "'" + value.replace("'", "''") + "'"
+        return _double_quoted(value)
+
+    def block(entry: dict, indent: str) -> list[str]:
+        # kind, why and repo are words of the schema's enums, written bare.
+        return [f"{indent}{key}: {value if key in ('kind', 'why', 'repo') else scalar(value)}"
+                for key, value in ordered(entry).items()]
+
+    if "kind" in basis:
+        return ["version_basis:", *block(basis, "  ")]
+    lines = ["version_basis:"]
+    for mode, entry in basis.items():
+        lines += [f"  {mode}:", *block(entry, "    ")]
+    return lines
+
+
+def set_version_fields(text: str, version: object, basis: dict | None) -> str:
+    """Rewrite core_version and version_basis, version_basis right after it."""
+    lines = text.splitlines()
+    span = _top_block(lines, "core_version")
+    rendered = _render_version(version)
+    if span is None:
+        anchor = _top_block(lines, "upstream_commit") or _top_block(lines, "source_commit") \
+            or _top_block(lines, "profiled_date") or _top_block(lines, "upstream") \
+            or _top_block(lines, "source") or _top_block(lines, "alias_of") \
+            or _top_block(lines, "type")
+        if anchor is None:
+            raise YamlWriteError("core_version: no line to write it after")
+        lines[anchor[1]:anchor[1]] = rendered
+    else:
+        lines[span[0]:span[1]] = rendered
+    if basis is not None:
+        old = _top_block(lines, "version_basis")
+        if old is not None:
+            del lines[old[0]:old[1]]
+        after = _top_block(lines, "core_version")
+        lines[after[1]:after[1]] = _render_basis(basis)
+    return "\n".join(lines) + ("\n" if text.endswith("\n") else "")
+
+
+def apply_readings(document: dict, readings: list) -> tuple[object, dict | None]:
+    """core_version and version_basis as the readings state them.
+
+    A reading that could not be made leaves its build mode as written.
+    """
+    version = document.get("core_version")
+    basis = document.get("version_basis")
+    basis = dict(basis) if isinstance(basis, dict) else None
+    if isinstance(version, dict):
+        version = dict(version)
+    for reading in readings:
+        if reading.status not in (version_basis.MATCH, version_basis.DRIFT):
+            continue
+        if reading.mode:
+            if not isinstance(version, dict):
+                version = {}
+            version[reading.mode] = reading.read
+        else:
+            version = reading.read
+        if reading.updates and basis is not None:
+            target = basis if not reading.mode else dict(basis.get(reading.mode) or {})
+            target.update(dict(reading.updates))
+            if reading.mode:
+                basis[reading.mode] = target
+    return version, basis
+
+
+def write_version(path: Path, readings: list) -> bool:
+    """Set core_version (and a tag basis' tag and distance) from the readings."""
+    text = path.read_text(encoding="utf-8")
+    document = yaml.safe_load(text)
+    version, basis = apply_readings(document, readings)
+    if version == document.get("core_version") and basis == document.get("version_basis"):
+        return False
+    expected = dict(document)
+    expected["core_version"] = version
+    if basis is not None:
+        expected["version_basis"] = basis
+    apply_edit(path, set_version_fields(text, version, basis), expected)
+    return True
+
+
 def backfill_commit(path: Path, sha: str) -> bool:
     """Insert source_commit after profiled_date. False when already present."""
     text = path.read_text(encoding="utf-8")
@@ -3313,9 +3437,15 @@ def _needs_review(report: ProfileReport, accept_changed: bool) -> bool:
 
 
 def bump_commit(
-    path: Path, report: ProfileReport, accept_changed: bool = False
+    path: Path, report: ProfileReport, accept_changed: bool = False,
+    cache_dir: str = DEFAULT_CACHE, offline: bool = False,
 ) -> bool:
-    """Advance source_commit to HEAD when nothing needs a read again."""
+    """Advance source_commit to HEAD when nothing needs a read again.
+
+    core_version moves with the pin, read again from version_basis at the
+    new revision. Four bulk advances moved 295 pins and no version: an
+    advance whose version cannot be read is refused.
+    """
     if _needs_review(report, accept_changed):
         return False
     text = path.read_text(encoding="utf-8")
@@ -3375,8 +3505,31 @@ def bump_commit(
         new_text = _set_pin(
             new_text, document, "upstream_commit", report.upstream_head, "source_commit"
         )
+    readings = version_basis.check(expected, cache_dir, offline, recompute=True)
+    refused = version_refusal(readings)
+    if refused:
+        print(f"{path.stem}: {refused}, its pin is not advanced", file=sys.stderr)
+        return False
+    version, basis = apply_readings(expected, readings)
+    if version != expected.get("core_version") or basis != expected.get("version_basis"):
+        new_text = set_version_fields(new_text, version, basis)
+        expected["core_version"] = version
+        if basis is not None:
+            expected["version_basis"] = basis
     apply_edit(path, new_text, expected)
     return True
+
+
+def version_refusal(readings: list) -> str | None:
+    """Why the version at a new pin cannot be stated, or None."""
+    for reading in readings:
+        if reading.status == version_basis.NO_BASIS:
+            return "no version_basis says where its version is read"
+        if reading.status == version_basis.UNREADABLE:
+            return f"core_version cannot be read at the new pin: {reading.where}"
+        if reading.status == version_basis.UNCHECKED:
+            return f"core_version is {reading.where}, not read from the code at a pin"
+    return None
 
 
 def pins_changed(before: dict, after: dict) -> list[str]:
@@ -3997,6 +4150,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="compare core_version with the latest tag and release",
     )
     parser.add_argument(
+        "--verify-version", action="store_true",
+        help="read core_version again from version_basis at the pin and "
+        "exit 1 when the code states another",
+    )
+    parser.add_argument(
+        "--set-version", action="store_true",
+        help="write core_version from version_basis at the pin, the nearest "
+        "tag asked of git again",
+    )
+    parser.add_argument(
         "--detect-new-files", action="store_true",
         help="name files upstream loads that the profile does not list",
     )
@@ -4284,7 +4447,8 @@ def _apply_writes(
         applied = []
         if args.rebase_refs and not report.skipped:
             applied = rebase_refs(target, report, args.accept_changed)
-        moved = bump_commit(target, report, args.accept_changed)
+        moved = bump_commit(target, report, args.accept_changed,
+                            args.cache_dir, args.offline)
         if args.rebase_refs and applied and not moved:
             keyed = any(isinstance(profile.get(f), dict) for f in ("source_commit", "upstream_commit"))
             reason = (
@@ -4723,6 +4887,32 @@ def _print_triage(
 
 def _refuse_flag_combinations(args: argparse.Namespace) -> None:
     """Exit on a flag the chosen mode would not apply, before any request."""
+    if args.verify_version or args.set_version:
+        ignored = [
+            flag for flag, on in (
+                ("--verify-version", args.verify_version and args.set_version),
+                ("--markdown", args.markdown),
+                ("--fetch-plan", args.fetch_plan),
+                ("--triage", args.triage),
+                ("--strict", args.strict),
+                ("--check-version", args.check_version),
+                ("--detect-new-files", args.detect_new_files),
+                ("--watch-hashes", args.watch_hashes),
+                ("--full-diff", args.full_diff),
+                ("--tree-diff", args.tree_diff),
+                ("--backfill-commits", args.backfill_commits),
+                ("--rebase-refs", args.rebase_refs),
+                ("--attribute-refs", args.attribute_refs),
+                ("--bump-commit", args.bump_commit),
+                ("--realign-prose", args.realign_prose),
+                ("--accept-changed", args.accept_changed),
+                ("--dry-run", args.dry_run and not args.set_version),
+            ) if on
+        ]
+        if ignored:
+            mode = "--set-version" if args.set_version else "--verify-version"
+            print(f"{mode} does not apply {', '.join(ignored)}", file=sys.stderr)
+            raise SystemExit(1)
     if args.fresh and args.offline:
         print("--fresh asks the forges again, which --offline forbids.", file=sys.stderr)
         raise SystemExit(1)
@@ -4809,6 +4999,63 @@ def _refuse_flag_combinations(args: argparse.Namespace) -> None:
         raise SystemExit(1)
 
 
+def _version_selection(args: argparse.Namespace, profiles: dict) -> dict:
+    """--all reaches the alias and test profiles too: each states a version."""
+    if args.all and not (args.system or args.type_ or args.stale_before or args.limit):
+        return dict(sorted(profiles.items()))
+    return select_profiles(profiles, args)
+
+
+def format_reading(name: str, reading: version_basis.Reading) -> str:
+    mode = f"[{reading.mode}] " if reading.mode else ""
+    kind = f"{reading.kind} " if reading.kind else ""
+    if reading.status == version_basis.DRIFT:
+        said = f"declared {reading.declared}, code {reading.read}"
+    elif reading.status == version_basis.MATCH:
+        said = str(reading.read)
+    else:
+        said = f"declared {reading.declared}"
+    return f"{name}: {mode}{reading.status} {said} ({kind}{reading.where})"
+
+
+def run_versions(args: argparse.Namespace, profiles: dict) -> None:
+    """--verify-version and --set-version: core_version against the code."""
+    selected = _version_selection(args, profiles)
+    if args.set_version and not args.dry_run and not args.force:
+        _refuse_dirty_tree(args.emulators_dir, list(selected))
+    counts: Counter = Counter()
+    rows = []
+    failed = False
+    for name, profile in selected.items():
+        readings = version_basis.check(
+            profile, args.cache_dir, args.offline, profiles, recompute=args.set_version
+        )
+        for reading in readings:
+            counts[reading.status] += 1
+            rows.append({"profile": name, **asdict(reading)})
+            if not args.as_json and (not args.changed_only or reading.status != version_basis.MATCH):
+                print(format_reading(name, reading))
+        if args.set_version:
+            path = Path(args.emulators_dir) / f"{name}.yml"
+            if args.dry_run:
+                continue
+            try:
+                if write_version(path, readings):
+                    print(f"{name}: core_version written")
+            except YamlWriteError as exc:
+                print(f"{name}: write refused: {exc}", file=sys.stderr)
+                failed = True
+        elif any(r.status in version_basis.FAILING for r in readings):
+            failed = True
+    if args.as_json:
+        print(json.dumps(rows, indent=2))
+    else:
+        print(", ".join(f"{count} {status}" for status, count in sorted(counts.items())),
+              file=sys.stderr)
+    if failed:
+        raise SystemExit(1)
+
+
 def main() -> None:
     """Build one report per selected profile, then apply writes and output."""
     args = build_parser().parse_args()
@@ -4818,6 +5065,9 @@ def main() -> None:
         # trzy/Supermodel and VICE read as behind their real HEAD.
         upstream.MOVING_TTL = 0
     profiles = load_emulator_profiles(args.emulators_dir, skip_aliases=False)
+    if args.verify_version or args.set_version:
+        run_versions(args, profiles)
+        return
     selected = select_profiles(profiles, args)
     _check_quota(len(selected), args.offline)
 

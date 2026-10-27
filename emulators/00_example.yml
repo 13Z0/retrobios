@@ -4,7 +4,11 @@ core_classification: pure_libretro
 source: "https://github.com/libretro/libretro-core-info"
 profiled_date: "2026-03-22"
 source_commit: "bd81a0b73b50449c0862b65bd755d87860925f65"
-core_version: ~
+core_version: "v1.22.2-3-gbd81a0b"
+version_basis:
+  kind: tag
+  tag: "v1.22.2"
+  distance: 3
 display_name: "Example Core (.info template)"
 cores:
   - 00_example

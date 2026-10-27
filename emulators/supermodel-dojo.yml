@@ -9,6 +9,10 @@ source_commit: "113a48d567c5d49a40292df386fee4a0acaea486"
 upstream_commit: "98fcbff223e23b1530c8f899aca2fc4fd5663ab4"
 upstream_frozen: "The dojo branch merged trzy/Supermodel at this commit through merge ab1ecae. Later upstream commits are not in the port."
 core_version: "v0.3a-20261024-git-113a48d"
+version_basis:
+  kind: tag
+  tag: "v0.3a-20261024-git-113a48d"
+  distance: 0
 display_name: "Sega - Model 3 (Supermodel Dojo)"
 verification: existence
 cores:

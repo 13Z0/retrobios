@@ -1,0 +1,94 @@
+{
+ "api": {
+  "https://api.github.com/repos/libretro/dolphin/compare/f84df02055ab9610feec48e65648cac5a3c098fa...3aac3f052f733f8df2f1616843a4d2e14002ed11": {
+   "ahead_by": 437,
+   "behind_by": 0,
+   "status": "ahead"
+  },
+  "https://api.github.com/repos/libretro/dolphin/git/ref/tags/2609": {
+   "object": {
+    "sha": "b134d026ab4e71df13b3657ea6787d499962664b",
+    "type": "tag"
+   }
+  },
+  "https://api.github.com/repos/libretro/dolphin/git/tags/b134d026ab4e71df13b3657ea6787d499962664b": {
+   "object": {
+    "sha": "f84df02055ab9610feec48e65648cac5a3c098fa",
+    "type": "commit"
+   }
+  }
+ },
+ "files": {
+  "github.com/libretro/FBNeo/32958a89abd645ed20387c8d31d21ede3bc48161/src/burn/version.h": "// Version number, written as  vV.V.BB  or  vV.V.BBaa\n// (0xVVBBaa, in BCD notation)\n\n#define VER_MAJOR  1\n#define VER_MINOR  0\n#define VER_BETA  0\n#define VER_ALPHA 3\n\n#define BURN_VERSION (VER_MAJOR * 0x100000) + (VER_MINOR * 0x010000) + (((VER_BETA / 10) * 0x001000) + ((VER_BETA % 10) * 0x000100)) + (((VER_ALPHA / 10) * 0x000010) + (VER_ALPHA % 10))\n\n\n\n\n",
+  "github.com/libretro/snes9x/fae2fea08f74180759ef540ee94259213f503480/snes9x.h": "/*****************************************************************************\\\n     Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.\n                This file is licensed under the Snes9x License.\n   For further information, consult the LICENSE file in the root directory.\n\\*****************************************************************************/\n\n#ifndef _SNES9X_H_\n#define _SNES9X_H_\n\n#ifndef VERSION\n#define VERSION\t\"1.63\"\n#endif\n\n#include \"port.h\"\n#include \"65c816.h\"\n#include \"messages.h\"\n\n/* All core file I/O goes through the libretro VFS via the\n   file_stream_transforms wrappers (RFILE). The frontend supplies the\n   VFS interface when available (see retro_set_environment);\n   filestream falls back to its local implementation otherwise.\n   Compressed (.gz) stream support from the old ZLIB build is gone --\n   under libretro the frontend handles compressed content itself. */\n#include <streams/file_stream_transforms.h>\n#define FSTREAM\t\t\t\t\tRFILE *\n#define READ_FSTREAM(p, l, s)\trfread(p, 1, l, s)\n#define WRITE_FSTREAM(p, l, s)\trfwrite(p, 1, l, s)\n#define GETS_FSTREAM(p, l, s)\trfgets(p, l, s)\n#define GETC_FSTREAM(s)\t\t\trfgetc(s)\n#define OPEN_FSTREAM(f, m)\t\trfopen(f, m)\n#define FIND_FSTREAM(s)\t\t\trftell(s)\n#define REVERT_FSTREAM(s, o, p)\trfseek(s, o, p)\n#define CLOSE_FSTREAM(s)\t\t\trfclose(s)\n\n\n#define SNES_WIDTH\t\t\t\t\t256\n#define SNES_HEIGHT\t\t\t\t\t224\n#define SNES_HEIGHT_EXTENDED\t\t239\n#define MAX_SNES_WIDTH\t\t\t\t(SNES_WIDTH * 2)\n#define MAX_SNES_HEIGHT\t\t\t\t(SNES_HEIGHT_EXTENDED * 2)\n\n#define\tNTSC_MASTER_CLOCK\t\t\t21477272.727272 // 21477272 + 8/11 exact\n#define\tPAL_MASTER_CLOCK\t\t\t21281370.0\n#define NTSC_PROGRESSIVE_FRAME_RATE\t60.09881389744051\n#define NTSC_INTERLACED_FRAME_RATE\t59.94005994\n#define PAL_PROGRESSIVE_FRAME_RATE\t50.006977968\n\n\n#define SNES_MAX_NTSC_VCOUNTER\t\t262\n#define SNES_MAX_PAL_VCOUNTER\t\t312\n#define SNES_HCOUNTER_MAX\t\t\t341\n\n#ifndef ALLOW_CPU_OVERCLOCK\n#define ONE_CYCLE\t\t\t\t\t6\n#define SLOW_ONE_CYCLE\t\t\t\t8\n#define TWO_CYCLES\t\t\t\t\t12\n#else\n#define ONE_CYCLE      (Settings.OneClockCycle)\n#define SLOW_ONE_CYCLE (Settings.OneSlowClockCycle)\n#define TWO_CYCLES     (Settings.TwoClockCycles)\n#endif\n#define\tONE_DOT_CYCLE\t\t\t\t4\n\n#define SNES_CYCLES_PER_SCANLINE\t(SNES_HCOUNTER_MAX * ONE_DOT_CYCLE)\n#define SNES_SCANLINE_TIME\t\t\t(SNES_CYCLES_PER_SCANLINE / NTSC_MASTER_CLOCK)\n\n#define SNES_WRAM_REFRESH_HC_v1\t\t530\n#define SNES_WRAM_REFRESH_HC_v2\t\t538\n#define SNES_WRAM_REFRESH_CYCLES\t40\n\n#define SNES_HBLANK_START_HC\t\t1096\t\t\t\t\t// H=274\n#define\tSNES_HDMA_START_HC\t\t\t1106\t\t\t\t\t// FIXME: not true\n#define\tSNES_HBLANK_END_HC\t\t\t4\t\t\t\t\t\t// H=1\n#define\tSNES_HDMA_INIT_HC\t\t\t20\t\t\t\t\t\t// FIXME: not true\n#define\tSNES_RENDER_START_HC\t\t(128 * ONE_DOT_CYCLE)\t// FIXME: Snes9x renders a line at a time.\n\n#define SNES_TR_MASK\t\t(1 <<  4)\n#define SNES_TL_MASK\t\t(1 <<  5)\n#define SNES_X_MASK\t\t\t(1 <<  6)\n#define SNES_A_MASK\t\t\t(1 <<  7)\n#define SNES_RIGHT_MASK\t\t(1 <<  8)\n#define SNES_LEFT_MASK\t\t(1 <<  9)\n#define SNES_DOWN_MASK\t\t(1 << 10)\n#define SNES_UP_MASK\t\t(1 << 11)\n#define SNES_START_MASK\t\t(1 << 12)\n#define SNES_SELECT_MASK\t(1 << 13)\n#define SNES_Y_MASK\t\t\t(1 << 14)\n#define SNES_B_MASK\t\t\t(1 << 15)\n\n#define DEBUG_MODE_FLAG\t\t(1 <<  0)\t// debugger\n#define TRACE_FLAG\t\t\t(1 <<  1)\t// debugger\n#define SINGLE_STEP_FLAG\t(1 <<  2)\t// debugger\n#define BREAK_FLAG\t\t\t(1 <<  3)\t// debugger\n#define SCAN_KEYS_FLAG\t\t(1 <<  4)\t// CPU\n#define HALTED_FLAG\t\t\t(1 << 12)\t// APU\n#define FRAME_ADVANCE_FLAG\t(1 <<  9)\n\n#define ROM_NAME_LEN\t23\n#define AUTO_FRAMERATE\t200\n\nstruct SCPUState\n{\n\tuint32\tFlags;\n\tint32\tCycles;\n\tint32\tPrevCycles;\n\tint32\tV_Counter;\n\tuint8\t*PCBase;\n\tbool8\tNMIPending;\n\tbool8\tIRQLine;\n\tbool8\tIRQTransition;\n\tbool8\tIRQLastState;\n\tbool8\tIRQExternal;\n\tint32\tIRQPending;\n\tint32\tMemSpeed;\n\tint32\tMemSpeedx2;\n\tint32\tFastROMSpeed;\n\tbool8\tInDMA;\n\tbool8\tInHDMA;\n\tbool8\tInDMAorHDMA;\n\tbool8\tInWRAMDMAorHDMA;\n\tuint8\tHDMARanInDMA;\n\tint32\tCurrentDMAorHDMAChannel;\n\tuint8\tWhichEvent;\n\tint32\tNextEvent;\n\tbool8\tWaitingForInterrupt;\n\tuint32\tAutoSaveTimer;\n\tbool8\tSRAMModified;\n};\n\nenum\n{\n\tHC_HBLANK_START_EVENT = 1,\n\tHC_HDMA_START_EVENT   = 2,\n\tHC_HCOUNTER_MAX_EVENT = 3,\n\tHC_HDMA_INIT_EVENT    = 4,\n\tHC_RENDER_EVENT       = 5,\n\tHC_WRAM_REFRESH_EVENT = 6\n};\n\nenum\n{\n\tIRQ_NONE        = 0x0,\n\tIRQ_SET_FLAG    = 0x1,\n\tIRQ_CLEAR_FLAG  = 0x2,\n\tIRQ_TRIGGER_NMI = 0x4\n};\n\nstruct STimings\n{\n\tint32\tH_Max_Master;\n\tint32\tH_Max;\n\tint32\tV_Max_Master;\n\tint32\tV_Max;\n\tint32\tHBlankStart;\n\tint32\tHBlankEnd;\n\tint32\tHDMAInit;\n\tint32\tHDMAStart;\n\tint32\tNMITriggerPos;\n\tint32\tNextIRQTimer;\n\tint32\tIRQTriggerCycles;\n\tint32\tWRAMRefreshPos;\n\tint32\tRenderPos;\n\tbool8\tInterlaceField;\n\tint32\tDMACPUSync;\t\t// The cycles to synchronize DMA and CPU. Snes9x cannot emulate correctly.\n\tint32\tNMIDMADelay;\t// The delay of NMI trigger after DMA transfers. Snes9x cannot emulate correctly.\n\tint32\tIRQFlagChanging;\t// This value is just a hack.\n\tint32\tAPUSpeedup;\n\tbool8\tAPUAllowTimeOverflow;\n};\n\nstruct SSettings\n{\n\tbool8\tTraceDMA;\n\tbool8\tTraceHDMA;\n\tbool8\tTraceVRAM;\n\tbool8\tTraceUnknownRegisters;\n\tbool8\tTraceDSP;\n\tbool8\tTraceHCEvent;\n\tbool8\tTraceSMP;\n\n\tbool8\tSuperFX;\n\tuint8\tDSP;\n\tbool8\tSA1;\n\tbool8\tC4;\n\tbool8\tSDD1;\n\tbool8\tSPC7110;\n\tbool8\tSPC7110RTC;\n\tbool8\tOBC1;\n\tuint8\tSETA;\n\tbool8\tSRTC;\n\tbool8\tBS;\n\tbool8\tBSXItself;\n\tbool8\tBSXBootup;\n\tbool8\tMSU1;\n\tbool8\tMouseMaster;\n\tbool8\tSuperScopeMaster;\n\tbool8\tJustifierMaster;\n\tbool8\tMultiPlayer5Master;\n\tbool8\tMacsRifleMaster;\n\n\tbool8\tForceLoROM;\n\tbool8\tForceHiROM;\n\tbool8\tForceHeader;\n\tbool8\tForceNoHeader;\n\tbool8\tForceInterleaved;\n\tbool8\tForceInterleaved2;\n\tbool8\tForceInterleaveGD24;\n\tbool8\tForceNotInterleaved;\n\tbool8\tForcePAL;\n\tbool8\tForceNTSC;\n\tbool8\tPAL;\n\tuint32\tFrameTimePAL;\n\tuint32\tFrameTimeNTSC;\n\tuint32\tFrameTime;\n\n\tbool8\tStereo;\n\tbool8\tReverseStereo;\n\tbool8\tMute;\n\t/* The frontend has stated it will never need this frame's audio and that\n\t   the state left behind will be discarded or restored. The DSP declines to\n\t   run at all while this is set - see SPC_DSP::run. Distinct from Mute,\n\t   which only says the output is not wanted. */\n\tbool8\tHardDisableAudio;\n\tint32\tInterpolationMethod;\n\n\tbool8\tTransparency;\n\tint32\tMode7Hires;\t\t\t\t// 0 off, 2 = 2x, 4 = 4x Mode 7 hires\n\tint32\tMode7HiresVertical;\t\t// 2x vertical resample post-pass\n\tint32\tMode7HiresBilinear;\t\t// 0 nearest, 1 stable, 2 smooth\n\tuint8\tBG_Forced;\n\tuint16  ForcedBackdrop;\n\n\tuint32\tInitialInfoStringTimeout;\n\tuint16\tDisplayColor;\n\tbool8\tBilinearFilter;\n\tbool\tShowOverscan;\n\n\tbool8\tMulti;\n\tchar\tCartAName[PATH_MAX + 1];\n\tchar\tCartBName[PATH_MAX + 1];\n\n\tbool8\tDisableGameSpecificHacks;\n\tbool8\tBlockInvalidVRAMAccessMaster;\n\tbool8\tBlockInvalidVRAMAccess;\n\tint32\tHDMATimingHack;\n\n\tuint32\tSkipFrames;\n\tuint32\tTurboSkipFrames;\n\tuint32\tAutoMaxSkipFrames;\n\tbool8\tTurboMode;\n\tuint32\tHighSpeedSeek;\n\n\tbool8\tDumpStreams;\n\tint\t\tDumpStreamsMaxFrames;\n\n\tchar    InitialSnapshotFilename[PATH_MAX + 1];\n\tbool8\tFastSavestates;\n\n\tbool8\tApplyCheats;\n\tbool8\tNoPatch;\n\tbool8\tIgnorePatchChecksum;\n\tbool8\tIsPatched;\n\tint32\tAutoSaveDelay;\n\tbool8\tDontSaveOopsSnapshot;\n\tbool8\tUpAndDown;\n\n    bool8   SeparateEchoBuffer;\n\tuint32\tSuperFXClockMultiplier;\n    int OverclockMode;\n\tint\tOneClockCycle;\n\tint\tOneSlowClockCycle;\n\tint\tTwoClockCycles;\n\tint\tMaxSpriteTilesPerLine;\n\tint\tChannelsVolumePercent[9];\n};\n\nstruct SSNESGameFixes\n{\n\tuint8\tSRAMInitialValue;\n\tuint8\tUniracers;\n};\n\nvoid S9xMessage(int, int, const char *);\n\nextern struct SSettings\t\t\tSettings;\nextern struct SCPUState\t\t\tCPU;\nextern struct STimings\t\t\tTimings;\nextern struct SSNESGameFixes\tSNESGameFixes;\nextern char\t\t\t\t\t\tString[513];\n\n#endif\n"
+ },
+ "profiles": {
+  "anarch": {
+   "core_version": null,
+   "emulator": "Anarch",
+   "type": "libretro",
+   "version_basis": {
+    "kind": "none"
+   }
+  },
+  "beetle_psx": {
+   "core_version": "v0.9.44.1",
+   "emulator": "Beetle PSX",
+   "type": "libretro",
+   "version_basis": {
+    "artifact": "mednafen_psx_libretro v0.9.44.1.zip",
+    "kind": "package",
+    "pattern": "libretro (v[0-9.]+)\\.zip"
+   }
+  },
+  "dolphin": {
+   "core_version": "2609-437-g3aac3f0",
+   "emulator": "Dolphin",
+   "source": "https://github.com/libretro/dolphin",
+   "source_commit": "3aac3f052f733f8df2f1616843a4d2e14002ed11",
+   "type": "standalone + libretro",
+   "upstream": "https://github.com/dolphin-emu/dolphin",
+   "version_basis": {
+    "distance": 437,
+    "kind": "tag",
+    "tag": "2609"
+   }
+  },
+  "fbneo": {
+   "core_version": "v1.0.0.03",
+   "emulator": "FinalBurn Neo",
+   "source": "https://github.com/libretro/FBNeo",
+   "source_commit": "32958a89abd645ed20387c8d31d21ede3bc48161",
+   "type": "libretro",
+   "version_basis": {
+    "format": "v{1}.{2}.{3}.{4:02d}",
+    "kind": "file",
+    "path": "src/burn/version.h",
+    "pattern": "VER_MAJOR\\s+(\\d+)\\s+#define\\s+VER_MINOR\\s+(\\d+)\\s+#define\\s+VER_BETA\\s+(\\d+)\\s+#define\\s+VER_ALPHA\\s+(\\d+)"
+   }
+  },
+  "mednafen_psx": {
+   "alias_of": "beetle_psx",
+   "core_version": "v0.9.44.1",
+   "emulator": "Beetle PSX",
+   "type": "alias",
+   "version_basis": {
+    "kind": "alias",
+    "of": "beetle_psx"
+   }
+  },
+  "snes9x": {
+   "core_version": "1.63",
+   "emulator": "Snes9x",
+   "source": "https://github.com/libretro/snes9x",
+   "source_commit": "fae2fea08f74180759ef540ee94259213f503480",
+   "type": "libretro",
+   "upstream": "https://github.com/snes9xgit/snes9x",
+   "version_basis": {
+    "kind": "file",
+    "path": "snes9x.h",
+    "pattern": "#define\\s+VERSION\\s+\"([^\"]+)\""
+   }
+  }
+ }
+}

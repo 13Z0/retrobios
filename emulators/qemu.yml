@@ -7,6 +7,10 @@ profiled_date: "2026-03-25"
 source_commit: "aaba4471880587540314f82419d920431d55b769"
 upstream_commit: "d73149283205645625bfa9fe029cfb68e4c4a9ae"
 core_version: "0.1.0"
+version_basis:
+  kind: file
+  path: "ui/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "QEMU"
 cores: [qemu]
 systems: [ibm-pc, x86, x86-64, ppc, ppc64, sparc, sparc64, arm, aarch64, mips, mips64, riscv32, riscv64, s390x, m68k, alpha, hppa]

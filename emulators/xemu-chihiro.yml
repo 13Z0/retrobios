@@ -7,7 +7,12 @@ upstream: "https://github.com/xemu-project/xemu"
 profiled_date: "2026-10-20"
 source_commit: "98fbd75dd0f3088a4988abc1698feb37b844a41a"
 upstream_commit: "25e1ee2fd59a451f2ab57e825b4f8a5414220c8b"
-core_version: "0.8.134-406-g0d44d803b2"
+core_version: "v0.8.134-410-g98fbd75"
+version_basis:
+  kind: tag
+  match: "v*"
+  tag: "v0.8.134"
+  distance: 410
 display_name: "Sega - Chihiro (xemu Chihiro)"
 cores:
   - xemu-chihiro

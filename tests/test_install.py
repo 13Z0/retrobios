@@ -23,6 +23,7 @@ import unittest
 from types import SimpleNamespace
 import unittest.mock
 import urllib.error
+import zipfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -5850,6 +5851,158 @@ class KeptFilesEndToEnd(unittest.TestCase, _SyntheticTree):
                              "--no-input", "--jobs", "1")
         self.assertEqual(again.returncode, 0, again.stderr)
         self.assertEqual(len(list((self.home / install.BACKUP_DIR).iterdir())), 2)
+
+
+
+class TheListVersionIsComparedWithTheSystems(unittest.TestCase):
+    """The list says which version of the platform it was built for, and the
+    installer reads the version the system runs from the file the system
+    writes. A difference is said, never refused."""
+
+    def note(self, plat: str, listed: str, bios: Path = Path("/userdata/bios")):
+        return install.version_note(plat, bios, {"platform": plat, "version": listed})
+
+    def test_batocera_reads_the_first_word_of_its_version_file(self):
+        _device(self, {"/usr/share/batocera/batocera.version": "41 2025/01/17 10:12\n"})
+        listed, installed, text = self.note("batocera", "43.1")
+        self.assertEqual((listed, installed), ("43.1", "41"))
+        self.assertEqual(
+            text, "This list was built for Batocera 43.1, this machine runs 41. "
+            "Batocera's own BIOS check may report some files as wrong though they work.")
+        self.assertIsNone(self.note("batocera", "41"))
+
+    def test_recalbox_reads_only_a_release(self):
+        _device(self, {"/recalbox/recalbox.version": "10.0\n"})
+        self.assertEqual(self.note("recalbox", "10.1.1")[:2], ("10.1.1", "10.0"))
+        self.assertIsNone(self.note("recalbox", "10.0"))
+        for built in ("development", "2026/10/01 main (4242)"):
+            with self.subTest(built=built):
+                _device(self, {"/recalbox/recalbox.version": built})
+                self.assertIsNone(self.note("recalbox", "10.1.1"))
+
+    def test_retrobat_reads_the_folder_beside_its_bios_folder(self):
+        root = Path(_tempdir(self))
+        version = root / "system" / "version.info"
+        version.parent.mkdir()
+        version.write_text("8.3.1.1-stable-win64")
+        # The release tagged 8.3.1 ships 8.3.1.1.
+        self.assertIsNone(self.note("retrobat", "8.3.1", root / "bios"))
+        version.write_text("8.2.0-stable-win64")
+        self.assertEqual(self.note("retrobat", "8.3.1", root / "bios")[:2],
+                         ("8.3.1", "8.2.0"))
+
+    def test_lakka_and_emuelec_read_os_release(self):
+        _device(self, {}, release='NAME="Lakka"\nID="lakka"\nVERSION_ID="6.0"\n')
+        listed, installed, text = self.note("lakka", "v6.1")
+        self.assertEqual((listed, installed), ("v6.1", "6.0"))
+        self.assertIn("Lakka checks only that a file is there", text)
+        _device(self, {}, release='NAME="Lakka"\nID="lakka"\nVERSION_ID="6.1"\n')
+        self.assertIsNone(self.note("lakka", "v6.1"))
+        _device(self, {}, release='NAME="EmuELEC"\nVERSION_ID="4.7"\n')
+        self.assertEqual(self.note("emuelec", "4.8")[:2], ("4.8", "4.7"))
+        # The file of another system says nothing about this one.
+        self.assertIsNone(self.note("lakka", "v6.1"))
+
+    def test_an_unknown_version_says_nothing(self):
+        _device(self, {"/usr/share/batocera/batocera.version": "41 2025/01/17 10:12"})
+        self.assertIsNone(self.note("batocera", "1.0"))
+        self.assertIsNone(install.version_note("batocera", Path("/userdata/bios"),
+                                               {"platform": "batocera"}))
+        self.assertIsNone(self.note("retroarch", "v1.22.2"))
+        _device(self, {"/usr/share/knulli/knulli.version": "scarab 2026/05/11 10:00"})
+        self.assertIsNone(self.note("knulli", "20260511"))
+        _device(self, {})
+        self.assertIsNone(self.note("batocera", "43.1"))
+        _device(self, {"/usr/share/batocera/batocera.version": "\x1b[2J 2025/01/17"})
+        self.assertIsNone(self.note("batocera", "43.1"))
+
+    def test_a_pack_alone_gives_the_version_of_its_list(self):
+        """A handheld without network installs from the pack: its manifest.json
+        records the list's version, which generate_pack takes from the
+        install list built with the same choices."""
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import generate_pack
+        data = b"bios"
+        install_list = {"version": "43.1", "files": [
+            {"dest": "a.bin", "sha1": hashlib.sha1(data).hexdigest(), "size": 4}]}
+        pack_list = {"files": [{"path": "a.bin", "sha1": hashlib.sha1(data).hexdigest(),
+                                "size": 4}]}
+        generate_pack.annotate_pack_systems(pack_list, generate_pack.pack_systems(install_list))
+        self.assertEqual(pack_list["list_version"], "43.1")
+        pack = Path(_tempdir(self)) / "Batocera_43.1_BIOS_Pack.zip"
+        with zipfile.ZipFile(pack, "w") as archive:
+            archive.writestr("manifest.json", json.dumps(pack_list))
+            archive.writestr("a.bin", data)
+        source = install.PackSource([pack])
+        self.addCleanup(source.close)
+        self.assertEqual(source.manifest("batocera")["version"], "43.1")
+
+    def test_the_result_repeats_it_in_every_ending(self):
+        for kw in ({"downloaded": 3}, {"errors": 2}, {"downloaded": 1, "errors": 1}):
+            with self.subTest(**kw):
+                buf = io.StringIO()
+                with contextlib.redirect_stdout(buf), contextlib.suppress(SystemExit):
+                    install._report_outcome([Path("/userdata/bios")], omitted=0,
+                                            interrupted=False, notes=["Built for 43.1."],
+                                            **{"downloaded": 0, "up_to_date": 0,
+                                               "errors": 0, **kw})
+                self.assertIn("Built for 43.1.", buf.getvalue())
+
+
+class TheListVersionIsSaidBeforeAndAfter(unittest.TestCase):
+    """A RetroBat folder holding 8.2.0 and a list built for 8.3.1, through
+    the installer as a person and as the screen run it."""
+
+    DATA = b"retrobat bios" * 8
+
+    def setUp(self):
+        self.root = Path(_tempdir(self))
+        (self.root / "system").mkdir()
+        (self.root / "system" / "version.info").write_text("8.2.0-stable-win64")
+        self.bios = self.root / "bios"
+        self.bios.mkdir()
+        (self.bios / "a.bin").write_bytes(self.DATA)
+        self.list = self.root / "retrobat.json"
+        self.list.write_text(json.dumps({
+            "manifest_version": 2, "platform": "retrobat", "version": "8.3.1",
+            "files": [{"dest": "a.bin", "sha1": hashlib.sha1(self.DATA).hexdigest(),
+                       "size": len(self.DATA), "repo_path": "bios/a.bin"}],
+        }))
+
+    def run_installer(self, *options: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "retrobat",
+             "--dest", str(self.bios), "--manifest", str(self.list), "--offline",
+             "--yes", *options],
+            capture_output=True, text=True, timeout=120, check=False,
+            stdin=subprocess.DEVNULL,
+        )
+
+    SAID = ("This list was built for RetroBat 8.3.1, this machine runs 8.2.0. "
+            "RetroBat's own BIOS check may report some files as wrong though they work.")
+
+    def test_line_mode_says_it_before_the_install_and_with_the_result(self):
+        proc = self.run_installer()
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(proc.stdout.count(self.SAID), 2, proc.stdout)
+        self.assertLess(proc.stdout.index(self.SAID), proc.stdout.index("Checking existing"))
+        self.assertGreater(proc.stdout.rindex(self.SAID), proc.stdout.index("Done."))
+
+    def test_the_screen_reads_an_event(self):
+        proc = self.run_installer("--check", "--events")
+        events = [json.loads(line) for line in proc.stdout.splitlines()]
+        said = [event for event in events if event["event"] == "version"]
+        self.assertEqual(said, [{"event": "version", "platform": "retrobat",
+                                 "list_version": "8.3.1", "installed_version": "8.2.0",
+                                 "message": self.SAID}])
+        kinds = [event["event"] for event in events]
+        self.assertLess(kinds.index("version"), kinds.index("check"))
+
+    def test_the_same_version_says_nothing(self):
+        (self.root / "system" / "version.info").write_text("8.3.1.1-stable-win64")
+        proc = self.run_installer()
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertNotIn("This list was built for", proc.stdout)
 
 
 if __name__ == "__main__":

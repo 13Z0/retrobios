@@ -6,6 +6,10 @@ upstream: "https://www.fbalpha.com"
 profiled_date: "2026-03-23"
 source_commit: "e092097037d494c50d17c5144a2758d68538061b"
 core_version: "v0.2.97.29"
+version_basis:
+  kind: file
+  path: "src/burner/libretro/libretro.cpp"
+  pattern: '#define\s+FBA_VERSION\s+"([^"]+)'
 display_name: "Arcade (FB Alpha 2012 Neo Geo)"
 cores:
   - fbalpha2012_neogeo

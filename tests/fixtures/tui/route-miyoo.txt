@@ -604,7 +604,7 @@
    Copy from: none
    Preview the file list
    Show the command line
- A Open  R2 Back  Left/Right Set
+ A Open  R2 Back  <> Set
 === options 40x15
  RetroBIOS: Options
 
@@ -620,7 +620,7 @@
 
  Sets --region
 
- A Open  R2 Back  Left/Right Set
+ A Open  R2 Back  <> Set
 === options 80x24
  RetroBIOS: Options
 
@@ -658,7 +658,7 @@
    [ ] Japan
 
 
- A Tick  R2 Done  Left/Right Order
+ A Tick  R2 Done  <> Order
 === regions 40x15
  RetroBIOS: Preferred regions
 
@@ -674,7 +674,7 @@
 
 
 
- A Tick  R2 Done  Left/Right Order
+ A Tick  R2 Done  <> Order
 === regions 80x24
  RetroBIOS: Preferred regions
 
@@ -754,35 +754,6 @@
 
 
  A Filter  R2 Back
-=== preview 40x12
- RetroBIOS: Preview
-
- 4 files to download, 1.0 MB. Nothing
-   is written.
-
- missing     512.0 KB  scph5500.bin
- wrong copy  512.0 KB  scph5501.bin
- missing          4 B  pcsx/extra.bin
- missing      16.0 KB  gba_bios.bin
-
-
- A Back
-=== preview 40x15
- RetroBIOS: Preview
-
- 4 files to download, 1.0 MB. Nothing
-   is written.
-
- missing     512.0 KB  scph5500.bin
- wrong copy  512.0 KB  scph5501.bin
- missing          4 B  pcsx/extra.bin
- missing      16.0 KB  gba_bios.bin
-
-
-
-
-
- A Back
 === preview 80x24
  RetroBIOS: Preview
 
@@ -801,35 +772,6 @@
 
 
 
-
-
-
-
-
-
- A Back
-=== command 40x12
- RetroBIOS: Command line
-
- The same choice without questions:
-
- python3 install.py --platform
-   retroarch --dest
-   /home/user/.config/retroarch/system
-   --system nintendo-gba
-
-
-
- A Back
-=== command 40x15
- RetroBIOS: Command line
-
- The same choice without questions:
-
- python3 install.py --platform
-   retroarch --dest
-   /home/user/.config/retroarch/system
-   --system nintendo-gba
 
 
 
@@ -978,8 +920,8 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/
-   retrobios-backup/2026-10-23_1200
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+
  Details: /tmp/retrobios-x/install.log
 
  A Exit
@@ -991,8 +933,8 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/
-   retrobios-backup/2026-10-23_1200
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+
  Details: /tmp/retrobios-x/install.log
 
 
@@ -1032,11 +974,11 @@
      -2] Name or service not known
    Address:
      https://raw.githubusercontent.com/
-     Abdess/retrobios/main/install/
-     retroarch.json
+ 1-5 of 7
+
  > Choose another setup or folder
    Quit
- A Choose  R2 Back
+ A Choose  R2 Back  L1/R1 Scroll
 === error 40x15
  RetroBIOS: Something went wrong
 

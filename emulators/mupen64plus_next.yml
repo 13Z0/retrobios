@@ -7,6 +7,11 @@ profiled_date: "2026-03-24"
 source_commit: "15bada85906593376e8fd697f1b0b3af3a20f512"
 upstream_commit: "3be6336a1de6f32ccc4f57bf80c988163fe6bf7a"
 core_version: "2.6.0"
+version_basis:
+  kind: file
+  path: "mupen64plus-core/src/main/version.h"
+  pattern: '#define\s+MUPEN_CORE_VERSION\s+0x0?((?<=0)[0-9]|[1-9][0-9])0?((?<=0)[0-9]|[1-9][0-9])0?((?<=0)[0-9]|[1-9][0-9])\b'
+  format: "{1}.{2}.{3}"
 display_name: "Nintendo - Nintendo 64 (Mupen64Plus-Next)"
 systems: [nintendo-64, nintendo-64dd]
 cores: [mupen64plus_next, mupen64plus_next_develop, mupen64plus_next_gles3, mupen64plus_next_gles2, mupen64plus-next, mupen64plus_nx, "mupen64plus_next_alt"]

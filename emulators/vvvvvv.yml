@@ -6,6 +6,11 @@ upstream: "https://github.com/TerryCavanagh/VVVVVV"
 profiled_date: "2026-10-23"
 source_commit: "40e1ec3bbf2a990a5c600564fe312c2121178a50"
 core_version: "v2.5"
+version_basis:
+  kind: file
+  path: "desktop_version/src/ReleaseVersion.h"
+  pattern: '#define MAJOR_VERSION (\d+)\n#define MINOR_VERSION (\d+)\n#define PATCH_VERSION 0\b'
+  format: "v{1}.{2}"
 display_name: "VVVVVV"
 cores:
   - "vvvvvv"

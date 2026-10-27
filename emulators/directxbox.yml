@@ -5,6 +5,10 @@ source: "https://github.com/libretro/libretro-directxbox"
 profiled_date: "2026-03-23"
 source_commit: "8b6b806675065efa7addb833e56fff7c05193bb1"
 core_version: "alpha"
+version_basis:
+  kind: file
+  path: "src/libretro/libretro.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Microsoft - Xbox (DirectXbox)"
 cores:
   - directxbox

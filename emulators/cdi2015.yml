@@ -6,14 +6,19 @@ upstream: "https://github.com/mamedev/mame/tree/mame0160"
 profiled_date: "2026-03-23"
 source_commit: "7adbf440d5f554097f58f8c6ebb673adc4320a31"
 upstream_commit: "0147bb4cc82e642cf75151f039f240eb20989fbc"
-core_version: "0.160"
+core_version: "0.159"
+version_basis:
+  kind: file
+  path: "src/version.c"
+  pattern: '#define\s+BARE_BUILD_VERSION\s+"([^"]+)"'
 display_name: "Philips CDi (CDi 2015)"
 cores: [cdi2015]
 systems:
   - philips-cdi
 
 notes: |
-  MAME 0.160 compiled with SUBTARGET=cdi, only cdimono1 driver.
+  MAME 0.159 (version.c, the core reports 0.160) compiled with SUBTARGET=cdi,
+  only cdimono1 driver.
   Checks cdimono1.zip existence in system_dir, then game dir. Returns -2 if missing.
   cdic.bin and slave.bin are undumped 68HC05 MCUs (NO_DUMP), not in the ZIP.
 

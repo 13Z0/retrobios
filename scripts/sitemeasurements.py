@@ -18,6 +18,7 @@ its line at the last commit that touched measurements/.
 
 from __future__ import annotations
 
+import html
 import json
 import os
 import re
@@ -146,7 +147,19 @@ def index_item(entry: mr.Stored, runs: int, source: dict, profiles: dict,
         "runs": runs,
         "record_url": permalink(source["repo"], source["commit"], mr.records_path(entry.emulator), entry.line),
         "sqlite": f"downloads/measurements/{entry.emulator}.sqlite",
+        "host_short": short_host(record["host"]),
+        "setup": setup_of(record),
+        "groups": variant_groups(record),
+        "proves": proves(record["id"], profile),
+        "timing": ({"ms_per_frame": record["timing"]["ms_per_frame"]["median"],
+                    "fps": record["timing"]["fps"]["median"],
+                    "stdev": record["timing"]["ms_per_frame"]["stdev"]}
+                   if record.get("timing") else None),
     }
+
+
+def with_title(item: dict) -> dict:
+    return {**item, "title": short_title(item)}
 
 
 def build_index(stored: list[mr.Stored], source: dict | None, profiles: dict,
@@ -161,7 +174,8 @@ def build_index(stored: list[mr.Stored], source: dict | None, profiles: dict,
     for key in sorted(by_subject):
         entries = by_subject[key]
         latest = max(entries, key=lambda s: (s.record["recorded_at"], s.line))
-        items.append(index_item(latest, len(entries), source or {}, profiles, system_names or {}))
+        items.append(with_title(index_item(latest, len(entries), source or {}, profiles,
+                                           system_names or {})))
     items.sort(key=lambda item: (item["emulator"], item["date"], item["subject"]))
     return {
         "schema_version": INDEX_SCHEMA_VERSION,
@@ -589,9 +603,14 @@ def build(public: Path, root: Path = ROOT, emulators_dir: Path = ROOT / "emulato
 # --------------------------------------------------------------------------
 
 def by_emulator(index: dict) -> dict[str, list[dict]]:
+    """Each emulator's items, with the count of its findings still open."""
+    opened: dict[str, int] = {}
+    for line in (index.get("campaign") or {}).get("open") or ():
+        opened[line["emulator"]] = opened.get(line["emulator"], 0) + 1
     out: dict[str, list[dict]] = {}
     for item in index.get("items", []):
-        out.setdefault(item["emulator"], []).append(item)
+        out.setdefault(item["emulator"], []).append(
+            {**item, "open_findings": opened.get(item["emulator"], 0)})
     return out
 
 
@@ -607,52 +626,375 @@ def _short(commit: str | None) -> str:
     return f"`{commit[:12]}`" if commit else "unknown"
 
 
-def tested_item(item: dict) -> list[str]:
-    """One test: what ran, the result, the method and host beside it, the record."""
-    title = item["claim"] or f"Benchmark of {item['content'] or 'the core alone'}"
-    runs = "1 run" if item["runs"] == 1 else f"{item['runs']} runs, the latest shown"
-    core = item["core"]
-    build = f"{_text(core['library'])} at {_short(core['commit'])}" if core.get("commit") \
-        else _text(core["library"])
-    lines = [f"- **{_text(title)}**", ""]
-    if len(item.get("verdicts") or ()) > 1:
-        lines += [f"    **Result:** `{item['status']}`.", ""]
-        lines += [f"    - {_text(v['variant'])}: `{v['verdict']}`. {_text(v['detail'])}."
-                  for v in item["verdicts"]]
-        lines.append("")
+# A verdict or a comparison, as the block says it: words and a chip kind.
+RESULT_WORDS = {
+    "boots": ("works", "success"),
+    "bios_error": ("BIOS error", "danger"),
+    "crash": ("crash", "danger"),
+    "hang": ("hang", "warning"),
+    "unknown": ("unknown", "muted"),
+    "mixed": ("depends on the file", "info"),
+    "same": ("same with every file", "muted"),
+    "differs": ("depends on the file", "info"),
+    "inconclusive": ("inconclusive", "warning"),
+    "no verdict": ("no verdict", "muted"),
+    "ran": ("ran", "muted"),
+}
+# Words a subject slug spells that read as one term.
+TERMS = {"bios": "BIOS", "vcd": "Video CD", "cd": "CD", "jp": "JP", "us": "US", "eu": "EU",
+         "cr2": "CR2", "mpeg": "MPEG", "psx": "PSX", "hle": "HLE", "usa": "USA"}
+# The campaign's own check names, as the block says them.
+CHECK_NAMES = {"files": "full set", "none": "no BIOS", "negative": "wrong files",
+               "references": "reference run", "variants": "copies", "alias": "other name",
+               "path": "other path", "bench": "benchmark", "boot": "boot test", "alone": "file alone"}
+
+
+def _words(text: str) -> list[str]:
+    return re.findall(r"[a-z0-9]+", str(text or "").lower())
+
+
+def short_content(label: str | None) -> str:
+    """A content label cut to the game's name: no source prefix, no
+    edition, region or identity detail."""
+    text = str(label or "").strip()
+    if ":" in text.split("(")[0]:
+        text = text.split(":", 1)[1].strip()
+    for cut in (" - ", " (", ", "):
+        text = text.split(cut, 1)[0]
+    return text.strip()
+
+
+def short_title(item: dict) -> str:
+    """A test's name in a few words: the file it varies, the game, and what
+    the subject adds to them (a build, a region, a check of the campaign)."""
+    thing = Path(str(item.get("variable") or "")).name
+    game = short_content(item.get("content"))
+    known = set(_words(thing)) | set(_words(item.get("content"))) | set(_words(game))
+    known |= set(_words(Path(str((item.get("core") or {}).get("file") or "")).name.split("_libretro")[0]))
+    axis = []
+    for word in _words(item.get("subject")):
+        if word in known or re.fullmatch(r"[0-9a-f]{8}", word):
+            continue
+        issue = re.fullmatch(r"issue(\d+)", word)
+        word = f"issue {issue[1]}" if issue else CHECK_NAMES.get(word, TERMS.get(word, word))
+        if word not in axis:
+            axis.append(word)
+    head = ", ".join(part for part in (f"`{thing}`" if thing else "", game) if part)
+    title = f"{head} ({' '.join(axis)})" if axis and head else head or " ".join(axis)
+    return title or str(item.get("subject") or "")
+
+
+OBSERVABLE_WORDS = {"video_sha1": "video", "frame_hashes": "screens", "audio_sha1": "audio",
+                    "state_sha1": "save state", "frame_sha1": "last frame"}
+
+
+def setup_of(record: dict) -> dict:
+    """What told two runs of one test apart, each as the words a title
+    would use: the campaign check, the core build, the core options, the
+    clock, the number of files tried and what was compared."""
+    build = str(record["core"].get("build_command") or "")
+    patched = re.search(r"\b(patch|edit(?:ed|ing)?)\b", build, re.IGNORECASE)
+    named = re.search(r"\b([A-Z]+[0-9]+)\b", build) if patched else None
+    check = record.get("check") or {}
+    first = (_words(record["subject"]) or [""])[0]
+    options = {}
+    for key, value in sorted(record["inputs"].get("options", {}).items()):
+        options[key] = f"{value} region" if key.endswith("_region") else f"{key.rsplit('_', 1)[-1]} {value}"
+    observable = str(check.get("observable") or "")
+    return {
+        "check": CHECK_NAMES.get(first, ""),
+        "build": (f"{named[1]} patch" if named else "patched build") if patched else "published build",
+        "options": options,
+        "clock": "fixed clock" if "FAKETIME" in record["inputs"].get("env", {}) else "running clock",
+        "files": f"{len(record['variants'])} files" if record["kind"] == "check" else "",
+        "observable": (observable.split(":", 1)[1] if observable.startswith("state:")
+                       else OBSERVABLE_WORDS.get(observable, observable)),
+    }
+
+
+def _features(item: dict) -> dict[str, str]:
+    """A test's setup as named features, the options one by one."""
+    setup = item.get("setup") or {}
+    out = {name: str(setup.get(name) or "") for name in ("build", "clock", "files", "observable")}
+    for key, value in (setup.get("options") or {}).items():
+        out[f"option:{key}"] = value
+    return out
+
+
+def distinct_titles(items: list[dict]) -> dict[str, str]:
+    """A title per item: its game and campaign check, then what sets it
+    apart from the other tests of the same file, game and core.
+
+    A test whose setup is the common one of its group is named by its game.
+    Another adds the features where it leaves the common setup (a patched
+    build, a running clock, another region). Two titles still alike take
+    every feature that varies in the group, then the subject's own words.
+    Nothing is cut.
+    """
+    out: dict[str, str] = {}
+    peers: dict[tuple, list[dict]] = {}
+    for item in items:
+        game = short_content(item.get("content")) or short_title(item)
+        peers.setdefault((item.get("variable") or "", game, item["core"].get("file")), []).append(item)
+    for (_, game, _), group in peers.items():
+        features = [_features(item) for item in group]
+        names = sorted({name for f in features for name in f},
+                       key=lambda n: (n.startswith("option:"), ["build", "clock", "files", "observable"].index(n)
+                                      if not n.startswith("option:") else 0, n))
+        common = {}
+        for name in names:
+            values = [f.get(name, "") for f in features]
+            ranked = sorted(set(values), key=lambda v: -values.count(v))
+            # A tie has no common value: every test names its own.
+            tied = len(ranked) > 1 and values.count(ranked[0]) == values.count(ranked[1])
+            common[name] = None if tied else ranked[0]
+        varying = [n for n in names if len({f.get(n, "") for f in features}) > 1]
+
+        def title(item: dict, own: dict[str, str], every: bool, varying: list[str] = varying,
+                  common: dict[str, str] = common, game: str = game) -> str:
+            words = [(item.get("setup") or {}).get("check", "")]
+            for name in varying:
+                value = own.get(name, "")
+                if every or value != common[name]:
+                    words.append(value or f"no {name.rsplit('_', 1)[-1]}")
+            return ", ".join([game, *[w for w in words if w]])
+
+        for item, own in zip(group, features):
+            out[item["id"]] = title(item, own, every=False)
+        for every in (True, None):
+            seen: dict[str, int] = {}
+            for item in group:
+                seen[out[item["id"]]] = seen.get(out[item["id"]], 0) + 1
+            for item, own in zip(group, features):
+                if seen[out[item["id"]]] > 1:
+                    if every:
+                        out[item["id"]] = title(item, own, every=True)
+                    else:
+                        axis = short_title({**item, "variable": None, "content": None})
+                        out[item["id"]] = f"{out[item['id']]}, {axis}"
+    return out
+
+
+def short_host(host: dict) -> str:
+    """The computer as a reader names it: the CPU model and the OS."""
+    cpu = str(host.get("cpu_model") or "unknown CPU")
+    cpu = re.sub(r"\(R\)|\(TM\)|\bCPU\b|@.*$|^\d+(?:st|nd|rd|th) Gen ", "", cpu)
+    cpu = " ".join(cpu.split())
+    system = str(host.get("os") or "")
+    name = "Linux" if "Linux" in system else system.split("-")[0] or "unknown OS"
+    if "microsoft" in system.lower():
+        name += " (WSL2)"
+    return f"{cpu}, {name}"
+
+
+def variant_groups(record: dict) -> list[dict]:
+    """One entry per variant: the result group it falls in, and whether it
+    staged no file. A run that carries verdicts is grouped by verdict, a
+    comparison by the value its observable took."""
+    check = record.get("check") or {}
+    position: dict[str, int] = {}
+    result: dict[str, str] = {}
+    if all("verdict" in v for v in record["variants"]) and (
+            record["kind"] == "run" or check.get("observable") == "frame_hashes"):
+        for variant in record["variants"]:
+            position.setdefault(variant["verdict"], len(position))
+            result[variant["label"]] = RESULT_WORDS[variant["verdict"]][0]
+        groups = {v["label"]: position[v["verdict"]] for v in record["variants"]}
     else:
-        lines += [f"    **Result:** `{item['status']}`. {_text(item['statement'])}.", ""]
-    if item.get("method"):
-        lines += [f"    **Method:** {_text(item['method'])}", ""]
-    lines += [
-        f"    **Ran on:** {_text(item['host'])}, {item['date'][:10]}. Core build: {build}. "
-        f"{item['variants']} variant{'s' if item['variants'] != 1 else ''}, "
-        f"{item['repetitions']} repetition{'s' if item['repetitions'] != 1 else ''} each"
-        + (f", {item['flags']} flag{'s' if item['flags'] != 1 else ''} raised" if item["flags"] else "")
-        + ".",
-        "",
-        f"    [Full record]({item['record_url']}), {runs}.",
-        "",
+        groups = {}
+        for number, group in enumerate((check.get("result") or {}).get("groups") or ()):
+            for label in group["variants"]:
+                groups[label] = number
+                result[label] = f"result {chr(ord('A') + number % 26)}"
+    varied = check.get("variable")
+    return [{"variant": v["label"], "group": groups.get(v["label"], 0),
+             "result": result.get(v["label"], ""),
+             "absent": bool(varied) and varied in v["system_files"] and v["system_files"][varied] is None}
+            for v in record["variants"]]
+
+
+def proves(record_id: str, profile: dict) -> list[str]:
+    """The profile fields this record is evidence for, as `field of file`."""
+    out = []
+    for entry in profile.get("files") or ():
+        for name, ids in sorted((entry.get("evidence") or {}).items()):
+            if record_id in ids:
+                out.append(f"{name} of {entry.get('name')}")
+    return out
+
+
+# An MDX page reads a brace as the start of an expression, in text and in
+# an attribute alike.
+_BRACES = str.maketrans({"{": "&#123;", "}": "&#125;"})
+
+
+def _attr(value: object) -> str:
+    return html.escape(" ".join(str(value or "").split()), quote=True).translate(_BRACES)
+
+
+def _cell(value: object) -> str:
+    """Record text placed in raw HTML: escaped, code spans kept, a semicolon
+    joining two clauses ending a sentence as on the rest of the site."""
+    text = " ".join(str(value or "").split())
+    text = re.sub(r";\s+(\w)", lambda m: ". " + m[1].upper(), text)
+    return markup.inline_html(text).translate(_BRACES)
+
+
+def _dots(item: dict) -> str:
+    groups = item.get("groups") or []
+    names = "; ".join(f"{g['variant']}: {g['result']}" for g in groups)
+    dots = "".join(
+        f'<span class="rb-dot rb-dot-{g["group"] % 5}{" rb-dot-empty" if g["absent"] else ""}" '
+        f'title="{_attr(g["variant"] + ": " + g["result"])}"></span>' for g in groups)
+    return (f'<span class="rb-dots" role="img" aria-label="{_attr(f"{len(groups)} variants. {names}")}">'
+            f"{dots}</span>")
+
+
+def _chip(item: dict) -> str:
+    words, kind = RESULT_WORDS.get(item["status"], (item["status"], "muted"))
+    return f'<span class="rb-badge rb-badge-{kind}">{html.escape(words)}</span>'
+
+
+def _sentence_html(label: str, value: object, markup_ready: bool = False) -> str:
+    """One line of the details, or nothing: an empty value is never printed."""
+    text = (str(value or "") if markup_ready else _cell(value)).strip().rstrip(".")
+    return f"<p><strong>{label}:</strong> {text}.</p>" if text else ""
+
+
+def _details(item: dict) -> list[str]:
+    core = item["core"]
+    build = _cell(core["library"]) + (f" at <code>{html.escape(core['commit'][:12])}</code>"
+                                      if core.get("commit") else "")
+    reps = f"{item['variants']} variant{'s' if item['variants'] != 1 else ''}, " \
+           f"{item['repetitions']} repetition{'s' if item['repetitions'] != 1 else ''} each"
+    if item["flags"]:
+        reps += f", {item['flags']} flag{'s' if item['flags'] != 1 else ''} raised"
+    runs = "" if item["runs"] == 1 else f", {item['runs']} runs, the latest shown"
+    lines = [
+        _sentence_html("Claim", item.get("claim")),
+        _sentence_html("Result", item.get("statement")),
+        _sentence_html("Method", item.get("method")),
+        _sentence_html("Proves", ", ".join(item.get("proves") or [])),
+        _sentence_html("Ran on", item.get("host_short") or item["host"]),
+        _sentence_html("Core build", build and f"{build}. {reps}", markup_ready=True),
+        f'<p><a href="{_attr(item["record_url"])}">Full record</a>{runs}.</p>',
     ]
-    return lines
+    return [line for line in lines if line]
+
+
+def tested_counts(items: list[dict]) -> dict:
+    tests = [i for i in items if i["kind"] != "bench"]
+    return {"tests": len(items), "confirmed": sum(1 for i in items if i.get("proves")),
+            "open": max((i.get("open_findings", 0) for i in items), default=0),
+            "benchmarks": len(items) - len(tests),
+            "last": max((i["date"][:10] for i in items), default="")}
+
+
+def core_label(item: dict) -> str:
+    return Path(str(item["core"].get("file") or "")).name.split("_libretro")[0]
+
+
+def _row(item: dict, title: str, page_host: str, main_core: str) -> list[str]:
+    elsewhere = (item.get("host_short") or item["host"]) != page_host
+    title = _cell(title)
+    if core_label(item) != main_core:
+        title += f' <small>{html.escape(core_label(item))}</small>'
+    return [
+        '<details class="rb-tested-row">',
+        ("<summary>"
+         f'<span class="rb-tested-test">{title}</span>'
+         f'<span class="rb-tested-result">{_chip(item)}</span>'
+         f'<span class="rb-tested-variants">{_dots(item)}</span>'
+         f'<span class="rb-tested-date">{item["date"][:10]}'
+         + (f' <small>{_attr(item.get("host_short"))}</small>' if elsewhere else "")
+         + "</span></summary>"),
+        '<div class="rb-tested-more">',
+        *_details(item),
+        "</div>",
+        "</details>",
+    ]
+
+
+def by_file(items: list[dict]) -> list[tuple[str, list[dict]]]:
+    """The items under the file each varies, in order of first appearance;
+    the runs that vary none last."""
+    groups: dict[str, list[dict]] = {}
+    for item in items:
+        groups.setdefault(Path(str(item.get("variable") or "")).name, []).append(item)
+    return sorted(groups.items(), key=lambda kv: kv[0] == "")
+
+
+def summary_line(items: list[dict], page_host: str) -> str:
+    """N tests, the confirmed and open counts when there are any, the last
+    run and its computer."""
+    counts = tested_counts(items)
+    parts = [f"{counts['tests']} test{'s' if counts['tests'] != 1 else ''}"]
+    parts += [f"{counts[key]} {key}" for key in ("confirmed", "open") if counts[key]]
+    parts.append(f"last run {counts['last']} on {page_host}")
+    return " · ".join(parts) + "."
 
 
 def tested_section(name: str, items: list[dict]) -> list[str]:
-    """The Tested block of an emulator page, empty when nothing was recorded."""
+    """The Tested block of an emulator page, empty when nothing was recorded.
+
+    The answer first: one summary line, then the tests under the file each
+    one varies, a row per test with its result chip, a dot per variant and
+    its date. What proves it (method, claim, computer, core build, record)
+    waits in each row's details. Tests recorded before the boot oracle fold
+    under one line, and benchmarks get their own table at the end.
+    """
     if not items:
         return []
-    lines = [
-        "## Tested",
-        "",
-        f"This emulator was run in real conditions by the [core probe](../{METHOD_PAGE}). "
-        f"Each test below is the latest of its kind. "
-        f"[All measurements](../{EXPLORER_PAGE}), "
-        f"[these records as SQLite](../downloads/measurements/{name}.sqlite).",
-        "",
-    ]
-    for item in sorted(items, key=lambda i: (i["date"], i["subject"]), reverse=True):
-        lines += tested_item(item)
-    return lines
+    hosts = [i.get("host_short") or i["host"] for i in items]
+    page_host = max(sorted(set(hosts)), key=hosts.count)
+    cores = [core_label(i) for i in items]
+    main_core = max(sorted(set(cores)), key=cores.count)
+    titles = distinct_titles(items)
+    links = (f'<a href="{markup.site_href(METHOD_PAGE.removesuffix(".md") + "/")}">How</a> · '
+             f'<a href="{markup.site_href(EXPLORER_PAGE.removesuffix(".md") + "/")}">All tests</a> · '
+             f'<a href="{markup.site_href(f"downloads/measurements/{name}.sqlite")}">SQLite</a>')
+    ordered = sorted(items, key=lambda i: (i["date"], i["subject"], core_label(i)), reverse=True)
+    benches = [i for i in ordered if i["kind"] == "bench"]
+    earlier = [i for i in ordered if i["kind"] != "bench" and i["status"] == "no verdict"]
+    current = [i for i in ordered if i["kind"] != "bench" and i["status"] != "no verdict"]
+    lines = ["## Tested", "", '<div class="rb-tested">',
+             f'<p class="rb-tested-summary">{html.escape(summary_line(items, page_host))} {links}</p>']
+    if current or earlier:
+        lines.append('<div class="rb-tested-head" aria-hidden="true"><span>Test</span>'
+                     "<span>Result</span><span>Variants</span><span>Date</span></div>")
+    for file, group in by_file(current):
+        label = f"<code>{html.escape(file)}</code>" if file else "No file varied"
+        lines.append(f'<p class="rb-tested-file">{label}</p>')
+        for item in group:
+            lines += _row(item, titles[item["id"]], page_host, main_core)
+    if current:
+        lines.append('<p class="rb-tested-legend"><span class="rb-dot rb-dot-0"></span> A dot per file tried, '
+                     'the same colour for the same result. <span class="rb-dot rb-dot-0 rb-dot-empty">'
+                     "</span> No file staged.</p>")
+    if earlier:
+        lines += ['<details class="rb-tested-earlier">',
+                  f"<summary>{len(earlier)} earlier test{'s' if len(earlier) != 1 else ''}, "
+                  "before the boot oracle</summary>"]
+        for item in earlier:
+            file = Path(str(item.get("variable") or "")).name
+            title = f"{file}, {titles[item['id']]}" if file else titles[item["id"]]
+            lines += _row(item, title, page_host, main_core)
+        lines.append("</details>")
+    if benches:
+        # One line: MDX reads a table split over lines as paragraphs.
+        table = ['<table class="rb-tested-bench"><thead><tr><th>Benchmark</th><th>ms per frame</th>'
+                 "<th>fps</th><th>stdev</th><th>runs</th></tr></thead><tbody>"]
+        for item in benches:
+            timing = item.get("timing") or {}
+            title = _cell(titles[item["id"]])
+            if core_label(item) != main_core:
+                title += f' <small>{html.escape(core_label(item))}</small>'
+            table.append(
+                f'<tr><td><a href="{_attr(item["record_url"])}">{title}</a></td>'
+                f'<td>{timing.get("ms_per_frame", 0):.3f}</td><td>{timing.get("fps", 0):.1f}</td>'
+                f'<td>{timing.get("stdev", 0):.3f}</td><td>{item["repetitions"]}</td></tr>')
+        lines.append("".join([*table, "</tbody></table>"]))
+    return [*lines, "</div>", ""]
 
 
 def hosts_table(index: dict) -> list[str]:

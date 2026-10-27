@@ -7,6 +7,11 @@ profiled_date: "2026-10-27"
 source_commit: "d0d79b4928e3d32695294142784c033ce7aeda9b"
 upstream_commit: "7871f5cc6a26cf458f1adaaf54c4ccbd3ab3e338"
 core_version: "1.0.0"
+version_basis:
+  kind: tag
+  repo: upstream
+  tag: "1.0.0"
+  distance: 0
 display_name: "Atari - Lynx (Holani)"
 cores: [holani]
 systems: [atari-lynx]

@@ -8,6 +8,9 @@ version_source:
   pattern: '<title>[Vv](?:ersion\s*)?(\d+(?:\.\d+)+)'
 profiled_date: "2026-08-07"
 core_version: "1.1"
+version_basis:
+  kind: unverified
+  why: no_artifact
 display_name: "3dSen (3D NES)"
 cores:
   - 3dsen

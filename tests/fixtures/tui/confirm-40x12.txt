@@ -9,4 +9,4 @@
 
  > Install
    Back
- A/Enter Install  B/Esc Back  ? Help
+ A Install  B Back  ? Help

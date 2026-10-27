@@ -6,6 +6,10 @@ upstream: "https://github.com/libretro/libretro-samples"
 profiled_date: "2026-03-25"
 source_commit: "7c2ad112d7a5176de2191e473369668da8946b16"
 core_version: "v1"
+version_basis:
+  kind: file
+  path: "video/opengl/libretro_test_gl_compute_shaders/app/boxes.cpp"
+  pattern: 'info\.library_version\s*=\s*"([^"]+)"'
 display_name: "TestGL ComputeShaders"
 cores:
   - testgl_compute_shaders

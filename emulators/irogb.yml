@@ -5,7 +5,11 @@ source: "https://github.com/AlexSutila/IroGB"
 upstream: "https://github.com/AlexSutila/IroGB"
 profiled_date: "2026-09-03"
 source_commit: "7b6bb9b1f9cbf04e49eea0dc89c54635c2b54056"
-core_version: "1.0.0"
+core_version: "v1.0.0"
+version_basis:
+  kind: file
+  path: "src/frontend/libretro/libretro_host.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Nintendo - Game Boy / Color (IroGB)"
 cores:
   - irogb

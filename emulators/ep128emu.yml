@@ -3,6 +3,9 @@ type: alias
 alias_of: "ep128emu_core"
 profiled_date: "2026-03-30"
 core_version: "v1.2.13"
+version_basis:
+  kind: alias
+  of: "ep128emu_core"
 display_name: "Enterprise - 64/128 (ep128emu)"
 cores:
   - ep128emu

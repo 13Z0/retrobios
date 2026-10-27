@@ -7,6 +7,10 @@ profiled_date: "2026-03-24"
 source_commit: "35dabb85ff3af6825820f54090d344945f65d24e"
 upstream_commit: "8b6c163575e6ce9a0537553e0d4ed4225315955e"
 core_version: "r22"
+version_basis:
+  kind: file
+  path: "frontend/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Sony - PlayStation (PCSX1)"
 cores: [pcsx1]
 systems: [sony-playstation]
@@ -27,6 +31,9 @@ files:
     size: 524288
     validation: [size]
     source_ref: "source frontend/libretro.c:1229 (bios[0]), :1181 (size check)"
+    evidence:
+      hle_fallback: ["2026-10-27-c535a6e54730"]
+      validation: ["2026-10-27-c535a6e54730", "2026-10-27-dd7185b51e4e"]
 
   - name: "scph5501.bin"
     description: "SCPH-5501 (v3.0 11-18-96 A)"
@@ -37,7 +44,8 @@ files:
     validation: [size]
     source_ref: "source frontend/libretro.c:1229 (bios[1]), :1181 (size check)"
     evidence:
-      hle_fallback: ["2026-10-27-cfc47bbfcd02", "2026-10-27-b6d0ce4dfd7e"]
+      hle_fallback: ["2026-10-27-c535a6e54730"]
+      validation: ["2026-10-27-c535a6e54730", "2026-10-27-fb7efd4c1af6"]
 
   - name: "scph7001.bin"
     description: "SCPH-7001 (v4.1 12-16-97 A)"
@@ -47,6 +55,9 @@ files:
     size: 524288
     validation: [size]
     source_ref: "source frontend/libretro.c:1229 (bios[2]), :1181 (size check)"
+    evidence:
+      hle_fallback: ["2026-10-27-c535a6e54730"]
+      validation: ["2026-10-27-c535a6e54730", "2026-10-27-5fccbc0c830b"]
 
   # Dynamic scan fallback: after the 3 named files, find_any_bios() scans the
   # system directory for any file starting with "scph" (case-insensitive) that

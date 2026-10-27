@@ -6,6 +6,10 @@ upstream: "http://amethyst.yui.ne.jp/svn/x1/xmil/trunk/"
 profiled_date: "2026-03-25"
 source_commit: "3106aa54ffb244cca4019a6e95dacaa698781bc3"
 core_version: "0.60a"
+version_basis:
+  kind: file
+  path: "xmilver.h"
+  pattern: '#define\s+XMILVER_CORE\s+"ver\.([^"]+)"'
 display_name: "Sharp X1 (X Millennium)"
 cores:
   - x1

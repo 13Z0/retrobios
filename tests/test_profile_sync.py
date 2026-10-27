@@ -60,7 +60,27 @@ from profile_sync import (
     worst_status,
 )
 import upstream
+import version_basis
 from upstream import CompareResult, FileChange
+
+
+def _version_read_as_written(profile, cache_dir, offline, profiles=None, recompute=False):
+    """bump_commit reads core_version again at the new pin. These fixtures
+    have no forge behind them, so the version reads as written here:
+    tests/test_version_basis.py holds the reading and the refusals."""
+    stated = version_basis.declared(profile, "")
+    return [version_basis.Reading("", "file", stated, stated, "fixture", version_basis.MATCH)]
+
+
+_VERSION_AS_WRITTEN = mock.patch.object(version_basis, "check", _version_read_as_written)
+
+
+def setUpModule():
+    _VERSION_AS_WRITTEN.start()
+
+
+def tearDownModule():
+    _VERSION_AS_WRITTEN.stop()
 
 
 class TestParseSourceRef(unittest.TestCase):

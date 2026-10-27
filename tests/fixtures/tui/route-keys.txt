@@ -924,11 +924,11 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/
-   retrobios-backup/2026-10-23_1200
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+
  To put them back: python3 install.py
  1-8 of 17
- Enter Exit  Up/Down Scroll
+ Enter Exit  ^v Scroll
 === result 40x15
  RetroBIOS: Finished with errors
 
@@ -937,14 +937,14 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/
-   retrobios-backup/2026-10-23_1200
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+
  To put them back: python3 install.py
    --restore
-   /home/user/.config/retroarch/
-   retrobios-backup/2026-10-23_1200
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+
  1-11 of 17
- Enter Exit  Up/Down Scroll
+ Enter Exit  ^v Scroll
 === result 80x24
  RetroBIOS: Finished with errors
 
@@ -978,8 +978,8 @@
      -2] Name or service not known
    Address:
      https://raw.githubusercontent.com/
-     Abdess/retrobios/main/install/
-     retroarch.json
+ 1-5 of 7
+
  > Choose another setup or folder
    Quit
  Enter Choose  Esc Back

@@ -5,7 +5,11 @@ source: "https://github.com/libretro/FFmpeg"
 upstream: "https://www.ffmpeg.org/"
 profiled_date: "2026-03-23"
 source_commit: "4920879d2f09a78cdf855403c349457cee1c31da"
-core_version: "Git"
+core_version: "2.7.git"
+version_basis:
+  kind: file
+  path: "RELEASE"
+  pattern: '^(\S+)'
 display_name: "FFmpeg"
 cores:
   - ffmpeg

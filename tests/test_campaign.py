@@ -217,6 +217,7 @@ class RuleTable(unittest.TestCase):
         for zeros, half, entry in cases:
             verdict = rules.rule_validation(zeros, half, NONE_BOOTS, PRESENT, entry)
             self.assertEqual((verdict.rule, verdict.apply), ("validation_contradicted", False), entry)
+            self.assertEqual(set(verdict.value), {"content", "size"})
             self.assertFalse(rules.agrees(entry, verdict))
         self.assertIsNone(rules.rule_validation(run(rules.UNKNOWN), None, NONE_BOOTS, PRESENT,
                                                 {"name": "b"}))
@@ -238,6 +239,11 @@ class RuleTable(unittest.TestCase):
         self.assertIsNone(rules.rule_variants([run(rules.BOOTS, "a"), run(rules.BOOTS, "b")], self.ENTRY))
         verdict = rules.rule_variants([run(rules.BOOTS, "b"), run(rules.HANG, "a")], self.ENTRY)
         self.assertEqual((verdict.value, verdict.apply), (["a", "b"], False))
+
+    def test_every_settled_field_can_carry_evidence(self) -> None:
+        schema = json.loads((REPO_ROOT / "schemas" / "emulator.schema.json").read_text())
+        evidence = schema["properties"]["files"]["items"]["properties"]["evidence"]["properties"]
+        self.assertEqual(set(rules.SETTLED_FIELDS), set(evidence))
 
     def test_agreement_and_evidence(self) -> None:
         self.assertTrue(rules.agrees({"name": "a"}, rules.Verdict("r", "hle_fallback", False, "", ())))
@@ -866,6 +872,15 @@ class Findings(Workspace):
         self.c.settle("fake", self.content, self.core, 0, self.entry(), [later])
         self.assertEqual([line["status"] for line in self.lines()], ["open", "resolved"])
 
+    def test_new_evidence_writes_the_finding_again(self) -> None:
+        verdict = rules.Verdict("unsettled", "hle_fallback", None, "x", (self.RID,))
+        self.c.settle("fake", self.content, self.core, 0, self.entry(), [verdict])
+        self.c.settle("fake", self.content, self.core, 0, self.entry(), [verdict])
+        later = rules.Verdict("unsettled", "hle_fallback", None, "x", ("2026-10-28-000000000000",))
+        self.c.settle("fake", self.content, self.core, 0, self.entry(), [later])
+        self.assertEqual([line["evidence"] for line in self.lines()],
+                         [[self.RID], ["2026-10-28-000000000000"]])
+
     def test_never_opened_is_flagged(self) -> None:
         verdict = rules.rule_never_opened(self.entry(1), [self.RID], "Fake Game (World)")
         self.c.settle("fake", self.content, self.core, 1, self.entry(1), [verdict])
@@ -1015,6 +1030,11 @@ class FakeCorePasses(Workspace):
 
     @classmethod
     def setUpClass(cls) -> None:
+        # These passes prove the cores run sandboxed. Without a working bwrap
+        # the campaign refuses, and the cause is named here instead of a KeyError.
+        _prefix, isolation = campaign.core_probe.sandbox_argv([Path(tempfile.gettempdir())])
+        if isolation != campaign.core_probe.SANDBOX:
+            raise unittest.SkipTest(f"no sandbox here ({isolation}): install bubblewrap")
         TMP.mkdir(parents=True, exist_ok=True)
         cls.build = Path(tempfile.mkdtemp(dir=TMP))
         source = cls.build / "fake.c"
@@ -1125,6 +1145,52 @@ class FakeCorePasses(Workspace):
         self.assertEqual({v["verdict"] for r in records for v in r["variants"]}, {"hang"})
         self.assertEqual({rep["verdict_evidence"]["rule"] for r in records for v in r["variants"]
                           for rep in v["repetitions"]}, {"timeout"})
+
+    def test_two_passes_interleave_their_runs(self) -> None:
+        """Each core_probe takes the host lock for its own run: a pass never
+        holds it between runs, so a second pass runs between them."""
+        import threading
+        import time
+
+        spans: dict[str, list[tuple[float, float]]] = {"a": [], "b": []}
+        other = Workspace(methodName="setUp")
+        other.setUp()
+        self.addCleanup(other.tearDown)
+        passes = []
+        for name, workspace in (("a", self), ("b", other)):
+            c = FakeCorePasses.passing(workspace, "hle") if workspace is self else self.passing_in(workspace)
+            real = c.host.run
+
+            def timed(argv: list[str], *args: object, _name: str = name, _real=real, **kwargs: object):
+                start = time.monotonic()
+                try:
+                    return _real(argv, *args, **kwargs)
+                finally:
+                    spans[_name].append((start, time.monotonic()))
+            c.host.run = timed
+            passes.append(c)
+        threads = [threading.Thread(target=c.run, args=(set(), None)) for c in passes]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        ends = {name: sorted(end for _, end in runs) for name, runs in spans.items()}
+        self.assertGreater(len(ends["a"]), 2)
+        self.assertGreater(len(ends["b"]), 2)
+        # Neither pass finished all its runs before the other started finishing its own.
+        self.assertLess(ends["b"][0], ends["a"][-1])
+        self.assertLess(ends["a"][0], ends["b"][-1])
+
+    def passing_in(self, workspace: Workspace) -> campaign.Campaign:
+        workspace.put_game()
+        host = campaign.Host(loadavg=lambda: (0.0, 0.0, 0.0), free_gb=lambda path: 500.0,
+                             cpu_count=1_000_000)
+        c = campaign.Campaign(workspace.paths, campaign.Settings(
+            check_repeat=2, probe_timeout=30, delays=(1,), echo=False), host,
+            lock_path=workspace.tmp / "auto.lock")
+        so = self.cores["hle"]
+        c.unit_cores = lambda *a, **k: [campaign.Core("fake", so, campaign.file_sha256(so))]
+        return c
 
     def test_missing_content_leaves_the_checks_pending(self) -> None:
         c = self.passing(romfetch=str(self.tmp / "no-romfetch"))

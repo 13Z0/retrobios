@@ -6,7 +6,11 @@ source_branch: libretro
 upstream: "https://github.com/picocomputer/rp6502"
 profiled_date: "2026-09-17"
 source_commit: "02bfc3cbc9b2700795ce0a40fb49b413784cb832"
-core_version: "0.33"
+core_version: "v0.33"
+version_basis:
+  kind: tag
+  tag: "v0.33"
+  distance: 0
 display_name: "Picocomputer 6502"
 cores:
   - rp6502

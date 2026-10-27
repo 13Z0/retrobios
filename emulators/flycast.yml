@@ -5,7 +5,11 @@ source: "https://github.com/flyinghead/flycast"
 logo: "https://raw.githubusercontent.com/flyinghead/flycast/master/shell/linux/flycast.png"
 profiled_date: "2026-10-21"
 source_commit: "e88b0ced2243de137bcccac0072f0c1dd00d41bd"
-core_version: "Git"
+core_version: "v2.7-90-ge88b0ce"
+version_basis:
+  kind: tag
+  tag: "v2.7"
+  distance: 90
 display_name: "Sega - Dreamcast/Naomi (Flycast)"
 cores:
   - flycast

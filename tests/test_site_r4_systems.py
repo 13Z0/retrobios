@@ -149,7 +149,8 @@ class TheNeoGeoOpensOnItsSet(unittest.TestCase):
         pairs = gs._install_pairs([("batocera", "snk-neogeo")], "a" * 40, consumers)
         self.assertIn(("retroarch", "arcade"), pairs)
         block = "\n".join(gs._console_install_block("Neo Geo", pairs))
-        self.assertIn("# RetroArch\n", block)
+        self.assertIn("<li>RetroArch: <code", block)
+        self.assertIn("--platform retroarch --system arcade</code>", block)
 
     def test_the_built_section(self) -> None:
         html = _page(DIST / "systems" / "snk" / "index.html")

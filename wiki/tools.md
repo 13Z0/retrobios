@@ -585,6 +585,21 @@ match no entry. Both land in the `--json` report (`new_files`, with
 since the pin or an undeclared hash makes the profile stale. `--tree-diff`
 shows added, removed and renamed files in the directories the refs point at.
 
+`core_version` is the version of the code at the pin, and `version_basis`
+says where it is read: a pattern in one file (`file`), the nearest tag and
+the commits after it (`tag`, written in git describe's form), the profile an
+alias follows (`alias`), an artefact read outside any source tree
+(`package`), or `none` when the code states nothing, with `core_version`
+null. `--verify-version` reads it again at the pin and exits 1 on a
+difference or a missing basis. `--set-version` writes what the code states.
+A pin advance reads the version at the new pin in the same write and is
+refused when it cannot: a package version moves by hand.
+
+```bash
+python scripts/profile_sync.py --all --verify-version --changed-only
+python scripts/profile_sync.py --emulator snes9x --set-version
+```
+
 Branch tips, tags and releases are cached for six hours. `--fresh` asks the
 forges again for them, which matters right after an upstream commit or a
 hand-set pin: a tip cached before the pin reads as behind it. It is refused
@@ -855,6 +870,15 @@ python scripts/core_probe.py check --core core.so --content disc.cue \
   --observable frame_hashes --claim "..." --method "..." --repeat 2 --record
 ```
 
+One measurement runs at a time on the host. core_probe takes the host lock
+itself, per run: `~/.local/state/retrobios/probe.lock` (`RETROBIOS_PROBE_LOCK`
+names another file), from its load check to its record, released when the run
+ends. A run that finds it held waits and says so. Never wrap a whole pass in
+`flock`: a pass of many runs then holds the host for hours, while called
+directly its runs interleave with everyone else's. A caller that holds the
+lock around one core_probe call sets `RETROBIOS_PROBE_LOCK_HELD=1`. The tests
+use their own lock file.
+
 Each repetition runs in a fresh process under `strace -f -e trace=openat,open`
 when strace is installed. The worker starts with an empty environment and
 clears its own before it loads the core, keeping only the `--env` values.
@@ -1046,6 +1070,7 @@ checks. The campaign's own `evidence:` writes do not count as a profile change.
 | Guard | Rule |
 |-------|------|
 | Lock | The host-wide autorun lock. Under the `campaign` job, autorun holds it and says so with `RETROBIOS_AUTO_LOCK_HELD` |
+| Probe lock | Not held by the pass: each core_probe it starts takes the host probe lock for its own run, so the pass and other measurements (pack_probe, a core_probe loop) interleave. Two campaign passes still exclude each other through the automation lock, since they share `.cache/campaign/state.json`. Do not wrap `campaign.py run` in `flock` |
 | Environment | `core_probe.py`, git and `make` get autorun's allowlist, romfetch the same plus its `ROMFETCH_*` settings. None sees a token or a password |
 | Sandbox | Fails closed: without a working bubblewrap the pass is `refused` (exit 3) and nothing third-party runs, every probe is started with `--require-sandbox`, and a build is refused. `--allow-unsandboxed` overrides. Under autorun the refusal raises the `job:campaign` alert |
 | Load | Before each run, waits while the 1-minute load is above a quarter of the CPUs, up to `--max-load-wait` seconds, then the pass stops as `paused` |

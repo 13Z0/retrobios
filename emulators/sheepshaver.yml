@@ -6,6 +6,11 @@ upstream: "https://github.com/cebix/macemu"
 profiled_date: "2026-08-08"
 source_commit: "96e512bd6376e78a2869f16dcc8a9028bce5ee72"
 core_version: "2.4"
+version_basis:
+  kind: file
+  path: "SheepShaver/src/include/version.h"
+  pattern: 'const int VERSION_MAJOR = (\d+);\s*\nconst int VERSION_MINOR = (\d+);'
+  format: "{1}.{2}"
 display_name: "Apple - Macintosh PowerPC (SheepShaver)"
 cores:
   - sheepshaver

@@ -1,7 +1,8 @@
 // Progressive enhancement of the generated pages: table captions, filters
 // and keyboard scrolling, the hash lookup on files/ (a pasted hash or a file
 // hashed on this device), moved cards, a hash typed in the search, glossary
-// terms on a tap, the OS tab of the visitor's system, the current page in
+// terms on a tap, the OS tab of the visitor's system, the setup picked in an
+// install box, copy buttons on hashes, the current page in
 // the sidebar, and the 404 page's hints.
 // Which tables stack on a phone is decided when the page is built
 // (src/plugins/rehype-stack-tables.mjs), so the layout is right on first paint.
@@ -87,9 +88,19 @@ const setScrollable = (table: HTMLTableElement, overflows: boolean) => {
 // The filter box above a long table is written when the page is built
 // (src/plugins/rehype-stack-tables.mjs), so the table never moves down once
 // drawn. Here it only filters.
-const filterTable = (table: HTMLTableElement) => {
+// A table folded in a closed block can have its box above the block
+// (the provenance lists): typing opens the block on the rows it keeps.
+const filterControls = (table: HTMLTableElement) => {
 	const controls = table.previousElementSibling;
-	if (!controls?.matches('.rb-table-filter')) return;
+	if (controls?.matches('.rb-table-filter')) return controls;
+	const block = table.closest('details');
+	return block?.previousElementSibling?.matches('.rb-table-filter') ? block.previousElementSibling : null;
+};
+
+const filterTable = (table: HTMLTableElement) => {
+	const controls = filterControls(table);
+	if (!controls) return;
+	const block = controls.nextElementSibling instanceof HTMLDetailsElement ? controls.nextElementSibling : null;
 	const input = controls.querySelector('input');
 	const count = controls.querySelector('.rb-table-filter-count');
 	if (!input || !count || input.dataset.rbWired) return;
@@ -100,6 +111,7 @@ const filterTable = (table: HTMLTableElement) => {
 	input.addEventListener('input', () => {
 		searchable ??= rows.map((row) => ({ row, text: row.textContent!.normalize('NFKD').toLocaleLowerCase() }));
 		const query = input.value.trim().normalize('NFKD').toLocaleLowerCase();
+		if (block && query) block.open = true;
 		let visible = 0;
 		for (const entry of searchable) {
 			entry.row.hidden = !!query && !entry.text.includes(query);
@@ -171,6 +183,9 @@ const enhanceTables = () => {
 		});
 	if (document.readyState === 'complete') start();
 	else addEventListener('load', start, { once: true });
+	// A box above a closed block is typed in before its table is ever near
+	// the screen: it is wired now.
+	for (const table of tables) if (table.closest('details:not([open])') && filterControls(table)) filterTable(table);
 	let timer = 0;
 	addEventListener('resize', () => {
 		clearTimeout(timer);
@@ -743,6 +758,18 @@ const followMovedCard = () => {
 	if (match && !target) location.replace(new URL(`files/?sha1=${match[1]}`, siteRoot()));
 };
 
+// A link to a card folded in a table row (emulators with many entries)
+// opens its row. Chrome does it on its own. Where the browser left the
+// target hidden, the same address is followed again once the row is open,
+// so the browser brings the card into view as for any link.
+const openTargetBlock = () => {
+	const id = decodeURIComponent(location.hash.slice(1));
+	const block = id ? document.getElementById(id)?.closest('details') : null;
+	if (!block || block.open) return;
+	block.open = true;
+	location.replace(location.hash);
+};
+
 // The site search holds no hashes. A hash typed in it gets "Look up this
 // hash" as its first result, and Enter opens the lookup. The pages Pagefind
 // finds for the same characters (a file name that holds them, a word that
@@ -931,6 +958,251 @@ const glossaryTerms = () => {
 	document.addEventListener('click', close);
 };
 
+// Copy buttons. A system card's hash cell (dd.rb-hash) gets one: in its
+// fold, each hash copies itself, and the short SHA1 shown open copies the
+// whole value, the fold's first hash. An emulator card's hash and each
+// command of an install box's list carry data-copy: the value to copy, or
+// empty when the text shown is the value. The buttons are added where the
+// reader sees the values, and when a fold opens for the ones inside it, so a
+// page of 250 closed folds holds none of them.
+// A platform row's button carries its own data-copy: it is not a value to
+// give a button.
+const COPYABLE = '[data-copy]:not(button), .rb-sys-file dd.rb-hash';
+
+// What the button copies, in words: the label of its grid row, else the
+// words before the value ("MD5: ", ", SHA1 ", "RetroArch: "), else the
+// label its list item opens on.
+const copyLabel = (value: HTMLElement) => {
+	const term = (value.tagName === 'DD' ? value : value.closest('dd'))?.previousElementSibling;
+	if (term?.tagName === 'DT') return term.textContent?.trim() ?? '';
+	const before = (value.previousSibling?.textContent ?? '').replace(/[:\s]+$/, '').split(',').pop()?.trim();
+	if (before) return before;
+	return /^\s*([^:]+):/.exec(value.closest('li')?.textContent ?? '')?.[1]?.trim() ?? '';
+};
+
+// The value's own text, without the button a cell holds.
+const shownText = (value: Element) =>
+	[...value.childNodes].filter((node) => !(node instanceof HTMLButtonElement)).map((node) => node.textContent).join('').trim();
+
+const copyText = (value: HTMLElement) => {
+	const own = value.dataset.copy;
+	// An MDX page writes an empty attribute as "true".
+	if (own && own !== 'true') return own;
+	if (value.matches('dd.rb-hash') && !value.closest('details')) {
+		const whole = value.closest('.rb-sys-file')?.querySelector('details dd.rb-hash');
+		if (whole) return shownText(whole);
+	}
+	return shownText(value);
+};
+
+const addCopyButtons = (root: ParentNode) => {
+	for (const value of root.querySelectorAll<HTMLElement>(COPYABLE)) {
+		if (value.hasAttribute('data-copy-ready') || value.closest('details:not([open])')) continue;
+		value.setAttribute('data-copy-ready', '');
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'rb-copy';
+		button.textContent = 'Copy';
+		// The word that replaces "Copy" is read out.
+		button.setAttribute('aria-live', 'polite');
+		const label = copyLabel(value);
+		button.setAttribute('aria-label', label ? `Copy ${label}` : 'Copy');
+		// A grid cell holds its button, a value elsewhere is followed by it.
+		if (value.tagName === 'DD') value.append(button);
+		else value.after(button);
+	}
+};
+
+const copyButtons = () => {
+	if (!document.querySelector(`${COPYABLE}, button.rb-copy[data-copy]`)) return;
+	addCopyButtons(document);
+	document.addEventListener('toggle', (event) => {
+		const fold = event.target as HTMLDetailsElement;
+		if (fold.open) addCopyButtons(fold);
+	}, true);
+	document.addEventListener('click', async (event) => {
+		const button = (event.target as Element).closest?.<HTMLButtonElement>('button.rb-copy');
+		if (!button) return;
+		// A platform row's button shows a short hash and copies the whole one
+		// from data-copy: its text stays, a mark shows for two seconds.
+		const own = button.dataset.copy;
+		if (own && own !== 'true') {
+			try {
+				await navigator.clipboard.writeText(own);
+				let status = document.querySelector<HTMLElement>('#rb-copy-status');
+				if (!status) {
+					status = document.createElement('p');
+					status.id = 'rb-copy-status';
+					status.className = 'rb-visually-hidden';
+					status.setAttribute('role', 'status');
+					document.body.append(status);
+				}
+				status.textContent = `Copied ${own}`;
+				button.dataset.copied = '';
+				window.setTimeout(() => delete button.dataset.copied, 2000);
+			} catch {
+				// No clipboard: the full value is in the row's details.
+			}
+			return;
+		}
+		const value = button.parentElement?.matches(COPYABLE)
+			? button.parentElement
+			: (button.previousElementSibling as HTMLElement | null);
+		if (!value?.matches(COPYABLE)) return;
+		try {
+			await navigator.clipboard.writeText(copyText(value));
+			button.textContent = 'Copied';
+		} catch {
+			// No clipboard (an insecure page, a refused permission): the value
+			// is selected, for Ctrl+C.
+			const range = document.createRange();
+			range.selectNodeContents(value.tagName === 'DD' && value.firstChild ? value.firstChild : value);
+			getSelection()?.removeAllRanges();
+			getSelection()?.addRange(range);
+			button.textContent = 'Selected';
+		}
+		window.setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+	});
+};
+
+// A system's install box: one command, for the setup picked in its list,
+// under the site's OS tabs. The box is built with the first setup's command;
+// the choice rewrites the options of each command and its copy text, and is
+// remembered for the next box and the next page. Without this script the
+// picker stays hidden and the list of every command shows instead.
+const SETUP_KEY = 'rb-setup';
+
+const savedSetup = (): string | null => {
+	try {
+		return localStorage.getItem(SETUP_KEY);
+	} catch {
+		// Storage refused (a private window, blocked site data): no saved setup.
+		return null;
+	}
+};
+
+// The colours a flag and a value take in the highlighted sh command, read
+// from the box's own first command so a rewritten one looks the same.
+type ArgStyles = { flag: string; value: string; space: string };
+
+const argStyles = (block: Element): ArgStyles | null => {
+	const leaves = [...block.querySelectorAll<HTMLElement>('pre[data-language="sh"] .ec-line .code span')].filter((span) => !span.children.length);
+	const at = leaves.findIndex((leaf) => leaf.textContent === '--platform');
+	if (at < 0) return null;
+	const value = leaves.slice(at + 1).find((leaf) => leaf.textContent?.trim());
+	const space = leaves.find((leaf) => leaf.textContent === ' ');
+	return { flag: leaves[at].getAttribute('style') ?? '', value: value?.getAttribute('style') ?? '', space: space?.getAttribute('style') ?? '' };
+};
+
+// Rewrites the options of a highlighted command, from " --platform": the
+// installer's own part keeps its colours, the options take *styles*.
+const setCommandArgs = (frame: Element, args: string, styles: ArgStyles | null) => {
+	const line = frame.querySelector<HTMLElement>('.ec-line .code');
+	if (!line) return;
+	const text = line.textContent ?? '';
+	const start = text.indexOf(' --platform ');
+	if (start < 0) return;
+	const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+	let seen = 0;
+	const range = document.createRange();
+	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+		const length = node.textContent?.length ?? 0;
+		if (seen + length > start) {
+			range.setStart(node, start - seen);
+			break;
+		}
+		seen += length;
+	}
+	range.setEndAfter(line.lastChild!);
+	range.deleteContents();
+	for (const part of ` ${args}`.split(/(\s+)/)) {
+		if (!part) continue;
+		const span = document.createElement('span');
+		const space = /^\s+$/.test(part);
+		const style = space ? styles?.space : part.startsWith('-') ? styles?.flag : styles?.value;
+		if (style) span.setAttribute('style', style);
+		span.textContent = part;
+		// The theme colours a span that has no class: a word kept whole is
+		// wrapped, as the build wraps it (ec-unbroken-tokens.mjs).
+		if (space) {
+			line.append(span);
+		} else {
+			const whole = document.createElement('span');
+			whole.className = 'rb-nb';
+			whole.append(span);
+			line.append(whole);
+		}
+	}
+	frame.querySelector('.copy button')?.setAttribute('data-code', text.slice(0, start) + ` ${args}`);
+};
+
+const installPickers = () => {
+	const blocks = [...document.querySelectorAll<HTMLElement>('[data-rb-install]')];
+	if (!blocks.length) return;
+	const pick = (setup: string | null) => {
+		for (const block of blocks) {
+			const select = block.querySelector('select');
+			if (!select) continue;
+			if (setup && [...select.options].some((option) => option.value === setup)) select.value = setup;
+			const option = select.selectedOptions[0];
+			if (!option) continue;
+			const styles = (block as HTMLElement & { rbStyles?: ArgStyles | null }).rbStyles;
+			for (const frame of block.querySelectorAll('.expressive-code')) {
+				const shell = frame.querySelector('pre')?.dataset.language === 'powershell' ? 'ps' : 'sh';
+				setCommandArgs(frame, option.dataset[shell] ?? '', styles ?? null);
+			}
+		}
+	};
+	for (const block of blocks) {
+		(block as HTMLElement & { rbStyles?: ArgStyles | null }).rbStyles = argStyles(block);
+		block.hidden = false;
+		const list = block.nextElementSibling;
+		if (list instanceof HTMLDetailsElement && list.classList.contains('rb-install-all')) list.open = false;
+		block.querySelector('select')?.addEventListener('change', (event) => {
+			const setup = (event.target as HTMLSelectElement).value;
+			try {
+				localStorage.setItem(SETUP_KEY, setup);
+			} catch {
+				// Storage refused: the choice holds for this page only.
+			}
+			pick(setup);
+		});
+	}
+	pick(savedSetup());
+};
+
+// A platform's file list (div.rb-files) is rows of a details and its copy
+// button. The filter box written above a long one hides both of a row.
+const filterFiles = () => {
+	for (const list of document.querySelectorAll<HTMLElement>('.rb-table-filter + .rb-files')) {
+		const controls = list.previousElementSibling!;
+		const input = controls.querySelector('input');
+		const count = controls.querySelector('.rb-table-filter-count');
+		if (!input || !count) continue;
+		const rows = [...list.querySelectorAll<HTMLElement>(':scope > details.rb-file')];
+		let searchable: { row: HTMLElement; text: string }[] | null = null;
+		input.addEventListener('input', () => {
+			searchable ??= rows.map((row) => ({
+				row,
+				text: `${row.querySelector('summary')?.textContent ?? ''} ${row.nextElementSibling?.matches('button.rb-copy') ? row.nextElementSibling.textContent : ''}`
+					.normalize('NFKD')
+					.toLocaleLowerCase(),
+			}));
+			const query = input.value.trim().normalize('NFKD').toLocaleLowerCase();
+			let visible = 0;
+			for (const { row, text } of searchable) {
+				row.hidden = !!query && !text.includes(query);
+				const button = row.nextElementSibling;
+				if (button?.matches('button.rb-copy')) (button as HTMLElement).hidden = row.hidden;
+				if (!row.hidden) visible += 1;
+			}
+			count.textContent = query
+				? `${visible.toLocaleString('en')} of ${rows.length.toLocaleString('en')} rows`
+				: `${rows.length.toLocaleString('en')} rows`;
+		});
+	}
+};
+
 // The 404 page: a search button, and the list a moved page belongs to.
 const notFound = () => {
 	document.querySelector('[data-rb-open-search]')?.addEventListener('click', () => {
@@ -948,10 +1220,15 @@ const notFound = () => {
 
 resolveFileAddress();
 followMovedCard();
+openTargetBlock();
+addEventListener('hashchange', openTargetBlock);
 enhanceTables();
 breakPaths();
 hashSearch();
 glossaryTerms();
+copyButtons();
+filterFiles();
 osTabs();
+installPickers();
 showCurrentPage();
 notFound();

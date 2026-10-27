@@ -5,7 +5,11 @@ source: "https://github.com/libretro/beetle-psx-libretro"
 upstream: "https://mednafen.github.io/"
 profiled_date: "2026-03-29"
 source_commit: "7fea57a541abb39b8c5035b6261c3e70962d221b"
-core_version: "v0.9.44.1"
+core_version: "0.9.44.1"
+version_basis:
+  kind: file
+  path: "libretro_options.h"
+  pattern: '#define\s+MEDNAFEN_CORE_SETVERSION\s+"([^"]+)"'
 display_name: "Sony - PlayStation (Beetle PSX)"
 cores: [beetle_psx, mednafen_psx, mednafen_psx_hw, "beetle-psx"]
 systems: [sony-playstation]
@@ -85,7 +89,7 @@ files:
       - "SCPH-7003.BIN"
     evidence:
       aliases: ["2026-10-27-48269ae11777", "2026-10-27-ba941702c6c2", "2026-10-27-fc95254312c0", "2026-10-27-5a191f2b540b", "2026-10-27-12ba45024f8c", "2026-10-27-a7c1a301bdb0"]
-      hle_fallback: ["2026-10-27-f2ecd7ed71b5", "2026-10-27-ca1f49599ca1"]
+      hle_fallback: ["2026-10-27-6e97b657aca7", "2026-10-27-699ca140a270", "2026-10-27-ec1ab64f96d3", "2026-10-27-47c3dcceed98"]
 
   # -- Region: Europe (REGION_EU) --
 

@@ -6,6 +6,10 @@ upstream: "https://github.com/ZQuestClassic/ZQuestClassic"
 source_commit: "4ef771c64666812a1359b8f34fe4d7803868ba13"
 profiled_date: "2026-10-20"
 core_version: "2.55.17"
+version_basis:
+  kind: tag
+  tag: "2.55.17"
+  distance: 0
 display_name: "Zelda Classic (ZQuest Classic)"
 cores: [zquestclassic]
 systems: [zeldaclassic]

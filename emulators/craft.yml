@@ -5,7 +5,11 @@ source: "https://github.com/libretro/Craft"
 upstream: "https://github.com/fogleman/Craft"
 profiled_date: "2026-03-23"
 source_commit: "f30e7b4b1d1406c750a504583adf0cc88449a699"
-core_version: "v1"
+core_version: "v1.0-353-gf30e7b4"
+version_basis:
+  kind: tag
+  tag: "v1.0"
+  distance: 353
 display_name: "Minecraft (Craft)"
 cores: [craft]
 systems: []

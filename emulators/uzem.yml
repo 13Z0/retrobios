@@ -7,6 +7,10 @@ profiled_date: "2026-03-25"
 source_commit: "d991ee94547c8294abc1c4cb73d63116aa58b5bc"
 upstream_commit: "eb02e5f69212983e778a2ca87b198f22071303b8"
 core_version: "v2.0"
+version_basis:
+  kind: file
+  path: "uzem.h"
+  pattern: '#define\s+VERSION\s+"([^"]+)'
 display_name: "Uzebox (Uzem)"
 cores:
   - uzem

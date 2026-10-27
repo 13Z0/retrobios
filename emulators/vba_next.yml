@@ -6,7 +6,11 @@ upstream: "https://github.com/visualboyadvance-m/visualboyadvance-m"
 upstream_commit: "46cc9f6bda114737e99304a4bd8427c038e63084"
 profiled_date: "2026-03-25"
 source_commit: "788192f215ad0a1413f1625b40ebba3423fa0ade"
-core_version: "SVN"
+core_version: "v1.0.2"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "Nintendo - Game Boy Advance (VBA Next)"
 cores:
   - vba_next

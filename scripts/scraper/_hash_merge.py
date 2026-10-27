@@ -158,7 +158,12 @@ def merge_fbneo_profile(
     profile = _load_yaml(profile_path)
     hashes = _load_json(hashes_path)
 
-    profile["core_version"] = hashes.get("version", profile.get("core_version"))
+    # core_version stays as written: it is the version of the code at the
+    # profile's own pin, read through version_basis (profile_sync
+    # --set-version). The hashes come from finalburnneo/FBNeo's tip, a
+    # revision the libretro/FBNeo pin does not name: writing its version
+    # left fbneo, fbneo_cps12 and fbneo_neogeo on a release their pin
+    # never was.
 
     files = profile.get("files", [])
     archive_files, non_archive = _split_files(files, lambda f: "archive" in f)
@@ -1060,17 +1065,16 @@ def _backup_and_write_fbneo(path: str, data: dict, hashes: dict) -> None:
     """Write merged FBNeo profile using text-based patching.
 
     FBNeo profiles have individual ROM entries with archive: field.
-    Patches core_version, the content values of existing entries that
-    changed, and appends new ROM entries. Advancing core_version alone left
-    a profile claiming a release whose crc32 it did not carry. Comments and
-    curated source_refs stay as written.
+    Patches the content values of existing entries that changed and
+    appends new ROM entries. core_version is the pin's, never written here.
+    Comments and curated source_refs stay as written.
     """
     p = Path(path)
     backup = p.with_suffix(PROFILE_BACKUP_SUFFIX)
     shutil.copy2(p, backup)
 
     original = p.read_text(encoding="utf-8")
-    patched = _patch_core_version(original, data.get("core_version", ""))
+    patched = original
 
     # Identify new ROM entries by comparing parsed data keys, not text search
     existing_data = yaml_load(original) or {}

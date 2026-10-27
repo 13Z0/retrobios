@@ -6,6 +6,10 @@ upstream: "https://github.com/hissorii/px68k"
 profiled_date: "2026-03-25"
 source_commit: "5510637a4c0a08ac0302087ea498093dcc3e9d17"
 core_version: "0.15+"
+version_basis:
+  kind: file
+  path: "libretro.c"
+  pattern: '#define\s+PX68K_VERSION\s+"([^"]+)'
 display_name: "Sharp - X68000 (PX68k)"
 cores:
   - px68k

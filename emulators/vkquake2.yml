@@ -6,6 +6,10 @@ upstream: "https://github.com/id-Software/Quake-2"
 profiled_date: "2026-10-23"
 source_commit: "6763f207229f97cffabb6fc2da72017a794b139b"
 core_version: "1.5.10"
+version_basis:
+  kind: tag
+  tag: "1.5.10"
+  distance: 0
 display_name: "Quake II (vkQuake2)"
 cores: ["vkquake2"]
 systems: [quake2, xatrix, rogue, ctf]

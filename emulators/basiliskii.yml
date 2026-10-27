@@ -5,6 +5,11 @@ upstream: "https://github.com/cebix/macemu"
 profiled_date: "2026-08-08"
 source_commit: "96e512bd6376e78a2869f16dcc8a9028bce5ee72"
 core_version: "1.0"
+version_basis:
+  kind: file
+  path: "BasiliskII/src/include/version.h"
+  pattern: 'const int VERSION_MAJOR = (\d+);\s*\nconst int VERSION_MINOR = (\d+);'
+  format: "{1}.{2}"
 display_name: "Apple - Macintosh 68k (Basilisk II)"
 cores:
   - basiliskii

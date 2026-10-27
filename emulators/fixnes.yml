@@ -7,6 +7,10 @@ profiled_date: "2026-03-23"
 source_commit: "72af6c6fd9d3b6c23d334ba7385b6a09225f2276"
 prose_written_at: "72af6c6fd9d3b6c23d334ba7385b6a09225f2276"
 core_version: "Alpha v1.3.1"
+version_basis:
+  kind: file
+  path: "main.c"
+  pattern: 'VERSION_STRING\s*=\s*"fixNES ([^"]+)"'
 display_name: "Nintendo - NES / Famicom (fixNES)"
 cores:
   - fixnes

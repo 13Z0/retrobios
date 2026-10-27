@@ -6,6 +6,10 @@ upstream: "https://github.com/autch/piece-emu"
 profiled_date: "2026-09-17"
 source_commit: "08ec4b45176e8df0d6d6f67e56b87e847cd64a65"
 core_version: "0.1"
+version_basis:
+  kind: file
+  path: "src/libretro/piece_libretro.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Aquaplus - P/ECE (piece-emu)"
 cores:
   - piece

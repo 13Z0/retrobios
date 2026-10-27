@@ -158,16 +158,13 @@ class EachEntryNamesItsFile(unittest.TestCase):
         # Existence mode reports no path: nothing is claimed, held or not.
         self.assertEqual(generate_site._served_line({"status": "ok"}), "")
 
-    def test_a_long_system_list_is_cut_between_files(self):
-        body = ["2/2 files verified", ""]
-        for n in range(4):
-            body += [f"- `f{n}.bin` - OK", "    " + "x" * 100]
-        runs = generate_site._file_runs(body, 250)
-        self.assertEqual(len(runs), 2)
-        for run in runs:
-            self.assertEqual(run[:2], body[:2])
-            self.assertTrue(run[2].startswith("- "))
-        self.assertEqual(sum(len(run) - 2 for run in runs), len(body) - 2)
+    def test_a_long_system_list_is_cut_between_rows_by_elements(self):
+        rows = [[f'<details class="rb-file"><summary>f{n}.bin</summary>x<br>y</details>']
+                for n in range(4)]
+        # Three elements a row: two rows fit in a budget of seven.
+        runs = generate_site._blocks_in_runs(rows, 7, generate_site._element_weight)
+        self.assertEqual([len(run) for run in runs], [2, 2])
+        self.assertEqual(sum(runs, []), sum(rows, []))
 
 
 class AlsoNamedIsNotCited(unittest.TestCase):

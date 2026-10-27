@@ -12,4 +12,4 @@
    emulator, not to ES-DE itself.
 
 
- A/Enter Continue  B/Esc Quit  ? Help
+ A Continue  B Quit  ? Help

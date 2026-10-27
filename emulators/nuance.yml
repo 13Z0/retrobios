@@ -7,6 +7,10 @@ profiled_date: "2026-09-03"
 source_commit: "daf3ca642756a559ecce91e10da0e73cbad180ff"
 upstream_commit: "daf3ca642756a559ecce91e10da0e73cbad180ff"
 core_version: "0.6.7"
+version_basis:
+  kind: file
+  path: "src/libretro.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "VM Labs - NUON (Nuance)"
 cores: [nuance]
 systems: [vm-labs-nuon]

@@ -6,6 +6,10 @@ upstream: "https://github.com/sinamas/gambatte"
 profiled_date: "2026-03-23"
 source_commit: "7809bb68ee96c3e6c74e9d9c4c8bb09aa7c6801d"
 core_version: "v0.5.0"
+version_basis:
+  kind: file
+  path: "libgambatte/libretro/libretro.cpp"
+  pattern: 'library_version\s*=\s*"(v[0-9.]+)"\s*GIT_VERSION'
 display_name: "Nintendo - Game Boy / Color (Gambatte)"
 cores:
   - gambatte

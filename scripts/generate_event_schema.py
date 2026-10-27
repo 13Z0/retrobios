@@ -35,6 +35,7 @@ KEY_TYPES: dict[str, dict] = {
     **dict.fromkeys((
         "installer", "os", "os_name", "stage", "reason", "platform", "message",
         "folder", "dest", "system", "name", "bios_dir", "path", "member",
+        "list_version", "installed_version",
     ), _TEXT),
     "mode": {"enum": ["install", "check", "dry-run", "list"]},
     "state": {"enum": ["present", "wrong_hash", "missing"]},

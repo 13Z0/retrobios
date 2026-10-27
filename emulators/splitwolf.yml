@@ -6,6 +6,9 @@ source_branch: scrubbed
 profiled_date: "2026-10-20"
 source_commit: "f6c00044cdef00a31c66307d8b7cb1fb4ddf8c67"
 core_version: "V1.01"
+version_basis:
+  kind: unverified
+  why: host_unsupported
 display_name: "Wolfenstein 3D (SplitWolf)"
 cores: [splitwolf]
 systems: [wolfenstein3d]

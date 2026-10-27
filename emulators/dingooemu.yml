@@ -5,7 +5,11 @@ source: "https://github.com/AloysHF/DingooEmu"
 upstream: "https://github.com/AloysHF/DingooEmu"
 profiled_date: "2026-09-17"
 source_commit: "f57c9339e6021cd37c4bd694c14b0813a9b5ee72"
-core_version: "0.3.0"
+core_version: "v0.3.0"
+version_basis:
+  kind: tag
+  tag: "v0.3.0"
+  distance: 0
 display_name: "Dingoo - A320 / Gemei A330 (DingooEmu)"
 cores:
   - dingooemu

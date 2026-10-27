@@ -7,6 +7,12 @@ version_source:
   pattern: 'Current Version: <strong>([0-9.]+)</strong>'
 profiled_date: "2026-10-20"
 core_version: "1.221"
+version_basis:
+  kind: package
+  url: "https://www.richwhitehouse.com/jaguar/builds/BigPEmu_Linux64_v1221.tar.gz"
+  pattern: 'BigPEmu_Linux64_v(\d)(\d+)\.tar\.gz'
+  format: "{1}.{2}"
+  artifact: "BigPEmu_Linux64_v1221.tar.gz"
 display_name: "BigPEmu (Atari Jaguar)"
 cores:
   - bigpemu

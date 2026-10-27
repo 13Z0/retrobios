@@ -7,6 +7,10 @@ upstream: https://github.com/istvan-v/ep128emu
 profiled_date: "2026-03-30"
 source_commit: "6af5d03de220e6effcd0ffcd99e0fb8e8c77cc9e"
 core_version: "v1.2.13"
+version_basis:
+  kind: file
+  path: "core/main.cpp"
+  pattern: 'library_version\s*=\s*"([^"]+)"'
 
 cores:
   - ep128emu_core

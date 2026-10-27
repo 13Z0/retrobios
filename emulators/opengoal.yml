@@ -7,6 +7,10 @@ source_commit: "6445b4a50a7540df512e3c82c62216521421410c"
 pin_frozen: "RetroBat, the only platform that ships it, installs this release: the gk.exe of its opengoal.7z package (10 October 2026) is byte identical to the one in opengoal-windows-v0.3.8.zip. Later releases are not part of that package."
 profiled_date: "2026-10-20"
 core_version: "v0.3.8"
+version_basis:
+  kind: tag
+  tag: "v0.3.8"
+  distance: 0
 display_name: "Jak and Daxter (OpenGOAL)"
 cores: [opengoal]
 systems: [opengoal]

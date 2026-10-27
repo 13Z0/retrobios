@@ -918,6 +918,37 @@ class ColourFollowsNoColorOrg(unittest.TestCase):
                     self.assertFalse(term.live)
 
 
+class TheEndOfARunPaintsItsStatusWords(unittest.TestCase):
+    """Line mode ends on the words the full screen paints, in the same
+    roles, and on the same text without colour."""
+
+    def _end(self, colour: bool, *counts: int, **given) -> str:
+        term = install.Terminal(io.StringIO())
+        term.colour = colour
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.suppress(SystemExit):
+            install._report_outcome([Path("bios")], *counts, term=term, **given)
+        return out.getvalue()
+
+    def test_the_same_words_with_and_without_colour(self):
+        for counts, given, painted in (
+                ((3, 1, 1, 0, False), {"failures": [("a.bin", "HTTP 404")]},
+                 (("failure", "Finished with errors"), ("success", "3 files installed"),
+                  ("failure", "1 file failed"), ("failure", "failed:"))),
+                ((2, 1, 0, 0, False), {},
+                 (("success", "Done"), ("success", "2 files installed"),
+                  ("success", "1 file already up to date"))),
+                ((1, 0, 0, 0, False), {"offline": 2},
+                 (("warning", "Finished with files missing"), ("warning", "2 not fetched")))):
+            with self.subTest(counts=counts):
+                plain, coloured = self._end(False, *counts, **given), \
+                    self._end(True, *counts, **given)
+                self.assertNotIn("\x1b", plain)
+                self.assertEqual(install.unpainted(coloured), plain)
+                for role, word in painted:
+                    self.assertIn(install._sgr(role) + word, coloured)
+
+
 class SmallWordings(unittest.TestCase):
     def test_check_asks_which_to_check(self):
         """--check with several platforms asked "Install for:", and
@@ -1174,11 +1205,17 @@ class ADetectedClosedFolderSaysWhereItCameFrom(unittest.TestCase):
         said = " ".join(proc.stderr.split())
         self.assertIn(f"than the one {self.cfg} names (name another with --dest)", said)
 
-    def test_nothing_installed_comes_after_the_error(self):
+    def test_two_setups_stop_before_either_folder_is_read(self):
+        """code_audit_18 P2-3: a run without questions installs for one
+        setup, so two found stop on what to name before either folder is
+        read, the closed one included."""
         proc = self.run_detected(True)
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        error = proc.stderr.index("Error: ")
-        self.assertGreater(proc.stderr.index("Nothing was installed."), error, proc.stderr)
+        said = " ".join(proc.stderr.split())
+        self.assertIn("2 setups were found here, and a run without questions installs for "
+                      "one", said)
+        self.assertIn("--platform emudeck --dest", said)
+        self.assertNotIn("Downloading", proc.stdout)
 
     def test_an_assumed_default_reads_plainly(self):
         self.assertIn("used by default, since {display_name(name)} was not found",

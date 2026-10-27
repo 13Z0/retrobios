@@ -8,7 +8,11 @@ logo: "https://raw.githubusercontent.com/cemu-project/Cemu/main/dist/linux/info.
 profiled_date: "2026-10-23"
 source_commit: "14f56b569b3668db01a4972225993abd3e8f2096"
 upstream_commit: "42876aa86d2b92f9c620a76959a792bf392b89d3"
-core_version: "2.6"
+core_version: "2.6-372-g29f2f1fa"
+version_basis:
+  kind: file
+  path: "src/libretro/CemuLibretro.cpp"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "Nintendo - Wii U (Cemu)"
 library_name: "Cemu"
 save_folder_once: true

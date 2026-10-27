@@ -88,9 +88,11 @@ Arrows move, Enter chooses, Esc goes back, as A and B on a handheld.
 
 ## 3. Install
 
-The next screen counts missing files and free space.
+It counts missing files and free space.
 Press Enter on **Install**. **Choose systems** keeps the consoles you
 play.
+
+**Game data** (only a game reads it) has its own row.
 
 **Old card?** In a card reader, choose **Copy the BIOS files from your old
 card or a folder**, then the card.
@@ -102,11 +104,11 @@ Esc or Ctrl+C stops, B on a handheld. Run again to resume.
 ## 5. Read the result
 
 - **Done**: all files are in place.
-- **Finished with errors**: run the command again. It retries only those.
+- **Finished with errors**: run it again. It retries only those.
 - **Finished with files missing**: run it again online.
 - **Nothing installed**: the screen says why. See [If it stops](#if-it-stops).
 
-For questions line by line (screen readers), add `--plain`.
+For line-by-line questions (screen readers), add `--plain`.
 
 ## What the command does
 
@@ -129,8 +131,8 @@ All good:
 
 ## Undo
 
-Files it replaces go to a `retrobios-backup` folder beside your BIOS folder.
-The result says how to restore them.
+Replaced files go to `retrobios-backup` beside your BIOS folder. The result
+says how to restore them.
 
 ## If it stops
 
@@ -166,7 +168,7 @@ You cannot write there. Do what the message says.
 
 ### The card is full
 
-Nothing was written. Free some space, or choose another folder.
+Nothing was written. Free some space there.
 
 ### The game still does not start
 

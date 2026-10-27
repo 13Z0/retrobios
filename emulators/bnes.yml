@@ -6,6 +6,10 @@ upstream: "https://github.com/Sir-Walrus/bsnes-gc"
 profiled_date: "2026-03-23"
 source_commit: "8e26e89a93bef8eb8992d1921b539dce1792660a"
 core_version: "v083"
+version_basis:
+  kind: file
+  path: "libretro/libretro.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Nintendo - NES / Famicom (bnes)"
 cores:
   - bnes

@@ -504,6 +504,32 @@ class FakeCoreTests(unittest.TestCase):
         sealed = measurement_records.seal({**record, "emulator": "fake", "subject": "s"})
         self.assertEqual([e.message for e in Draft202012Validator(schema).iter_errors(sealed)], [])
 
+    def test_a_run_waits_for_the_host_lock_and_frees_it(self) -> None:
+        import fcntl
+        import time
+
+        lock = self.tmp / "host.lock"
+        argv = [sys.executable, str(REPO_ROOT / "scripts" / "core_probe.py"), "run", "--core",
+                str(self.core), "--frames", "1", "--no-trace", "--work-dir", str(self.tmp / "work")]
+        env = {**os.environ, "RETROBIOS_PROBE_LOCK": str(lock)}
+        with lock.open("a") as held:
+            fcntl.flock(held, fcntl.LOCK_EX)
+            waiting = subprocess.Popen(argv, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
+                                       text=True)
+            time.sleep(1.5)
+            self.assertIsNone(waiting.poll(), "the run went ahead while another held the lock")
+            # A caller that holds the lock for this run says so.
+            held_run = subprocess.run(argv, env={**env, "RETROBIOS_PROBE_LOCK_HELD": "1"},
+                                      capture_output=True, text=True, timeout=60, check=False)
+            self.assertEqual(held_run.returncode, 0, held_run.stderr)
+            fcntl.flock(held, fcntl.LOCK_UN)
+        _, err = waiting.communicate(timeout=60)
+        self.assertEqual(waiting.returncode, 0, err)
+        self.assertIn("another measurement is running", err)
+        # Released at the end of the run: the lock is free again.
+        with lock.open("a") as again:
+            fcntl.flock(again, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
     def test_second_run_is_appended_beside_the_first(self) -> None:
         record_dir = checkout(self.tmp / "appended")
         argv = ["run", "--core", str(self.core), "--frames", "1", "--no-trace", "--max-load", "1000",
@@ -630,6 +656,46 @@ class Sandbox(unittest.TestCase):
         with unittest.mock.patch.object(core_probe.shutil, "which", return_value=None):
             problems = core_probe.validate_args(args)
         self.assertIn("--require-sandbox: environment only: bwrap not found", problems)
+
+
+
+class TheInterpreterIsInTheSandbox(unittest.TestCase):
+    """CI's setup-python, a venv and uv put Python outside /usr. The sandbox
+    bound only the system trees, so the worker could not start and every run
+    crashed on the runner."""
+
+    def test_each_link_to_the_interpreter_is_bound(self):
+        from unittest import mock  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            real = root / "uv" / "cpython-3.13.12" / "bin"
+            real.mkdir(parents=True)
+            (real / "python3.13").write_text("")
+            alias = root / "uv" / "cpython-3.13"
+            alias.symlink_to(root / "uv" / "cpython-3.13.12")
+            venv = root / "venv" / "bin"
+            venv.mkdir(parents=True)
+            (venv / "python").symlink_to(alias / "bin" / "python3.13")
+            with mock.patch.object(core_probe.sys, "executable", str(venv / "python")), \
+                    mock.patch.object(core_probe.sys, "prefix", str(root / "venv")), \
+                    mock.patch.object(core_probe.sys, "base_prefix", str(root / "uv" / "cpython-3.13.12")):
+                paths = core_probe.interpreter_paths()
+        self.assertIn(root / "venv", paths)
+        self.assertIn(alias, paths)
+        self.assertIn(root / "uv" / "cpython-3.13.12", paths)
+
+    def test_a_link_is_mounted_at_its_own_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "real"
+            target.mkdir()
+            link = Path(tmp) / "link"
+            link.symlink_to(target)
+            prefix, isolation = core_probe.sandbox_argv([], [link])
+        if isolation != core_probe.SANDBOX:
+            self.skipTest(f"no sandbox here ({isolation})")
+        self.assertIn(["--ro-bind", str(target.resolve()), str(link)],
+                      [prefix[i:i + 3] for i in range(len(prefix) - 2)])
 
 
 if __name__ == "__main__":

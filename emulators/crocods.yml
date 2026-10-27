@@ -5,7 +5,11 @@ source: "https://github.com/libretro/libretro-crocods"
 upstream: "https://github.com/redbug26/crocods-core"
 profiled_date: "2026-03-23"
 source_commit: "a9c63b29443715ae2add392010fca4eae7f93e67"
-core_version: "v1"
+core_version: "2024-10-16"
+version_basis:
+  kind: file
+  path: "crocods-core/crocods.h"
+  pattern: '#define\s+CROCOVERSION\s+"([^"]+)"'
 display_name: "Amstrad - CPC (CrocoDS)"
 cores:
   - crocods

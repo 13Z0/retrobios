@@ -7,6 +7,9 @@ version_source:
   pattern: 'version\s*<strong>([0-9.]+)</strong>, released'
 profiled_date: "2026-10-20"
 core_version: "1.12.1"
+version_basis:
+  kind: unverified
+  why: host_unsupported
 display_name: "Dragon / CoCo / MC-10 (XRoar)"
 cores:
   - xroar

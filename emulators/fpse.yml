@@ -10,6 +10,10 @@ version_source:
 author: "Schtruck & LDchen (EMUSOFT)"
 profiled_date: "2026-08-11"
 core_version: "12.1"
+version_basis:
+  kind: package
+  url: "https://play.google.com/store/apps/details?id=com.emulator.fpse"
+  artifact: "com.emulator.fpse APK versionName (versionCode 940)"
 display_name: "Sony - PlayStation (FPse)"
 cores:
   - fpse

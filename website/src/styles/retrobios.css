@@ -17,6 +17,9 @@
    .rb-bar             inline coverage bar, width from --v
    .rb-details-*       collapsible block, neutral unless caution or danger
    dl.rb-facts         the facts of a file card, label and value side by side
+   .rb-install-all     the list of every command in a system's install box
+   .rb-copy            the copy button site.ts adds after a hash
+   .rb-install-setup   the setup list of a system's install box
    abbr.rb-term        a glossary term, its definition on hover or tap
 */
 
@@ -530,6 +533,88 @@ body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: var(--rb-grid-width
 }
 :is(.rb-sys-file, .rb-file-entry):has(> .rb-file-title:target) { background: var(--rb-surface); }
 
+/* Entries as table rows (scripts/siteentries.py): the name takes the room
+   and its card opens under it. On a phone the row stacks like any table
+   with a hash column, the name on the full width. */
+body:has(table.rb-entries) { --sl-content-width: var(--rb-grid-width); }
+/* A row the filter leaves out stays out on a phone, where a stacked row is
+   a block: `display: block` outweighed the hidden attribute, and every
+   stacked table showed all its rows under "11 of 1,037 rows". */
+.sl-markdown-content table[data-rb-stack] tr[hidden] { display: none; }
+@media (min-width: 50rem) {
+	.sl-markdown-content table.rb-wanted td.rb-hash { min-width: 10rem; }
+}
+.sl-markdown-content .rb-entries-wrap { container-type: inline-size; }
+.sl-markdown-content table.rb-entries { width: 100%; }
+@media (min-width: 50rem) {
+	.sl-markdown-content table.rb-entries { display: table; }
+	.sl-markdown-content table.rb-entries td:first-child { width: 100%; }
+	/* An open card takes the table's width, not its column's: the other
+	   cells of its row keep to one line, so the room under them is free. */
+	.sl-markdown-content table.rb-entries tr:has(> td > details[open]) > td:not(:first-child) { white-space: nowrap; }
+	.sl-markdown-content details.rb-entry[open] { contain: inline-size; }
+	.sl-markdown-content details.rb-entry[open] > :not(summary) { width: 100cqi; }
+}
+.sl-markdown-content details.rb-entry { border: 0; padding: 0; }
+.sl-markdown-content details.rb-entry > summary { min-height: 24px; font-weight: 400; }
+.sl-markdown-content details.rb-entry > summary > .rb-file-title { display: inline; margin: 0; }
+.sl-markdown-content details.rb-entry[open] > summary { margin-bottom: 0.4rem; }
+.sl-markdown-content details.rb-entry ul { margin: 0.3rem 0 0; padding-left: 1.2rem; font-size: 0.85rem; }
+.sl-markdown-content details.rb-entry li { margin: 0.1rem 0; }
+.sl-markdown-content details.rb-entry:has(.rb-file-title:target) { background: var(--rb-surface); }
+@media (max-width: 50rem) {
+	.sl-markdown-content table.rb-entries td:first-child { padding-left: 0.6rem; font-size: 1rem; }
+	.sl-markdown-content table.rb-entries td:first-child::before { content: none; }
+	/* "required for Data East DECO Cassette System" ran 12 px past a phone
+	   beside its label: a long badge wraps in its cell. */
+	.sl-markdown-content table.rb-entries .rb-badge { white-space: normal; }
+	.sl-markdown-content details.rb-entry ul { font-size: 0.75rem; }
+}
+
+/* A fold of a file card (Hashes, the rest): no frame, a small summary in
+   the muted colour, a 24 px target (WCAG 2.5.8). */
+.sl-markdown-content :is(:is(.rb-sys-file, .rb-file-entry) details, details.rb-install-all) { margin: 0.3rem 0 0; padding: 0; border: 0; font-size: 0.85rem; }
+.sl-markdown-content :is(:is(.rb-sys-file, .rb-file-entry) details, details.rb-install-all) > summary {
+	min-height: 24px;
+	line-height: 24px;
+	font-size: 0.8rem;
+	color: var(--rb-text-secondary);
+	cursor: pointer;
+}
+.sl-markdown-content :is(:is(.rb-sys-file, .rb-file-entry) details, details.rb-install-all) > summary::before { background-color: var(--rb-text-secondary); }
+.sl-markdown-content :is(:is(.rb-sys-file, .rb-file-entry) details, details.rb-install-all) > summary:hover { color: var(--sl-color-white); }
+.sl-markdown-content :is(:is(.rb-sys-file, .rb-file-entry) details, details.rb-install-all) > :not(summary) { margin-top: 0.2rem; }
+
+/* The copy button after a hash (site.ts): the Download button's frame,
+   smaller, a 24 px target that stays inside a 24 px line, so it never
+   covers the fold below it (WCAG 2.5.8). */
+.rb-copy {
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	height: 24px;
+	margin-left: 0.4rem;
+	padding: 0 0.5rem;
+	border: 1px solid var(--rb-border-strong);
+	border-radius: 4px;
+	background: transparent;
+	font: inherit;
+	font-family: var(--sl-font);
+	font-size: 0.75rem;
+	line-height: 1;
+	color: var(--rb-link);
+	vertical-align: top;
+	cursor: pointer;
+}
+.rb-copy:hover { background: var(--sl-color-accent-low); }
+
+/* A system's install box: the setup list above the OS tabs, and the list
+   of every command, which wraps anywhere rather than scroll a phone. */
+.sl-markdown-content .rb-install-all code { overflow-wrap: anywhere; }
+.sl-markdown-content .rb-install-setup { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+/* Its select is styled as every other choice list on the site (the
+   arrow of --rb-select-arrow, below): a rule of its own hid the arrow. */
+
 /* Collapsible blocks are quiet: a closed block must not outweigh the
    command it explains. Colour is kept for caution and danger. */
 .sl-markdown-content details.rb-details {
@@ -550,6 +635,95 @@ body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: var(--rb-grid-width
 /* Starlight's chevron, which turns when the block opens, in the muted colour. */
 .sl-markdown-content details.rb-details > summary::before { background-color: var(--rb-text-secondary); }
 .sl-markdown-content details.rb-details[open] > summary { margin-bottom: 0.6rem; }
+
+/* A platform's file list (generate_site._platform_file_list), on the
+   pattern of the Tested block: each row a details whose summary is the
+   row (name, folder, status), its body the evidence across the whole
+   list. The short hash sits on its copy button (site.ts) beside the
+   summary, since a summary is itself a control. The details reaches under
+   the button column, so the row rule and an opened body run full width. */
+.sl-markdown-content .rb-files {
+	--rb-hash-column: 6.75rem;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) var(--rb-hash-column);
+	margin-top: 0.75rem;
+	border-top: 1px solid var(--rb-border-strong);
+}
+.sl-markdown-content .rb-files > * { margin: 0; }
+.sl-markdown-content .rb-files > details.rb-file {
+	grid-column: 1;
+	margin-right: calc(-1 * var(--rb-hash-column));
+	padding: 0 0 0 1.75rem;
+	border: 0;
+	border-bottom: 1px solid var(--rb-border);
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	overflow-wrap: anywhere;
+}
+.sl-markdown-content .rb-files > details.rb-file[open] { padding-bottom: 0.6rem; background: var(--rb-surface); }
+.sl-markdown-content .rb-files > details.rb-file > summary {
+	display: grid;
+	grid-template-columns: 1.25rem minmax(0, 1fr) 9rem 6rem;
+	gap: 0.5rem;
+	align-items: center;
+	min-height: 2.25rem;
+	margin-left: -1.75rem;
+	padding: 0.3rem calc(var(--rb-hash-column) + 0.5rem) 0.3rem 0;
+	font: 0.8125rem/1.4 var(--sl-font-mono);
+	cursor: pointer;
+}
+.sl-markdown-content .rb-files:not(.rb-files-path) > details.rb-file > summary { grid-template-columns: 1.25rem minmax(0, 1fr) 6rem; }
+.sl-markdown-content .rb-files > details.rb-file > summary:hover { background: var(--rb-surface); }
+.sl-markdown-content .rb-files > details.rb-file > summary::before { margin: 0; background-color: var(--rb-text-secondary); }
+.sl-markdown-content .rb-files > details.rb-file > summary > code { grid-column: 3; padding: 0; background: none; color: var(--rb-text-secondary); }
+.sl-markdown-content .rb-files > details.rb-file > summary > .rb-badge { grid-column: -2; justify-self: start; font-family: var(--sl-font); }
+.sl-markdown-content .rb-files > button.rb-copy {
+	position: relative;
+	grid-column: 2;
+	align-self: start;
+	justify-self: start;
+	margin-top: 0.4rem;
+}
+.sl-markdown-content .rb-files > [hidden] { display: none; }
+
+.sl-markdown-content .rb-files button.rb-copy {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3em;
+	min-height: 24px;
+	padding: 0 0.35em;
+	border: 1px solid var(--rb-border-strong);
+	border-radius: 3px;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-white);
+	font: 0.8125rem/1.4 var(--sl-font-mono);
+	cursor: pointer;
+	white-space: nowrap;
+}
+.sl-markdown-content .rb-files button.rb-copy::after {
+	content: '';
+	width: 0.9em;
+	height: 0.9em;
+	background: var(--rb-text-secondary);
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5 1h8a2 2 0 0 1 2 2v8h-2V3H5zM3 5h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 2v7h7V7z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.sl-markdown-content .rb-files button.rb-copy[data-copied]::after {
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6 11.2 2.8 8 1.4 9.4 6 14l8.6-8.6-1.4-1.4z'/%3E%3C/svg%3E");
+	background: var(--rb-ok-fg);
+}
+.sl-markdown-content .rb-files button.rb-copy:hover { border-color: var(--rb-link); }
+@media (max-width: 50rem) {
+	/* On a phone the folder goes under the name, the status stays on the
+	   first line. A row with no folder prints nothing for it. */
+	.sl-markdown-content .rb-files > details.rb-file > summary,
+	.sl-markdown-content .rb-files:not(.rb-files-path) > details.rb-file > summary {
+		grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+		row-gap: 0.1rem;
+	}
+	.sl-markdown-content .rb-files > details.rb-file > summary::before { grid-row: 1; }
+	.sl-markdown-content .rb-files > details.rb-file > summary > code { grid-column: 2; grid-row: 2; }
+	.sl-markdown-content .rb-files > details.rb-file > summary > .rb-badge { grid-column: 3; grid-row: 1; }
+}
 
 /* Asides: a neutral box for notes and tips, no side stripe, no icon.
    Caution and danger keep their colour, as a 1 px border all round. */
@@ -876,4 +1050,88 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
    tab row from 50rem up. Size it from the top bar alone. */
 @media (min-width: 50rem) {
 	header .site-title img { height: calc(4rem - 2 * var(--sl-nav-pad-y)); width: auto; }
+}
+
+/* The Tested block of an emulator page (scripts/sitemeasurements.py): a
+   summary line, then one row per test, each a <details> whose summary is
+   the row and whose body is the proof. Rows stack into two lines on a
+   phone. A dot per variant, its group in colour and its name in a title
+   and the strip's label; a variant that staged no file is a ring. */
+.sl-markdown-content .rb-tested-summary { color: var(--rb-text-secondary); font-size: 0.9rem; }
+.sl-markdown-content :is(.rb-tested-head, .rb-tested-row > summary) {
+	display: grid;
+	grid-template-columns: 1.25rem minmax(0, 1fr) 8.5rem 9rem 6rem;
+	gap: 0.5rem;
+	align-items: center;
+}
+.sl-markdown-content .rb-tested-head {
+	margin-top: 0.75rem;
+	padding: 0 0 0.25rem;
+	border-bottom: 1px solid var(--rb-border-strong);
+	color: var(--rb-text-secondary);
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+.sl-markdown-content .rb-tested-head::before { content: ""; }
+/* Starlight draws a side rule on every details: a row has a rule below only. */
+.sl-markdown-content details:is(.rb-tested-row, .rb-tested-earlier) { border-inline-start: 0; padding-inline-start: 0; }
+.sl-markdown-content details.rb-tested-row { margin: 0; border-bottom: 1px solid var(--rb-border); }
+.sl-markdown-content details.rb-tested-row:has(> summary:hover) { border-color: var(--rb-border); }
+.sl-markdown-content .rb-tested-row > summary {
+	min-height: 2.25rem;
+	padding: 0.3rem 0;
+	cursor: pointer;
+	font-size: 0.9rem;
+}
+.sl-markdown-content .rb-tested-row > summary::before { background-color: var(--rb-text-secondary); margin: 0; }
+.sl-markdown-content .rb-tested-row > summary:hover { background: var(--rb-surface); }
+.sl-markdown-content .rb-tested-test { font-weight: 600; overflow-wrap: anywhere; }
+.sl-markdown-content :is(.rb-tested-test, .rb-tested-date) small { color: var(--rb-text-secondary); font-weight: 400; }
+.sl-markdown-content .rb-tested-date { color: var(--rb-text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sl-markdown-content .rb-tested-more {
+	margin: 0 0 0.75rem 1.75rem;
+	padding: 0.5rem 0.75rem;
+	border-left: 2px solid var(--rb-border-strong);
+	font-size: 0.875rem;
+}
+.sl-markdown-content .rb-tested-more p { margin: 0.35rem 0 0; }
+.sl-markdown-content .rb-tested-more p:first-child { margin-top: 0; }
+.sl-markdown-content details.rb-tested-earlier { margin-top: 0.75rem; }
+.sl-markdown-content details.rb-tested-earlier > summary { font-size: 0.9rem; color: var(--rb-text-secondary); cursor: pointer; }
+.sl-markdown-content .rb-dots { display: inline-flex; flex-wrap: wrap; gap: 3px; }
+.sl-markdown-content .rb-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	border: 2px solid var(--rb-dot);
+	background: var(--rb-dot);
+}
+.sl-markdown-content .rb-dot-empty { background: transparent; }
+.sl-markdown-content .rb-dot-0 { --rb-dot: var(--rb-ok-fg); }
+.sl-markdown-content .rb-dot-1 { --rb-dot: var(--rb-info-fg); }
+.sl-markdown-content .rb-dot-2 { --rb-dot: var(--rb-warn-fg); }
+.sl-markdown-content .rb-dot-3 { --rb-dot: var(--rb-err-fg); }
+.sl-markdown-content .rb-dot-4 { --rb-dot: var(--rb-muted-fg); }
+.sl-markdown-content p.rb-tested-file {
+	margin: 0.9rem 0 0;
+	padding-bottom: 0.2rem;
+	border-bottom: 1px solid var(--rb-border-strong);
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+.sl-markdown-content p.rb-tested-legend { margin-top: 0.5rem; color: var(--rb-text-secondary); font-size: 0.8rem; }
+.sl-markdown-content p.rb-tested-legend .rb-dot { display: inline-block; vertical-align: -1px; }
+.sl-markdown-content table.rb-tested-bench { margin-top: 1rem; font-size: 0.875rem; }
+.sl-markdown-content table.rb-tested-bench td:not(:first-child) { font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 50rem) {
+	.sl-markdown-content div.rb-tested-head { display: none; }
+	.sl-markdown-content details.rb-tested-row > summary {
+		grid-template-columns: 1.25rem auto minmax(0, 1fr) auto;
+		row-gap: 0.2rem;
+	}
+	.sl-markdown-content .rb-tested-row > summary::before { grid-row: 1; }
+	.sl-markdown-content .rb-tested-test { grid-column: 2 / -1; }
+	.sl-markdown-content .rb-tested-result { grid-column: 2; }
+	.sl-markdown-content .rb-tested-date { text-align: right; }
+	.sl-markdown-content .rb-tested-more { margin-left: 0.5rem; }
 }

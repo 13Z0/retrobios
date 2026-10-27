@@ -2,6 +2,10 @@ emulator: Lexaloffle
 type: standalone
 upstream: "https://www.lexaloffle.com/"
 profiled_date: "2026-03-26"
+core_version: null
+version_basis:
+  kind: unverified
+  why: no_artifact
 display_name: "Lexaloffle - PICO-8 / Voxatron"
 cores:
   - lexaloffle

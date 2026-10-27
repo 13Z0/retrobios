@@ -3,6 +3,9 @@ type: alias
 alias_of: "beetle_pcfx"
 profiled_date: "2026-03-24"
 core_version: "v0.9.36.5"
+version_basis:
+  kind: alias
+  of: "beetle_pcfx"
 display_name: "NEC - PC-FX (Beetle PC-FX)"
 cores:
   - mednafen_pcfx

@@ -33,18 +33,24 @@ cores:
       OpenBIOS, a wrong one logs "Firmware found but has invalid SHA1" and is
       loaded anyway (libretro.c:849, 856, 3504-3511 at 7fea57a5).
     error_patterns: []
-    error_screens: []
+    error_screens:
+      - sha1: dfbfc299250c0983f86bbf951efd187441306d92
+        shows: the Japanese BIOS main menu, the disc refused (a US disc under a Japanese BIOS)
   "Beetle PSX HW":
     note: The same code as Beetle PSX, built with the hardware renderers.
     error_patterns: []
-    error_screens: []
+    error_screens:
+      - sha1: dfbfc299250c0983f86bbf951efd187441306d92
+        shows: the Japanese BIOS main menu, the disc refused (a US disc under a Japanese BIOS)
   "SwanStation":
     note: >-
       "No BIOS image found for <region> region" is followed by the built-in
       OpenBIOS (src/core/host_interface.cpp:182, src/core/system.cpp:678-682
       at 631f0fb3).
     error_patterns: []
-    error_screens: []
+    error_screens:
+      - sha1: 167fb7b6527e295b12dca5806a29856f5f31d401
+        shows: the Japanese BIOS main menu, the disc refused (a US disc under a Japanese BIOS)
   "PCSX-ReARMed":
     note: >-
       Without a BIOS, or with one of the wrong size, it logs "Using HLE BIOS"
@@ -56,6 +62,16 @@ cores:
       - pattern: '^found (US|EU|JP) BIOS file, crc32 '
         source_ref: frontend/libretro.c:3646-3669 at c8816799
     error_patterns: []
+    error_screens: []
+  "Beetle Saturn":
+    note: Without a usable BIOS the core logs one of these and retro_load_game fails.
+    error_patterns:
+      - pattern: '^Cannot open BIOS file '
+        source_ref: mednafen/ss/ss.c:1943-1947 at 2ce77e20
+      - pattern: '^BIOS file ".*" is of an incorrect size\.'
+        source_ref: mednafen/ss/ss.c:1961-1967 at 2ce77e20
+      - pattern: '^BIOS file ".*" could not be fully read'
+        source_ref: mednafen/ss/ss.c:1978-1983 at 2ce77e20
     error_screens: []
   "PCSX1":
     note: An HLE BIOS stands in when none is found, and the run logs nothing about it.
@@ -176,3 +192,260 @@ content:
           - sha1: 2238516839dc43c0b22c00db5fe76128f5fb6f3f
             stage: game
             shows: a black screen with CREDIT 6
+  - name: "Puzzle Bobble 2 (Japan)"
+    catalog: redump
+    sha1: 3b51b45b8b78777c04086fcd1ef1dd0439c365e6
+    references:
+      "Beetle PSX":
+        recorded_from: 2026-10-27-a2bd916f1765
+        frames:
+          - sha1: 7b72ebae83893b63f9fffd1685f03b1d048d9fa9
+            stage: bios
+            shows: the Sony Computer Entertainment logo
+          - sha1: 1d5305661b110a78aff8e41d60c19168c4af77ac
+            stage: bios
+            shows: the PlayStation logo licensed by Sony Computer Entertainment Inc.
+          - sha1: d51ab7783f8eeafc63a28f14ce39f8e2babeffb3
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: 80d023ecbf776a97b6bb2bdeb13e43460f60fd53
+            stage: game
+            shows: the Taito logo on white, CREDIT 6
+          - sha1: 1bda114b66fd098623abca772cf23813293a3849
+            stage: game
+            shows: a black screen with CREDIT 6
+          - sha1: 3bb53b8a3036554a4bf9ec4785df7a4b4e06a87d
+            stage: game
+            shows: the attract-mode game on the beach, PASSAGE TIME IS
+      "Beetle PSX HW":
+        recorded_from: 2026-10-27-6e0e946eeba5
+        frames:
+          - sha1: 7b72ebae83893b63f9fffd1685f03b1d048d9fa9
+            stage: bios
+            shows: the Sony Computer Entertainment logo
+          - sha1: 1d5305661b110a78aff8e41d60c19168c4af77ac
+            stage: bios
+            shows: the PlayStation logo licensed by Sony Computer Entertainment Inc.
+          - sha1: d51ab7783f8eeafc63a28f14ce39f8e2babeffb3
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: 80d023ecbf776a97b6bb2bdeb13e43460f60fd53
+            stage: game
+            shows: the Taito logo on white, CREDIT 6
+          - sha1: 1bda114b66fd098623abca772cf23813293a3849
+            stage: game
+            shows: a black screen with CREDIT 6
+          - sha1: 3bb53b8a3036554a4bf9ec4785df7a4b4e06a87d
+            stage: game
+            shows: the attract-mode game on the beach, PASSAGE TIME IS
+      "PCSX-ReARMed":
+        recorded_from: 2026-10-27-65923ebc1836
+        frames:
+          - sha1: e5af1f2023d0d729ce7aabf52d8e03f75bb8d230
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: 2443e73be7ce3203408d7398c997fe6ec7cebd9f
+            stage: game
+            shows: the Taito logo on white, CREDIT 6
+          - sha1: 373e5e3d7c524ed1556b9292a794169bf1de27d0
+            stage: game
+            shows: a black screen with CREDIT 6
+          - sha1: 53f32c4acd5a522f359952ee48f138e44aee6e61
+            stage: game
+            shows: the attract-mode game on the beach, PASSAGE TIME IS
+      "SwanStation":
+        recorded_from: 2026-10-27-abe38e414339
+        frames:
+          - sha1: fad859d9b8211ce9f35ad3a05b0b7d184fe14d83
+            stage: bios
+            shows: the Sony Computer Entertainment logo
+          - sha1: 9c168a8d6a6c706157307910e2b46039d019e48b
+            stage: bios
+            shows: the PlayStation logo licensed by Sony Computer Entertainment Inc.
+          - sha1: e5af1f2023d0d729ce7aabf52d8e03f75bb8d230
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: 2443e73be7ce3203408d7398c997fe6ec7cebd9f
+            stage: game
+            shows: the Taito logo on white, CREDIT 6
+          - sha1: 373e5e3d7c524ed1556b9292a794169bf1de27d0
+            stage: game
+            shows: a black screen with CREDIT 6
+          - sha1: 53f32c4acd5a522f359952ee48f138e44aee6e61
+            stage: game
+            shows: the attract-mode game on the beach, PASSAGE TIME IS
+  - name: "Bust-A-Move 2 - Arcade Edition (Europe)"
+    catalog: redump
+    sha1: fbfb904cdb7a0e25a659980a5ed1206298bc7a1e
+    references:
+      "Beetle PSX":
+        recorded_from: 2026-10-27-4b9e700d03a9
+        frames:
+          - sha1: 7b72ebae83893b63f9fffd1685f03b1d048d9fa9
+            stage: bios
+            shows: the Sony Computer Entertainment logo
+          - sha1: 408effe5ed13b50c97a21d2efe9930ab0d2b6f43
+            stage: bios
+            shows: the PlayStation logo licensed by Sony Computer Entertainment Europe
+          - sha1: d51ab7783f8eeafc63a28f14ce39f8e2babeffb3
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: f5649c8df958220324753968e8785ea80a021837
+            stage: game
+            shows: the anti-piracy notice
+          - sha1: 2cccff1e0706fcc8bdd4fdcd35e0310c9aaf9ac5
+            stage: game
+            shows: the Acclaim and Taito credits text
+          - sha1: dd70e8e057c3de89f0c39c2b91b72fce902a8588
+            stage: game
+            shows: the Acclaim logo
+          - sha1: 368ac3ce2a4ef7dcc1720e0e48f18e3e6404e191
+            stage: game
+            shows: the Taito logo on white
+      "Beetle PSX HW":
+        recorded_from: 2026-10-27-f3b61598f415
+        frames:
+          - sha1: 7b72ebae83893b63f9fffd1685f03b1d048d9fa9
+            stage: bios
+            shows: the Sony Computer Entertainment logo
+          - sha1: 408effe5ed13b50c97a21d2efe9930ab0d2b6f43
+            stage: bios
+            shows: the PlayStation logo licensed by Sony Computer Entertainment Europe
+          - sha1: d51ab7783f8eeafc63a28f14ce39f8e2babeffb3
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: f5649c8df958220324753968e8785ea80a021837
+            stage: game
+            shows: the anti-piracy notice
+          - sha1: 2cccff1e0706fcc8bdd4fdcd35e0310c9aaf9ac5
+            stage: game
+            shows: the Acclaim and Taito credits text
+          - sha1: dd70e8e057c3de89f0c39c2b91b72fce902a8588
+            stage: game
+            shows: the Acclaim logo
+          - sha1: 368ac3ce2a4ef7dcc1720e0e48f18e3e6404e191
+            stage: game
+            shows: the Taito logo on white
+      "PCSX-ReARMed":
+        recorded_from: 2026-10-27-c71f71b579b9
+        frames:
+          - sha1: e5af1f2023d0d729ce7aabf52d8e03f75bb8d230
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: d0c5e568fd2585ad5c0ed244c25bdacdbb596d55
+            stage: game
+            shows: the anti-piracy notice
+          - sha1: 4ea5612d272a8b05fabf98ed7dc4b245fe759001
+            stage: game
+            shows: the Acclaim and Taito credits text
+          - sha1: ed433c340dc7ef65c8afba4434542c1827251127
+            stage: game
+            shows: the Acclaim logo
+          - sha1: a909b761d6f46ec28bdf46aac874873db40396b7
+            stage: game
+            shows: the Taito logo on white
+      "SwanStation":
+        recorded_from: 2026-10-27-57e092562c10
+        frames:
+          - sha1: fad859d9b8211ce9f35ad3a05b0b7d184fe14d83
+            stage: bios
+            shows: the Sony Computer Entertainment logo
+          - sha1: e6f4f8524f3c8a47d5dba0d33f63c64dcebccde7
+            stage: bios
+            shows: the PlayStation logo licensed by Sony Computer Entertainment Europe
+          - sha1: e5af1f2023d0d729ce7aabf52d8e03f75bb8d230
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: d0c5e568fd2585ad5c0ed244c25bdacdbb596d55
+            stage: game
+            shows: the anti-piracy notice
+          - sha1: 4ea5612d272a8b05fabf98ed7dc4b245fe759001
+            stage: game
+            shows: the Acclaim and Taito credits text
+          - sha1: ed433c340dc7ef65c8afba4434542c1827251127
+            stage: game
+            shows: the Acclaim logo
+          - sha1: a909b761d6f46ec28bdf46aac874873db40396b7
+            stage: game
+            shows: the Taito logo on white
+  - name: "Puzzle Bobble 2X (Japan) (2M1, 2MB1)"
+    catalog: redump
+    sha1: b962ec9148a189239810a10677dcba073983733f
+    references:
+      "Beetle Saturn":
+        recorded_from: 2026-10-27-ea155398ce4b
+        frames:
+          - sha1: 5edec5180d1c04dc0ead1e5fbbc7d6d53cc23fdb
+            stage: bios
+            shows: the SEGA SATURN logo of the Japanese BIOS
+          - sha1: dcd45679fcd31a423d0e54690e89b52f417d8728
+            stage: bios
+            shows: SEGA, produced by or under license from Sega Enterprises
+          - sha1: 7efe0a96245086d186a702a253525614d03f01f4
+            stage: game
+            shows: NOW LOADING
+          - sha1: 79894146225fefecb7db22b6aa296cb035a8d8ae
+            stage: game
+            shows: the Taito logo on white, CREDIT 9
+          - sha1: 475fce75c7c581b7367ac1a4adaa0aadc18afab1
+            stage: game
+            shows: GAME OVER, press 1P or 2P start button
+          - sha1: f610c613f723fa640250121d6086b5e2c53b695c
+            stage: game
+            shows: the Puzzle Bobble 2X title, press start button
+  - name: "Bust-A-Move 2 - Arcade Edition (USA)"
+    catalog: redump
+    sha1: 782b93d04ecb9da4cc534489e67feeac7ea9dc78
+    references:
+      "Beetle Saturn":
+        recorded_from: 2026-10-27-35dd5587262d
+        frames:
+          - sha1: f6f6ad7714da4b7c32a7736276c8cba7ef9d45d0
+            stage: bios
+            shows: the SEGA SATURN globe logo
+          - sha1: dcd45679fcd31a423d0e54690e89b52f417d8728
+            stage: bios
+            shows: SEGA, produced by or under license from Sega Enterprises
+          - sha1: e0b0fd36c4da2579b509934b8fe010f4741edfa5
+            stage: game
+            shows: NOW LOADING
+          - sha1: 97f62d0835bc7f27b660f330d794c149c50c5716
+            stage: game
+            shows: the Acclaim and Taito credits text, CREDIT 9
+          - sha1: 0cd323a8a93adec3a2173549300acbf9a3fe5596
+            stage: game
+            shows: the Acclaim logo, CREDIT 9
+          - sha1: 76ed20462b9f45e247611fa77feff69e47052875
+            stage: game
+            shows: the Taito logo on white, CREDIT 9
+          - sha1: e90793d79a1c815cd74e7a56f0e9d8f124bfc547
+            stage: game
+            shows: the Bust-A-Move 2 title, press start button
+  - name: "Bust-A-Move 2 - Arcade Edition (Europe)"
+    catalog: redump
+    sha1: 9298fabcdd797272c8c993abc81fcdd51a4e7830
+    references:
+      "Beetle Saturn":
+        recorded_from: 2026-10-27-1880da25f150
+        frames:
+          - sha1: 2d870b2352923df4b2563f75c8a01a3d6dcb4237
+            stage: bios
+            shows: the SEGA SATURN globe logo
+          - sha1: 95410b3a4a9f69ae981e2774c55574886efa67ea
+            stage: bios
+            shows: SEGA, produced by or under license from Sega Enterprises
+          - sha1: 4d426aec90be9bff76e2d32da0437d91f9880950
+            stage: game
+            shows: NOW LOADING
+          - sha1: 5bfbc97567caa32bad7489acc6c9a4f3f65ed863
+            stage: game
+            shows: the Acclaim and Taito credits text, CREDIT 9
+          - sha1: 8af02ae2f2f0864657a3c7a68293a4da163000d6
+            stage: game
+            shows: the Acclaim logo, CREDIT 9
+          - sha1: e3245a31197fa028c2da63f387f58a38e010c98d
+            stage: game
+            shows: the Taito logo on white, CREDIT 9
+          - sha1: 9ae4dbf2ded891887635634d224dedccf176c1a0
+            stage: game
+            shows: the Bust-A-Move 2 title, press start button

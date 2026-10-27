@@ -6,7 +6,11 @@ upstream: "https://github.com/hatari/hatari"
 profiled_date: "2026-09-17"
 source_commit: "5f05733fc21903dce7d978bd0d7aae445ffe1185"
 upstream_commit: "23bc3060ebf0da348cc842e358c102ba88002b56"
-core_version: "1.1 unstable preview"
+core_version: "v1.1"
+version_basis:
+  kind: file
+  path: "core/core.c"
+  pattern: '#define\s+CORE_VERSION\s+"([^" ]+)'
 display_name: "Atari - ST/STE/TT/Falcon (hatariB)"
 cores:
   - hatarib

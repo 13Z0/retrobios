@@ -14,9 +14,8 @@ the emulator's page shows a **Tested** block. Every result is on the
 ## What a test does
 
 - A script runs the emulator with no window and no sound.
-- It starts a game and runs it for a set time.
-- Each run starts fresh and runs at least twice.
-- Each run gets one result, by comparing its screens with ones we checked by eye.
+- It starts a game and runs it for a set time, at least twice.
+- It compares the screens with ones we checked by eye.
 
 ## Packs
 
@@ -28,28 +27,30 @@ the emulator looked for and did not find.
 
 ## What a result says
 
-- **boots**: the game reached a screen it shows when it works.
-- **bios_error**: the emulator said a BIOS is missing or wrong.
-- **crash**: the emulator stopped.
-- **hang**: the screen stayed blank, or the run never ended.
-- **unknown**: none of these could be shown.
-- **measured**: a speed test, given as time per frame.
-- **no verdict**: an older test that only compared screens.
+| Result | Meaning |
+|--------|---------|
+| works | the game reached a screen it shows when it works |
+| BIOS error | the emulator said a BIOS is missing or wrong |
+| crash | the emulator stopped |
+| hang | the screen stayed blank, or the run never ended |
+| unknown | none of these could be shown |
+| no verdict | an older test that only compared screens |
+| ms per frame | a speed test |
 
 ## How a file is proven
 
-The game runs with no BIOS, with the BIOS alone, and with a wrong file under
-its name: zeros, half the file, or another region's BIOS.
+The game runs with no BIOS and with the BIOS alone. Then it runs with a wrong
+file under the BIOS name: zeros, half the file, or another region's BIOS.
 
-- **Required**: no BIOS fails, the BIOS alone boots.
-- **Built-in stand-in**: no BIOS still boots.
+- **Required**: no BIOS fails, the BIOS alone works.
+- **Built-in stand-in**: no BIOS still works.
 - **Checked**: a wrong file is refused.
 
 ## When tests run
 
-A maintainer starts a test run. A clear result updates the emulator's page and
-names the test as proof. Anything else waits on the
-[Measurements](../measurements.md) page for someone to read the code.
+A maintainer starts a test run. A clear result updates the emulator's page.
+Anything else waits on the [Measurements](../measurements.md) page for someone
+to read the code.
 
 ## What a result keeps
 

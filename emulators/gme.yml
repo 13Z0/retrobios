@@ -5,7 +5,12 @@ source: "https://github.com/libretro/libretro-gme"
 upstream: "https://github.com/libgme/game-music-emu"
 profiled_date: "2026-03-23"
 source_commit: "1562f6207a066e9807243c89648d1cb44e411971"
-core_version: "Git"
+core_version: "0.6.0"
+version_basis:
+  kind: file
+  path: "deps/game-music-emu/gme/gme.h"
+  pattern: '#define\s+GME_VERSION\s+0x0?([0-9])0?([0-9])0?([0-9])\b'
+  format: "{1}.{2}.{3}"
 display_name: "Game Music Emu"
 cores: [gme]
 systems: []

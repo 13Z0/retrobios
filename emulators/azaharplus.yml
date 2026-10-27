@@ -5,7 +5,11 @@ source: "https://github.com/AzaharPlus/AzaharPlus"
 upstream: "https://github.com/AzaharPlus/AzaharPlus"
 profiled_date: "2026-08-08"
 source_commit: "cf9068844820f819a6eabbeeeb6a70d546e3e85a"
-core_version: "2126.0-A"
+core_version: "AZAHAR_PLUS_2126_2_A"
+version_basis:
+  kind: tag
+  tag: "AZAHAR_PLUS_2126_2_A"
+  distance: 0
 display_name: "Nintendo - 3DS (AzaharPlus)"
 cores:
   - azaharplus

@@ -8,6 +8,10 @@ source_commit: "5b2b5da3a9654d88b2e51fb7a1637808ac601a18"
 upstream_commit: "3353efd3a1087f4d16d9b9fd2a8e465087ab8ec0"
 upstream_frozen: "nSide is synced with the higan v106r25 release, this commit. Later higan history is another program."
 core_version: "106.25"
+version_basis:
+  kind: file
+  path: "nSide/emulator/emulator.hpp"
+  pattern: 'static\s+const\s+string\s+Version\s*=\s*"([^"]+)"'
 display_name: "Nintendo - SNES / SFC (nSide Balanced)"
 cores:
   - nside_sfc_balanced

@@ -16,6 +16,11 @@ import os
 from pathlib import Path
 
 os.environ.setdefault("RETROBIOS_OFFLINE", "1")
+# A test never waits on, nor blocks, the measurements running on the host.
+os.environ.setdefault(
+    "RETROBIOS_PROBE_LOCK",
+    str(Path(__file__).resolve().parent.parent / "tmp" / "tests" / "probe.lock"),
+)
 
 (Path(__file__).resolve().parent.parent / "tmp" / "tests").mkdir(
     parents=True, exist_ok=True
