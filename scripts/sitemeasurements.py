@@ -403,6 +403,8 @@ def site_region_results(root: Path = ROOT, repo: str = REPO) -> list[dict]:
     return region_results(root, stored, source)
 
 
+REGION_SUBJECT = re.compile(r"^region-[a-z0-9_]+-[a-z0-9-]+-(full|own|others|pack)$")
+
 VARIANT_WORDS = {"full": "every regional BIOS", "own": "its own region's BIOS only",
                  "others": "the other regions' BIOS only", "pack": "the region's pack"}
 
@@ -1047,6 +1049,10 @@ def tested_section(name: str, items: list[dict]) -> list[str]:
              f'<a href="{markup.site_href(f"downloads/measurements/{name}.sqlite")}">SQLite</a>')
     ordered = sorted(items, key=lambda i: (i["date"], i["subject"], core_label(i)), reverse=True)
     benches = [i for i in ordered if i["kind"] == "bench"]
+    # The region runs (region_check.py) read as one outcome per game, on the
+    # system page: listed here they would be a row per run.
+    regional = [i for i in ordered if i["kind"] != "bench" and REGION_SUBJECT.match(i["subject"])]
+    ordered = [i for i in ordered if i not in regional]
     earlier = [i for i in ordered if i["kind"] != "bench" and folded(i)]
     current = [i for i in ordered if i["kind"] != "bench" and not folded(i)]
     lines = ["## Tested", "", '<div class="rb-tested">',
@@ -1075,6 +1081,10 @@ def tested_section(name: str, items: list[dict]) -> list[str]:
             title = f"{file}, {titles[item['id']]}" if file else titles[item["id"]]
             lines += _row(item, title, page_host, main_core)
         lines.append("</details>")
+    if regional:
+        games = len({i["content"] for i in regional})
+        lines.append(f'<p class="rb-tested-file">Region check: {len(regional)} runs of '
+                     f"{games} game{'s' if games != 1 else ''}, read on the system page.</p>")
     if benches:
         # One line: MDX reads a table split over lines as paragraphs.
         table = ['<table class="rb-tested-bench"><thead><tr><th>Benchmark</th><th>ms per frame</th>'

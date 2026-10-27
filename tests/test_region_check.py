@@ -226,6 +226,21 @@ class SitePages(unittest.TestCase):
         self.assertNotIn("reference frames are recorded", text)
         self.assertEqual(sm.region_section([]), [])
 
+    def test_the_emulator_page_folds_region_runs_into_one_line(self) -> None:
+        import measurement_records as mr
+        import sitemeasurements as sm
+
+        stored = mr.read_records(ROOT)
+        index = sm.build_index(stored, {"repo": sm.REPO, "commit": "0" * 40}, sm.load_profiles(ROOT / "emulators"))
+        items = sm.by_emulator(index).get("beetle_psx") or []
+        regional = [i for i in items if sm.REGION_SUBJECT.match(i["subject"])]
+        if not regional:
+            self.skipTest("no region record")
+        text = "\n".join(sm.tested_section("beetle_psx", items))
+        self.assertIn(f"Region check: {len(regional)} runs of 3 games, read on the system page.", text)
+        for item in regional:
+            self.assertNotIn(item["record_url"], text)
+
     def test_coverage_names_tested_and_uncovered_systems(self) -> None:
         import sitemeasurements as sm
 
