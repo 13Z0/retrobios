@@ -334,7 +334,7 @@
 
 
 
- A Create  R2 Back
+ A Create  R2 Quit
 === create 40x15
  RetroBIOS: Create the folder?
 
@@ -350,7 +350,7 @@
 
 
 
- A Create  R2 Back
+ A Create  R2 Quit
 === create 80x24
  RetroBIOS: Create the folder?
 
@@ -375,7 +375,7 @@
 
 
 
- A Create  R2 Back
+ A Create  R2 Quit
 === checking 40x12
  RetroBIOS: Checking
 
@@ -388,7 +388,7 @@
 
 
 
- R2 Back
+ R2 Quit
 === checking 40x15
  RetroBIOS: Checking
 
@@ -404,7 +404,7 @@
 
 
 
- R2 Back
+ R2 Quit
 === checking 80x24
  RetroBIOS: Checking
 
@@ -429,7 +429,7 @@
 
 
 
- R2 Back
+ R2 Quit
 === plan 40x12
  RetroBIOS: RetroArch
 
@@ -712,7 +712,7 @@
 
 
 
- Start Filter  A Tick  R2 Back
+ A Filter  R2 Back
 === cores 40x15
  RetroBIOS: Cores
 
@@ -728,7 +728,7 @@
 
 
 
- Start Filter  A Tick  R2 Back
+ A Filter  R2 Back
 === cores 80x24
  RetroBIOS: Cores
 
@@ -753,7 +753,7 @@
 
 
 
- Start Filter  A Tick  R2 Back
+ A Filter  R2 Back
 === preview 40x12
  RetroBIOS: Preview
 

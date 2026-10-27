@@ -1794,11 +1794,13 @@ class TestDetectedPlatformPrompt(unittest.TestCase):
     def test_a_wrong_answer_names_the_choices(self):
         result, out = self._answer("x", "2")
         self.assertEqual(result, [self.PLATFORMS[1]])
-        self.assertIn("Type a number from 1 to 3, or q to quit.", out)
+        self.assertIn("Type a number from 1 to 2, or q to quit.", out)
 
-    def test_all_installs_every_platform(self):
-        result, _ = self._answer("3")
-        self.assertEqual(result, self.PLATFORMS)
+    def test_enter_takes_the_first_and_there_is_no_all(self):
+        """tui_audit_9 P3-11: the screen focuses the first and has no All."""
+        result, out = self._answer("")
+        self.assertEqual(result, [self.PLATFORMS[0]])
+        self.assertNotIn("All", out)
 
 
 class TestManualPlatformPrompt(unittest.TestCase):

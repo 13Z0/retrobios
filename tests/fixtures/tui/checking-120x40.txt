@@ -37,4 +37,4 @@
 
 
 
- Ctrl-C Quit  B/Esc Back
+ Ctrl-C Quit  B/Esc Quit

@@ -80,8 +80,9 @@ It opens a menu:
 ```
 
 - **Right folder?** Press Enter.
-- **Wrong folder?** Choose **Another setup or folder**, then browse to yours.
-- **A handheld's SD card?** There, type its name (Miyoo Mini).
+- **Wrong folder, or a handheld's SD card?** Choose
+  **Another setup or folder**. Press / and type the device (Miyoo Mini),
+  or browse.
 
 Arrows move, Enter chooses, Esc goes back, as A and B on a handheld.
 
