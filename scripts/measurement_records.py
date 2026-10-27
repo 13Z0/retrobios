@@ -27,7 +27,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 
-RECORD_VERSION = 3
+RECORD_VERSION = 4
 # 3: before the boot oracle. 4: every repetition and variant carries a verdict.
 RECORD_VERSIONS = (3, 4)
 RECORDS_DIR = "measurements"

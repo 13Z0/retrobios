@@ -375,15 +375,25 @@ class Frontend:
         self.unanswered: dict[int, int] = {}
         self.input_queries = 0
         self.input_pressed = 0
+        # What a run showed so far, one JSON line per event, flushed at once:
+        # a core that kills the worker leaves its logs and frames behind.
+        events = spec.get("events")
+        self.events = open(events, "a", encoding="utf-8", buffering=1) if events else None  # noqa: SIM115
         self.callbacks = (
             EnvFn(self.environment), VideoFn(self.video_refresh), AudioFn(self.audio_sample),
             AudioBatchFn(self.audio_batch), PollFn(lambda: None), InputFn(self.input_state),
         )
         self.log_callback = RetroLogCallback(LogFn(self.log))
 
+    def event(self, kind: str, **values: object) -> None:
+        if self.events:
+            self.events.write(json.dumps({"event": kind, **values}) + "\n")
+
     def log(self, level: int, fmt: bytes, *args: int) -> None:
         name = LOG_LEVELS[level] if 0 <= level < len(LOG_LEVELS) else str(level)
-        self.logs.append({"frame": self.frame, "level": name, "text": render_printf(fmt or b"", args)})
+        line = {"frame": self.frame, "level": name, "text": render_printf(fmt or b"", args)}
+        self.logs.append(line)
+        self.event("log", **line)
 
     def environment(self, cmd: int, data: int) -> bool:
         cmd &= ~ENV_EXPERIMENTAL
@@ -446,8 +456,10 @@ class Frontend:
         if every and self.frame % every == 0:
             digest = hashlib.sha1(self.last_frame).hexdigest()
             self.frame_hashes.append([self.frame, digest])
-            if digest not in self.uniform and uniform_frame(self.last_frame, PIXEL_BYTES[self.pixel_format]):
+            flat = digest in self.uniform or uniform_frame(self.last_frame, PIXEL_BYTES[self.pixel_format])
+            if flat:
                 self.uniform.add(digest)
+            self.event("frame", frame=self.frame, sha1=digest, uniform=flat)
             png_dir = self.spec.get("png_dir")
             if png_dir and self.last_frame:
                 rgb = to_rgb(self.pixel_format, *self.last_size, self.last_frame)
@@ -483,6 +495,7 @@ def run_worker(spec: dict) -> dict:
         getattr(core, name)(fn)
     info = RetroSystemInfo()
     core.retro_get_system_info(ctypes.byref(info))
+    front.event("info", library_name=info.library_name.decode(), library_version=info.library_version.decode())
     core.retro_init()
     game = None
     if spec.get("content"):
@@ -494,7 +507,9 @@ def run_worker(spec: dict) -> dict:
             front.option_buffers.append(holder)
             game.data, game.size = ctypes.cast(holder, ctypes.c_void_p), len(blob)
     core.retro_load_game.restype = ctypes.c_bool
-    if not core.retro_load_game(ctypes.byref(game) if game else None):
+    loaded = bool(core.retro_load_game(ctypes.byref(game) if game else None))
+    front.event("loaded", value=loaded)
+    if not loaded:
         return {"loaded": False, "logs": front.logs, "library_name": info.library_name.decode()}
     # A frontend plugs a joypad into each port after loading, as RetroArch does.
     for port in range(spec["joypad_ports"]):
@@ -619,10 +634,41 @@ def core_identity(args: argparse.Namespace) -> dict:
 # Runs (parent side)
 # --------------------------------------------------------------------------
 
+@dataclass(frozen=True)
+class Synthetic:
+    """A wrong file made for a negative test: `@zeros:SIZE` is SIZE zero
+    bytes, `@head:SIZE:PATH` the first SIZE bytes of PATH."""
+
+    kind: str
+    size: int
+    source: Path | None = None
+
+    @classmethod
+    def parse(cls, text: str) -> Synthetic:
+        kind, _, rest = text[1:].partition(":")
+        size_text, _, source = rest.partition(":")
+        if kind not in ("zeros", "head") or not size_text.isdigit() or (kind == "head") != bool(source):
+            raise argparse.ArgumentTypeError(
+                f"{text!r}: a made file is @zeros:SIZE or @head:SIZE:PATH")
+        return cls(kind, int(size_text), Path(source) if source else None)
+
+    def label(self, dest: str) -> str:
+        if self.kind == "zeros":
+            return f"{dest}-zeros-{self.size}"
+        return f"{dest}-head-{self.size}-of-{self.source.name}"
+
+    def write(self, out: Path) -> None:
+        if self.kind == "zeros":
+            out.write_bytes(bytes(self.size))
+            return
+        with self.source.open("rb") as handle:
+            out.write_bytes(handle.read(self.size))
+
+
 @dataclass
 class Variant:
     label: str
-    files: dict[str, Path | None] = field(default_factory=dict)
+    files: dict[str, Path | Synthetic | None] = field(default_factory=dict)
 
 
 def stage_system_dir(base: dict[str, Path], variant: Variant, target: Path) -> dict[str, str | None]:
@@ -632,10 +678,14 @@ def stage_system_dir(base: dict[str, Path], variant: Variant, target: Path) -> d
     for dest, src in {**base, **variant.files}.items():
         out = target / dest
         if src is None:
+            out.unlink(missing_ok=True)
             staged[dest] = None
             continue
         out.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(src, out)
+        if isinstance(src, Synthetic):
+            src.write(out)
+        else:
+            shutil.copyfile(src, out)
         staged[dest] = file_digest(out)
     return staged
 
@@ -729,6 +779,45 @@ def run_group(command: list[str], timeout: float, env: dict[str, str]) -> subpro
     return subprocess.CompletedProcess(command, proc.returncode, out, err)
 
 
+WORKER_TRACEBACK = "Traceback (most recent call last)"
+
+
+def exit_description(returncode: int) -> dict:
+    """The status of a worker that died. A signal reaches the probe as a
+    negative code, or as 128 + its number through bubblewrap's init."""
+    number = -returncode if returncode < 0 else returncode - 128 if 128 < returncode < 160 else 0
+    name = None
+    if number:
+        with contextlib.suppress(ValueError):
+            name = signal.Signals(number).name
+    return {"status": returncode, "signal": name}
+
+
+def partial_result(events: Path, spec: dict) -> dict:
+    """A repetition rebuilt from the events a worker wrote before it died."""
+    lines = []
+    if events.is_file():
+        for line in events.read_text(encoding="utf-8", errors="replace").splitlines():
+            with contextlib.suppress(ValueError):
+                lines.append(json.loads(line))
+    info = next((e for e in lines if e.get("event") == "info"), {})
+    loaded = next((e["value"] for e in lines if e.get("event") == "loaded"), False)
+    frames = [e for e in lines if e.get("event") == "frame"]
+    result: dict = {
+        "loaded": bool(loaded),
+        "library_name": info.get("library_name", ""),
+        "logs": [{k: e[k] for k in ("frame", "level", "text")} for e in lines if e.get("event") == "log"],
+    }
+    if info.get("library_version"):
+        result["library_version"] = info["library_version"]
+    if spec["frame_hash_every"]:
+        result["observables"] = {
+            "frame_hashes": [[e["frame"], e["sha1"]] for e in frames],
+            "uniform_frames": sorted({e["sha1"] for e in frames if e.get("uniform")}),
+        }
+    return result
+
+
 def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_out: Path | None,
              png_dir: Path | None) -> dict:
     save_dir = scratch / "save"
@@ -748,6 +837,7 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
         "png_dir": str(png_dir) if png_dir else None,
         "state_out": str(state_out) if state_out else None,
         "env": dict(args.env),
+        "events": str((scratch / "events.jsonl").resolve()),
     }
     spec_path, out_path, trace_path = scratch / "spec.json", scratch / "result.json", scratch / "strace.txt"
     spec_path.write_text(json.dumps(spec), encoding="utf-8")
@@ -764,10 +854,20 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
     if args.require_sandbox and isolation != SANDBOX:
         raise ProbeError(f"refused to run the core outside a sandbox: {isolation}")
     # The core sees the variables it was given and nothing of the host's.
-    proc = run_group(prefix + command, args.timeout, dict(args.env))
-    if proc.returncode != 0 or not out_path.exists():
-        raise ProbeError(f"worker exited {proc.returncode}: {proc.stderr.strip()[-2000:]}")
-    result = json.loads(out_path.read_text(encoding="utf-8"))
+    try:
+        proc = run_group(prefix + command, args.timeout, dict(args.env))
+    except subprocess.TimeoutExpired:
+        result = partial_result(scratch / "events.jsonl", spec)
+        result["exit"] = {"status": None, "signal": "SIGKILL", "timeout_s": args.timeout}
+    else:
+        if proc.returncode == 0 and out_path.exists():
+            result = json.loads(out_path.read_text(encoding="utf-8"))
+        elif WORKER_TRACEBACK in proc.stderr:
+            # The probe's own code failed: no verdict on the core is drawn.
+            raise ProbeError(f"worker exited {proc.returncode}: {proc.stderr.strip()[-2000:]}")
+        else:
+            result = partial_result(scratch / "events.jsonl", spec)
+            result["exit"] = exit_description(proc.returncode)
     places = [(str(system_dir.resolve()), "<system>"), (str(save_dir.resolve()), "<save>")]
     if args.content:
         places.append((str(Path(args.content).resolve().parent), "<content>"))
@@ -820,6 +920,10 @@ def run_variant(args: argparse.Namespace, base: dict[str, Path], variant: Varian
         if state_out:
             state_out.parent.mkdir(parents=True, exist_ok=True)
         rep = run_once(args, system_dir, scratch, state_out, png_dir)
+        oracle = oracle_for(args.oracle_data, args.content_sha1, rep.get("library_name"))
+        rep["verdict"], rep["verdict_evidence"] = judge(rep, oracle)
+        if rep.get("exit"):
+            flags.append(f"repetition {index}: {rep['verdict_evidence']['detail']}")
         if not rep.get("loaded"):
             flags.append(f"repetition {index}: retro_load_game returned false")
         for entry in rep.get("files_opened") or []:
@@ -833,11 +937,14 @@ def run_variant(args: argparse.Namespace, base: dict[str, Path], variant: Varian
         if rep.get("observables") != reference:
             differing = sorted(k for k in (reference or {}) if (rep.get("observables") or {}).get(k) != reference[k])
             flags.append(f"repetition {index} disagrees with repetition 0 on {', '.join(differing)}")
+    verdict, evidence = variant_verdict(reps)
     return {
         "label": variant.label,
         "system_files": {dest: sha for dest, sha in sorted(staged.items())},
         "repetitions": reps,
         "flags": flags,
+        "verdict": verdict,
+        "verdict_evidence": evidence,
     }
 
 
@@ -894,12 +1001,18 @@ def build_parser() -> argparse.ArgumentParser:
                         help="refuse to record when the 1-minute load average exceeds this "
                              "(default: a quarter of the CPU count)")
     common.add_argument("--work-dir", default=str(DEFAULT_WORK_DIR), help="scratch directory")
-    common.add_argument("--timeout", type=int, default=1800, help="seconds per repetition")
+    common.add_argument("--timeout", type=int, default=1800,
+                        help="seconds per repetition, after which the run is killed and judged a hang")
+    common.add_argument("--oracle", default=None, metavar="FILE",
+                        help="reference frames and error patterns the verdicts are judged against "
+                             "(default: tests/campaign/oracle.yml)")
     common.add_argument("--no-trace", action="store_true", help="do not run the worker under strace")
     common.add_argument("--require-sandbox", action="store_true",
                         help="refuse to run the core unless bubblewrap can isolate it")
 
-    sub.add_parser("run", parents=[common], help="one execution")
+    run = sub.add_parser("run", parents=[common], help="one execution")
+    run.add_argument("--repeat", type=int, default=1,
+                     help="runs, each in a fresh process: the verdict is the one they all agree on")
     bench = sub.add_parser("bench", parents=[common], help="timed repetitions")
     bench.add_argument("--repeat", type=int, default=MIN_BENCH_REPETITIONS,
                        help=f"timed repetitions, each in a fresh process (at least {MIN_BENCH_REPETITIONS} to record)")
@@ -941,12 +1054,16 @@ def validate_args(args: argparse.Namespace) -> list[str]:
     for dest, src in args.system_file:
         if not Path(src).is_file():
             problems.append(f"--system-file {dest}={src}: not a file")
+    if args.repeat < 1:
+        problems.append("--repeat must be >= 1")
     if args.frames < 1 or args.warmup < 0:
         problems.append("--frames must be >= 1 and --warmup >= 0")
     if args.require_sandbox:
         isolation = sandbox_argv([])[1]
         if isolation != SANDBOX:
             problems.append(f"--require-sandbox: {isolation}")
+    if args.oracle and not Path(args.oracle).is_file():
+        problems.append(f"--oracle {args.oracle}: not a file")
     if args.png_dir and not args.frame_hash_every:
         problems.append("--png-dir needs --frame-hash-every")
     if args.record:
@@ -970,7 +1087,15 @@ def validate_args(args: argparse.Namespace) -> list[str]:
         if len(dests) != 1:
             problems.append("--vary must name the same DEST in every occurrence")
         for dest, src in args.vary:
-            if src and not Path(src).is_file():
+            if src.startswith("@"):
+                try:
+                    made = Synthetic.parse(src)
+                except argparse.ArgumentTypeError as exc:
+                    problems.append(f"--vary {dest}: {exc}")
+                    continue
+                if made.source and not made.source.is_file():
+                    problems.append(f"--vary {dest}={src}: {made.source} is not a file")
+            elif src and not Path(src).is_file():
                 problems.append(f"--vary {dest}={src}: not a file")
         names = set(BASE_OBSERVABLES) | {f"state:{v}" for v in args.state_var}
         if args.frame_hash_every:
@@ -986,11 +1111,12 @@ def variants_for(args: argparse.Namespace) -> list[Variant]:
     out: list[Variant] = []
     seen: set[str] = set()
     for dest, src in args.vary:
-        label = Path(src).name if src else f"{dest}-absent"
+        made = Synthetic.parse(src) if src.startswith("@") else None
+        label = made.label(dest) if made else Path(src).name if src else f"{dest}-absent"
         while label in seen:
             label += "+"
         seen.add(label)
-        out.append(Variant(label, {dest: Path(src) if src else None}))
+        out.append(Variant(label, {dest: made or (Path(src) if src else None)}))
     return out
 
 
@@ -1034,6 +1160,125 @@ def check_result(variants: list[dict], observable: str) -> dict:
         "statement": statement,
         "groups": [{"value": json.loads(key), "variants": labels} for key, labels in groups.items()],
     }
+
+
+# --------------------------------------------------------------------------
+# Boot oracle: what a run reached, from positive evidence
+# --------------------------------------------------------------------------
+
+BOOTS, BIOS_ERROR, CRASH, HANG, UNKNOWN = "boots", "bios_error", "crash", "hang", "unknown"
+VERDICTS = (BOOTS, BIOS_ERROR, CRASH, HANG, UNKNOWN)
+DEFAULT_ORACLE = ROOT / "tests" / "campaign" / "oracle.yml"
+
+
+def oracle_for(data: dict, content_sha1: str | None, library_name: str | None) -> dict:
+    """The oracle entries that judge one content on one core: its reference
+    frames, the error patterns every core shares and the core's own, and the
+    core's known error screens."""
+    core = (data.get("cores") or {}).get(library_name or "") or {}
+    references: list[dict] = []
+    for item in data.get("content") or ():
+        if content_sha1 and item.get("sha1") == content_sha1:
+            block = (item.get("references") or {}).get(library_name or "") or {}
+            references = [{"sha1": f["sha1"], "stage": f["stage"], "shows": f["shows"]}
+                          for f in block.get("frames") or ()]
+    patterns = [p["pattern"] for p in (data.get("error_patterns") or ())]
+    patterns += [p["pattern"] for p in core.get("error_patterns") or ()]
+    screens = [{"sha1": s["sha1"], "shows": s["shows"]} for s in core.get("error_screens") or ()]
+    return {"references": references, "error_patterns": patterns, "error_screens": screens}
+
+
+def sampled(rep: dict) -> list[tuple[int, str]]:
+    observables = rep.get("observables") or {}
+    return [(int(frame), digest) for frame, digest in observables.get("frame_hashes") or ()]
+
+
+def judge(rep: dict, oracle: dict) -> tuple[str, dict]:
+    """The verdict of one repetition and the evidence that decided it.
+
+    In order: a worker killed after the timeout is a hang and one that died
+    a crash, from the process status. A reference frame reached is a boot.
+    Without one, an error pattern of the core log or a known error screen
+    is a BIOS error. Every sampled frame of the second half one colour is a
+    hang. Anything else is unknown: a run is never called a boot because
+    its frames differ from another run's.
+    """
+    ended = rep.get("exit")
+    if ended and ended.get("timeout_s") is not None:
+        return HANG, {"rule": "timeout", "detail": f"killed after {ended['timeout_s']} s",
+                      "exit_status": ended.get("status"), "signal": ended.get("signal")}
+    if ended:
+        how = f"signal {ended['signal']}" if ended.get("signal") else f"exit status {ended.get('status')}"
+        return CRASH, {"rule": "exit_status", "detail": f"the worker died: {how}",
+                       "exit_status": ended.get("status"), "signal": ended.get("signal")}
+    frames = sampled(rep)
+    final = (rep.get("observables") or {}).get("frame_sha1")
+    if final:
+        frames.append((int(rep.get("frames", 0)) + int(rep.get("warmup", 0)), final))
+    references = {r["sha1"]: r for r in oracle.get("references") or ()}
+    reached = [(frame, digest) for frame, digest in frames if digest in references]
+    if reached:
+        frame, digest = reached[0]
+        stages = list(dict.fromkeys(references[d]["stage"] for _, d in reached))
+        return BOOTS, {"rule": "reference_frame",
+                       "detail": f"frame {frame} shows {references[digest]['shows']}",
+                       "frame": frame, "sha1": digest, "stages": stages}
+    for pattern in oracle.get("error_patterns") or ():
+        for line in rep.get("logs") or ():
+            if re.search(pattern, line["text"]):
+                return BIOS_ERROR, {"rule": "error_pattern",
+                                    "detail": f"the core logged an error at frame {line['frame']}",
+                                    "pattern": pattern, "log": line["text"], "frame": line["frame"]}
+    screens = {s["sha1"]: s for s in oracle.get("error_screens") or ()}
+    for frame, digest in frames:
+        if digest in screens:
+            return BIOS_ERROR, {"rule": "error_screen",
+                                "detail": f"frame {frame} shows {screens[digest]['shows']}",
+                                "frame": frame, "sha1": digest}
+    if not rep.get("loaded"):
+        return UNKNOWN, {"rule": "no_evidence",
+                         "detail": "retro_load_game returned false and no error pattern matched"}
+    uniform = set((rep.get("observables") or {}).get("uniform_frames") or ())
+    tail = [digest for frame, digest in sampled(rep)][len(sampled(rep)) // 2:]
+    if tail and all(digest in uniform for digest in tail):
+        return HANG, {"rule": "uniform_tail",
+                      "detail": f"the last {len(tail)} sampled frames are one colour each"}
+    if not oracle.get("references"):
+        return UNKNOWN, {"rule": "no_evidence", "detail": "no reference frame is known for this "
+                                                          "content on this core"}
+    return UNKNOWN, {"rule": "no_evidence", "detail": "no reference frame reached, no error pattern "
+                                                      "and no error screen"}
+
+
+def variant_verdict(reps: Sequence[dict]) -> tuple[str, dict]:
+    """The verdict all repetitions agree on, else unknown."""
+    verdicts = [rep["verdict"] for rep in reps]
+    if len(set(verdicts)) == 1:
+        first = reps[0]["verdict_evidence"]
+        evidence = {"rule": "repetitions_agree",
+                    "detail": f"{len(reps)} of {len(reps)} repetitions: {first['detail']}",
+                    "repetitions": verdicts}
+        for key in ("frame", "sha1", "stages", "pattern", "log", "exit_status", "signal"):
+            if key in first:
+                evidence[key] = first[key]
+        return verdicts[0], evidence
+    return UNKNOWN, {"rule": "repetitions_disagree",
+                     "detail": f"the repetitions disagree: {', '.join(verdicts)}",
+                     "repetitions": verdicts}
+
+
+def load_oracle(path: Path | None) -> tuple[dict, dict | None]:
+    """The oracle file's data and its identity, or nothing without a file."""
+    if path is None or not path.is_file():
+        return {}, None
+    import yaml  # noqa: PLC0415
+
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    try:
+        shown = path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        shown = path.name
+    return data, {"file": shown, "sha256": file_digest(path, "sha256")}
 
 
 def default_emulator(core_file: Path, library_name: str | None) -> str:
@@ -1097,8 +1342,10 @@ def probe(args: argparse.Namespace) -> int:
         print(f"ERROR: load average {load_before[0]} exceeds {max_load}: the machine is busy, "
               f"nothing recorded (raise --max-load to override)", file=sys.stderr)
         return 3
-    repetitions = 1 if args.mode == "run" else args.repeat
+    repetitions = args.repeat
     base = {dest: Path(src) for dest, src in args.system_file}
+    args.oracle_data, oracle_identity = load_oracle(Path(args.oracle) if args.oracle else DEFAULT_ORACLE)
+    args.content_sha1 = file_digest(Path(args.content)) if args.content else None
     work = Path(tempfile.mkdtemp(prefix=f"{args.mode}-", dir=_ensure(Path(args.work_dir))))
     try:
         variants = [run_variant(args, base, variant, work / f"v{i}", repetitions)
@@ -1136,6 +1383,9 @@ def probe(args: argparse.Namespace) -> int:
                            + (["frame_hashes", "uniform_frames"] if args.frame_hash_every else []),
             "frame_hash_every": args.frame_hash_every,
             "joypad_ports": args.joypad_ports,
+            "oracle": ({**oracle_identity, **oracle_for(args.oracle_data, args.content_sha1,
+                                                          first.get("library_name"))}
+                       if oracle_identity else None),
         },
         "variants": variants,
         "flags": [f"{v['label']}: {flag}" for v in variants for flag in v["flags"]],
@@ -1150,7 +1400,8 @@ def probe(args: argparse.Namespace) -> int:
     if args.mode == "check":
         record["check"] = {"claim": args.claim, "method": args.method, "observable": args.observable,
                            "variable": args.vary[0][0],
-                           "result": check_result(variants, args.observable)}
+                           "result": {**check_result(variants, args.observable),
+                                      "verdicts": {v["label"]: v["verdict"] for v in variants}}}
     try:
         record["emulator"] = args.emulator or default_emulator(Path(args.core), first.get("library_name"))
     except ProbeError as exc:
