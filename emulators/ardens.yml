@@ -5,7 +5,11 @@ source: "https://github.com/tiberiusbrown/ardens"
 upstream: "https://github.com/tiberiusbrown/ardens"
 profiled_date: "2026-03-23"
 source_commit: "e811cc6be72c8a802bd3265a84daf4165c177b93"
-core_version: "Git"
+core_version: "v0.25.12"
+version_basis:
+  kind: tag
+  tag: "v0.25.12"
+  distance: 0
 display_name: "Arduboy (Ardens)"
 cores:
   - ardens

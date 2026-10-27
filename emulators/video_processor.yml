@@ -9,6 +9,10 @@ profiled_date: "2026-09-17"
 source_commit: "8fe4751f0039a1b645bf750531fcfc234958a7ac"
 upstream_commit: "c608ced893583e0a8a8153890f99453fd1647d53"
 core_version: "0.0.2"
+version_basis:
+  kind: file
+  path: "video_processor_v4l2.c"
+  pattern: '#define LIBRARY_VERSION\s+"([^"]+)"'
 display_name: "Video Processor (V4L2)"
 cores:
   - video_processor

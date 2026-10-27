@@ -7,6 +7,10 @@ profiled_date: "2026-10-17"
 source_commit: "0eef09ba2b74e48fd5cfd388ee69a3743fd5f618"
 pin_frozen: "Batocera's supermodel-legacy package builds this revision, held before the renderer moved to OpenGL 4.1. Recaling would repoint these refs at code this build never had."
 core_version: "0.3a-WIP"
+version_basis:
+  kind: file
+  path: "Src/Version.h"
+  pattern: '#define\s+SUPERMODEL_VERSION\s+"([^"]+)'
 display_name: "Sega - Model 3 (Supermodel Legacy)"
 cores:
   - "supermodel-legacy"

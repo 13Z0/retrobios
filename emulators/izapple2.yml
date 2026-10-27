@@ -5,7 +5,11 @@ source: "https://github.com/ivanizag/izapple2"
 upstream: "https://github.com/ivanizag/izapple2"
 profiled_date: "2026-08-08"
 source_commit: "4e773baf9f1f3fb692e3f3444eb5f42fddb205ef"
-core_version: "v2.5.0"
+core_version: "v2.5.0-3-g4e773ba"
+version_basis:
+  kind: tag
+  tag: "v2.5.0"
+  distance: 3
 display_name: "Apple - Apple II (izapple2)"
 cores:
   - izapple2

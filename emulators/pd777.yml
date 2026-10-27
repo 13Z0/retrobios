@@ -5,7 +5,11 @@ source: "https://github.com/mittonk/PD777"
 upstream: "https://github.com/W88DodPECuThLOl/PD777"
 profiled_date: "2026-03-24"
 source_commit: "331af5f53cc0ffbab90f915681c8dfe3a4cda0a2"
-core_version: "v1.0.0"
+core_version: "1.01.01"
+version_basis:
+  kind: file
+  path: "source/libretro/libretro.cpp"
+  pattern: 'library_version\s*=\s*"([^"]+)"'
 display_name: "Epoch - Cassette Vision (PD777)"
 cores:
   - pd777

@@ -5,7 +5,11 @@ source: "https://github.com/lindbergh-loader/linuxloader"
 upstream: "https://github.com/lindbergh-loader/linuxloader"
 source_commit: "9aa6e3e45ccfbbc60eb0f975aa9d3d158a13706c"
 profiled_date: "2026-10-20"
-core_version: "3.0.12"
+core_version: "v3.0.12"
+version_basis:
+  kind: tag
+  tag: "v3.0.12"
+  distance: 0
 display_name: "Sega - Lindbergh (Linux Loader)"
 cores:
   - linuxloader

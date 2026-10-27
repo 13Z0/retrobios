@@ -5,7 +5,11 @@ source: "https://github.com/libretro/gw-libretro"
 upstream: "http://www.madrigaldesign.it/sim/"
 profiled_date: "2026-03-25"
 source_commit: "91d599b951e7bfe7e040347f58667cba20074adc"
-core_version: "Git"
+core_version: "1.6.3"
+version_basis:
+  kind: file
+  path: "src/libretro_version.c"
+  pattern: 'gw_version\s*=\s*"([^"]+)"'
 display_name: "Handheld Electronic (GW)"
 cores:
   - gw

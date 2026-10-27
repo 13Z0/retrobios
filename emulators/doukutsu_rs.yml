@@ -6,7 +6,11 @@ upstream: "https://github.com/doukutsu-rs/doukutsu-rs"
 profiled_date: "2026-03-23"
 source_commit: "51e64c2e9615bcd476034c69b58927877fe73494"
 upstream_commit: "d05995b2ce88e583491fcecfbd5883735d3527ea"
-core_version: "1.2.0 - 0.101.0"
+core_version: "0.102.0"
+version_basis:
+  kind: file
+  path: "Cargo.toml"
+  pattern: '\[package\][^\[]*?^version\s*=\s*"([^"]+)"'
 display_name: "Cave Story (drs)"
 cores:
   - doukutsu_rs

@@ -4,7 +4,12 @@ source: "https://github.com/shadps4-emu/shadPS4"
 upstream: "https://github.com/shadps4-emu/shadPS4"
 profiled_date: "2026-03-26"
 source_commit: "3eecea94ddaca360b19f4b800523b609a8b2ffcc"
-core_version: "pre-release 2026-08-08"
+core_version: "0.20.1 WIP"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'set\(EMULATOR_VERSION_MAJOR "(\d+)"\)\s*\nset\(EMULATOR_VERSION_MINOR "(\d+)"\)\s*\nset\(EMULATOR_VERSION_PATCH "(\d+)"\)[\s\S]*?set\(APP_VERSION "\$\{APP_VERSION_NUM\} ?([^"]*)"\)'
+  format: "{1}.{2}.{3} {4}"
 display_name: "shadPS4 (PlayStation 4)"
 cores:
   - shadps4

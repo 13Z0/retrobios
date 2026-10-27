@@ -7,6 +7,9 @@ upstream: "https://git.ryujinx.app/projects/Ryubing"
 profiled_date: "2026-08-11"
 source_commit: "53d32a761e61dc8e9b5c0744199a890fc8d934d5"
 core_version: "2.1.0-pr.2"
+version_basis:
+  kind: unverified
+  why: host_unreachable
 display_name: "Nintendo - Switch (Kenji-NX)"
 cores:
   - kenji-nx

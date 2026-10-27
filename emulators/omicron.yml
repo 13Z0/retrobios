@@ -8,6 +8,10 @@ profiled_date: "2026-09-17"
 source_commit: "0181fbad079addb1fca895325c711f8f91397be4"
 upstream_commit: "aaaa2f1a98b88a6b1e6102417317ced206887076"
 core_version: "v1"
+version_basis:
+  kind: file
+  path: "libretro/LibretroOmicronCore/omicron_libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Omicron"
 cores:
   - omicron

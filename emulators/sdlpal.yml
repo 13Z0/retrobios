@@ -5,7 +5,11 @@ source: "https://github.com/sdlpal/sdlpal"
 upstream: "https://github.com/sdlpal/sdlpal"
 profiled_date: "2026-03-25"
 source_commit: "d4bf69b64d335cd680555af9df90e7ec4f3006a3"
-core_version: "v2.0.1"
+core_version: "2.0.1"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "SDLPAL"
 cores:
   - sdlpal

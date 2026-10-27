@@ -5,7 +5,11 @@ source: "https://github.com/libretro/libretro-samples"
 upstream: "https://github.com/libretro/libretro-samples"
 profiled_date: "2026-03-25"
 source_commit: "7c2ad112d7a5176de2191e473369668da8946b16"
-core_version: "v1"
+core_version: "0.01"
+version_basis:
+  kind: file
+  path: "input/button_test/libretro.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "Button Test"
 cores:
   - testinput_buttontest

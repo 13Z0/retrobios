@@ -6,7 +6,11 @@ upstream: "https://github.com/ColinPitrat/caprice32"
 profiled_date: "2026-10-23"
 source_commit: "8e61dd69d948cea16c3bad734f7b9d0c2a018cc8"
 upstream_commit: "8c778bf072a06fb7c23b9cccd179041db7f79a52"
-core_version: "v4.5.4"
+core_version: "4.5.4"
+version_basis:
+  kind: file
+  path: "libretro/libretro-core.h"
+  pattern: '#define\s+VERSION_STRING\s+"([^"]+)"'
 display_name: "Amstrad - CPC/GX4000 (Caprice32)"
 cores:
   - cap32

@@ -7,6 +7,10 @@ profiled_date: "2026-03-24"
 source_commit: "45048806fbc0fea82709a75a523f2eda945e0a47"
 upstream_commit: "c285eb9bcd3505c14a338e29f251ba00776cc75c"
 core_version: "0.135u4"
+version_basis:
+  kind: file
+  path: "src/version.c"
+  pattern: 'build_version\[\]\s*=\s*"([^" ]+)'
 display_name: "Arcade (MAME 2009)"
 
 cores:

@@ -6,7 +6,11 @@ upstream: "https://github.com/stenzek/duckstation"
 profiled_date: "2026-03-25"
 source_commit: "631f0fb31b809e0f889d7c551fe695788e39c1d3"
 upstream_commit: "526b4a128827ecaef037134095cd95f431b52d06"
-core_version: "v0.1"
+core_version: "1.0.0"
+version_basis:
+  kind: file
+  path: "src/libretro/libretro_host_interface.cpp"
+  pattern: 'library_version\s*=\s*"([0-9][^" ]*)'
 display_name: "Sony - PlayStation (SwanStation)"
 cores: [swanstation]
 found_by: content
@@ -63,7 +67,7 @@ files:
     source_ref: "source src/core/bios.cpp:50-51"
     aliases: []
     evidence:
-      hle_fallback: ["2026-10-27-dc8ff3969ec2"]
+      hle_fallback: ["2026-10-27-ba53cd101c61"]
 
   - name: "scph5502.bin"
     description: "SCPH-5502, 5552 (v3.0 01-06-97 E)"
@@ -86,6 +90,8 @@ files:
     validation: [size, md5]
     source_ref: "source src/core/bios.cpp:66-67"
     aliases: []
+    evidence:
+      hle_fallback: ["2026-10-27-ba53cd101c61"]
 
   - name: "ps1_rom.bin"
     description: "PS3 embedded PS1 BIOS (v5.0 06-23-03 A)"
@@ -98,6 +104,8 @@ files:
     note: "Accepts PS1 (512KB), PS2 (4MB), and PS3 (0x3E66F0) sizes. Only first 512KB used."
     source_ref: "source src/core/bios.h:9, source src/core/bios.cpp:71, source src/core/bios.cpp:81-90"
     aliases: []
+    evidence:
+      hle_fallback: ["2026-10-27-ba53cd101c61"]
 
   - name: "ps1_rom.bin"
     description: "PS3 embedded PS1 BIOS (v5.0 06-23-03 A), whole 0x3E66F0 image"

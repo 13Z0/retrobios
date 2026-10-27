@@ -7,6 +7,10 @@ profiled_date: "2026-10-18"
 source_commit: "caf0998989446e3d6659f67c1b8aabd708a0379d"
 upstream_commit: "caf0998989446e3d6659f67c1b8aabd708a0379d"
 core_version: "0.1.0"
+version_basis:
+  kind: file
+  path: "Cargo.toml"
+  pattern: 'version\s+=\s+"([^"]+)'
 display_name: "Wenquxing - Electronic Dictionary (WQXEmu)"
 cores:
   - wqxemu

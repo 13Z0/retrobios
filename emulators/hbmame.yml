@@ -6,7 +6,11 @@ upstream: "https://github.com/Robbbert/hbmame"
 logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/MAMElogo.svg"
 profiled_date: "2026-03-23"
 source_commit: "840eeef5ee0fd75dab62c90bf25789b898f3dba3"
-core_version: "Git"
+core_version: "0.289"
+version_basis:
+  kind: file
+  path: "makefile"
+  pattern: '^BARE_VERS\s*:=\s*(\S+)'
 display_name: "Arcade (HBMAME)"
 cores:
   - hbmame

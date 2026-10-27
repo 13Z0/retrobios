@@ -393,7 +393,7 @@ class PlatformPagesLinkTheirSystemsAndEmulators(unittest.TestCase):
 
     def test_a_moved_list_opens_on_its_console_and_names_its_parent(self):
         # Past PLATFORM_SECTION_BUDGET, so the list leaves for a page of its own.
-        files = [{"name": f"{'f' * 200}{i}.bin", "status": "ok"} for i in range(1200)]
+        files = [{"name": f"{'f' * 200}{i}.bin", "status": "ok"} for i in range(2000)]
         moved: dict[str, str] = {}
         generate_site._render_platform_systems(
             {"sony-playstation": files}, {}, {}, ("retroarch", "RetroArch"), moved, {})

@@ -5,6 +5,11 @@ source: "https://github.com/minivmac/minivmac"
 profiled_date: "2026-10-20"
 source_commit: "6860a9a7f372c461b25dc42974b191a453ebcfb2"
 core_version: "37.03"
+version_basis:
+  kind: file
+  path: "setup/SPBASDEF.i"
+  pattern: '#define MajorVersion (\d+)\s*\n#define MinorVersion (\d+)'
+  format: "{1}.{2}"
 display_name: "Apple - Macintosh Plus (Mini vMac 37)"
 mode: standalone
 cores: ["minivmac"]

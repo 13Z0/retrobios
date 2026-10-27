@@ -5,7 +5,11 @@ source: "https://github.com/minkcv/vm"
 upstream: "https://github.com/minkcv/vm"
 profiled_date: "2026-03-25"
 source_commit: "11f63848a592644722ea1240b4b96785db9b009f"
-core_version: "GIT"
+core_version: "1.0"
+version_basis:
+  kind: file
+  path: "machine/libretro.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "VaporSpec"
 cores: [vaporspec]
 systems: [vaporspec]

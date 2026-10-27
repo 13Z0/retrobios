@@ -6,7 +6,11 @@ upstream: "https://github.com/bsnes-emu/bsnes"
 profiled_date: "2026-03-23"
 source_commit: "fc26b25ea236f0f877f0265d2a2c37dfd93dfde9"
 upstream_commit: "78474e5d39f58872dc21aca18cf9eb583b147fe7"
-core_version: "v10.6"
+core_version: "10.6"
+version_basis:
+  kind: file
+  path: "bsnes/emulator/emulator.hpp"
+  pattern: 'static const string Version\s*=\s*"([^"]+)"'
 display_name: "Nintendo - SNES / SFC (bsnes-hd beta)"
 cores: [bsnes_hd_beta, bsneshd, bsnes_hd]
 systems:

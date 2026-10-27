@@ -6,6 +6,10 @@ upstream: "https://github.com/garglk/garglk"
 profiled_date: "2026-08-08"
 source_commit: "9e06211c20bee35026744424a57f50375cdc29db"
 core_version: "2026.1"
+version_basis:
+  kind: file
+  path: "VERSION"
+  pattern: '^(\S+)'
 display_name: "Interactive Fiction (Gargoyle)"
 cores:
   - gargoyle

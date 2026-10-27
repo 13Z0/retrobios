@@ -5,7 +5,11 @@ source: "https://codeberg.org/iyzsong/uxn-libretro"
 upstream: "https://github.com/chmod222/zuxn"
 profiled_date: "2026-03-25"
 source_commit: "2037b34ee0bf5f3914c38e0aafd145ece170b0f6"
-core_version: "0.0.1"
+core_version: "0.0.2"
+version_basis:
+  kind: file
+  path: "build.zig.zon"
+  pattern: '^\s*\.version\s*=\s*"([^"]+)"'
 display_name: "Uxn / Varvara (zuxn)"
 cores: [uxn]
 systems: []

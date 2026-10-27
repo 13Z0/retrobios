@@ -6,6 +6,10 @@ upstream: ~
 profiled_date: "2026-10-04"
 source_commit: "3c5add5fb7f83d4ceb542823ab66d00146c4271b"
 core_version: "1.24 RC"
+version_basis:
+  kind: file
+  path: "src/config.h"
+  pattern: '#define SDLPOP_VERSION "([^"]+)"'
 display_name: "Prince of Persia (SDLPoP)"
 cores: [sdlpop, "prince"]
 systems: [prince-of-persia]

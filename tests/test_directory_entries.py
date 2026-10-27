@@ -56,6 +56,7 @@ files:
 
 PLATFORM = {
     "platform": "Demo",
+    "version": "2.1",
     "verification_mode": "existence",
     "base_destination": "",
     "cores": ["demo"],

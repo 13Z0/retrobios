@@ -5,7 +5,11 @@ source: "https://github.com/joncampbell123/dosbox-x"
 upstream: "https://github.com/joncampbell123/dosbox-x"
 source_commit: "997f616e0886a835fc3660f2b935688f17f20d42"
 profiled_date: "2026-09-17"
-core_version: "2026.08.31"
+core_version: "2026.10.01"
+version_basis:
+  kind: file
+  path: "configure.ac"
+  pattern: 'AC_INIT\(dosbox-x,\s*([0-9.]+)'
 display_name: "DOS (DOSBox-X)"
 cores:
   - dosbox-x

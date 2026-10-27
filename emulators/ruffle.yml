@@ -6,6 +6,10 @@ upstream: "https://github.com/ruffle-rs/ruffle"
 profiled_date: "2026-09-17"
 source_commit: "fe6cfc545405b888ebb478ce1c211d63147ca49b"
 core_version: "0.7.1"
+version_basis:
+  kind: file
+  path: "Cargo.toml"
+  pattern: 'version\s+=\s+"([^"]+)'
 display_name: "Adobe Flash (Ruffle)"
 cores:
   - ruffle

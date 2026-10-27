@@ -5,7 +5,11 @@ source: "https://github.com/yquake2/yquake2"
 upstream: "https://github.com/yquake2/yquake2"
 profiled_date: "2026-10-04"
 source_commit: "9dbf699273e2546f3ad14cff3dee6a51a518cd2a"
-core_version: "8.51+git"
+core_version: "8.71pre"
+version_basis:
+  kind: file
+  path: "src/common/header/common.h"
+  pattern: '#define\s+YQ2VERSION\s+"([^"]+)"'
 display_name: "Yamagi Quake II"
 cores: [yquake2]
 systems: [quake2, xatrix, rogue, ctf]

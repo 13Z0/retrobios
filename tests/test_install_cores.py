@@ -370,18 +370,28 @@ class RefusedBeforeAnyInstall(unittest.TestCase):
         (tmp / "retroarch.cfg").write_text("")
         (tmp / "cores").mkdir()
         (tmp / "cores" / "mgba_libretro.so").write_bytes(b"")
-        with mock.patch.object(install, "detect_os", return_value="linux"), \
-                mock.patch.object(install, "detect_frontends", return_value=[]), \
-                mock.patch.object(install, "detect_platforms", return_value=detected), \
-                mock.patch.object(install, "fetch_manifest") as fetch, \
-                mock.patch.object(sys, "argv", ["install.py", "--installed-cores", "--no-input"]), \
-                contextlib.redirect_stdout(io.StringIO()), \
-                contextlib.redirect_stderr(io.StringIO()) as err:
-            with self.assertRaises(SystemExit) as stop:
-                install.main()
-        self.assertEqual(stop.exception.code, 1)
-        self.assertIn("batocera ships its cores", err.getvalue())
-        fetch.assert_not_called()
+        # Two setups found stop a run without questions before either is
+        # read (code_audit_18 P2-3): the refusal is checked with Batocera
+        # named, and with both found nothing is fetched either.
+        for argv, said in (
+                (["--platform", "batocera", "--dest", str(tmp / "bios")],
+                 "batocera ships its cores"),
+                ([], "2 setups were found here")):
+            with self.subTest(argv=argv), \
+                    mock.patch.object(install, "detect_os", return_value="linux"), \
+                    mock.patch.object(install, "detect_frontends", return_value=[]), \
+                    mock.patch.object(install, "detect_platforms", return_value=detected), \
+                    mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                    mock.patch.object(install, "fetch_manifest") as fetch, \
+                    mock.patch.object(sys, "argv", ["install.py", "--installed-cores",
+                                                    "--no-input", *argv]), \
+                    contextlib.redirect_stdout(io.StringIO()), \
+                    contextlib.redirect_stderr(io.StringIO()) as err:
+                with self.assertRaises(SystemExit) as stop:
+                    install.main()
+                self.assertEqual(stop.exception.code, 1)
+                self.assertIn(said, err.getvalue())
+                fetch.assert_not_called()
 
 
 class AnUnknownTargetStopsTheRunFirst(unittest.TestCase):
@@ -393,12 +403,14 @@ class AnUnknownTargetStopsTheRunFirst(unittest.TestCase):
         self.addCleanup(shutil.rmtree, tmp, True)
         detected = [("emudeck", tmp / "bios"), ("retroarch", tmp / "system")]
         lists = {"emudeck": {"steamos": {"cores": []}}, "retroarch": {"x86_64": {"cores": []}}}
+        # Listed for both platforms: a listing reads every list found.
         with mock.patch.object(install, "detect_os", return_value="linux"), \
                 mock.patch.object(install, "detect_frontends", return_value=[]), \
                 mock.patch.object(install, "detect_platforms", return_value=detected), \
                 mock.patch.object(install, "fetch_targets", side_effect=lists.get), \
                 mock.patch.object(install, "fetch_manifest") as fetch, \
-                mock.patch.object(sys, "argv", ["install.py", "--target", "steamos", "--no-input"]), \
+                mock.patch.object(sys, "argv", ["install.py", "--target", "steamos",
+                                                "--list-systems", "--no-input"]), \
                 contextlib.redirect_stdout(io.StringIO()), \
                 contextlib.redirect_stderr(io.StringIO()) as err:
             with self.assertRaises(SystemExit) as stop:

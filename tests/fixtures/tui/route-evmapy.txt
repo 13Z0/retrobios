@@ -322,35 +322,6 @@
 
 
  A Use this folder  B Back
-=== create 40x12
- RetroBIOS: Create the folder?
-
- /home/user/bios/new does not exist.
- The nearest folder that does:
-   /home/user
-
- > Create it and continue
-   Choose another folder
-
-
-
- A Create  B Quit
-=== create 40x15
- RetroBIOS: Create the folder?
-
- /home/user/bios/new does not exist.
- The nearest folder that does:
-   /home/user
-
- > Create it and continue
-   Choose another folder
-
-
-
-
-
-
- A Create  B Quit
 === create 80x24
  RetroBIOS: Create the folder?
 
@@ -604,7 +575,7 @@
    Copy from: none
    Preview the file list
    Show the command line
- A Open  B Back  Left/Right Set
+ A Open  B Back  <> Set
 === options 40x15
  RetroBIOS: Options
 
@@ -620,7 +591,7 @@
 
  Sets --region
 
- A Open  B Back  Left/Right Set
+ A Open  B Back  <> Set
 === options 80x24
  RetroBIOS: Options
 
@@ -658,7 +629,7 @@
    [ ] Japan
 
 
- A Tick  B Done  Left/Right Order
+ A Tick  B Done  <> Order
 === regions 40x15
  RetroBIOS: Preferred regions
 
@@ -674,7 +645,7 @@
 
 
 
- A Tick  B Done  Left/Right Order
+ A Tick  B Done  <> Order
 === regions 80x24
  RetroBIOS: Preferred regions
 
@@ -754,35 +725,6 @@
 
 
  A Filter  B Back  X Tick
-=== preview 40x12
- RetroBIOS: Preview
-
- 4 files to download, 1.0 MB. Nothing
-   is written.
-
- missing     512.0 KB  scph5500.bin
- wrong copy  512.0 KB  scph5501.bin
- missing          4 B  pcsx/extra.bin
- missing      16.0 KB  gba_bios.bin
-
-
- A Back
-=== preview 40x15
- RetroBIOS: Preview
-
- 4 files to download, 1.0 MB. Nothing
-   is written.
-
- missing     512.0 KB  scph5500.bin
- wrong copy  512.0 KB  scph5501.bin
- missing          4 B  pcsx/extra.bin
- missing      16.0 KB  gba_bios.bin
-
-
-
-
-
- A Back
 === preview 80x24
  RetroBIOS: Preview
 
@@ -801,35 +743,6 @@
 
 
 
-
-
-
-
-
-
- A Back
-=== command 40x12
- RetroBIOS: Command line
-
- The same choice without questions:
-
- python3 install.py --platform
-   retroarch --dest
-   /home/user/.config/retroarch/system
-   --system nintendo-gba
-
-
-
- A Back
-=== command 40x15
- RetroBIOS: Command line
-
- The same choice without questions:
-
- python3 install.py --platform
-   retroarch --dest
-   /home/user/.config/retroarch/system
-   --system nintendo-gba
 
 
 
@@ -978,8 +891,8 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/
-   retrobios-backup/2026-10-23_1200
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+
  Details: /tmp/retrobios-x/install.log
 
  A Exit
@@ -991,8 +904,8 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/
-   retrobios-backup/2026-10-23_1200
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+
  Details: /tmp/retrobios-x/install.log
 
 
@@ -1032,27 +945,11 @@
      -2] Name or service not known
    Address:
      https://raw.githubusercontent.com/
-     Abdess/retrobios/main/install/
-     retroarch.json
- > Choose another setup or folder
-   Quit
- A Choose  B Back
-=== error 40x15
- RetroBIOS: Something went wrong
-
-   Could not fetch the file list for
-     retroarch after 3 attempts: [Errno
-     -2] Name or service not known
-   Address:
-     https://raw.githubusercontent.com/
-     Abdess/retrobios/main/install/
-     retroarch.json
+ 1-5 of 7
 
  > Choose another setup or folder
    Quit
-
-
- A Choose  B Back
+ A Choose  B Back  L1/R1 Scroll
 === error 80x24
  RetroBIOS: Something went wrong
 
@@ -1078,35 +975,6 @@
 
 
  A Choose  B Back
-=== quit 40x12
- RetroBIOS: Quit?
-
- Quit without installing? Nothing was
-   written.
-
- > Quit
-   Stay
-
-
-
-
- A Quit  B Stay
-=== quit 40x15
- RetroBIOS: Quit?
-
- Quit without installing? Nothing was
-   written.
-
- > Quit
-   Stay
-
-
-
-
-
-
-
- A Quit  B Stay
 === quit 80x24
  RetroBIOS: Quit?
 

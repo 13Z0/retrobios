@@ -5,7 +5,11 @@ source: "https://github.com/xenia-canary/xenia-canary"
 upstream: "https://github.com/xenia-canary/xenia-canary"
 profiled_date: "2026-03-26"
 source_commit: "72c2afa3ba2b1b232f89de71577251d6edafb1bd"
-core_version: "canary"
+core_version: "72c2afa"
+version_basis:
+  kind: tag
+  tag: "72c2afa"
+  distance: 0
 display_name: "Xenia Canary (Xbox 360)"
 cores:
   - xenia

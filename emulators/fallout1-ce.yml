@@ -5,7 +5,11 @@ source: "https://github.com/alexbatalov/fallout1-ce"
 upstream: ~
 profiled_date: "2026-10-04"
 source_commit: "0609bcfd0ec40ff0571d0f57fab2821eb461dc8b"
-core_version: "1.1"
+core_version: "v1.1.0-7-g0609bcf"
+version_basis:
+  kind: tag
+  tag: "v1.1.0"
+  distance: 7
 display_name: "Fallout (Community Edition)"
 cores: [fallout1-ce, "fallout-ce"]
 systems: [fallout]

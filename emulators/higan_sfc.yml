@@ -7,6 +7,10 @@ upstream: "https://gitlab.com/higan/higan"
 profiled_date: "2026-09-17"
 source_commit: "d3f592013a27cb78f17d84f90a6be6cf6f6af1d1"
 core_version: "106"
+version_basis:
+  kind: file
+  path: "higan/emulator/emulator.hpp"
+  pattern: 'static\s+const\s+string\s+Version\s*=\s*"([^"]+)"'
 display_name: "Nintendo - SNES / Famicom (higan Accuracy)"
 cores:
   - higan_sfc

@@ -156,13 +156,15 @@ def image(alt: str, src: str, **attributes: str) -> str:
     return f'<img src="{html.escape(src)}" alt="{html.escape(alt)}"{attrs}>'
 
 
-def hash_value(value: object) -> str:
+def hash_value(value: object, copy: bool = False) -> str:
     """A hash printed whole, in the hash style. One element under Starlight:
-    a span around a code span was 1,400 extra elements on a page of cards."""
+    a span around a code span was 1,400 extra elements on a page of cards.
+    *copy* marks it for the copy button the site script adds after it."""
     text = str(value).replace("`", "'")
     if _engine == "mkdocs":
         return f'<span class="rb-hash">`{text}`</span>'
-    return f'<code class="rb-hash">{html.escape(text, quote=False)}</code>'
+    marker = ' data-copy=""' if copy else ""
+    return f'<code class="rb-hash"{marker}>{html.escape(text, quote=False)}</code>'
 
 
 def block_open(tag: str, attributes: str = "") -> str:

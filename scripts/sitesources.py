@@ -425,6 +425,24 @@ def _two_repositories(profile: dict) -> bool:
 def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
     """Render source_ref values as pinned links when their forge is known.
 
+    Each part is followed by whose code it cites, in words, when the profile
+    reads two repositories. source_ref_items() gives the same parts with
+    that role apart, for a page that names the roles once in a legend.
+    """
+    rendered_groups = []
+    for label, items in source_ref_items(profile, value):
+        text = ", ".join(f"{part} ({role})" if role else part for part, role in items)
+        if label:
+            text = f"**{label}:** {text}"
+        rendered_groups.append(text)
+    return ", ".join(rendered_groups)
+
+
+def source_ref_items(profile: dict, value: str | dict | None) -> list[tuple[str, list[tuple[str, str]]]]:
+    """Each group of source_ref values: its label and its parts, each part
+    as Markdown with the role_label() of the code it cites ("" when the
+    profile reads one repository).
+
     A profile can declare two repositories: the libretro port in ``source`` and
     the original emulator in ``upstream``. A path links into the one whose
     tree SOURCE_PATHS says holds it. Any other path is rendered as plain
@@ -432,18 +450,18 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
     link to the wrong repository is a false citation. An address inside a
     shipped binary reads as one (offset 0x8094-0x80ac in libnes.so).
     """
-    rendered_groups: list[str] = []
+    groups: list[tuple[str, list[tuple[str, str]]]] = []
     path_re = re.compile(r"^[A-Za-z0-9_.@/+~-]+$")
     for label, refs in source_ref_values(value):
         candidates = _forge_sources(profile, label)
         by_role = role_sources(profile, label)
-        rendered: list[str] = []
+        rendered: list[tuple[str, str]] = []
         current_role = ""
         binary = ""
         for part in split_source_ref(refs):
             if is_binary_citation(part.path):
                 text, binary = _binary_citation(part.path, binary)
-                rendered.append(text)
+                rendered.append((text, ""))
                 continue
             binary = ""
             role, bare = ref_role(part.path)
@@ -473,22 +491,19 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
                 else:
                     selected = _holder(candidates, part.path)
 
-            tag = (f" ({role_label(profile, current_role, part.path)})"
-                   if current_role and _two_repositories(profile) else "")
+            role = (role_label(profile, current_role, part.path)
+                    if current_role and _two_repositories(profile) else "")
             if selected is None:
-                rendered.append(f"`{display}`{tag}")
+                rendered.append((f"`{display}`", role))
             else:
                 repo, pin = selected
                 url = _source_permalink(
                     repo, pin, real_path, part.start, part.end
                 )
-                rendered.append(f"[`{display}`]({url}){tag}")
+                rendered.append((f"[`{display}`]({url})", role))
 
-        text = ", ".join(rendered) if rendered else f"`{refs}`"
-        if label:
-            text = f"**{label}:** {text}"
-        rendered_groups.append(text)
-    return ", ".join(rendered_groups)
+        groups.append((label, rendered or [(f"`{refs}`", "")]))
+    return groups
 
 
 def _binary_citation(path: str, previous: str) -> tuple[str, str]:

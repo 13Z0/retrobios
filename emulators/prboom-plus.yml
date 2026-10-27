@@ -5,7 +5,11 @@ source: "https://github.com/coelckers/prboom-plus"
 upstream: "https://github.com/coelckers/prboom-plus"
 profiled_date: "2026-08-08"
 source_commit: "969515162c5aebea4ad7a125ee178dcad3d576ad"
-core_version: "2.6.66"
+core_version: "v2.6.66"
+version_basis:
+  kind: tag
+  tag: "v2.6.66"
+  distance: 0
 display_name: "Doom (PrBoom+)"
 cores:
   - prboom-plus

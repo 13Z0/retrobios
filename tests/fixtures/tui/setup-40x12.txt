@@ -9,4 +9,4 @@
  BIOS folder:
    /home/user/.config/retroarch/system
  ES-DE found: its BIOS files go to each
- A/Enter Continue  B/Esc Quit  ? Help
+ A Continue  B Quit  ? Help

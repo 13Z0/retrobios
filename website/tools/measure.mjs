@@ -68,6 +68,27 @@ if (mode === 'weight') {
 			if (n === 0) await page.click('button[data-open-modal]');
 			const input = page.locator('dialog input[type="text"], dialog input[type="search"]').first();
 			await input.fill(query);
+			if (/^[0-9a-f]+$/.test(query) && [8, 32, 40, 64].includes(query.length)) {
+				// A pasted hash: the search offers "Look up this hash" first, and
+				// the lookup names the cards that hold the value. Its results
+				// are those cards.
+				const lookup = await page.waitForSelector('.rb-search-hash a', { timeout: 15000 });
+				const found = await context.newPage();
+				await found.goto(await lookup.evaluate((a) => a.href), { waitUntil: 'networkidle' });
+				await found.waitForFunction(() => /^Found|^No file/.test(document.getElementById('rb-file-lookup-status')?.textContent ?? ''), null, { timeout: 15000 });
+				results = await found.evaluate(() => {
+					const cards = [...document.querySelectorAll('#rb-file-lookup-result a')].filter((a) => a.textContent === 'Open its card');
+					return {
+						count: document.getElementById('rb-file-lookup-status')?.textContent ?? '',
+						top: cards.slice(0, 5).map((a) => `Open its card | ${new URL(a.href).pathname}${new URL(a.href).hash}`),
+					};
+				});
+				await found.close();
+				await page.waitForTimeout(300);
+				const transfer = sum(rows.slice(mark), () => true);
+				console.log(JSON.stringify({ query, transfer_kb: (transfer / 1024).toFixed(1), ...results }));
+				continue;
+			}
 			await page.waitForSelector('.pagefind-ui__result', { timeout: 15000 });
 			await page.waitForTimeout(1200);
 			results = await page.evaluate(() => {

@@ -6,6 +6,10 @@ upstream: "https://github.com/Yabause/yabause"
 profiled_date: "2026-03-25"
 source_commit: "8926b0c6c347f8c5c755911ddb0ac695420ffbf8"
 core_version: "v0.9.15"
+version_basis:
+  kind: file
+  path: "yabause/src/libretro/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Sega - Saturn (Yabause)"
 cores:
   - yabause

@@ -5,7 +5,11 @@ source: "https://github.com/timoinutilis/lowres-nx"
 upstream: "https://github.com/timoinutilis/lowres-nx"
 profiled_date: "2026-03-25"
 source_commit: "63d5988f74e1eea2ecd6ea0445a8ce260b0a9822"
-core_version: "v1.2"
+core_version: "1.2"
+version_basis:
+  kind: file
+  path: "core/core.h"
+  pattern: '#define\s+CORE_VERSION\s+"([^"]+)"'
 display_name: "LowRes NX"
 cores:
   - lowresnx

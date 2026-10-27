@@ -8,6 +8,10 @@ upstream_commit: "7f6e8fb7385fa446d1444d671063268520bf9b54"
 logo: "https://raw.githubusercontent.com/schellingb/dosbox-pure-unleashed/main/images/logo.png"
 profiled_date: "2026-08-08"
 core_version: "1.0-preview6"
+version_basis:
+  kind: tag
+  tag: "1.0-preview6"
+  distance: 0
 display_name: "DOS (DOSBox Pure Unleashed)"
 cores:
   - dosbox-pure-unleashed

@@ -4,7 +4,12 @@ source: "https://github.com/Vita3K/Vita3K"
 upstream: "https://github.com/Vita3K/Vita3K"
 profiled_date: "2026-10-23"
 source_commit: "6ec8e6ce31f3d6099b14eb9dd0320c09ef6386b6"
-core_version: "0.2.1"
+core_version: "v0.2.1"
+version_basis:
+  kind: file
+  path: "vita3k/CMakeLists.txt"
+  pattern: 'set\(VITA3K_APP_VER_HI (\d+)\)\nset\(VITA3K_APP_VER_MID (\d+)\)\nset\(VITA3K_APP_VER_LO (\d+)\)\nset\(VITA3K_APP_VERSION "v'
+  format: "v{1}.{2}.{3}"
 display_name: "Vita3K (PS Vita)"
 cores:
   - vita3k

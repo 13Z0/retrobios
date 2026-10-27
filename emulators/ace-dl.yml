@@ -8,6 +8,10 @@ version_source:
   pattern: 'New release <i>[^<]*</i> - (\d{4}/\d{2}/\d{2})'
 profiled_date: "2026-10-20"
 core_version: "2026/10/16"
+version_basis:
+  kind: package
+  url: "https://roudoudou.com/ACE-DL/"
+  artifact: "BNDGEN.tar.gz (ACE-DL Linux x86-64 build), release date on the download page"
 display_name: "Amstrad - CPC/Plus (ACE-DL)"
 cores:
   - ace-dl

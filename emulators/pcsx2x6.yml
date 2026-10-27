@@ -8,7 +8,11 @@ profiled_date: "2026-08-08"
 source_commit: "583f0e90907d69bb2db670f570d0865260fcc71b"
 upstream_commit: "3df128d9f9cd89cfc47d08d94b3439136ba22b33"
 prose_written_at: "583f0e90907d69bb2db670f570d0865260fcc71b"
-core_version: "v0.2.22"
+core_version: "v0.2.22-2-g583f0e9"
+version_basis:
+  kind: tag
+  tag: "v0.2.22"
+  distance: 2
 display_name: "Namco - System 246 / 256 (PCSX2x6)"
 cores:
   - pcsx2x6

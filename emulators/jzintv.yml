@@ -8,6 +8,11 @@ version_source:
   pattern: 'jzintv-(\d{8})-src\.zip'
 profiled_date: "2026-10-20"
 core_version: "20200712"
+version_basis:
+  kind: package
+  url: "http://spatula-city.org/~im14u2c/intv/"
+  pattern: 'jzintv-(\d{8})-src\.zip'
+  artifact: "jzintv-20200712-src.zip"
 display_name: "Mattel - Intellivision (jzIntv)"
 cores:
   - jzintv

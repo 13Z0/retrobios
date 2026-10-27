@@ -5,7 +5,12 @@ source: "https://github.com/DCurrent/openbor"
 upstream: "https://github.com/DCurrent/openbor"
 profiled_date: "2026-08-12"
 source_commit: "65a7f0b41aee87fe4084e538634b4ed73236f871"
-core_version: "4.0 Build 7949"
+core_version: "4.0"
+version_basis:
+  kind: file
+  path: "engine/version.sh"
+  pattern: '^VERSION_MAJOR=(\d+)\s*\nVERSION_MINOR=(\d+)'
+  format: "{1}.{2}"
 display_name: "OpenBOR Game Engine"
 cores:
   - openbor

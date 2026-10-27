@@ -7,6 +7,10 @@ profiled_date: "2026-10-20"
 source_commit: "9e139779956ddba89333eece8104bd7b1b4ff2e7"
 pin_frozen: "RetroPie, the only platform that ships it, builds the 0.10.2 tag at this commit (RetroPie scriptmodules/ports/love-0.10.2.sh:16). Later releases are packaged separately as love."
 core_version: "0.10.2"
+version_basis:
+  kind: tag
+  tag: "0.10.2"
+  distance: 0
 display_name: "LOVE 2D game framework (0.10.2)"
 cores:
   - love-0.10.2

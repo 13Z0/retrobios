@@ -5,6 +5,11 @@ source: "https://github.com/RSDKModding/Sonic-Mania-Decompilation"
 upstream: "https://github.com/RSDKModding/RSDKv5-Decompilation"
 source_commit: "9dc699428420d752af9767bdb13f585ee0881bc0"
 upstream_commit: "191d7aea6c262d891244172a8609ac69fbfd7571"
+core_version: "v1.1.1-15-g9dc6994"
+version_basis:
+  kind: tag
+  tag: "v1.1.1"
+  distance: 15
 profiled_date: "2026-10-04"
 display_name: "Sonic Mania (RSDKv5 Decomp)"
 cores: [sonicmania]

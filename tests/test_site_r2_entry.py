@@ -285,7 +285,12 @@ class CommandBlocks(unittest.TestCase):
             self.assertIn("install.ps1", group)
         block = "\n".join(generate_site._console_install_block(
             "PlayStation", [("batocera", "psx"), ("recalbox", "psx")]))
-        self.assertEqual(block.count("install.sh | sh"), block.count("install.ps1))) "))
+        # Every setup's options in both forms: the list of every command,
+        # and the one command under the OS tabs.
+        sh_args = re.findall(r"install\.sh \| sh -s -- ([^<\n]+)", block)
+        ps_args = re.findall(r"install\.ps1\)\)\) ([^<\n]+)", block)
+        self.assertEqual(sorted(set(sh_args)), sorted(set(ps_args)))
+        self.assertEqual(len(set(sh_args)), 2)
         self.assertIn('```powershell title="PowerShell"', block)
         for key, guide in siteguides.GUIDES.items():
             if "windows" in guide.run:

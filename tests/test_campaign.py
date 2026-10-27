@@ -217,6 +217,7 @@ class RuleTable(unittest.TestCase):
         for zeros, half, entry in cases:
             verdict = rules.rule_validation(zeros, half, NONE_BOOTS, PRESENT, entry)
             self.assertEqual((verdict.rule, verdict.apply), ("validation_contradicted", False), entry)
+            self.assertEqual(set(verdict.value), {"content", "size"})
             self.assertFalse(rules.agrees(entry, verdict))
         self.assertIsNone(rules.rule_validation(run(rules.UNKNOWN), None, NONE_BOOTS, PRESENT,
                                                 {"name": "b"}))
@@ -238,6 +239,11 @@ class RuleTable(unittest.TestCase):
         self.assertIsNone(rules.rule_variants([run(rules.BOOTS, "a"), run(rules.BOOTS, "b")], self.ENTRY))
         verdict = rules.rule_variants([run(rules.BOOTS, "b"), run(rules.HANG, "a")], self.ENTRY)
         self.assertEqual((verdict.value, verdict.apply), (["a", "b"], False))
+
+    def test_every_settled_field_can_carry_evidence(self) -> None:
+        schema = json.loads((REPO_ROOT / "schemas" / "emulator.schema.json").read_text())
+        evidence = schema["properties"]["files"]["items"]["properties"]["evidence"]["properties"]
+        self.assertEqual(set(rules.SETTLED_FIELDS), set(evidence))
 
     def test_agreement_and_evidence(self) -> None:
         self.assertTrue(rules.agrees({"name": "a"}, rules.Verdict("r", "hle_fallback", False, "", ())))
@@ -866,6 +872,15 @@ class Findings(Workspace):
         self.c.settle("fake", self.content, self.core, 0, self.entry(), [later])
         self.assertEqual([line["status"] for line in self.lines()], ["open", "resolved"])
 
+    def test_new_evidence_writes_the_finding_again(self) -> None:
+        verdict = rules.Verdict("unsettled", "hle_fallback", None, "x", (self.RID,))
+        self.c.settle("fake", self.content, self.core, 0, self.entry(), [verdict])
+        self.c.settle("fake", self.content, self.core, 0, self.entry(), [verdict])
+        later = rules.Verdict("unsettled", "hle_fallback", None, "x", ("2026-10-28-000000000000",))
+        self.c.settle("fake", self.content, self.core, 0, self.entry(), [later])
+        self.assertEqual([line["evidence"] for line in self.lines()],
+                         [[self.RID], ["2026-10-28-000000000000"]])
+
     def test_never_opened_is_flagged(self) -> None:
         verdict = rules.rule_never_opened(self.entry(1), [self.RID], "Fake Game (World)")
         self.c.settle("fake", self.content, self.core, 1, self.entry(1), [verdict])
@@ -1015,6 +1030,11 @@ class FakeCorePasses(Workspace):
 
     @classmethod
     def setUpClass(cls) -> None:
+        # These passes prove the cores run sandboxed. Without a working bwrap
+        # the campaign refuses, and the cause is named here instead of a KeyError.
+        _prefix, isolation = campaign.core_probe.sandbox_argv([Path(tempfile.gettempdir())])
+        if isolation != campaign.core_probe.SANDBOX:
+            raise unittest.SkipTest(f"no sandbox here ({isolation}): install bubblewrap")
         TMP.mkdir(parents=True, exist_ok=True)
         cls.build = Path(tempfile.mkdtemp(dir=TMP))
         source = cls.build / "fake.c"

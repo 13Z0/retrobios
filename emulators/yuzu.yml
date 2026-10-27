@@ -9,6 +9,9 @@ pin_frozen: "The analysed revision, the one the EA 4176 build documented here co
 upstream_gone: "GitHub withdrew the repository for legal reasons: the API answers HTTP 451 for both yuzu-emu/yuzu and the yuzu-emu-mirror copy. Observed 2026-09-04. The fork Zenfone-5-X00QD-4-19/yuzu, pushed 2024-03-05, still serves the analysed commit."
 source_mirror: "https://github.com/Zenfone-5-X00QD-4-19/yuzu"
 core_version: "EA 4176"
+version_basis:
+  kind: unverified
+  why: host_gone
 display_name: "Yuzu (Nintendo Switch)"
 cores:
   - yuzu

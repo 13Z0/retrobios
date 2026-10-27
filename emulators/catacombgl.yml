@@ -6,6 +6,11 @@ upstream: "https://github.com/ArnoAnsems/CatacombGL"
 profiled_date: "2026-10-04"
 source_commit: "d11ba549382278cbc67ba6171faf8af338e29f77"
 core_version: "0.5.7 Beta"
+version_basis:
+  kind: file
+  path: "src/Engine/EngineCore.cpp"
+  pattern: 'versionMajor\s*=\s*(\d+);\s*\n.*versionMinor\s*=\s*(\d+);\s*\n.*versionLevel\s*=\s*(\d+);\s*\n.*versionPhase\s*=\s*"([^"]+)"'
+  format: "{1}.{2}.{3} {4}"
 display_name: "Catacomb 3-D (CatacombGL)"
 cores: [catacombgl]
 systems: [catacomb-3d, catacomb-adventure]

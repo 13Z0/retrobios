@@ -260,8 +260,9 @@ class EnginesGoByEngine(unittest.TestCase):
         if not SYSTEMS.is_dir():
             self.skipTest("pages not generated")
         for old, new in gs.SYSTEM_PAGES_MOVED.items():
-            self.assertFalse((CONTENT / old).exists(), old)
-            self.assertTrue((CONTENT / new).exists(), new)
+            self.assertFalse((CONTENT / old).exists() or (CONTENT / old).with_suffix(".mdx").exists(), old)
+            # A page with tabs is written as MDX.
+            self.assertTrue((CONTENT / new).exists() or (CONTENT / new).with_suffix(".mdx").exists(), new)
         redirects = CONTENT.parents[1] / "generated" / "redirects.json"
         if redirects.is_file():
             table = json.loads(redirects.read_text(encoding="utf-8"))

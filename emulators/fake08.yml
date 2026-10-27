@@ -6,6 +6,11 @@ upstream: "https://github.com/jtothebell/fake-08"
 profiled_date: "2026-03-23"
 source_commit: "814991a2571ad3970e386cef48f3b148aa1c27b9"
 core_version: "v0.0.2.20"
+version_basis:
+  kind: file
+  path: "Makefile"
+  pattern: '^export V_MAJOR\s*=\s*(\d+)\s*\nexport V_MINOR\s*=\s*(\d+)\s*\nexport V_PATCH\s*=\s*(\d+)\s*\nexport V_BUILD\s*=\s*(\d+)'
+  format: "v{1}.{2}.{3}.{4}"
 display_name: "PICO-8 (FAKE-08)"
 cores:
   - fake08

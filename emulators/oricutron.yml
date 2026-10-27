@@ -5,7 +5,12 @@ source: "https://github.com/pete-gordon/oricutron"
 upstream: "https://www.petergordon.org.uk/oricutron/"
 profiled_date: "2026-08-08"
 source_commit: "002279fce9fa756d1d63cdc40ae97939eb7de7ed"
-core_version: "V1_2_14"
+core_version: "1.2.0"
+version_basis:
+  kind: file
+  path: "Makefile"
+  pattern: '^VERSION_MAJ\s*=\s*(\d+)\s*\nVERSION_MIN\s*=\s*(\d+)\s*\nVERSION_REV\s*=\s*(\d+)'
+  format: "{1}.{2}.{3}"
 display_name: "Tangerine - Oric (Oricutron)"
 cores:
   - oricutron

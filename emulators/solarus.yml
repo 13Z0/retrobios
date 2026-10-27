@@ -6,6 +6,10 @@ upstream: "https://gitlab.com/solarus-games/solarus"
 profiled_date: "2026-08-08"
 source_commit: "86fa2031e1303aaaf9924a2f03dfdb7b7d1cbf4b"
 core_version: "2.2.0"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'project\(solarus-engine\s+VERSION\s+([0-9][^\s)]*)'
 display_name: "Solarus Game Engine"
 cores:
   - solarus

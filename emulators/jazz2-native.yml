@@ -6,6 +6,10 @@ upstream: "https://github.com/deathkiller/jazz2-native"
 profiled_date: "2026-10-04"
 source_commit: "ff9ddb7be9c84bdcf71b22d9380da06135edeb62"
 core_version: "3.9.0"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'set\(NCINE_VERSION\s+"([^"]+)"\)'
 display_name: "Jazz Jackrabbit 2 (Jazz² Resurrection)"
 cores: [jazz2]
 systems: [jazz-jackrabbit-2]

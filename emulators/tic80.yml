@@ -6,7 +6,13 @@ upstream: "https://github.com/nesbox/TIC-80"
 profiled_date: "2026-03-25"
 source_commit: "14fd99edc29962778bc88d81773288ffc6e8aa53"
 upstream_commit: "ae1195a9d0fbda243bf0ebd861d6876d072a979e"
-core_version: "0.80.0"
+core_version: "1.2.0-dev"
+version_basis:
+  kind: file
+  repo: upstream
+  path: "cmake/version.cmake"
+  pattern: 'set\(VERSION_MAJOR (\d+)\)\s*set\(VERSION_MINOR (\d+)\)\s*set\(VERSION_REVISION (\d+)\)\s*set\(VERSION_STATUS "([^"]*)"\)'
+  format: "{1}.{2}.{3}{4}"
 display_name: "TIC-80"
 cores:
   - tic80

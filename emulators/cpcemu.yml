@@ -8,6 +8,11 @@ version_source:
   pattern: 'CPCemu (\d+(?:\.\d+)+) released'
 profiled_date: "2026-08-08"
 core_version: "3.0.2"
+version_basis:
+  kind: package
+  url: "https://cpc-emu.org/Release/2025-04-24/cpcemu_portable-win32-x86-3.0.2.zip"
+  pattern: 'cpcemu_portable-win32-x86-(\d+(?:\.\d+)+)\.zip'
+  artifact: "cpcemu_portable-win32-x86-3.0.2.zip"
 display_name: "Amstrad - CPC (CPCemu)"
 cores:
   - cpcemu

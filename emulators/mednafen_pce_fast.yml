@@ -6,6 +6,10 @@ upstream: "https://mednafen.github.io/"
 profiled_date: "2026-03-24"
 source_commit: "4eee99c451f85ebe66d1591de88b892015b23059"
 core_version: "v1.31.0.0"
+version_basis:
+  kind: file
+  path: "libretro.c"
+  pattern: '#define\s+MEDNAFEN_CORE_VERSION\s+"([^"]+)'
 display_name: "NEC - PC Engine / CD (Beetle PCE FAST)"
 cores: [mednafen_pce_fast, pce_fast, beetle_pce_fast, "beetle-pce-fast"]
 systems: [nec-pc-engine]

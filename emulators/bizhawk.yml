@@ -5,6 +5,10 @@ source: "https://github.com/TASEmulators/BizHawk"
 source_commit: "bdddf4a58aa1a022afb11dc73294a81a5aa7bbd5"
 profiled_date: "2026-10-20"
 core_version: "2.11.1"
+version_basis:
+  kind: tag
+  tag: "2.11.1"
+  distance: 0
 display_name: "Multi-system (BizHawk EmuHawk)"
 cores:
   - bizhawk

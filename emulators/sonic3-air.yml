@@ -4,6 +4,11 @@ core_classification: game_engine
 source: "https://github.com/Eukaryot/sonic3air"
 upstream: "https://github.com/Eukaryot/sonic3air"
 source_commit: "b0063dfb4b3e69d710e131ab83507cdf8c41910f"
+core_version: "26.08.15.0"
+version_basis:
+  kind: file
+  path: "Oxygen/sonic3air/source/sonic3air/version.inc"
+  pattern: '#define\s+BUILD_STRING\s+"([^"]+)"'
 profiled_date: "2026-10-04"
 display_name: "Sonic 3 - Angel Island Revisited"
 cores: [sonic3air]

@@ -4,7 +4,12 @@ core_classification: pure_libretro
 source: "https://github.com/libretro/libretro-samples"
 upstream: "https://github.com/libretro/libretro-samples"
 profiled_date: "2026-03-25"
+source_commit: "bce193bc1b8c9a3da43b2ead0158a69e28b37ed8"
 core_version: "v1"
+version_basis:
+  kind: file
+  path: "video/opengl/libretro_test_gl_shaders/libretro_gl_test.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "TestGL"
 cores:
   - testgl

@@ -98,8 +98,30 @@ class InstallerOutputExample(unittest.TestCase):
                 self.assertIn(part.rsplit(":", 1)[0], install.OMISSION_REASONS.values())
         count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", run).groups()
         self.assertIn(f"0/{count} present", run)
-        menu = re.search(r"RetroArch: (\d+) files, ([\d.]+ [KMG]B)\.", text)
-        self.assertEqual(menu.groups(), (count, size))
+        self.assertSplitAddsUp(run, count, size)
+        menu = re.search(r"RetroArch: (\d+) files, ([\d.]+ [KMG]B)[.,]([^`]*)", text)
+        self.assertEqual(menu.groups()[:2], (count, size))
+        self.assertSplitAddsUp(menu.group(3), count, size)
+        games = re.search(r"g\) leave out the (\d+) game data files \(([\d.]+ [KMG]B)\)",
+                          menu.group(3))
+        self.assertIsNotNone(games, "the menu offers to leave the game data out")
+        split = re.search(r"(\d+) BIOS files \(([\d.]+ [KMG]B)\) and (\d+) game data files "
+                          r"\(([\d.]+ [KMG]B)\)", menu.group(3))
+        self.assertEqual(games.groups(), split.groups()[2:])
+
+    def assertSplitAddsUp(self, text: str, count: str, size: str) -> None:
+        """The run counted 8069 files where its menu counted 3259 BIOS files
+        and 5089 game data files: the parts add up to the total they divide,
+        the sizes within the rounding of their three figures."""
+        split = re.search(r"(\d+) BIOS files \(([\d.]+) ([KMG]B)\) and (\d+) game data "
+                          r"files \(([\d.]+) ([KMG]B)\)", text)
+        self.assertIsNotNone(split, "a categorized list says its BIOS files and game data")
+        bios, bios_size, bios_unit, games, game_size, game_unit = split.groups()
+        self.assertEqual(int(bios) + int(games), int(count))
+        units = {"KB": 1, "MB": 1024, "GB": 1024 ** 2}
+        total, unit = size.split()
+        added = (float(bios_size) * units[bios_unit] + float(game_size) * units[game_unit])
+        self.assertLessEqual(abs(added - float(total) * units[unit]), 0.15 * units[unit])
 
 
 class OneResolutionChain(unittest.TestCase):

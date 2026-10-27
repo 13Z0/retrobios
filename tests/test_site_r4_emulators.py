@@ -89,7 +89,7 @@ class AnAppThatReadsAnyBios(unittest.TestCase):
 
 class EveryArcadeCoreNamesItsRomset(unittest.TestCase):
     def test_finalburn_and_mame_2003_plus(self):
-        for name, romset in (("fbneo", "FinalBurn Neo v1.0.0.2"),
+        for name, romset in (("fbneo", f"FinalBurn Neo {_profile('fbneo')['core_version']}"),
                              ("mame2003_plus", "MAME 0.78 (plus backports)")):
             page = _pages(name)[name]
             line = page.index(f"Its BIOS and game sets must come from the {romset} romset.")

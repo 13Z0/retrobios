@@ -5,7 +5,11 @@ source: "https://github.com/HurricanGame/Hurrican"
 upstream: "https://github.com/HurricanGame/Hurrican"
 profiled_date: "2026-10-04"
 source_commit: "0d91d1f2d40f38d21e7f41afc01369ee55649fb6"
-core_version: ~
+core_version: "v1.0.9.3-398-g0d91d1f"
+version_basis:
+  kind: tag
+  tag: "v1.0.9.3"
+  distance: 398
 display_name: "Hurrican"
 cores: [hurrican]
 systems: []

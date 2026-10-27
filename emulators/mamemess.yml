@@ -6,7 +6,11 @@ upstream: "https://github.com/mamedev/mame"
 profiled_date: "2026-03-29"
 source_commit: "5f5a07748ce5c239c4118463ce8e6473743d4859"
 upstream_commit: "f34f02505e32c1993c6a782b6814232cbfc74e36"
-core_version: "0.287"
+core_version: "0.289"
+version_basis:
+  kind: file
+  path: "makefile"
+  pattern: '#define BARE_BUILD_VERSION "([^"]+)"'
 display_name: "Multi (MAME/MESS)"
 
 cores:

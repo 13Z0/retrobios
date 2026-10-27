@@ -6,7 +6,11 @@ upstream: "https://gitlab.com/jgemu/geolith"
 profiled_date: "2026-08-07"
 source_commit: "2dc88e3fa72ff404213a65d6eb5bb33baa687f73"
 upstream_commit: "05ddef568212e7225ceec22f3ecb20b5a9b640e6"
-core_version: "0.4.1"
+core_version: "0.5.0"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: 'library_version\s*=\s*"([^"]+)"'
 display_name: "SNK - Neo Geo AES/MVS (Geolith)"
 cores:
   - geolith

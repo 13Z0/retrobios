@@ -6,6 +6,10 @@ upstream: "https://codeberg.org/virtualxt/virtualxt"
 profiled_date: "2026-10-17"
 source_commit: "a400adb0abf242c2fecbe926618338a00dc557c5"
 core_version: "3.1.0"
+version_basis:
+  kind: file
+  path: "virtualxt_libretro.info"
+  pattern: '^display_version\s*=\s*"([^"]+)"'
 display_name: "VirtualXT"
 cores: [virtualxt]
 systems: [ibm-pc]

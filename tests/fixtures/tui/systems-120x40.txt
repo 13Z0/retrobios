@@ -3,9 +3,9 @@
    All
    None
    Filter (/ to type)
- > [x] nintendo-gba (gba)                                                           1 file, 16.0 KB
-   [x] sony-playstation                                                             3 files, 1.0 MB
-   [ ] nintendo-famicom-disk (ファミコン)                                                  in place
+ > [x] nintendo-gba (gba)                                       1 file, 16.0 KB
+   [x] sony-playstation                                         3 files, 1.0 MB
+   [ ] nintendo-famicom-disk (ファミコン)                              in place
 
 
 

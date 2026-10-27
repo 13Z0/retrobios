@@ -5,6 +5,10 @@ source: "https://github.com/cyxx/bermuda"
 profiled_date: "2026-10-22"
 source_commit: "cf6bdb68d53a1618967da565a44c931b15daf791"
 core_version: "0.1.7"
+version_basis:
+  kind: file
+  path: "main_libretro.cpp"
+  pattern: 'static\s+const\s+char\s+\*kVersion\s+=\s+"([^"]+)'
 display_name: "Bermuda Syndrome (bs)"
 cores:
   - "bs"

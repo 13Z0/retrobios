@@ -6,6 +6,10 @@ upstream: "https://github.com/kitao/pyxel"
 profiled_date: "2026-10-04"
 source_commit: "5d8e7b4f37c106684c1e91692772569a32a5e3d4"
 core_version: "v2.9.9"
+version_basis:
+  kind: tag
+  tag: "v2.9.9"
+  distance: 0
 display_name: "Pyxel"
 cores: [pyxel]
 systems: []

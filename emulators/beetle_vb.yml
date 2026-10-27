@@ -5,7 +5,11 @@ source: "https://github.com/libretro/beetle-vb-libretro"
 upstream: "https://mednafen.github.io/"
 profiled_date: "2026-03-24"
 source_commit: "d5ae54c8e23b573a3b34e888b2d48a588027e92c"
-core_version: "v0.9.36.1"
+core_version: "v1.31.0"
+version_basis:
+  kind: file
+  path: "libretro.cpp"
+  pattern: '#define\s+MEDNAFEN_CORE_VERSION\s+"([^"]+)'
 display_name: "Nintendo - Virtual Boy (Beetle VB)"
 cores: [mednafen_vb, vb, "beetle-vb"]
 systems: [nintendo-virtualboy]

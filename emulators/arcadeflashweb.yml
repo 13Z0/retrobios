@@ -6,6 +6,10 @@ upstream: "https://github.com/aureyoboss/ArcadeFlashWeb"
 profiled_date: "2026-08-11"
 source_commit: "5de66e0cd69b48721a094887a28d042f71ddad08"
 core_version: "1.0.2"
+version_basis:
+  kind: file
+  path: "src/ArcadeFlashWeb.pro"
+  pattern: '^VERSION\s*\+?=\s*(\S+)'
 display_name: "Adobe Flash (ArcadeFlashWeb)"
 cores:
   - arcadeflashweb

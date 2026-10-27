@@ -458,17 +458,17 @@ class SitePages(unittest.TestCase):
         cases = [
             ({"subject": "mpeg-card-lunar-cr2-build", "variable": "mpeg_card.bin",
               "content": "Redump: Lunar - Silver Star Story Complete (Japan), T-27904G V1.00"},
-             "`mpeg_card.bin`, Lunar (CR2 build)"),
+             "mpeg_card.bin, Lunar (CR2 build)"),
             ({"subject": "negative-scph5501-bin-mednafen-psx-bust-a-move-2-arcade-edition-usa",
               "variable": "scph5501.bin", "content": "Bust-A-Move 2 - Arcade Edition (USA)",
               "core": {"file": "mednafen_psx_libretro.so"}},
-             "`scph5501.bin`, Bust-A-Move 2 (wrong files)"),
+             "scph5501.bin, Bust-A-Move 2 (wrong files)"),
             ({"subject": "issue85-lunar-opening-movie", "variable": None,
               "content": "Redump: Lunar - Silver Star Story Complete (Japan), T-27904G V1.00"},
              "Lunar (issue 85 opening movie)"),
             ({"subject": "with-command-auth-device-and-command-get-9a211715", "variable": "mpeg_card.bin",
               "content": "Redump: Lunar"},
-             "`mpeg_card.bin`, Lunar (with command auth device and get)"),
+             "mpeg_card.bin, Lunar (with command auth device and get)"),
         ]
         for item, title in cases:
             self.assertEqual(sm.short_title(item), title)
@@ -497,6 +497,29 @@ class SitePages(unittest.TestCase):
         self.assertNotIn("...", " ".join(titles.values()))
         # Alone in its file, a test is named by its game.
         self.assertEqual(sm.distinct_titles(items[:1]), {"a": "Lunar"})
+
+    def test_run_output_is_text_never_markup(self) -> None:
+        nasty = "`code` {expr} <script>alert(1)</script> [x](javascript:alert(1)) \"q\" 'q' **b**"
+        item = self.item(
+            claim=nasty, method=nasty, statement=nasty, host=nasty, host_short=nasty, content=nasty,
+            variable=f"{nasty}.bin", subject="s", title=nasty, proves=[nasty], runs=2, flags=1,
+            core={"library": nasty, "commit": "{`<x>`}", "file": f"{nasty}_libretro.so"},
+            groups=[{"variant": nasty, "group": 0, "result": nasty, "absent": False}],
+            record_url="javascript:alert(1)")
+        bench = self.item(id="b", kind="bench", status="measured", subject="bench", title=nasty,
+                          content=nasty, record_url="java\nscript:x",
+                          timing={"ms_per_frame": 1.0, "fps": 1.0, "stdev": 0.0})
+        earlier = self.item(id="e", status="no verdict", subject="e", content=nasty, claim=nasty)
+        text = "\n".join(sm.tested_section("alpha", [item, bench, earlier]))
+        self.assertNotIn("<script", text)
+        self.assertNotRegex(text, r'href="(?!https?://|/)')
+        self.assertNotIn("javascript:alert(1)\"", text)
+        self.assertNotRegex(text, r"[{}]")
+        self.assertNotIn("<strong>b</strong>", text)
+        self.assertNotIn("<code>code</code>", text)
+        self.assertNotRegex(text, r'="[^"]*"q"')
+        self.assertIn("&lt;script&gt;", text)
+        self.assertIn("&#123;expr&#125;", text)
 
     def test_no_empty_sentence(self) -> None:
         text = "\n".join(sm.tested_section("beetle_saturn", [self.item(claim=None, method=None, statement="",

@@ -5,7 +5,11 @@ source: "https://github.com/ioquake/ioq3"
 upstream: "https://github.com/ioquake/ioq3"
 profiled_date: "2026-10-04"
 source_commit: "87a99d18206e878a20289f05ac3c16005dcae5c3"
-core_version: "1.36+git"
+core_version: "1.36"
+version_basis:
+  kind: file
+  path: "cmake/identity.cmake"
+  pattern: 'set\(PROJECT_VERSION\s+([^)\s]+)\)'
 display_name: "ioquake3"
 cores: [ioquake3]
 systems: [quake3, teamarena]

@@ -4,7 +4,11 @@ core_classification: community_fork
 source: "https://github.com/ymartel06/GnGeo-Pi"
 profiled_date: "2026-10-20"
 source_commit: "b94571c6097b67cfc9db5eaffb98cdc8bcb55c6e"
-core_version: "0.85"
+core_version: "0.8"
+version_basis:
+  kind: file
+  path: "gngeo/configure.in"
+  pattern: 'AC_INIT\(gngeo,\s*([^)\s]+)\)'
 display_name: "SNK - Neo Geo (GnGeo-Pi)"
 mode: standalone
 cores:

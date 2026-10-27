@@ -13,6 +13,15 @@ pin_frozen: "Recalbox, the only platform that ships the standalone build, builds
 core_version:
   standalone: "v1.1"
   libretro: "v0.9"
+version_basis:
+  standalone:
+    kind: tag
+    tag: "v1.1"
+    distance: 0
+  libretro:
+    kind: tag
+    tag: "v0.9"
+    distance: 0
 display_name: "Philips - VG 5000 (RB5000)"
 cores:
   - "rb5000"

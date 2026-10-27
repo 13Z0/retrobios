@@ -585,6 +585,21 @@ match no entry. Both land in the `--json` report (`new_files`, with
 since the pin or an undeclared hash makes the profile stale. `--tree-diff`
 shows added, removed and renamed files in the directories the refs point at.
 
+`core_version` is the version of the code at the pin, and `version_basis`
+says where it is read: a pattern in one file (`file`), the nearest tag and
+the commits after it (`tag`, written in git describe's form), the profile an
+alias follows (`alias`), an artefact read outside any source tree
+(`package`), or `none` when the code states nothing, with `core_version`
+null. `--verify-version` reads it again at the pin and exits 1 on a
+difference or a missing basis. `--set-version` writes what the code states.
+A pin advance reads the version at the new pin in the same write and is
+refused when it cannot: a package version moves by hand.
+
+```bash
+python scripts/profile_sync.py --all --verify-version --changed-only
+python scripts/profile_sync.py --emulator snes9x --set-version
+```
+
 Branch tips, tags and releases are cached for six hours. `--fresh` asks the
 forges again for them, which matters right after an upstream commit or a
 hand-set pin: a tip cached before the pin reads as behind it. It is refused

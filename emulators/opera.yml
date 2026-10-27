@@ -8,6 +8,10 @@ upstream: "https://sourceforge.net/projects/freedo/"
 profiled_date: "2026-10-18"
 source_commit: "370d9a25c030bb9de4aade371b31045691c40a95"
 core_version: "1.0.0"
+version_basis:
+  kind: file
+  path: "libretro.c"
+  pattern: 'info_->library_version\s+=\s+"([^"]+)'
 display_name: "The 3DO Company - 3DO (Opera)"
 systems:
   - 3do

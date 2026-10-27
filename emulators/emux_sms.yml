@@ -6,6 +6,10 @@ upstream: "https://github.com/sronsse/emux"
 profiled_date: "2026-03-23"
 source_commit: "3e558cb15157fcb1944846a845547d369605c963"
 core_version: "0.1"
+version_basis:
+  kind: file
+  path: "configure.ac"
+  pattern: 'AC_INIT\(\[emux\],\s+\[([0-9][\w.+-]*)'
 display_name: "Sega - Master System (Emux SMS)"
 cores:
   - emux_sms

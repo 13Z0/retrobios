@@ -6,7 +6,11 @@ upstream: "https://github.com/glKarin/com.n0n3m4.diii4a"
 author: "glKarin"
 profiled_date: "2026-09-17"
 source_commit: "ce49510f3b0c04969eab8ebe8238416e84e4f0bb"
-core_version: "1.1.0harmattan73"
+core_version: "v1.1.0harmattan73"
+version_basis:
+  kind: tag
+  tag: "v1.1.0harmattan73"
+  distance: 0
 display_name: "id Tech engine collection (idTech4A++)"
 cores:
   - "idtech4a++"

@@ -7,7 +7,12 @@ upstream: "https://github.com/hatari/hatari"
 profiled_date: "2026-09-03"
 source_commit: "ab55c3ed0e620c91e7f059a6d3fbef7acf9bfca8"
 upstream_commit: "c1a5c88bc06e56778b6b7f8483becfd58a7da2b4"
-core_version: "1.8.0"
+core_version: "v1.8.0"
+version_basis:
+  kind: tag
+  repo: upstream
+  tag: "v1.8.0"
+  distance: 0
 display_name: "Atari - ST/STE/TT/Falcon (Hatari 2014)"
 cores:
   - hatari2014
