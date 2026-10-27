@@ -303,9 +303,9 @@ def child_env(romfetch: bool = False) -> dict[str, str]:
     """What a program the campaign starts inherits: autorun's allowlist,
     never a token or a password. romfetch also gets its own settings
     (ROMFETCH_*), its account staying in its config file."""
-    names: list[str] = []
+    names: list[str] = [core_probe.PROBE_LOCK_ENV, core_probe.PROBE_LOCK_HELD_ENV]
     if romfetch:
-        names = [k for k in os.environ if k.startswith("ROMFETCH_")] + list(ROMFETCH_PASSED)
+        names += [k for k in os.environ if k.startswith("ROMFETCH_")] + list(ROMFETCH_PASSED)
     return autorun.safe_env(names)
 
 
@@ -903,6 +903,7 @@ class Campaign:
         self.store = ContentStore(self)
         self.content = load_content(paths.content_file)
         self.oracle_sha = file_sha256(paths.oracle) if paths.oracle.is_file() else ""
+        self.oracle_data = core_probe.load_oracle(paths.oracle)[0]
         self.deadline = 0.0
         self.current: Pass | None = None
         self.dirty_at_start: set[str] = set()
@@ -1055,9 +1056,14 @@ class Campaign:
 
     def remember(self, emulator: str, key: str, result: ProbeResult, core: Core | None,
                  digest: str) -> None:
+        judged = None
+        if result.record and result.record["inputs"].get("content"):
+            judged = [result.record["inputs"]["content"]["sha1"], result.record["core"]["library_name"]]
         entry = {"status": result.status, "at": now_iso(), "profile_digest": digest,
                  "core_sha256": core.sha256 if core else None,
-                 "record_version": mr.RECORD_VERSION, "oracle_sha256": self.oracle_sha}
+                 "record_version": mr.RECORD_VERSION, "oracle_sha256": self.oracle_digest(judged)}
+        if judged:
+            entry["oracle_key"] = judged
         if result.reason:
             entry["reason"] = result.reason
         if result.log:
@@ -1073,9 +1079,27 @@ class Campaign:
         self.state["checks"].setdefault(emulator, {})[key] = {
             "status": PENDING, "reason": reason, "at": now_iso(), "profile_digest": digest}
 
+    def oracle_digest(self, key: list[str] | None) -> str:
+        """What a check's verdicts depend on in the oracle: the entries of its
+        content and core, else the whole file. Another core's references
+        never make a check run again."""
+        if not key:
+            return self.oracle_sha
+        return mr.value_sha1(core_probe.oracle_for(self.oracle_data, *key))
+
     def needed(self, emulator: str, key: str, core: Core, digest: str) -> bool:
-        return should_run(self.state["checks"].get(emulator, {}).get(key), core.sha256, digest,
-                          self.oracle_sha)
+        previous = self.state["checks"].get(emulator, {}).get(key)
+        judged = (previous or {}).get("oracle_key")
+        if previous and not judged and previous.get("record"):
+            record = self.read_record(emulator, previous["record"]) or {}
+            if (record.get("inputs") or {}).get("content"):
+                judged = [record["inputs"]["content"]["sha1"], record["core"]["library_name"]]
+                previous["oracle_key"] = judged
+                # Judged against the entries the record kept, not the file it named.
+                kept = {k: v for k, v in (record["inputs"].get("oracle") or {}).items()
+                        if k not in ("file", "sha256")}
+                previous["oracle_sha256"] = mr.value_sha1({"bios_patterns": [], **kept})
+        return should_run(previous, core.sha256, digest, self.oracle_digest(judged))
 
     def check(self, emulator: str, key: str, core: Core, digest: str, argv: list[str],
               log_name: str) -> dict | None:
@@ -1134,8 +1158,8 @@ class Campaign:
             keys[f"negative:{dest}"] = self.check_key(core, content, f"negative:{dest}")
         if self.settings.bench:
             keys["bench"] = self.check_key(core, content, "bench")
-        if not any(self.needed(emulator, key, core, digest) for key in keys.values()):
-            return
+        # The rules run on every pass, from the records kept when nothing
+        # needs to run again: a change of the table applies without a run.
         try:
             folder = self.store.get(content)
             load = load_file(folder, content.load)
@@ -1174,7 +1198,7 @@ class Campaign:
             for label in labels[3:]:
                 self.log(f"{emulator}: {rules.rule_region(rules.run_of(record, label), present, entry, content.region)}")
             if dest in self.opened(files_record, 0) or dest in self.opened(record, 0):
-                verdicts = rules.rule_need(none, present, entry)
+                verdicts = rules.rule_need(none, present, entry, rules.read(none, present, zeros, half))
                 validation = rules.rule_validation(zeros, half, none, present, entry)
                 if validation:
                     verdicts.append(validation)

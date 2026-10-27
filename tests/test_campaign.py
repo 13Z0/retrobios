@@ -155,6 +155,14 @@ class RuleTable(unittest.TestCase):
         optional = rules.rule_need(NONE_BOOTS, PRESENT, {"name": "a", "required": False})
         self.assertEqual([v.field for v in optional], ["hle_fallback"])
 
+    def test_a_file_the_content_never_uses_settles_nothing(self) -> None:
+        unused = run(rules.BOOTS, "bios.bin", ("game",))
+        self.assertFalse(rules.read(NONE_BOOTS, unused, unused, unused))
+        self.assertEqual(rules.rule_need(NONE_BOOTS, unused, self.ENTRY, used=False), [])
+        # A wrong file that hangs where no file boots: the core reads it.
+        self.assertTrue(rules.read(NONE_BOOTS, unused, run(rules.HANG), unused))
+        self.assertTrue(rules.read(NONE_BOOTS, PRESENT, None, None))
+
     def test_fails_without_and_boots_alone_settles_required(self) -> None:
         for failure in rules.FAILS:
             verdicts = rules.rule_need(run(failure, "none"), PRESENT, self.ENTRY)
@@ -396,6 +404,19 @@ class StateAndResume(Workspace):
         self.assertTrue(campaign.should_run(done, "a", "e"))
         self.assertTrue(campaign.should_run({**done, "status": "pending"}, "a", "d"))
         self.assertFalse(campaign.should_run({**done, "status": "failed"}, "a", "d"))
+
+    def test_only_its_own_oracle_entries_make_a_check_run_again(self) -> None:
+        key = [hashlib.sha1(b"GAME").hexdigest(), "Fake"]
+        before = self.make().oracle_digest(key)
+        data = yaml.safe_load(self.oracle.read_text())
+        data["content"][0]["references"]["Other"] = {"recorded_from": "2026-10-27-000000000000",
+                                                     "frames": [{"sha1": "a" * 40, "stage": "game",
+                                                                 "shows": "x"}]}
+        self.oracle.write_text(yaml.safe_dump(data), encoding="utf-8")
+        self.assertEqual(self.make().oracle_digest(key), before)
+        data["cores"] = {"Fake": {"error_patterns": [{"pattern": "BIOS", "reason": "r"}]}}
+        self.oracle.write_text(yaml.safe_dump(data), encoding="utf-8")
+        self.assertNotEqual(self.make().oracle_digest(key), before)
 
     def test_evidence_does_not_change_the_digest(self) -> None:
         profile = yaml.safe_load(PROFILE)
@@ -1104,6 +1125,52 @@ class FakeCorePasses(Workspace):
         self.assertEqual({v["verdict"] for r in records for v in r["variants"]}, {"hang"})
         self.assertEqual({rep["verdict_evidence"]["rule"] for r in records for v in r["variants"]
                           for rep in v["repetitions"]}, {"timeout"})
+
+    def test_two_passes_interleave_their_runs(self) -> None:
+        """Each core_probe takes the host lock for its own run: a pass never
+        holds it between runs, so a second pass runs between them."""
+        import threading
+        import time
+
+        spans: dict[str, list[tuple[float, float]]] = {"a": [], "b": []}
+        other = Workspace(methodName="setUp")
+        other.setUp()
+        self.addCleanup(other.tearDown)
+        passes = []
+        for name, workspace in (("a", self), ("b", other)):
+            c = FakeCorePasses.passing(workspace, "hle") if workspace is self else self.passing_in(workspace)
+            real = c.host.run
+
+            def timed(argv: list[str], *args: object, _name: str = name, _real=real, **kwargs: object):
+                start = time.monotonic()
+                try:
+                    return _real(argv, *args, **kwargs)
+                finally:
+                    spans[_name].append((start, time.monotonic()))
+            c.host.run = timed
+            passes.append(c)
+        threads = [threading.Thread(target=c.run, args=(set(), None)) for c in passes]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        ends = {name: sorted(end for _, end in runs) for name, runs in spans.items()}
+        self.assertGreater(len(ends["a"]), 2)
+        self.assertGreater(len(ends["b"]), 2)
+        # Neither pass finished all its runs before the other started finishing its own.
+        self.assertLess(ends["b"][0], ends["a"][-1])
+        self.assertLess(ends["a"][0], ends["b"][-1])
+
+    def passing_in(self, workspace: Workspace) -> campaign.Campaign:
+        workspace.put_game()
+        host = campaign.Host(loadavg=lambda: (0.0, 0.0, 0.0), free_gb=lambda path: 500.0,
+                             cpu_count=1_000_000)
+        c = campaign.Campaign(workspace.paths, campaign.Settings(
+            check_repeat=2, probe_timeout=30, delays=(1,), echo=False), host,
+            lock_path=workspace.tmp / "auto.lock")
+        so = self.cores["hle"]
+        c.unit_cores = lambda *a, **k: [campaign.Core("fake", so, campaign.file_sha256(so))]
+        return c
 
     def test_missing_content_leaves_the_checks_pending(self) -> None:
         c = self.passing(romfetch=str(self.tmp / "no-romfetch"))

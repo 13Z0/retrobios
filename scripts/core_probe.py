@@ -21,6 +21,7 @@ import argparse
 import contextlib
 import ctypes
 import datetime as dt
+import fcntl
 import hashlib
 import json
 import os
@@ -35,7 +36,7 @@ import sys
 import tempfile
 import time
 import zlib
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -71,6 +72,39 @@ STRACE_LINE = re.compile(
 )
 PRINTF_SPEC = re.compile(r"%(?P<flags>[-+ #0]*)(?P<width>\*|\d+)?(?:\.(?P<prec>\*|\d+))?"
                          r"(?P<len>hh|h|ll|l|j|z|t|L)?(?P<conv>[diouxXeEfFgGaAcspn%])")
+
+
+# One measurement at a time on the host: each core_probe execution takes this
+# lock itself, its load check included, and releases it when it ends. A pass
+# of many runs never holds it between them, so two passes interleave.
+PROBE_LOCK_ENV = "RETROBIOS_PROBE_LOCK"
+PROBE_LOCK_HELD_ENV = "RETROBIOS_PROBE_LOCK_HELD"
+DEFAULT_PROBE_LOCK = Path.home() / ".local" / "state" / "retrobios" / "probe.lock"
+
+
+def probe_lock_path() -> Path:
+    return Path(os.environ.get(PROBE_LOCK_ENV) or DEFAULT_PROBE_LOCK)
+
+
+@contextlib.contextmanager
+def host_probe_lock() -> Iterator[None]:
+    """The host's probe lock for one execution. A caller that already holds
+    it for this run says so with RETROBIOS_PROBE_LOCK_HELD."""
+    if os.environ.get(PROBE_LOCK_HELD_ENV):
+        yield
+        return
+    path = probe_lock_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a") as handle:
+        try:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            print(f"waiting for {path}: another measurement is running", file=sys.stderr)
+            fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 class ProbeError(RuntimeError):
@@ -1173,8 +1207,9 @@ DEFAULT_ORACLE = ROOT / "tests" / "campaign" / "oracle.yml"
 
 def oracle_for(data: dict, content_sha1: str | None, library_name: str | None) -> dict:
     """The oracle entries that judge one content on one core: its reference
-    frames, the error patterns every core shares and the core's own, and the
-    core's known error screens."""
+    frames, the error patterns every core shares and the core's own, the
+    core's known error screens, and the log lines by which it says it loaded
+    the console's own BIOS."""
     core = (data.get("cores") or {}).get(library_name or "") or {}
     references: list[dict] = []
     for item in data.get("content") or ():
@@ -1185,7 +1220,9 @@ def oracle_for(data: dict, content_sha1: str | None, library_name: str | None) -
     patterns = [p["pattern"] for p in (data.get("error_patterns") or ())]
     patterns += [p["pattern"] for p in core.get("error_patterns") or ()]
     screens = [{"sha1": s["sha1"], "shows": s["shows"]} for s in core.get("error_screens") or ()]
-    return {"references": references, "error_patterns": patterns, "error_screens": screens}
+    loaded = [p["pattern"] for p in core.get("bios_patterns") or ()]
+    return {"references": references, "error_patterns": patterns, "error_screens": screens,
+            "bios_patterns": loaded}
 
 
 def sampled(rep: dict) -> list[tuple[int, str]]:
@@ -1218,6 +1255,11 @@ def judge(rep: dict, oracle: dict) -> tuple[str, dict]:
     references = {r["sha1"]: r for r in oracle.get("references") or ()}
     reached = [(frame, digest) for frame, digest in frames if digest in references]
     stages = list(dict.fromkeys(references[d]["stage"] for _, d in reached))
+    # A core that hides the BIOS screens by default still says it loaded one.
+    if "bios" not in stages and any(re.search(pattern, line["text"])
+                                    for pattern in oracle.get("bios_patterns") or ()
+                                    for line in rep.get("logs") or ()):
+        stages.insert(0, "bios")
     game = [(frame, digest) for frame, digest in reached if references[digest]["stage"] == "game"]
     if game:
         frame, digest = game[0]
@@ -1347,6 +1389,11 @@ def probe(args: argparse.Namespace) -> int:
         for problem in problems:
             print(f"ERROR: {problem}", file=sys.stderr)
         return 2
+    with host_probe_lock():
+        return _probe(args)
+
+
+def _probe(args: argparse.Namespace) -> int:
     max_load = args.max_load if args.max_load is not None else (os.cpu_count() or 1) / 4
     load_before = load_average()
     if args.record and load_before and load_before[0] > max_load:

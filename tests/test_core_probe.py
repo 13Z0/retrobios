@@ -211,6 +211,13 @@ class OracleTests(unittest.TestCase):
         self.assertEqual((evidence["rule"], evidence["frame"], evidence["stages"]),
                          ("reference_frame", 20, ["bios", "game"]))
 
+    def test_a_bios_load_line_stands_for_hidden_bios_screens(self) -> None:
+        oracle = {**self.ORACLE, "bios_patterns": [r"^found US BIOS file"]}
+        verdict, evidence = core_probe.judge(
+            self.rep(frames((0, self.TITLE)), logs=["found US BIOS file, crc32 1: x"]), oracle)
+        self.assertEqual((verdict, evidence["stages"]), ("boots", ["bios", "game"]))
+        self.assertEqual(core_probe.judge(self.rep(frames((0, self.TITLE))), oracle)[1]["stages"], ["game"])
+
     def test_the_bios_screens_alone_are_not_a_boot(self) -> None:
         # A console that shows its logo and then refuses the disc never reached the game.
         verdict, evidence = core_probe.judge(
@@ -275,6 +282,7 @@ class OracleTests(unittest.TestCase):
         picked = core_probe.oracle_for(data, "a" * 40, "Fake")
         self.assertEqual(picked["references"], [{"sha1": self.TITLE, "stage": "game", "shows": "t"}])
         self.assertEqual(picked["error_patterns"], ["shared", "own"])
+        self.assertEqual(picked["bios_patterns"], [])
         self.assertEqual(core_probe.oracle_for(data, "b" * 40, "Fake")["references"], [])
         self.assertEqual(core_probe.oracle_for(data, "a" * 40, "Nobody")["error_patterns"], ["shared"])
 
@@ -283,7 +291,7 @@ class OracleTests(unittest.TestCase):
         data = yaml.safe_load(core_probe.DEFAULT_ORACLE.read_text(encoding="utf-8"))
         patterns = list(data.get("error_patterns") or ())
         for core in (data.get("cores") or {}).values():
-            patterns += core.get("error_patterns") or []
+            patterns += (core.get("error_patterns") or []) + (core.get("bios_patterns") or [])
             for screen in core.get("error_screens") or ():
                 self.assertRegex(screen["sha1"], r"^[0-9a-f]{40}$")
         for pattern in patterns:
@@ -495,6 +503,32 @@ class FakeCoreTests(unittest.TestCase):
         schema = json.loads((REPO_ROOT / "schemas" / "core-probe-record.schema.json").read_text())
         sealed = measurement_records.seal({**record, "emulator": "fake", "subject": "s"})
         self.assertEqual([e.message for e in Draft202012Validator(schema).iter_errors(sealed)], [])
+
+    def test_a_run_waits_for_the_host_lock_and_frees_it(self) -> None:
+        import fcntl
+        import time
+
+        lock = self.tmp / "host.lock"
+        argv = [sys.executable, str(REPO_ROOT / "scripts" / "core_probe.py"), "run", "--core",
+                str(self.core), "--frames", "1", "--no-trace", "--work-dir", str(self.tmp / "work")]
+        env = {**os.environ, "RETROBIOS_PROBE_LOCK": str(lock)}
+        with lock.open("a") as held:
+            fcntl.flock(held, fcntl.LOCK_EX)
+            waiting = subprocess.Popen(argv, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
+                                       text=True)
+            time.sleep(1.5)
+            self.assertIsNone(waiting.poll(), "the run went ahead while another held the lock")
+            # A caller that holds the lock for this run says so.
+            held_run = subprocess.run(argv, env={**env, "RETROBIOS_PROBE_LOCK_HELD": "1"},
+                                      capture_output=True, text=True, timeout=60, check=False)
+            self.assertEqual(held_run.returncode, 0, held_run.stderr)
+            fcntl.flock(held, fcntl.LOCK_UN)
+        _, err = waiting.communicate(timeout=60)
+        self.assertEqual(waiting.returncode, 0, err)
+        self.assertIn("another measurement is running", err)
+        # Released at the end of the run: the lock is free again.
+        with lock.open("a") as again:
+            fcntl.flock(again, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
     def test_second_run_is_appended_beside_the_first(self) -> None:
         record_dir = checkout(self.tmp / "appended")

@@ -877,3 +877,87 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 @media (min-width: 50rem) {
 	header .site-title img { height: calc(4rem - 2 * var(--sl-nav-pad-y)); width: auto; }
 }
+
+/* The Tested block of an emulator page (scripts/sitemeasurements.py): a
+   summary line, then one row per test, each a <details> whose summary is
+   the row and whose body is the proof. Rows stack into two lines on a
+   phone. A dot per variant, its group in colour and its name in a title
+   and the strip's label; a variant that staged no file is a ring. */
+.sl-markdown-content .rb-tested-summary { color: var(--rb-text-secondary); font-size: 0.9rem; }
+.sl-markdown-content :is(.rb-tested-head, .rb-tested-row > summary) {
+	display: grid;
+	grid-template-columns: 1.25rem minmax(0, 1fr) 8.5rem 9rem 6rem;
+	gap: 0.5rem;
+	align-items: center;
+}
+.sl-markdown-content .rb-tested-head {
+	margin-top: 0.75rem;
+	padding: 0 0 0.25rem;
+	border-bottom: 1px solid var(--rb-border-strong);
+	color: var(--rb-text-secondary);
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+.sl-markdown-content .rb-tested-head::before { content: ""; }
+/* Starlight draws a side rule on every details: a row has a rule below only. */
+.sl-markdown-content details:is(.rb-tested-row, .rb-tested-earlier) { border-inline-start: 0; padding-inline-start: 0; }
+.sl-markdown-content details.rb-tested-row { margin: 0; border-bottom: 1px solid var(--rb-border); }
+.sl-markdown-content details.rb-tested-row:has(> summary:hover) { border-color: var(--rb-border); }
+.sl-markdown-content .rb-tested-row > summary {
+	min-height: 2.25rem;
+	padding: 0.3rem 0;
+	cursor: pointer;
+	font-size: 0.9rem;
+}
+.sl-markdown-content .rb-tested-row > summary::before { background-color: var(--rb-text-secondary); margin: 0; }
+.sl-markdown-content .rb-tested-row > summary:hover { background: var(--rb-surface); }
+.sl-markdown-content .rb-tested-test { font-weight: 600; overflow-wrap: anywhere; }
+.sl-markdown-content :is(.rb-tested-test, .rb-tested-date) small { color: var(--rb-text-secondary); font-weight: 400; }
+.sl-markdown-content .rb-tested-date { color: var(--rb-text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sl-markdown-content .rb-tested-more {
+	margin: 0 0 0.75rem 1.75rem;
+	padding: 0.5rem 0.75rem;
+	border-left: 2px solid var(--rb-border-strong);
+	font-size: 0.875rem;
+}
+.sl-markdown-content .rb-tested-more p { margin: 0.35rem 0 0; }
+.sl-markdown-content .rb-tested-more p:first-child { margin-top: 0; }
+.sl-markdown-content details.rb-tested-earlier { margin-top: 0.75rem; }
+.sl-markdown-content details.rb-tested-earlier > summary { font-size: 0.9rem; color: var(--rb-text-secondary); cursor: pointer; }
+.sl-markdown-content .rb-dots { display: inline-flex; flex-wrap: wrap; gap: 3px; }
+.sl-markdown-content .rb-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	border: 2px solid var(--rb-dot);
+	background: var(--rb-dot);
+}
+.sl-markdown-content .rb-dot-empty { background: transparent; }
+.sl-markdown-content .rb-dot-0 { --rb-dot: var(--rb-ok-fg); }
+.sl-markdown-content .rb-dot-1 { --rb-dot: var(--rb-info-fg); }
+.sl-markdown-content .rb-dot-2 { --rb-dot: var(--rb-warn-fg); }
+.sl-markdown-content .rb-dot-3 { --rb-dot: var(--rb-err-fg); }
+.sl-markdown-content .rb-dot-4 { --rb-dot: var(--rb-muted-fg); }
+.sl-markdown-content p.rb-tested-file {
+	margin: 0.9rem 0 0;
+	padding-bottom: 0.2rem;
+	border-bottom: 1px solid var(--rb-border-strong);
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+.sl-markdown-content p.rb-tested-legend { margin-top: 0.5rem; color: var(--rb-text-secondary); font-size: 0.8rem; }
+.sl-markdown-content p.rb-tested-legend .rb-dot { display: inline-block; vertical-align: -1px; }
+.sl-markdown-content table.rb-tested-bench { margin-top: 1rem; font-size: 0.875rem; }
+.sl-markdown-content table.rb-tested-bench td:not(:first-child) { font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 50rem) {
+	.sl-markdown-content div.rb-tested-head { display: none; }
+	.sl-markdown-content details.rb-tested-row > summary {
+		grid-template-columns: 1.25rem auto minmax(0, 1fr) auto;
+		row-gap: 0.2rem;
+	}
+	.sl-markdown-content .rb-tested-row > summary::before { grid-row: 1; }
+	.sl-markdown-content .rb-tested-test { grid-column: 2 / -1; }
+	.sl-markdown-content .rb-tested-result { grid-column: 2; }
+	.sl-markdown-content .rb-tested-date { text-align: right; }
+	.sl-markdown-content .rb-tested-more { margin-left: 0.5rem; }
+}
