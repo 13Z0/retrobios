@@ -193,6 +193,34 @@ content:
           - sha1: 2238516839dc43c0b22c00db5fe76128f5fb6f3f
             stage: game
             shows: a black screen with CREDIT 6
+      "duckstation":
+        recorded_from: 2026-10-27-9bc8fbcebc85
+        variant: scph5501.bin
+        frames:
+          - sha1: 7218f6facf5c27248b8dc9cff31d8b4aeb3b1829
+            stage: bios
+            shows: the Sony Computer Entertainment logo
+          - sha1: d70b0e9e9e4e05eb54fb56d6adbab3afb753631a
+            stage: bios
+            shows: the PlayStation logo licensed by Sony Computer Entertainment America
+          - sha1: f336e067bb644abaf2ab30462564a1baa037d58e
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: 534459d74bac4644fe7d3f23689390026bbb6d1b
+            stage: game
+            shows: the Acclaim and Taito credits text, CREDIT 6
+          - sha1: b01b0ebfe12f3bcfd7250443f391a67f002c40d4
+            stage: game
+            shows: the Acclaim logo, CREDIT 6
+          - sha1: 5d83577be2b2ca48bd55daaede7cc4ba96b7fee7
+            stage: game
+            shows: the Taito logo on white, CREDIT 6
+          - sha1: 4b4e686aeae9fecbb8cb504dcddb9b91bc1a137e
+            stage: game
+            shows: a black screen with CREDIT 6
+          - sha1: 2901974f4a50e0a9f061b21e5f262ea7edf5b8c2
+            stage: game
+            shows: the attract-mode game, two playfields of bubbles
   - name: "Puzzle Bobble 2 (Japan)"
     catalog: redump
     sha1: 3b51b45b8b78777c04086fcd1ef1dd0439c365e6
