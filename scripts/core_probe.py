@@ -654,38 +654,63 @@ def host_paths_hidden(text: str, places: Sequence[tuple[str, str]]) -> str:
 _BWRAP_WORKS: dict[str, bool] = {}
 
 
-def sandbox_argv(writable: Sequence[Path], private_tmp: bool = False) -> tuple[list[str], str]:
+SANDBOX = "bwrap"
+# What a core or a build sees of the host, read-only: the system's programs
+# and libraries, and the parts of /etc the dynamic loader, fonts, TLS, the
+# clock and user lookups read. Nothing else of the tree exists inside.
+SANDBOX_SYSTEM = ("/usr", "/lib", "/lib32", "/lib64", "/libx32", "/bin", "/sbin")
+SANDBOX_ETC = ("/etc/ld.so.cache", "/etc/ld.so.conf", "/etc/ld.so.conf.d", "/etc/fonts",
+               "/etc/ssl", "/etc/ca-certificates", "/etc/localtime", "/etc/nsswitch.conf",
+               "/etc/passwd", "/etc/group", "/etc/alternatives")
+
+
+def _bwrap_base(bwrap: str, network: bool) -> list[str]:
+    argv = [bwrap, "--unshare-all", "--die-with-parent", "--new-session"]
+    if network:
+        argv.append("--share-net")
+    for path in SANDBOX_SYSTEM:
+        if os.path.islink(path):
+            # usrmerge: /lib -> usr/lib is a link, made again inside.
+            argv += ["--symlink", os.readlink(path), path]
+        elif os.path.isdir(path):
+            argv += ["--ro-bind", path, path]
+    for path in SANDBOX_ETC:
+        argv += ["--ro-bind-try", path, path]
+    argv += ["--ro-bind-try", "/sys/devices/system/cpu", "/sys/devices/system/cpu",
+             "--proc", "/proc", "--dev", "/dev", "--tmpfs", "/dev/shm", "--tmpfs", "/tmp",
+             "--tmpfs", "/mnt", "--tmpfs", str(Path.home())]
+    return argv
+
+
+def sandbox_argv(writable: Sequence[Path], readonly: Sequence[Path] = (),
+                 network: bool = False) -> tuple[list[str], str]:
     """The bubblewrap prefix a third-party program runs under, and its name.
 
-    The whole tree is read-only, the network and the other namespaces are
-    unshared, the user's credentials (~/.config, ~/.ssh, ~/.gnupg,
-    ~/.git-credentials, ~/.netrc) are masked, and only `writable` can be
-    written. Without a working bwrap the program still runs, with an empty
-    environment, and the returned name says so.
+    An allowlist: the system's programs and libraries and a few files of
+    /etc read-only, an empty home, empty /tmp and /mnt, the `readonly` paths
+    (the core, the content, the staged system directory) read-only, and only
+    `writable` writable. Every namespace is unshared, the network too unless
+    `network` asks for it. Without a working bwrap the returned prefix is
+    empty and the name says why, so the caller can refuse to run.
     """
     bwrap = shutil.which("bwrap")
     if not bwrap:
         return [], "environment only: bwrap not found"
-    base = [bwrap, "--ro-bind", "/", "/", "--dev", "/dev", "--tmpfs", "/dev/shm", "--proc", "/proc",
-            "--unshare-all", "--die-with-parent", "--new-session"]
     if bwrap not in _BWRAP_WORKS:
-        probe_run = subprocess.run(base + ["true"], capture_output=True, check=False, env={})
+        probe_run = subprocess.run(_bwrap_base(bwrap, False) + ["/bin/true"], capture_output=True,
+                                   check=False, env={})
         _BWRAP_WORKS[bwrap] = probe_run.returncode == 0
     if not _BWRAP_WORKS[bwrap]:
         return [], "environment only: bwrap cannot create a sandbox here"
-    home = Path.home()
-    argv = list(base) + (["--tmpfs", "/tmp"] if private_tmp else [])
-    for hidden in (home / ".config", home / ".ssh", home / ".gnupg"):
-        if hidden.is_dir():
-            argv += ["--tmpfs", str(hidden)]
-    for secret in (home / ".git-credentials", home / ".netrc"):
-        if secret.exists():
-            argv += ["--ro-bind", "/dev/null", str(secret)]
+    argv = _bwrap_base(bwrap, network)
+    for path in readonly:
+        resolved = Path(path).resolve()
+        argv += ["--ro-bind", str(resolved), str(resolved)]
     for path in writable:
         resolved = Path(path).resolve()
         resolved.mkdir(parents=True, exist_ok=True)
         argv += ["--bind", str(resolved), str(resolved)]
-    return argv, "bwrap"
+    return argv, SANDBOX
 
 
 def run_group(command: list[str], timeout: float, env: dict[str, str]) -> subprocess.CompletedProcess:
@@ -730,8 +755,14 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
     strace = shutil.which("strace") if not args.no_trace else None
     if strace:
         command = [strace, "-f", "-qq", "-s", "4096", "-e", "trace=openat,open", "-o", str(trace_path)] + command
-    writable = [scratch, system_dir] + [p for p in (png_dir, state_out.parent if state_out else None) if p]
-    prefix, isolation = sandbox_argv(writable)
+    writable = [scratch] + [p for p in (png_dir, state_out.parent if state_out else None) if p]
+    readonly = [Path(__file__), Path(args.core), system_dir]
+    if args.content:
+        readonly.append(Path(args.content).resolve().parent)
+    readonly += [Path(value) for _, value in args.env if Path(value).is_absolute() and Path(value).exists()]
+    prefix, isolation = sandbox_argv(writable, readonly)
+    if args.require_sandbox and isolation != SANDBOX:
+        raise ProbeError(f"refused to run the core outside a sandbox: {isolation}")
     # The core sees the variables it was given and nothing of the host's.
     proc = run_group(prefix + command, args.timeout, dict(args.env))
     if proc.returncode != 0 or not out_path.exists():
@@ -865,6 +896,8 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument("--work-dir", default=str(DEFAULT_WORK_DIR), help="scratch directory")
     common.add_argument("--timeout", type=int, default=1800, help="seconds per repetition")
     common.add_argument("--no-trace", action="store_true", help="do not run the worker under strace")
+    common.add_argument("--require-sandbox", action="store_true",
+                        help="refuse to run the core unless bubblewrap can isolate it")
 
     sub.add_parser("run", parents=[common], help="one execution")
     bench = sub.add_parser("bench", parents=[common], help="timed repetitions")
@@ -910,6 +943,10 @@ def validate_args(args: argparse.Namespace) -> list[str]:
             problems.append(f"--system-file {dest}={src}: not a file")
     if args.frames < 1 or args.warmup < 0:
         problems.append("--frames must be >= 1 and --warmup >= 0")
+    if args.require_sandbox:
+        isolation = sandbox_argv([])[1]
+        if isolation != SANDBOX:
+            problems.append(f"--require-sandbox: {isolation}")
     if args.png_dir and not args.frame_hash_every:
         problems.append("--png-dir needs --frame-hash-every")
     if args.record:
@@ -1147,7 +1184,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    # The worker runs under -I, which leaves the script directory off sys.path.
+    if sys.argv[1:2] == ["_worker"]:
+        # The worker runs in the sandbox, where this file is all of the
+        # repository there is: it imports nothing beside the standard library.
+        sys.exit(main())
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from common import run_cli
 

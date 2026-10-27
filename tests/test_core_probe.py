@@ -18,6 +18,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -361,41 +362,60 @@ class FakeCoreTests(unittest.TestCase):
 
 
 class Sandbox(unittest.TestCase):
-    """What a core run under bubblewrap can reach."""
+    """What a core run under bubblewrap can reach: an allowlist."""
 
     def setUp(self) -> None:
         if not core_probe.sandbox_argv([])[0]:
             self.skipTest("no working bwrap on this host")
         self.tmp = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp" / "tests"))
-        self.home = self.tmp / "home"
-        for secret in (".config/gh/hosts.yml", ".ssh/id_ed25519"):
-            (self.home / secret).parent.mkdir(parents=True)
-            (self.home / secret).write_text("secret")
-        (self.home / ".git-credentials").write_text("https://user:secret@github.com")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
         self.out = self.tmp / "out"
+        self.inputs = self.tmp / "inputs"
+        self.inputs.mkdir()
+        (self.inputs / "bios.bin").write_text("BIOS")
         self.elsewhere = self.tmp / "elsewhere"
         self.elsewhere.mkdir()
 
-    def tearDown(self) -> None:
-        shutil.rmtree(self.tmp, ignore_errors=True)
+    def inside(self, script: str, **kwargs: object) -> subprocess.CompletedProcess:
+        prefix, isolation = core_probe.sandbox_argv([self.out], [self.inputs], **kwargs)
+        self.assertEqual(isolation, core_probe.SANDBOX)
+        return subprocess.run(prefix + ["/bin/sh", "-c", script], capture_output=True, text=True,
+                              check=False, env={"PATH": "/usr/bin:/bin"})
 
-    def test_credentials_masked_tree_read_only_network_gone(self) -> None:
-        old_home = os.environ["HOME"]
-        os.environ["HOME"] = str(self.home)
-        try:
-            prefix, isolation = core_probe.sandbox_argv([self.out])
-        finally:
-            os.environ["HOME"] = old_home
-        self.assertEqual(isolation, "bwrap")
-        script = (f'cat {self.home}/.config/gh/hosts.yml {self.home}/.ssh/id_ed25519 '
-                  f'{self.home}/.git-credentials 2>/dev/null; echo ok > {self.out}/w; '
-                  f'echo no > {self.elsewhere}/w 2>/dev/null; tail -n +3 /proc/net/dev | cut -d: -f1')
-        proc = subprocess.run(prefix + ["/bin/sh", "-c", script], capture_output=True, text=True,
-                              check=False, env={})
-        self.assertNotIn("secret", proc.stdout)
+    def test_nothing_of_the_user_or_the_checkout_is_reachable(self) -> None:
+        home = Path.home()
+        hidden = [home / ".config", home / ".ssh", home / ".git-credentials", home / ".netrc",
+                  home / ".gitconfig", REPO_ROOT / ".git", REPO_ROOT / "scripts", REPO_ROOT / "bios",
+                  REPO_ROOT / "emulators", self.elsewhere,
+                  Path("/mnt/c"), Path("/root"), Path("/var"), Path("/etc/shadow"), Path("/opt")]
+        script = "; ".join(f'test -e "{path}" && echo "LEAK {path}"' for path in hidden)
+        # The checkout exists only as the path down to the bound folders.
+        script += f'; ls -A /mnt /tmp; ls -A ~ 2>/dev/null; ls -A "{REPO_ROOT}"; echo end'
+        proc = self.inside(script)
+        self.assertNotIn("LEAK", proc.stdout)
+        self.assertEqual(proc.stdout.split(), ["/mnt:", "/tmp:", "tmp", "end"])
+
+    def test_inputs_read_only_work_dir_writable(self) -> None:
+        proc = self.inside(f'cat "{self.inputs}/bios.bin"; echo; echo x > "{self.inputs}/bios.bin" 2>/dev/null '
+                           f'|| echo refused; echo ok > "{self.out}/w"; echo no > "{self.elsewhere}/w" '
+                           f'2>/dev/null || echo gone')
+        self.assertEqual(proc.stdout.split(), ["BIOS", "refused", "gone"])
+        self.assertEqual((self.inputs / "bios.bin").read_text(), "BIOS")
         self.assertEqual((self.out / "w").read_text(), "ok\n")
         self.assertFalse((self.elsewhere / "w").exists())
-        self.assertEqual(proc.stdout.split(), ["lo"])
+
+    def test_no_network_unless_asked(self) -> None:
+        devices = "tail -n +3 /proc/net/dev | cut -d: -f1"
+        self.assertEqual(self.inside(devices).stdout.split(), ["lo"])
+        self.assertNotEqual(self.inside(devices, network=True).stdout.split(), ["lo"])
+
+    def test_a_probe_can_require_the_sandbox(self) -> None:
+        args = core_probe.build_parser().parse_args(
+            ["run", "--core", sys.executable, "--require-sandbox"])
+        self.assertEqual([p for p in core_probe.validate_args(args) if "sandbox" in p], [])
+        with unittest.mock.patch.object(core_probe.shutil, "which", return_value=None):
+            problems = core_probe.validate_args(args)
+        self.assertIn("--require-sandbox: environment only: bwrap not found", problems)
 
 
 if __name__ == "__main__":
