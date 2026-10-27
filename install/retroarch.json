@@ -6,7 +6,7 @@
   "platform": "retroarch",
   "display_name": "RetroArch",
   "version": "1.0",
-  "generated": "2026-10-26T22:11:28Z",
+  "generated": "2026-10-27T10:27:58Z",
   "base_destination": "system",
   "detect": [
     {
@@ -85540,8 +85540,8 @@
     },
     {
       "dest": "mpeg_card.bin",
-      "sha1": "2f5ebd434f6d5b82e93d03e5626007bd5380f652",
-      "sha256": "d4bac489d59bf9bfd05fab4f647df66a087f0fd0bbb9f0a8b3c55cdcf51048de",
+      "sha1": "f7171b2a8f1c464696771941225c32d636b59349",
+      "sha256": "395835dba2a3356909de9dca7f03212e9deb747062c4c75448ab55c27f294429",
       "size": 524288,
       "repo_path": "bios/Sega/Saturn/mpeg_card.bin",
       "cores": [
