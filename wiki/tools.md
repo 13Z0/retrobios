@@ -641,8 +641,9 @@ profile, `--record-coreinfo <core>` records its blob as reviewed. Data
 directories are checked against their upstream, dump catalogs and romset
 snapshots against the catalog they were read from (Redump DAT versions, the
 No-Intro daily rebuild, the newest TOSEC pack, the newest MAME release, the
-git blobs of the FBNeo DATs), and the CI toolchain against PyPI and the
-actions' latest releases.
+git blobs of the FBNeo DATs), the measurements pin against the head of the
+measurements repository, and the CI toolchain against PyPI and the actions'
+latest releases.
 
 The `native` area needs no network. It reads the cache `export_native.py`
 patches from and reports an original that is absent, that came from another
@@ -684,6 +685,7 @@ committed.
 | `targets/<name>` | the target scraper |
 | `data/<key>` | `refresh_data_dirs.py --key <key> --force` |
 | `catalogs/mame recipes`, `catalogs/fbneo recipes` | `scraper/romset_dat_importer.py --source <source> --fetch` |
+| `measurements/records pin` | `sync_measurements.py --fetch --bump` |
 
 Rows that need a decision are listed and never run: a buildbot core with no
 profile, a new `.info` file, the Redump, No-Intro and TOSEC packs, the CI
@@ -718,12 +720,12 @@ python scripts/core_probe.py run --core mednafen_saturn_libretro.so \
 
 # timed repetitions after warm-up, written as a record
 python scripts/core_probe.py bench --core core.so --content game.cue \
-  --warmup 300 --frames 3000 --repeat 5 --record measurements/
+  --warmup 300 --frames 3000 --repeat 5 --record .cache/measurements
 
 # one system file swapped between runs, compared on one observable
 python scripts/core_probe.py check --core core.so --content disc.cue \
   --vary mpeg_card.bin=a.bin --vary mpeg_card.bin=b.bin --vary mpeg_card.bin= \
-  --observable video_sha1 --claim "..." --method "..." --record measurements/
+  --observable video_sha1 --claim "..." --method "..." --record .cache/measurements
 ```
 
 Each repetition runs in a fresh process under `strace -f -e trace=openat,open`
@@ -745,7 +747,10 @@ strace the record says that tracing was unavailable.
 | `--state-var SECTION.VAR` | a variable of a Mednafen save state, as an observable |
 | `--state-dir` | keep the save state taken at the end of the first repetition |
 | `--core-repo`, `--core-commit`, `--build-command` | where the core build comes from, copied into the record |
-| `--record DIR` | write `DIR/<core>/<date>-<sha12>.json` (schema `core-probe-record.schema.json`) |
+| `--record DIR` | append the record to the measurements clone `DIR`: one line of `records/<emulator>.jsonl` and its sidecar `data/<emulator>/<id>.json.gz`. A directory inside this repository's tracked tree is refused |
+| `--emulator` | the profile the record is filed under. By default the profile whose `cores:` names the `.so`, else the core's library name |
+| `--subject` | a slug naming the test, shared by its reruns. By default derived from the claim and method, or from the inputs of a run or bench |
+| `--supersedes ID` | the id of an earlier record of the same emulator this one corrects |
 | `--max-load` | refuse to record when the 1-minute load average is above it (default: a quarter of the CPU count) |
 | `--no-trace` | run without strace |
 | `@FILE` | read arguments from FILE, one per line |
@@ -762,6 +767,50 @@ save and content directories read `<system>`, `<save>` and `<content>`. A record
 host (CPU, kernel, Python, load before and after) and each input by hash.
 Core log lines arrive through the libretro log interface. Floating-point
 arguments of a log line cannot be read from Python and print as `<double>`.
+
+A record is stored in two parts by `measurement_records.py`. The line keeps
+the claim, method, result, timing statistics, host, core build, frontend
+commit, inputs by hash and, per variant, the first repetition's observables
+and files opened, under 20 KB. The sidecar keeps every repetition in full
+(per-frame hashes, core logs, declared options), the raw timing values and
+any compared value too large for a line, and its sha256 is in the line. The
+id is the date and the first 12 hex digits of the sha256 of the line without
+its id. Schemas: `core-probe-record.schema.json` for a line,
+`core-probe-data.schema.json` for a sidecar. `join` rebuilds the full record
+the run printed, `check_pair` checks a line against its sidecar.
+
+### sync_measurements.py
+
+The records live in their own repository,
+[Abdess/retrobios-measurements](https://github.com/Abdess/retrobios-measurements):
+`records/<emulator>.jsonl`, one record per line, append-only, and
+`data/<emulator>/<id>.json.gz`. This repository keeps only the pin,
+`measurements-pin.json`, and reads the clone in `.cache/measurements/` at
+that commit with git, whatever its working tree holds.
+
+```bash
+python scripts/sync_measurements.py --fetch           # clone or update, check the remote
+python scripts/sync_measurements.py --fetch --bump    # then move the pin to its head
+python scripts/sync_measurements.py --check-only      # check every line and sidecar at the pin
+python scripts/sync_measurements.py                   # write the site's measurement files
+```
+
+`--fetch` is the only step on the network. It refuses a remote whose history
+changed or removed a line the pin holds, or rewrote a data file: a correction
+is a new line naming the record it `supersedes`. Every line must hash to its
+id and join its sidecar. Two branches that each add a line merge cleanly,
+the measurements repository marking `records/*.jsonl` `merge=union`.
+
+`generate_site.py` compiles the records at the pin into files it never
+commits: `public/data/measurements/index.json` (one item per emulator and
+subject, its latest record not superseded, with method, host and the
+permalink of the line at the pin), `public/downloads/measurements.sqlite`
+(normalised tables, indexed on emulator, system and claim, `meta` naming the
+commit) and one `public/downloads/measurements/<emulator>.sqlite` per
+emulator. Rows are sorted and nothing reads the clock, so two builds give
+the same bytes. Without the pinned commit the site lists no measurements and
+says so. `--require-measurements` makes that an error, and the deploy passes
+it after a shallow fetch of the pinned commit.
 
 ### Other tools
 
