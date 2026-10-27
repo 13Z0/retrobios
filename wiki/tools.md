@@ -706,10 +706,12 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 
 ### autorun.py
 
-Runs the unattended jobs declared in `automation/jobs.yml`, one at a time.
-The registry holds each job's commands, its gate, the artifacts computed
-twice, the paths each commit may carry and the schedule. Changing any of
-them is a reviewed commit.
+Runs the jobs declared in `automation/jobs.yml`, one at a time. Nothing is
+scheduled by default: a maintainer runs a job by hand, and a contributor who
+wants a schedule on their own machine installs the timers below. The registry
+holds each job's commands, its gate, the artifacts computed twice, the paths
+each commit may carry and the schedule. Changing any of them is a reviewed
+commit.
 
 | Guard | Rule |
 |-------|------|
