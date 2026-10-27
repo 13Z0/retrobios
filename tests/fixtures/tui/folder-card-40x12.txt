@@ -9,4 +9,4 @@
  > Browse for a folder
    Type a path
    Look again
- A/Enter Browse  B/Esc Back  ? Help
+ A Browse  B Back  ? Help

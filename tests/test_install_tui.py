@@ -1013,7 +1013,7 @@ class Views(unittest.TestCase):
             with self.subTest(screen=name):
                 hint = install.tui_view(state, 40, 15)[-1].strip()
                 self.assertTrue(hint.startswith(("A/Enter", "A ", "Enter", "Ctrl-C", "Any key",
-                                                 "B/Esc Stop")), hint)
+                                                 "B/Esc Stop", "B Stop")), hint)
 
     def test_focus_is_marked_without_colour(self):
         lines = install.tui_view(fresh_state(), 80, 24)
@@ -1030,12 +1030,12 @@ def _bar_keys(line: str) -> set:
 # The keys each route has, as the bar may name them. "Any" opens "Any key
 # closes this help", <> and ^v are the narrow forms of Left/Right, Up/Down.
 ROUTE_KEYS = {
-    "keys": {"Enter", "Esc", "Space", "o", "?", "/", "Ctrl-C", "Ctrl-U"},
-    "gptokeyb": {"A", "B", "X", "Y", "Select+Start"},
-    "gptokeyb_muxterm": {"A", "B", "X", "Y", "Select+Start"},
-    "evmapy": {"A", "B", "X", "Y"},
-    "muxterm": {"Start", "B", "Y", "Menu", "Select"},
-    "miyoo": {"A", "Start", "R2", "L2"},
+    "keys": {"Enter", "Esc", "Space", "o", "?", "/", "Ctrl-C", "Ctrl-U", "PgUp/PgDn"},
+    "gptokeyb": {"A", "B", "X", "Y", "Select+Start", "L1/R1"},
+    "gptokeyb_muxterm": {"A", "B", "X", "Y", "Select+Start", "D-pad"},
+    "evmapy": {"A", "B", "X", "Y", "L1/R1"},
+    "muxterm": {"Start", "B", "Y", "Menu", "Select", "D-pad"},
+    "miyoo": {"A", "Start", "R2", "L2", "L1/R1"},
 }
 EVERY_ROUTE_HAS = {"Left/Right", "Up/Down", "<>", "^v", "Any"}
 
@@ -1628,7 +1628,11 @@ class AuditRoundTwo(unittest.TestCase):
         kind, plat, title, lines, code = inbox.get_nowait()
         self.assertEqual((kind, title, code), ("manifest_failed", "No connection", 1))
         self.assertIn("could not be downloaded: the server refused the connection", lines[0])
-        self.assertNotIn("--", " ".join(lines))
+        # The pack is the one option named: the way of a handheld with no
+        # Wi-Fi (tui_audit_11 P3-3).
+        self.assertIn("Or copy a pack to the card and run the installer with --from-pack",
+                      " ".join(lines))
+        self.assertNotIn("--", " ".join(lines).replace("--from-pack", ""))
         state = fresh_state()
         with mock.patch.object(install.Path, "exists", return_value=True):
             press(state, "enter")
@@ -5803,7 +5807,8 @@ class AuditSix(unittest.TestCase):
         self.assertNotIn("before Install", text)
         self.assertNotIn("backup folder", text)
         self.assertIn("Copy them from your old card", text)
-        self.assertEqual(view[-1].strip(), "A/Enter Back  ? Help")
+        # The short names at 40 columns, as every screen of that width.
+        self.assertEqual(view[-1].strip(), "A Back  ? Help")
 
     def test_a_refusal_shows_at_40x12_on_type_a_path(self):
         """P2-2: Enter seemed to do nothing, the refusal drawn below the
@@ -9071,6 +9076,131 @@ class AuditEighteenAndEleven(unittest.TestCase):
             state = checked_state()
             rows = install.tui_rows(state)
         self.assertEqual(rows[state.focus.get("plan", 0)].action, "fromcard")
+
+    # tui_audit_11 P3-2 to P3-20: the screens' polish.
+
+    def test_a_long_message_scrolls_with_its_position(self):
+        """P3-2: at 40x12 the offline screen dropped its remedy unsaid."""
+        state = fresh_state()
+        state.stack = ["error"]
+        state.error_title = install.TUI_OFFLINE_TITLE
+        state.error = ["This run makes no network request (--offline), and the list of BIOS "
+                       "files comes from the network.",
+                       "Run the installer again with the list saved as a file (--manifest "
+                       "FILE, a copy of install/<platform>.json) or with a pack (--from-pack "
+                       "PACK), or without --offline."]
+        state.cols, state.rows = 40, 12
+        view = [str(line) for line in install.tui_view(state, 40, 12)]
+        self.assertTrue(any(re.fullmatch(r" 1-\d+ of \d+", line) for line in view), view)
+        self.assertIn("Scroll", view[-1])
+        press(state, "pgdn")
+        end = " ".join(" ".join(str(line) for line in install.tui_view(state, 40, 12)).split())
+        self.assertIn("--offline.", end)
+
+    def test_a_small_window_says_why_the_questions_come_line_by_line(self):
+        """P3-4."""
+        with mock.patch.object(install, "tui_blocker",
+                               return_value="the terminal is 39x12, smaller than 40x12"), \
+                mock.patch.object(install, "_run", side_effect=SystemExit(0)), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.dict(install._WSL), \
+                mock.patch.object(sys, "argv", ["install.py"]), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                self.assertRaises(SystemExit):
+            install.main()
+        self.assertIn("The window is 39x12: questions come line by line (40x12 for the full "
+                      "screen).", out.getvalue())
+
+    def test_one_bar_rule_per_width(self):
+        """P3-5: at 40 columns the plan read "A Install", Confirm "A/Enter"."""
+        states = golden_states()
+        for name in ("preview", "confirm", "result", "quit"):
+            with self.subTest(screen=name):
+                bar = str(install.tui_view(states[name], 40, 12)[-1])
+                self.assertNotIn("A/Enter", bar)
+                self.assertNotIn("B/Esc", bar)
+
+    def test_the_folder_its_config_named_is_said_under_it(self):
+        """P3-6, P3-7."""
+        state = checked_state()
+        long_dest = Path("/home/user/" + "a-long-folder-name/" * 5 + "system")
+        state.dest = long_dest
+        with mock.patch.object(install, "_retroarch_config_at",
+                               return_value=(HOME / ".config/retroarch/retroarch.cfg", HOME)):
+            lines = [str(line).strip() for line in install.tui_view(state, 80, 30)]
+        at = next(index for index, line in enumerate(lines) if line.startswith("BIOS folder:"))
+        tail = next(index for index, line in enumerate(lines) if line.startswith("Named by"))
+        self.assertNotIn("...", " ".join(lines[at:tail]))
+        self.assertIn(str(long_dest).replace("/home/user", "~")[-20:], " ".join(lines[at:tail]))
+        self.assertLessEqual(tail - at, 3)
+
+    def test_the_help_while_typing_lists_what_does_not_type(self):
+        """P3-9."""
+        state = checked_state()
+        state.stack.append("systems")
+        state.editing = "systems"
+        state.help = True
+        help_text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+        self.assertIn("Esc Clear the filter", help_text)
+        self.assertIn("Ctrl-U Clear", help_text)
+        self.assertNotIn("Tick, untick", help_text)
+
+    def test_the_plan_names_core_and_region_as_line_mode(self):
+        """P3-11."""
+        state = checked_state()
+        state.cli_systems, state.cores, state.regions = ["sony-playstation"], ["x"], ["us"]
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("(--system), --core, --region.", text)
+
+    def test_pc_and_short_prefixes_find_the_computer_setups(self):
+        """P3-17."""
+        for typed in ("pc", "wi", "win"):
+            with self.subTest(typed=typed):
+                found = {row.value for row in install.setup_list([], set(), typed, "linux")
+                         if row.action == "platform"}
+                self.assertIn("retrobat", found)
+
+    def test_a_partial_result_counts_once_then_says_the_remedy(self):
+        """P3-18."""
+        state = _installed_state(Path("/x/system"))
+        state.summary.update(installed=6, pending=16, failed=[])
+        state.from_folders = [Path("/media/me/OLD")]
+        with mock.patch.object(install, "_offline_only", return_value=True), \
+                mock.patch.object(install, "_tui_sources",
+                                  return_value="6 files copied from OLD, 16 still missing."):
+            _title, lines = install.tui_outcome(state)
+        self.assertEqual(lines[0], "6 files copied from OLD, 16 still missing.")
+        self.assertIn("They are not in", lines[1])
+
+    def test_q_is_said_as_a_quit(self):
+        """P3-19: q reported "stopped", the word of an interrupted run."""
+        state = checked_state()
+        press(state, "q")
+        self.assertEqual(state.exit_code, 130)
+        self.assertEqual(install._closing_lines(state),
+                         ["RetroBIOS: quit. Nothing was installed."])
+        other = checked_state()
+        install.tui_interrupt(other)
+        self.assertEqual(install._closing_lines(other),
+                         ["RetroBIOS: stopped. Nothing was installed."])
+
+    def test_wide_rows_keep_the_size_near_the_name(self):
+        """P3-20."""
+        row = install.TuiRow("system", "[x] 3DO  3do", "2 files, 4.9 KB")
+        line = str(install._row_line(row, False, 118))
+        self.assertLessEqual(len(line.rstrip()), install.TUI_ROW_SPREAD)
+
+    def test_the_wsl_browser_titles_a_drive_by_its_letter(self):
+        """P3-13."""
+        state = fresh_state()
+        state.stack = ["browse"]
+        state.browse_dir = Path("/mnt/e")
+        with mock.patch.dict(install._WSL, {"active": True, "root": "/mnt"}), \
+                mock.patch.object(install, "_browse_rows", return_value=([], "")):
+            state.browse_rows = []
+            title = " ".join(str(line) for line in install.tui_view(state, 80, 24)[:4])
+        self.assertIn("E:\\", title)
+        self.assertNotIn("/mnt/e", title)
 
     def test_the_card_marker_table_is_written_from_the_rules(self):
         """code_audit_18 P3-6, tui_audit_11 P2-2: the table left out the

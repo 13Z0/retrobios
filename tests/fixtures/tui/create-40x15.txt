@@ -12,4 +12,4 @@
 
 
 
- A/Enter Create  B/Esc Quit
+ A Create  B Quit

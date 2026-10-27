@@ -9,4 +9,4 @@
 
  To put them back: python3 install.py
  1-8 of 17
- A/Enter Exit  Up/Down Scroll
+ A Exit  ^v Scroll
