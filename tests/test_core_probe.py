@@ -23,6 +23,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import core_probe
+import measurement_records
 
 STRACE_SAMPLE = """\
 4242  openat(AT_FDCWD, "/sys/bios/card.bin", O_RDONLY) = 5
@@ -259,16 +260,57 @@ class FakeCoreTests(unittest.TestCase):
             self.assertEqual([f["path"] for f in first["files_opened"]], ["card.bin"])
             self.assertEqual(record["variants"][3]["repetitions"][0]["files_probed_absent"], ["card.bin"])
         self.assertEqual(first["frames"], 3)
-        written = list(record_dir.glob("*/*.json"))
-        self.assertEqual(len(written), 1)
-        self.assertEqual(written[0].parent.name, "fake")
+        self.assertEqual(record["emulator"], "fake")
+        self.assertEqual(sorted(p.relative_to(record_dir).as_posix()
+                                for p in record_dir.rglob("*") if p.is_file()),
+                         sorted(["records/fake.jsonl", f"data/fake/{self._only_id(record_dir)}.json.gz"]))
+        line = json.loads((record_dir / "records" / "fake.jsonl").read_text())
+        blob = (record_dir / "data" / "fake" / f"{line['id']}.json.gz").read_bytes()
+        self.assertEqual(measurement_records.check_line(line), [])
+        self.assertEqual(measurement_records.check_pair(line, blob), [])
+        # The line and its sidecar give back the record the run printed.
+        self.assertEqual(measurement_records.join(line, measurement_records.read_sidecar(blob)), record)
         try:
             from jsonschema import Draft202012Validator
         except ImportError:
             return
-        schema = json.loads((REPO_ROOT / "schemas" / "core-probe-record.schema.json").read_text())
-        errors = list(Draft202012Validator(schema).iter_errors(json.loads(written[0].read_text())))
-        self.assertEqual(errors, [])
+        for name, document in (("core-probe-record", line),
+                               ("core-probe-data", measurement_records.read_sidecar(blob))):
+            schema = json.loads((REPO_ROOT / "schemas" / f"{name}.schema.json").read_text())
+            self.assertEqual(list(Draft202012Validator(schema).iter_errors(document)), [], name)
+
+    @staticmethod
+    def _only_id(record_dir: Path) -> str:
+        return json.loads((record_dir / "records" / "fake.jsonl").read_text())["id"]
+
+    def test_second_run_is_appended_beside_the_first(self) -> None:
+        record_dir = self.tmp / "appended"
+        argv = ["run", "--core", str(self.core), "--frames", "1", "--no-trace", "--max-load", "1000",
+                "--record", str(record_dir), "--subject", "smoke"]
+        self.assertEqual(self.probe(argv)[0], 0)
+        lines = record_dir / "records" / "fake.jsonl"
+        first = lines.read_text()
+        code, record = self.probe(argv)
+        self.assertEqual(code, 0)
+        self.assertTrue(lines.read_text().startswith(first))
+        ids = [json.loads(line)["id"] for line in lines.read_text().splitlines()]
+        self.assertEqual(len(ids), 2)
+        code, corrected = self.probe(argv + ["--supersedes", ids[0]])
+        self.assertEqual((code, corrected["supersedes"]), (0, ids[0]))
+        code, _ = self.probe(argv + ["--supersedes", "2000-01-01-000000000000"])
+        self.assertEqual(code, 2)
+        self.assertEqual(len(lines.read_text().splitlines()), 3)
+
+    def test_recording_inside_the_tracked_tree_is_refused(self) -> None:
+        inside = REPO_ROOT / "measurements"
+        err = io.StringIO()
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(err):
+            code = core_probe.main(["run", "--core", str(self.core), "--frames", "1", "--no-trace",
+                                    "--record", str(inside), "--work-dir", str(self.tmp / "work")])
+        self.assertEqual(code, 2)
+        self.assertIn("inside the tracked tree", err.getvalue())
+        self.assertIn(".cache/measurements", err.getvalue())
+        self.assertFalse(inside.exists())
 
     def test_bench_stats(self) -> None:
         code, record = self.probe(["bench", "--core", str(self.core), "--frames", "2", "--warmup", "1",

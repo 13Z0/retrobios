@@ -10,8 +10,10 @@ Three modes share one runner:
 
 Each repetition runs in its own process, under strace when it is installed,
 so the files a core opened are read from the kernel rather than guessed.
-`--record DIR` writes one JSON record per invocation, carrying what is needed
-to reproduce it (core build, frontend commit, host, inputs by hash).
+`--record DIR` appends one record per invocation to a clone of the
+measurements repository, carrying what is needed to reproduce it (core build,
+frontend commit, host, inputs by hash). measurement_records.py splits it into
+a slim line and a gzip sidecar.
 """
 
 from __future__ import annotations
@@ -37,7 +39,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-RECORD_VERSION = 1
+MEASUREMENTS_CLONE = ROOT / ".cache" / "measurements"
 MIN_BENCH_REPETITIONS = 5
 DEFAULT_WORK_DIR = ROOT / "tmp" / "core_probe"
 BASE_OBSERVABLES = ("frame_sha1", "video_sha1", "audio_sha1", "state_sha1")
@@ -769,7 +771,18 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument("--core-repo", help="source repository URL of the core build")
     common.add_argument("--core-commit", help="commit the core was built from")
     common.add_argument("--build-command", help="command and flags that built the core")
-    common.add_argument("--record", metavar="DIR", help="write one JSON record under DIR/<core>/")
+    common.add_argument("--record", metavar="DIR",
+                        help="append the record to the measurements clone DIR "
+                             f"(records/<emulator>.jsonl and data/<emulator>/), "
+                             f"for example {MEASUREMENTS_CLONE.relative_to(ROOT)}")
+    common.add_argument("--emulator", help="profile the record is filed under (default: the "
+                                           "profile whose cores: names the .so, else the "
+                                           "core's library name)")
+    common.add_argument("--subject", help="slug naming what the record tests, shared by its "
+                                          "reruns (default: derived from the claim and method, "
+                                          "or from the inputs of a run or bench)")
+    common.add_argument("--supersedes", metavar="ID",
+                        help="id of an earlier record of the same emulator this one corrects")
     common.add_argument("--max-load", type=float, default=None,
                         help="refuse to record when the 1-minute load average exceeds this "
                              "(default: a quarter of the CPU count)")
@@ -809,6 +822,18 @@ def validate_args(args: argparse.Namespace) -> list[str]:
         problems.append("--frames must be >= 1 and --warmup >= 0")
     if args.png_dir and not args.frame_hash_every:
         problems.append("--png-dir needs --frame-hash-every")
+    if args.record:
+        problems.extend(record_target_problems(Path(args.record)))
+        if not args.emulator and Path(args.core).is_file():
+            try:
+                default_emulator(Path(args.core), None)
+            except ProbeError as exc:
+                problems.append(str(exc))
+    if (args.subject or args.supersedes or args.emulator) and not args.record:
+        problems.append("--emulator, --subject and --supersedes need --record")
+    for flag, value in (("--subject", args.subject), ("--emulator", args.emulator)):
+        if value and not re.fullmatch(r"[a-z0-9]+(?:[-_][a-z0-9]+)*", value):
+            problems.append(f"{flag} {value!r}: lowercase letters, digits, - and _ only")
     if args.mode == "bench" and args.record and args.repeat < MIN_BENCH_REPETITIONS:
         problems.append(f"a recorded benchmark needs --repeat >= {MIN_BENCH_REPETITIONS}")
     if args.mode == "check":
@@ -882,12 +907,83 @@ def check_result(variants: list[dict], observable: str) -> dict:
     }
 
 
-def record_path(directory: Path, core_name: str, record: dict) -> Path:
-    canonical = json.dumps(record, sort_keys=True, separators=(",", ":")).encode()
-    digest = hashlib.sha256(canonical).hexdigest()[:12]
-    date = record["recorded_at"][:10]
-    slug = re.sub(r"[^a-z0-9]+", "_", core_name.lower()).strip("_") or "core"
-    return directory / slug / f"{date}-{digest}.json"
+def record_target_problems(directory: Path) -> list[str]:
+    """Why records may not be written under ``directory``.
+
+    Records live in their own repository. A directory inside this one's
+    tracked tree would put them in its history, megabytes per campaign;
+    an ignored directory (tmp/, the clone under .cache/) is fine.
+    """
+    target = directory.resolve()
+    if target != ROOT and ROOT not in target.parents:
+        return []
+    try:
+        ignored = subprocess.run(["git", "check-ignore", "-q", str(target)], cwd=ROOT,
+                                 capture_output=True, check=False).returncode
+    except OSError as exc:
+        return [f"--record {directory}: cannot ask git whether it is tracked ({exc})"]
+    if ignored == 0:
+        return []
+    if ignored != 1:
+        # 128: not a git checkout, nothing to keep records out of.
+        return []
+    return [f"--record {directory}: inside the tracked tree of this repository. Records go "
+            f"to the measurements repository: clone it with "
+            f"`python scripts/sync_measurements.py --fetch` and pass "
+            f"--record {MEASUREMENTS_CLONE.relative_to(ROOT)}"]
+
+
+def default_emulator(core_file: Path, library_name: str | None) -> str:
+    """The profile whose cores: names the .so, else the library name as a slug."""
+    stem = core_file.name.split(".")[0].removesuffix("_libretro")
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from common import load_emulator_profiles  # noqa: PLC0415
+
+    owners = sorted(key for key, profile in load_emulator_profiles(str(ROOT / "emulators")).items()
+                    if stem == key or stem in (profile.get("cores") or []))
+    if len(owners) == 1:
+        return owners[0]
+    if len(owners) > 1:
+        raise ProbeError(f"{core_file.name}: profiles {', '.join(owners)} all name core "
+                         f"{stem}, pass --emulator")
+    slug = re.sub(r"[^a-z0-9]+", "_", (library_name or stem).lower()).strip("_")
+    return slug or "core"
+
+
+def default_subject(record: dict) -> str:
+    """A slug shared by the reruns of one test: a check by its claim and
+    method, a run or bench by its inputs."""
+    from measurement_records import canonical, sha256_hex, slugify  # noqa: PLC0415
+
+    check = record.get("check")
+    if check:
+        digest = sha256_hex(canonical([check["claim"], check["method"], check["observable"],
+                                       check["variable"]]))[:8]
+        return f"{slugify(check['claim'])}-{digest}"
+    inputs = {k: v for k, v in record["inputs"].items() if k != "repetitions"}
+    content = (record["inputs"].get("content") or {}).get("label") or "no content"
+    digest = sha256_hex(canonical([record["core"]["sha256"], inputs]))[:8]
+    return f"{record['kind']}-{slugify(content, 30)}-{digest}"
+
+
+def write_record(directory: Path, full: dict) -> tuple[Path, Path]:
+    """Append the record to its emulator's .jsonl and write its sidecar."""
+    from measurement_records import (  # noqa: PLC0415
+        line_text, parse_lines, records_path, seal, sidecar_path, split)
+
+    slim, sidecar = split(full)
+    sealed, blob = seal(slim, sidecar)
+    lines = directory / records_path(sealed["emulator"])
+    existing = parse_lines(lines.read_text(encoding="utf-8"), str(lines)) if lines.is_file() else []
+    if sealed["supersedes"] and sealed["supersedes"] not in {r["id"] for r in existing}:
+        raise ProbeError(f"--supersedes {sealed['supersedes']}: no such record in {lines}")
+    data = directory / sidecar_path(sealed["emulator"], sealed["id"])
+    data.parent.mkdir(parents=True, exist_ok=True)
+    data.write_bytes(blob)
+    lines.parent.mkdir(parents=True, exist_ok=True)
+    with lines.open("a", encoding="utf-8") as handle:
+        handle.write(line_text(sealed) + "\n")
+    return lines, data
 
 
 def probe(args: argparse.Namespace) -> int:
@@ -915,8 +1011,13 @@ def probe(args: argparse.Namespace) -> int:
         shutil.rmtree(work, ignore_errors=True)
     load_after = load_average()
     first = variants[0]["repetitions"][0]
+    from measurement_records import RECORD_VERSION  # noqa: PLC0415
+
     record: dict = {
         "record_version": RECORD_VERSION,
+        "emulator": None,
+        "subject": None,
+        "supersedes": args.supersedes,
         "kind": args.mode,
         "recorded_at": dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat(),
         "core": {**core_identity(args), "library_name": first.get("library_name"),
@@ -951,13 +1052,21 @@ def probe(args: argparse.Namespace) -> int:
         record["check"] = {"claim": args.claim, "method": args.method, "observable": args.observable,
                            "variable": args.vary[0][0],
                            "result": check_result(variants, args.observable)}
-    text = json.dumps(record, indent=2, sort_keys=False)
+    try:
+        record["emulator"] = args.emulator or default_emulator(Path(args.core), first.get("library_name"))
+    except ProbeError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+    record["subject"] = args.subject or default_subject(record)
     if args.record:
-        path = record_path(Path(args.record), first.get("library_name") or Path(args.core).stem, record)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text + "\n", encoding="utf-8")
-        print(f"recorded {path}", file=sys.stderr)
-    print(text)
+        try:
+            lines, data = write_record(Path(args.record), record)
+        except ProbeError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 2
+        print(f"recorded {lines} (line {sum(1 for _ in lines.open(encoding='utf-8'))}) and {data}",
+              file=sys.stderr)
+    print(json.dumps(record, indent=2, sort_keys=False))
     return 0
 
 
