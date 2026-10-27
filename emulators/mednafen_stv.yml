@@ -6,6 +6,10 @@ upstream: "https://mednafen.github.io/"
 profiled_date: "2026-10-27"
 source_commit: "e65713478870dd494afd5c0bcd852fc76c383f14"
 core_version: "v1.8.3"
+version_basis:
+  kind: tag
+  tag: "v1.8.3"
+  distance: 0
 display_name: "Sega - ST-V (Mednafen STV)"
 cores:
   - "mednafen_stv"

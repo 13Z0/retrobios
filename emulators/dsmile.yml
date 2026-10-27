@@ -6,6 +6,10 @@ upstream: "https://github.com/derik-dot-digital/D.Smile"
 profiled_date: "2026-08-11"
 source_commit: "d4bbc3be27537def21513991647f14ea9a9c2d15"
 core_version: "0.4.4"
+version_basis:
+  kind: file
+  path: "app/build.gradle.kts"
+  pattern: 'versionName\s+=\s+"([^"]+)'
 display_name: "VTech - V.Smile (D.Smile)"
 cores:
   - dsmile

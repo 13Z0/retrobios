@@ -6,6 +6,10 @@ upstream: "https://github.com/jsgroth/jgenesis"
 profiled_date: "2026-08-08"
 source_commit: "0a00c47ba7a16bd6e77ef7e0b6c8fab2fc603cba"
 core_version: "0.14.1"
+version_basis:
+  kind: file
+  path: "Cargo.toml"
+  pattern: 'version\s+=\s+"([^"]+)'
 display_name: "Multi-System (jgenesis)"
 cores:
   - jgenesis

@@ -7,6 +7,10 @@ author: "Nikita Shakarun"
 profiled_date: "2026-10-23"
 source_commit: "76383ebf348b5d477256fc884dfc55f053b45a86"
 core_version: "1.8.2"
+version_basis:
+  kind: file
+  path: "app/build.gradle"
+  pattern: 'versionName\s+"([^"]+)'
 display_name: "Mobile - J2ME (J2ME Loader)"
 cores:
   - j2me-loader

@@ -6,6 +6,10 @@ upstream: "https://github.com/kode54/QuickNES"
 profiled_date: "2026-03-25"
 source_commit: "26bb785c9deddb66a17717b21bb4e328f03ade32"
 core_version: "1.0-WIP"
+version_basis:
+  kind: file
+  path: "libretro/libretro.cpp"
+  pattern: '#define\s+CORE_VERSION\s+"([^"]+)'
 display_name: "Nintendo - NES / Famicom (QuickNES)"
 cores:
   - quicknes

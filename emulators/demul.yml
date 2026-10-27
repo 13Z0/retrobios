@@ -6,6 +6,9 @@ version_source:
   pattern: '<div class="normaltext">\[[^\]]*\] DEmul (\d+\.\d+)'
 profiled_date: "2026-03-26"
 core_version: "0.7"
+version_basis:
+  kind: unverified
+  why: no_artifact
 display_name: "Sega - Dreamcast/NAOMI/Hikaru (Demul)"
 cores:
   - demul

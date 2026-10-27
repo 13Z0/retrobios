@@ -6,7 +6,11 @@ upstream: "https://github.com/scummvm/scummvm"
 logo: "https://raw.githubusercontent.com/scummvm/scummvm/master/icons/scummvm.svg"
 profiled_date: "2026-10-20"
 source_commit: "fed42f2068dcafc6aafa1c28c77e4c88def74b66"
-core_version: "2026.3.0"
+core_version: "v2026.3.0"
+version_basis:
+  kind: tag
+  tag: "v2026.3.0"
+  distance: 0
 display_name: "ScummVM (SDL1)"
 cores: [scummvm-sdl1]
 systems: [scummvm]

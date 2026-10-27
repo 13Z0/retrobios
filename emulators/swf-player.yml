@@ -9,6 +9,10 @@ version_source:
 author: "issess.net"
 profiled_date: "2026-08-12"
 core_version: "1.90 free (build 507)"
+version_basis:
+  kind: package
+  url: "https://play.google.com/store/apps/details?id=com.issess.flashplayer"
+  artifact: "com.issess.flashplayer APK versionName (versionCode 507)"
 display_name: "Adobe Flash (SWF Player)"
 mode: standalone
 cores:

@@ -7,6 +7,9 @@ version_source:
   pattern: 'Model 2 Emulator: (\d+\.\d+[a-z]?)'
 profiled_date: "2026-03-26"
 core_version: "1.1a"
+version_basis:
+  kind: unverified
+  why: no_artifact
 display_name: "Model 2 Emulator (Sega Model 2)"
 cores:
   - model2

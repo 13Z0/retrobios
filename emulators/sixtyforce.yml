@@ -8,6 +8,10 @@ version_source:
   pattern: 'version (\d+(?:\.\d+)+)<br>'
 profiled_date: "2026-08-12"
 core_version: "2.0.2"
+version_basis:
+  kind: package
+  url: "https://sixtyforce.com/download/sixtyforce.zip"
+  artifact: "sixtyforce.zip, sixtyforce.app Info.plist CFBundleShortVersionString"
 display_name: "Nintendo - Nintendo 64 (sixtyforce)"
 cores:
   - sixtyforce

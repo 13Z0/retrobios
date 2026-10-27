@@ -9,6 +9,11 @@ version_source:
 author: "Maxim Grishin (Altmer)"
 profiled_date: "2026-08-11"
 core_version: "1.0.7"
+version_basis:
+  kind: package
+  url: "http://www.arts-union.ru/node/23"
+  pattern: 'IrataJaguar_free_(\d+(?:\.\d+)+)\.zip'
+  artifact: "IrataJaguar_free_1.0.7.zip"
 display_name: "Atari - Jaguar (IrataJaguar)"
 cores:
   - iratajaguar

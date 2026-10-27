@@ -8,6 +8,11 @@ version_source:
   pattern: 'Latest Release: ([0-9.]+)'
 profiled_date: "2026-08-08"
 core_version: "4.0"
+version_basis:
+  kind: package
+  url: "https://dreamm.aarongiles.com/"
+  pattern: 'dreamm-(\d+(?:\.\d+)+)-win32-x64\.zip'
+  artifact: "dreamm-4.0-win32-x64.zip"
 display_name: "LucasArts (DREAMM)"
 cores:
   - dreamm

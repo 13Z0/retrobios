@@ -6,6 +6,10 @@ upstream: closed-source
 author: "Steve Snake"
 profiled_date: "2026-10-20"
 core_version: "3.64"
+version_basis:
+  kind: package
+  url: "https://www.retrobat.ovh/repo/win64/stable/emulators/kega-fusion.7z"
+  artifact: "kega-fusion.7z, Fusion.exe banner"
 display_name: "Sega - Master System / Mega Drive / Mega CD / 32X (Kega Fusion)"
 cores:
   - kega-fusion

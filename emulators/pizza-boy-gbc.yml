@@ -10,6 +10,10 @@ version_source:
 author: "Pizza Emulators"
 profiled_date: "2026-10-24"
 core_version: "6.0.6"
+version_basis:
+  kind: package
+  url: "https://play.google.com/store/apps/details?id=it.dbtecno.pizzaboypro"
+  artifact: "it.dbtecno.pizzaboypro APK versionName (versionCode 231)"
 display_name: "Nintendo - Game Boy / Color (Pizza Boy GBC)"
 mode: standalone
 cores:

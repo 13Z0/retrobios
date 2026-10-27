@@ -5,7 +5,11 @@ source: "https://github.com/RetroPie/mame4all-pi"
 upstream: "https://sourceforge.net/projects/mame4allpi/"
 profiled_date: "2026-10-20"
 source_commit: "c6bfd2aef331b5a5e157c15d8bf8a77393c85689"
-core_version: "0.37b5"
+core_version: "0.37 BETA 5"
+version_basis:
+  kind: file
+  path: "src/version.cpp"
+  pattern: 'build_version\[\]\s*=\s*"(.+?) \("'
 display_name: "Arcade (MAME4ALL-Pi)"
 mode: standalone
 cores:

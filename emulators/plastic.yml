@@ -5,7 +5,11 @@ source: "https://github.com/Amjad50/plastic"
 upstream: "https://github.com/Amjad50/plastic"
 profiled_date: "2026-08-12"
 source_commit: "74152adb3acd890d3abee2ff5906408f26a199e2"
-core_version: "0.3.5"
+core_version: "v0.3.5"
+version_basis:
+  kind: tag
+  tag: "v0.3.5"
+  distance: 0
 display_name: "Nintendo - NES / Famicom (Plastic)"
 cores:
   - plastic

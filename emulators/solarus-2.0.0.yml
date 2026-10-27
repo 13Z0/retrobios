@@ -7,6 +7,10 @@ profiled_date: "2026-10-26"
 source_commit: "49d1d4686f67ec81c86c90ca30279a4ce06b1729"
 pin_frozen: "RetroBat, the only platform that ships it, builds this revision: the solarus2 package its emulator repository lists as 0.25.04.16 carries a libsolarus.dll that reports Solarus 2.0.0 (49d1d46), tag v2.0.0+cicd1. Later tags are not part of that build."
 core_version: "2.0.0"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'project\(solarus-engine\s+VERSION\s+([0-9][^\s)]*)'
 display_name: "Solarus Game Engine (2.0.0)"
 cores:
   - solarus2

@@ -6,7 +6,12 @@ upstream: "https://github.com/AppleWin/AppleWin"
 profiled_date: "2026-03-23"
 source_commit: "0a89db3d593a74d04590b902fb7206723591f445"
 upstream_commit: "1f3cadb88d1158c139d2e3a7b864d91836856948"
-core_version: "1.31.0.1"
+core_version: "1.32.1.0"
+version_basis:
+  kind: file
+  path: "resource/version.h"
+  pattern: '#define\s+APPLEWIN_VERSION\s+(\d+),(\d+),(\d+),(\d+)'
+  format: "{1}.{2}.{3}.{4}"
 display_name: "Apple II (AppleWin)"
 cores:
   - applewin

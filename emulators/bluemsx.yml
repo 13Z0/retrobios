@@ -5,7 +5,11 @@ source: "https://github.com/libretro/blueMSX-libretro"
 upstream: "http://bluemsx.msxblue.com/"
 profiled_date: "2026-03-23"
 source_commit: "e3086eb5d36d77fa11704cf53dc176686e70127d"
-core_version: "SVN"
+core_version: "2.8.3"
+version_basis:
+  kind: file
+  path: "Src/BuildInfo/version.h"
+  pattern: '#define\s+BLUE_MSX_VERSION\s+"([^"]+)"'
 display_name: "MSX/SVI/ColecoVision/SG-1000 (blueMSX)"
 cores:
   - bluemsx

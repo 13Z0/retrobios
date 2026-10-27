@@ -7,6 +7,11 @@ profiled_date: "2026-10-27"
 source_commit: "63770cd66eee66c84c10ba2f4d2edff918ab85d3"
 prose_written_at: "63770cd66eee66c84c10ba2f4d2edff918ab85d3"
 core_version: "10.8.1"
+version_basis:
+  kind: file
+  path: "src/core/vpversion.h"
+  pattern: '#define VP_VERSION_MAJOR\s+(\d+)[^\n]*\n#define VP_VERSION_MINOR\s+(\d+)[^\n]*\n#define VP_VERSION_REV\s+(\d+)'
+  format: "{1}.{2}.{3}"
 display_name: "Visual Pinball X"
 cores:
   - vpinball

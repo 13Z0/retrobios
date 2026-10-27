@@ -7,7 +7,11 @@ profiled_date: "2026-03-23"
 source_commit: "d43c2708b0a31c285ce16724b6c4a2e92af07346"
 # The core the port vendors at source_commit (common -> core submodule).
 upstream_commit: "88ef45a6585556e2247dd26b6c937d6b9fb4a12d"
-core_version: "Git"
+core_version: "v1.6.12"
+version_basis:
+  kind: file
+  path: "source/libretro-interface.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "Sega - MD/CD (ClownMDEmu)"
 cores:
   - clownmdemu

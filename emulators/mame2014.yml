@@ -8,9 +8,13 @@ profiled_date: "2026-10-20"
 source_commit: "c8fe6c7399f24466808b67933b2b96feea188e0b"
 upstream_commit: "0147bb4cc82e642cf75151f039f240eb20989fbc"
 pin_frozen: "RetroBat, the only platform that ships it, distributes a build of this revision: the mame2014_libretro.dll of its win64 stable core repository reports library_version \"0.160 c8fe6c7\". Later commits are not part of that build."
-core_version: "0.160"
+core_version: "0.159"
+version_basis:
+  kind: file
+  path: "src/version.c"
+  pattern: '#define\s+BARE_BUILD_VERSION\s+"([^"]+)"'
 display_name: "Arcade (MAME 2014)"
-mame_version: "0.160"
+mame_version: "0.159"
 
 cores:
   - mame2014
@@ -89,7 +93,7 @@ notes: |
   reports library_version "0.160 c8fe6c7" and library_name "MAME 2014", so
   this profile reads the tree at c8fe6c7.
 
-  Same MAME 0.160 code as mame2015: between c8fe6c7 and the mame2015 pin no
+  Same MAME 0.159 code as mame2015 (version.c): between c8fe6c7 and the mame2015 pin no
   driver ROM definition, romload.c or hiscore.c changes. What differs is the
   directory name. libretro_shared.h sets core to "mame2014", and
   Set_Path_Option builds samples, artwork, cheat, ini and hash under

@@ -5,6 +5,12 @@ source: "https://github.com/JACoders/OpenJK"
 upstream: "https://github.com/JACoders/OpenJK"
 profiled_date: "2026-10-04"
 source_commit: "260c59c2907187af555a676fe0cc798893bf7757"
+core_version: "v0.0.0-951-g260c59c"
+version_basis:
+  kind: tag
+  match: "v*"
+  tag: "v0.0.0"
+  distance: 951
 display_name: "OpenJK"
 cores: [openjk]
 systems: [jediacademy, jediknight2]

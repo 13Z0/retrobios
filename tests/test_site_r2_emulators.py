@@ -86,9 +86,10 @@ class TheHeaderReadsAsWords(unittest.TestCase):
         self.assertNotIn('rb-badge-muted">japan</span>', self.page)
 
     def test_profile_version_names_the_pinned_build(self):
-        # DuckStation numbers builds v0.1-<commits since tag 0.1>: the pin,
-        # 4122fed9, is 12,070 commits past it.
-        self.assertRegex(str(_profile("duckstation")["core_version"]), r"^v0\.1-\d+$")
+        # DuckStation tags builds v0.1-<commits since tag 0.1>, and the
+        # pin sits past the last such tag: git describe's form names both.
+        self.assertRegex(str(_profile("duckstation")["core_version"]),
+                         r"^v0\.1-\d+(-\d+-g[0-9a-f]{7})?$")
 
     def test_the_second_spelling_is_a_platform_name(self):
         # The lookup is case-sensitive and EmuELEC launches "Duckstation":

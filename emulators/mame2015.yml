@@ -7,9 +7,13 @@ logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/
 profiled_date: "2026-03-24"
 source_commit: "7adbf440d5f554097f58f8c6ebb673adc4320a31"
 upstream_commit: "0147bb4cc82e642cf75151f039f240eb20989fbc"
-core_version: "0.160"
+core_version: "0.159"
+version_basis:
+  kind: file
+  path: "src/version.c"
+  pattern: '#define\s+BARE_BUILD_VERSION\s+"([^"]+)"'
 display_name: "Arcade (MAME 2015)"
-mame_version: "0.160"
+mame_version: "0.159"
 
 cores:
   - mame2015
@@ -80,14 +84,15 @@ systems:
   - barcrest-mpu4
 
 notes: |
-  Frozen snapshot of MAME 0.160 (mid-2015). 69 BIOS root sets. Upstream
+  Frozen snapshot of MAME 0.159 (version.c says 0.159, the core reports
+  0.160). 69 BIOS root sets. Upstream
   comparison (tag mame0160): BIOS root sets identical, romload.c unmodified.
   hiscore.c added (not in upstream), per-game XML cheat support via
   cheat_path(). Paths under system_dir/mame2015/ (samples, artwork, cheat,
   hash). hiscore.dat loaded via f.open("hiscore", ".dat") without explicit
   search path (libretro-specific path code disabled via #if 0).
 
-  ROM naming follows MAME 0.160 conventions.
+  ROM naming follows the BIOS root sets of tag mame0160, identical here.
 
 files:
   # Data files

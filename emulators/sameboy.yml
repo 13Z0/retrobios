@@ -7,6 +7,10 @@ profiled_date: "2026-03-25"
 source_commit: "aa158a889a48b538a0302873704a34577c8eb67d"
 upstream_commit: "9bf7e0b4dffc20941e4dfadffc6899ae19463844"
 core_version: "0.15.4"
+version_basis:
+  kind: file
+  path: "version.mk"
+  pattern: 'VERSION\s+:=\s+([0-9][\w.+-]*)'
 display_name: "Nintendo - Game Boy / Color (SameBoy)"
 cores:
   - sameboy

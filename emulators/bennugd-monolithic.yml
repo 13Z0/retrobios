@@ -4,7 +4,11 @@ core_classification: game_engine
 source: "https://github.com/christianhaitian/bennugd-monolithic"
 profiled_date: "2026-10-22"
 source_commit: "60ee3389efcf9b402d66035e87f33d17d70cbd83"
-core_version: "git"
+core_version: "1.0.0"
+version_basis:
+  kind: file
+  path: "projects/cmake/include/common_defs.cmake"
+  pattern: '-DVERSION="([^"]+)"'
 display_name: "Bennu Game Development (bennugd-monolithic)"
 cores:
   - "bgdi"

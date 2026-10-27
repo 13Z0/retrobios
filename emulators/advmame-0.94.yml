@@ -5,6 +5,11 @@ source: "https://files.retropie.org.uk/archives/advancemame-0.94.0.tar.gz"
 upstream: "https://www.mamedev.org"
 profiled_date: "2026-10-20"
 core_version: "0.94.0"
+version_basis:
+  kind: package
+  url: "https://files.retropie.org.uk/archives/advancemame-0.94.0.tar.gz"
+  pattern: 'advancemame-(\d+\.\d+\.\d+)\.tar\.gz'
+  artifact: "advancemame-0.94.0.tar.gz"
 mame_version: "0.94"
 display_name: "Arcade (AdvanceMAME 0.94)"
 mode: standalone

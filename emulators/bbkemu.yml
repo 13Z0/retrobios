@@ -6,6 +6,10 @@ upstream: "https://github.com/AloysHF/BBKEmu"
 profiled_date: "2026-10-26"
 source_commit: "6641863f6ec59a74635753766e3f9d34adf92b05"
 core_version: "0.1.0"
+version_basis:
+  kind: file
+  path: "Cargo.toml"
+  pattern: 'version\s+=\s+"([^"]+)'
 display_name: "BBK - Electronic Dictionary (BBKEmu)"
 cores:
   - bbkemu

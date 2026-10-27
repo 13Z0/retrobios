@@ -5,7 +5,11 @@ source: "https://github.com/libretro/dosbox-svn"
 upstream: "https://sourceforge.net/projects/dosbox/"
 profiled_date: "2026-03-23"
 source_commit: "46a3164fc0f1e808ae56143d81698b00fb6b4781"
-core_version: "SVN"
+core_version: "SVN-libretro"
+version_basis:
+  kind: file
+  path: "include/config.h"
+  pattern: '#define\s+VERSION\s+"([^"]+)"'
 display_name: "DOS (DOSBox-SVN)"
 cores: [dosbox_svn]
 systems: [dos]

@@ -6,6 +6,10 @@ upstream: "https://sourceforge.net/projects/vice-emu/"
 profiled_date: "2026-03-25"
 source_commit: "6cbc44add8b0a03791b343712dc63dc1edad2675"
 core_version: "3.10"
+version_basis:
+  kind: file
+  path: "vice/configure"
+  pattern: '^VICE_VERSION=(\S+)'
 display_name: "Commodore - C64DTV (VICE x64dtv)"
 cores: [vice_x64dtv, x64dtv]
 systems: [commodore-c64dtv]

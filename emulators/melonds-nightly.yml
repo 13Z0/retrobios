@@ -6,7 +6,11 @@ upstream: "https://github.com/rafaelvcaetano/melonDS-android-lib"
 source_commit: "c42995caff0144f37ad9791dc9bc96d82e8a6f65"
 upstream_commit: "431ab4bd0003c4356e25fce89640ae1004579b9b"
 profiled_date: "2026-08-12"
-core_version: "2.0.1 (NIGHTLY)"
+core_version: "2.0.1"
+version_basis:
+  kind: file
+  path: "buildSrc/src/main/kotlin/AppConfig.kt"
+  pattern: 'const val versionName = "([^"]+)"'
 display_name: "Nintendo - DS (melonDS Nightly)"
 cores: ["melonds-nightly"]
 systems: [nintendo-ds, nintendo-dsi]

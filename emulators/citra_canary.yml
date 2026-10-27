@@ -6,7 +6,11 @@ upstream: "https://github.com/citra-emu/citra"
 profiled_date: "2026-03-23"
 source_commit: "5401990a9be46e4497abc92db3d5f2042674303d"
 source_branch: canary
-core_version: "Git"
+core_version: "canary-82-6-g5401990"
+version_basis:
+  kind: tag
+  tag: "canary-82"
+  distance: 6
 display_name: "Nintendo - 3DS (Citra Canary/Experimental)"
 library_name: "Citra Canary"
 cores: [citra_canary]

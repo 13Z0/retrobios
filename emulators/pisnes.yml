@@ -6,6 +6,10 @@ upstream: "https://sourceforge.net/projects/pisnes/"
 profiled_date: "2026-10-20"
 source_commit: "a5b427f255f922cfa65e29c4285b3d565a4c9044"
 core_version: "1.39"
+version_basis:
+  kind: file
+  path: "snes9x.h"
+  pattern: '#define\s+VERSION\s+"([^"]+)"'
 display_name: "Nintendo - SNES (PiSNES)"
 mode: standalone
 cores:

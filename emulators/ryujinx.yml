@@ -5,6 +5,10 @@ upstream: "https://github.com/Ryujinx/Ryujinx"
 profiled_date: "2026-03-26"
 source_commit: "7d158acc3b5826a08941d6e8d50d3a3897021bcd"
 core_version: "1.1.1402"
+version_basis:
+  kind: tag
+  tag: "1.1.1402"
+  distance: 0
 display_name: "Ryujinx (Nintendo Switch)"
 cores:
   - ryujinx

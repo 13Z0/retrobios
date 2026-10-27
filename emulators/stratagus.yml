@@ -4,7 +4,11 @@ core_classification: game_engine
 source: "https://github.com/Wargus/stratagus"
 profiled_date: "2026-10-20"
 source_commit: "6b309817027618a12e26e4cf314ad09654495e28"
-core_version: "2.4.3"
+core_version: "v2.4.3"
+version_basis:
+  kind: tag
+  tag: "v2.4.3"
+  distance: 0
 display_name: "Stratagus"
 cores: [stratagus]
 systems: []

@@ -5,7 +5,12 @@ source: "https://github.com/amadvance/advancemame"
 upstream: "https://www.mamedev.org"
 profiled_date: "2026-10-26"
 source_commit: "81670476672b59f430518a63e9a116db58ed6232"
-core_version: "5.0"
+core_version: "v5.0-185-g8167047"
+version_basis:
+  kind: tag
+  match: "v*"
+  tag: "v5.0"
+  distance: 185
 mame_version: "0.106"
 display_name: "Arcade (AdvanceMAME)"
 mode: standalone

@@ -3,7 +3,12 @@ type: test
 core_classification: pure_libretro
 source: "https://github.com/schellingb/vidtest_libretro"
 profiled_date: "2026-03-25"
+source_commit: "edfd32747e5eeb5ce82a5cee686ee1b32f1cc52e"
 core_version: "0.1"
+version_basis:
+  kind: file
+  path: "vidtest.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "VidTest"
 cores:
   - vidtest

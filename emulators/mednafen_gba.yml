@@ -3,6 +3,9 @@ type: alias
 alias_of: "beetle_gba"
 profiled_date: "2026-03-24"
 core_version: "v0.9.36"
+version_basis:
+  kind: alias
+  of: "beetle_gba"
 display_name: "Nintendo - Game Boy Advance (Beetle GBA)"
 cores:
   - mednafen_gba

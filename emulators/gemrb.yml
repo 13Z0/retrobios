@@ -5,7 +5,11 @@ source: "https://github.com/gemrb/gemrb"
 upstream: "https://github.com/gemrb/gemrb"
 profiled_date: "2026-10-20"
 source_commit: "ef32a9a8b837ddf4f3a9508b23710146ada2d5fe"
-core_version: "0.9.2"
+core_version: "v0.9.2"
+version_basis:
+  kind: tag
+  tag: "v0.9.2"
+  distance: 0
 display_name: "Infinity Engine (GemRB)"
 cores:
   - gemrb

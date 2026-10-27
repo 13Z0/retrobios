@@ -10,6 +10,10 @@
 emulator: Redream
 type: libretro
 source: "https://github.com/libretro/redream"
+core_version: null
+version_basis:
+  kind: unverified
+  why: no_pin
 cores:
   - redream
 systems:

@@ -8,6 +8,11 @@ profiled_date: "2026-10-24"
 source_commit: "81546e60c222fe4aef750b890b0dbe3a5ac280d8"
 pin_frozen: "ROCKNIX, the only platform that ships it, builds this revision (ROCKNIX projects/ROCKNIX/packages/emulators/standalone/vice-sa/package.mk:5). Later commits are not part of that build."
 core_version: "3.8"
+version_basis:
+  kind: file
+  path: "vice/configure.ac"
+  pattern: 'm4_define\(vice_version_major, (\d+)\)\s*m4_define\(vice_version_minor, (\d+)\)\s*m4_define\(vice_version_build, 0\)'
+  format: "{1}.{2}"
 display_name: "Commodore - 8-bit computers (VICE SDL2)"
 mode: standalone
 cores:

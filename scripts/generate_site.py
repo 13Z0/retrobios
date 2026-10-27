@@ -2511,7 +2511,9 @@ def _emulator_description(markdown: str, key: str, title: str, intro: str) -> st
         row = {name: _plain_markdown(value) for name, value in re.findall(
             r"^\| (Type|Classification|Version) \| (.+?) \|$", markdown, re.M)}
         kind = row.get("Classification") or row.get("Type") or "emulator"
-        version = row.get("Version", "")
+        # The cell goes on to say where the version is read: the intro
+        # keeps the version alone.
+        version = row.get("Version", "").split(", ")[0]
         known = f", version {version}" if version and version[0].isdigit() else ""
         intro = f"{title}: {kind.lower()}{known}."
     elif title not in intro:
@@ -7993,13 +7995,122 @@ def emulator_romset(profile: dict) -> str:
     version = str(profile.get("core_version") or "")
     if profile.get("mame_version"):
         return f"MAME {profile['mame_version']}"
-    if "MAME" in emulator and _MAME_RELEASE.match(version):
+    # HBMAME's sets are its own homebrew sets, whatever MAME it is based on.
+    if "MAME" in emulator and "HBMAME" not in emulator and _MAME_RELEASE.match(version):
         return f"MAME {version}"
     if emulator.startswith("FinalBurn Neo") and version:
         return f"FinalBurn Neo {version}"
     if (emulator.startswith("FB Alpha") or "FBA" in emulator) and version:
         return f"FB Alpha {version}"
     return ""
+
+
+def _version_said(value: object, basis: dict) -> str:
+    """One build's version and where the profile reads it."""
+    kind = basis.get("kind")
+    if kind == "none":
+        return "none stated in the source"
+    if value is None:
+        if kind == "unverified":
+            return f"unknown: {_UNVERIFIED.get(str(basis.get('why')), 'unread')}"
+        return "none published"
+    value = str(value)
+    if kind == "file":
+        return f"{value}, stated in `{basis.get('path')}`"
+    if kind == "tag":
+        distance = int(basis.get("distance") or 0)
+        if not distance:
+            return f"{value}, the tag at this revision"
+        return f"{value}, {distance} commit{'s' if distance != 1 else ''} after tag `{basis.get('tag')}`"
+    if kind == "package":
+        return f"{value}, read from {basis.get('artifact')}"
+    if kind == "unverified":
+        return f"{value}, not confirmed: {_UNVERIFIED.get(str(basis.get('why')), 'unread')}"
+    return value
+
+
+# Why a profile's version could not be read, said to a reader.
+_UNVERIFIED = {
+    "no_pin": "no revision recorded",
+    "host_unsupported": "its host cannot be read",
+    "host_gone": "its source is gone",
+    "host_unreachable": "its host did not answer",
+    "pin_off_branch": "its recorded revision is not the build described",
+    "no_artifact": "no build recorded as read",
+    "no_source": "no source declared",
+}
+
+
+def version_markdown(profile: dict) -> str:
+    """The Version cell: core_version and where version_basis reads it.
+
+    A null version said "none published" whether the code states none or
+    nobody looked. Keyed by build mode like source, each build is named,
+    where the page printed the dict's Python repr.
+    """
+    if "core_version" not in profile and not profile.get("version_basis"):
+        return "unknown"
+    value = profile.get("core_version")
+    basis = profile.get("version_basis") if isinstance(profile.get("version_basis"), dict) else {}
+    if isinstance(value, dict) or (basis and "kind" not in basis):
+        values = value if isinstance(value, dict) else {}
+        modes = list(dict.fromkeys([*values, *basis]))
+        return ", ".join(
+            f"{_version_said(values.get(mode), basis.get(mode) or {})} ({mode})"
+            for mode in modes
+        )
+    return _version_said(value, basis)
+
+
+ROMSET_FAQ_PAGE = Path(WIKI_SRC_DIR) / "technical-faq.md"
+_ROMSET_BLOCK = re.compile(
+    r"(<!-- generated: romsets -->\n)(.*?)(<!-- /generated: romsets -->)", re.S)
+
+
+def _retroarch_label(profile: dict) -> str:
+    """"Arcade (MAME 2003)" gives "MAME 2003", "Arcade (FinalBurn Neo)
+    (Neo-Geo)" gives "FinalBurn Neo (Neo-Geo)"."""
+    inner = str(profile.get("display_name") or profile.get("emulator") or "").split("(", 1)[-1]
+    return inner.replace(")", "", 1).strip()
+
+
+def romset_table(profiles: dict) -> list[str]:
+    """The FAQ's arcade table: each MAME and FinalBurn libretro core and the
+    romset its profile reads at its pin.
+
+    Written by hand, it told readers to collect MAME 0.160 sets for a core
+    whose src/version.c states 0.159, and FinalBurn Neo 1.0.0.2 for a source
+    at 1.0.0.03. A core whose name gives its version (Recalbox's MAME 0.258)
+    needs no row.
+    """
+    rows: dict[str, list[str]] = {}
+    for key, profile in sorted(profiles.items()):
+        if not re.match(r"(mame|fbneo|fbalpha)", key) or \
+                "libretro" not in str(profile.get("type", "")):
+            continue
+        romset = emulator_romset(profile)
+        label = _retroarch_label(profile)
+        if not romset or romset.split(" ", 1)[1].lstrip("v") in label:
+            continue
+        rows.setdefault(romset, []).append(label)
+
+    def order(romset: str) -> tuple:
+        family = 0 if romset.startswith("MAME") else 1 if romset.startswith("FB Alpha") else 2
+        numbers = tuple(int(n) for n in re.findall(r"\d+", romset.split(" (", 1)[0]))
+        return family, numbers
+
+    lines = ["| Emulator, as RetroArch names it | Sets from |", "|---|---|"]
+    for romset in sorted(rows, key=order):
+        lines.append(f"| {', '.join(sorted(rows[romset]))} | {romset} |")
+    return lines
+
+
+def with_romset_table(page: str, profiles: dict) -> str:
+    """The FAQ page with its romset table read from the profiles."""
+    table = "\n".join(romset_table(profiles)) + "\n"
+    if not _ROMSET_BLOCK.search(page):
+        raise ValueError(f"{ROMSET_FAQ_PAGE}: no romsets block to write the table in")
+    return _ROMSET_BLOCK.sub(lambda m: f"{m.group(1)}{table}{m.group(3)}", page, count=1)
 
 
 def _render_metadata_rows(profile: dict) -> list[str]:
@@ -9174,15 +9285,7 @@ def emulator_pages(
     upstream_raw = profile.get("upstream", "")
     upstream_none = "upstream" in profile and upstream_raw is None
     upstream = str(upstream_raw) if isinstance(upstream_raw, str) else ""
-    version_raw = profile.get("core_version", "unknown")
-    if version_raw is None:
-        version = "none published"
-    elif isinstance(version_raw, dict):
-        # Keyed by build mode like source: each build's version, named,
-        # where the page printed the dict's Python repr.
-        version = ", ".join(f"{v} ({mode})" for mode, v in version_raw.items() if v)
-    else:
-        version = version_raw
+    version = version_markdown(profile)
     profiled = profile.get("profiled_date", "unknown")
     systems = profile.get("systems", [])
     cores = profile.get("cores", [name])
@@ -11652,6 +11755,11 @@ def _generate(args: argparse.Namespace) -> None:
     wiki_dest = docs / "wiki"
     wiki_dest.mkdir(parents=True, exist_ok=True)
     wiki_src = Path(WIKI_SRC_DIR)
+    # The romset table is the profiles' versions, never typed: the source
+    # page is rewritten before it is copied, as the README is.
+    faq = _REPO_ROOT / ROMSET_FAQ_PAGE
+    if faq.is_file():
+        write_if_changed(str(faq), with_romset_table(faq.read_text(encoding="utf-8"), profiles))
     if wiki_src.is_dir():
         for src_file in wiki_src.glob("*.md"):
             shutil.copy2(src_file, wiki_dest / src_file.name)

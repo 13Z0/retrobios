@@ -8,6 +8,10 @@ profiled_date: "2026-08-11"
 source_commit: "f723a190c0bdb44b31c3bc0ead6f8665c7ea517d"
 upstream_commit: "76383ebf348b5d477256fc884dfc55f053b45a86"
 core_version: "0.87.1"
+version_basis:
+  kind: file
+  path: "app/build.gradle.kts"
+  pattern: 'versionName\s+=\s+"([^"]+)'
 display_name: "Mobile - J2ME (JL-Mod)"
 cores:
   - jl-mod

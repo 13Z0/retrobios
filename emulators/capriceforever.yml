@@ -5,6 +5,10 @@ source: "https://www.retrobat.org/repo/win64/stable/emulators/capriceforever.7z"
 upstream: closed-source
 profiled_date: "2026-10-20"
 core_version: "26.4"
+version_basis:
+  kind: package
+  url: "https://www.retrobat.org/repo/win64/stable/emulators/capriceforever.7z"
+  artifact: "capriceforever.7z, Caprice.exe version resource ProductVersion"
 display_name: "Amstrad - CPC / PLUS (CaPriCe Forever)"
 cores:
   - capriceforever

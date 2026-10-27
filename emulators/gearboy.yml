@@ -5,7 +5,11 @@ source: "https://github.com/drhelius/Gearboy"
 upstream: "https://github.com/drhelius/Gearboy"
 profiled_date: "2026-03-23"
 source_commit: "b0a5fcaf68009c288d6b8016164a21af452d81b5"
-core_version: "3.8.19"
+core_version: "3.8.19-10-gb0a5fca"
+version_basis:
+  kind: tag
+  tag: "3.8.19"
+  distance: 10
 display_name: "Nintendo - Game Boy / Color (Gearboy)"
 cores:
   - gearboy

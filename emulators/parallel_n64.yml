@@ -6,7 +6,11 @@ upstream: "https://github.com/mupen64plus/mupen64plus-core"
 profiled_date: "2026-03-24"
 source_commit: "f87550d9ad70cb320870e2b5fd960235287abb89"
 upstream_commit: "3be6336a1de6f32ccc4f57bf80c988163fe6bf7a"
-core_version: "2.0-rc2"
+core_version: "1.0"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: 'library_version\s*=\s*"([^"]+)"'
 display_name: "Nintendo - Nintendo 64 (ParaLLEl N64)"
 systems: [nintendo-64, nintendo-64dd]
 cores: [parallel_n64, parallel_n64_debug, "parallel_n64_32b", "parallel-n64"]

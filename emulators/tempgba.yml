@@ -6,6 +6,10 @@ upstream: "https://github.com/Nebuleon/ReGBA"
 profiled_date: "2026-03-25"
 source_commit: "b0c2652797a4c11f3edd30f9e59a77a5b88ce5fb"
 core_version: "26731013"
+version_basis:
+  kind: file
+  path: "libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Nintendo - Game Boy Advance (TempGBA)"
 cores:
   - tempgba

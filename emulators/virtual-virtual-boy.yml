@@ -7,7 +7,11 @@ author: "Simon Gellis"
 profiled_date: "2026-08-12"
 source_commit: "0bf230bced628d78ff2c149baaf16f6fb8388cec"
 upstream_commit: "0bf230bced628d78ff2c149baaf16f6fb8388cec"
-core_version: "1.18.2"
+core_version: "v1.18.2"
+version_basis:
+  kind: tag
+  tag: "v1.18.2"
+  distance: 0
 display_name: "Nintendo - Virtual Boy (Virtual Virtual Boy)"
 mode: standalone
 cores:

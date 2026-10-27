@@ -5,7 +5,11 @@ source: "https://github.com/hex007/freej2me"
 upstream: "https://github.com/hex007/freej2me"
 profiled_date: "2026-03-23"
 source_commit: "eb4ac87e9a0b212ba701691eb67ee4892b2b1173"
-core_version: "GIT"
+core_version: "1.0.0"
+version_basis:
+  kind: file
+  path: "META-INF/freej2me-build.version"
+  pattern: '^build\.version=(\S+)'
 display_name: "Mobile - J2ME (FreeJ2ME)"
 cores:
   - freej2me

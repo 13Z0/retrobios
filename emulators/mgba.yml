@@ -7,7 +7,12 @@ logo: "https://raw.githubusercontent.com/mgba-emu/mgba/master/res/mgba-256.png"
 profiled_date: "2026-03-24"
 source_commit: "7a12d6d4b9acb14c0ae62c9166b6a2f3d08007f6"
 upstream_commit: "669817d03e4858e65d0b992bcd96d3009236cc1e"
-core_version: "0.10-dev"
+core_version: "0.11.0"
+version_basis:
+  kind: file
+  path: "version.cmake"
+  pattern: 'set\(LIB_VERSION_MAJOR (\d+)\)\s*\nset\(LIB_VERSION_MINOR (\d+)\)\s*\nset\(LIB_VERSION_PATCH (\d+)\)'
+  format: "{1}.{2}.{3}"
 display_name: "Nintendo - Game Boy Advance (mGBA)"
 cores:
   - mgba

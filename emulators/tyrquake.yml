@@ -6,6 +6,11 @@ upstream: "http://disenchant.net/tyrquake/"
 profiled_date: "2026-03-25"
 source_commit: "67db338ff4d27fdbcead61d4e54938d758ae62cb"
 core_version: "v0.62"
+version_basis:
+  kind: file
+  path: "Makefile"
+  pattern: "-DTYR_VERSION=([0-9.]+)"
+  format: "v{1}"
 display_name: "Quake (TyrQuake)"
 cores: [tyrquake]
 systems: [quake]

@@ -6,6 +6,10 @@ upstream: "https://mednafen.github.io/"
 profiled_date: "2026-03-24"
 source_commit: "642d1d1b6684aa7e306a02a89885f3f5456a5157"
 core_version: "1.29.0"
+version_basis:
+  kind: file
+  path: "mednafen/config.h"
+  pattern: '#define\s+MEDNAFEN_VERSION\s+"([^"]+)"'
 display_name: "Nintendo - SNES / SFC (Beetle Supafaust)"
 cores: [mednafen_supafaust, supafaust, beetle_supafaust]
 systems: [nintendo-snes]

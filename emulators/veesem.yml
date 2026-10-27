@@ -5,7 +5,11 @@ source: "https://github.com/sp1187/veesem"
 upstream: "https://github.com/sp1187/veesem"
 profiled_date: "2026-08-08"
 source_commit: "42fb8f07e7418f16ccfb7364127aef2217dda641"
-core_version: "0.2"
+core_version: "v0.2"
+version_basis:
+  kind: tag
+  tag: "v0.2"
+  distance: 0
 display_name: "VTech - V.Smile (veesem)"
 cores:
   - veesem

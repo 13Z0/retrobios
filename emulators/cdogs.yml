@@ -6,6 +6,11 @@ upstream: "https://github.com/cxong/cdogs-sdl"
 profiled_date: "2026-10-27"
 source_commit: "c70d1feaf9d89cf80e23265b256d9a364848e6ea"
 core_version: "2.5.0"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'set\(VERSION_MAJOR "(\d+)"\)\s*\nset\(VERSION_MINOR "(\d+)"\)\s*\nset\(VERSION_PATCH "(\d+)"\)'
+  format: "{1}.{2}.{3}"
 display_name: "C-Dogs"
 cores: [cdogs, cdogs-sdl]
 systems: []

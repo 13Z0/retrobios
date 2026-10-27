@@ -6,6 +6,9 @@ upstream: "https://www.ravarcade.pl/"
 profiled_date: "2026-08-11"
 source_commit: "e13007994011ae57dd9d9f48674c1f774183914b"
 core_version: "1.5-408"
+version_basis:
+  kind: unverified
+  why: no_artifact
 display_name: "Future Pinball (BAM)"
 cores:
   - future-pinball-fploader

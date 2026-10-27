@@ -6,7 +6,11 @@ upstream: "https://github.com/snes9xgit/snes9x"
 profiled_date: "2026-03-23"
 source_commit: "04c57c2902c25f36ae5a5d9c57aff851a772c868"
 upstream_commit: "1bcc369e89f08243e0a462882fb1f3e42e51de3a"
-core_version: ""
+core_version: "86bab70_20231001-4-g04c57c2"
+version_basis:
+  kind: tag
+  tag: "86bab70_20231001"
+  distance: 4
 display_name: "Nintendo - SNES / SFC (ChimeraSNES)"
 cores: [chimerasnes]
 systems:

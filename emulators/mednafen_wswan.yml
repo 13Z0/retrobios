@@ -4,6 +4,9 @@ alias_of: "beetle_wswan"
 source: "https://github.com/libretro/beetle-wswan-libretro"
 profiled_date: "2026-03-24"
 core_version: "v0.9.35.1"
+version_basis:
+  kind: alias
+  of: "beetle_wswan"
 display_name: "Bandai - WonderSwan/Color (Beetle Wonderswan)"
 cores:
   - mednafen_wswan

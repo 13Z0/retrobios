@@ -6,6 +6,10 @@ upstream: "https://amigan.1emu.net/releases/"
 profiled_date: "2026-10-23"
 source_commit: "8ca27c925833fe0021475155512c7f467924f647"
 core_version: "4.60"
+version_basis:
+  kind: file
+  path: "DroidArcadia/app/src/main/cpp/da.h"
+  pattern: '#define\s+INTEGERVERSION\s+"([^"]+)"'
 display_name: "Arcadia 2001 / Interton VC 4000 (AmiArcadia)"
 cores:
   - amiarcadia

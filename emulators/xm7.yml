@@ -7,6 +7,11 @@ upstream: "http://retropc.net/ryu/xm7/"
 profiled_date: "2026-10-20"
 source_commit: "2a48dceaf8a3a0de92cf369b039ac5fab2bb351a"
 core_version: "V3.4 L61a SDL/Agar 0.3.2pre2"
+version_basis:
+  kind: file
+  path: "linux-sdl/vm/xm7.h"
+  pattern: '#if XM7_VER >= 3\n#define\s+VERSION\s+"(V[^"]+)"[\s\S]*?#else\n#define\s+LEVEL\s+"([^"]+)"[\s\S]*?#else\n#define\s+LOCALVER\s+"(SDL/Agar [^"]+)"'
+  format: "{1} {2} {3}"
 cores:
   - xm7
 systems:

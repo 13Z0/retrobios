@@ -6,6 +6,10 @@ upstream: "https://github.com/azahar-emu/azahar"
 profiled_date: "2026-10-22"
 source_commit: "219d743a1e698101fe1ab8bef43e6563126c3c27"
 core_version: "2126.2"
+version_basis:
+  kind: tag
+  tag: "2126.2"
+  distance: 0
 display_name: "Nintendo - 3DS (Azahar)"
 library_name: "Azahar"
 cores:

@@ -6,6 +6,10 @@ upstream: "https://github.com/AlisterT/openjazz"
 profiled_date: "2026-10-04"
 source_commit: "a1626f4edd4a7af72c54103021790c56d8ecfced"
 core_version: "20260301"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: '^project\(OpenJazz\s+VERSION\s+(\S+)'
 display_name: "Jazz Jackrabbit (OpenJazz)"
 cores: ["OpenJazz"]
 systems: [jazz-jackrabbit]

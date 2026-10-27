@@ -6,6 +6,10 @@ upstream: "https://github.com/stardot/beebem-windows"
 profiled_date: "2026-08-11"
 source_commit: "a982ba6a74af09e801c296b29d514dbd4da09b94"
 core_version: "4.19"
+version_basis:
+  kind: file
+  path: "Src/Version.h"
+  pattern: '#define\s+VERSION_STRING\s+"([^"]+)'
 display_name: "Acorn - BBC Micro (BeebEm)"
 cores: [beebem]
 systems:

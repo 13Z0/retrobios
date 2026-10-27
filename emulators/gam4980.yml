@@ -7,6 +7,10 @@ profiled_date: "2026-03-23"
 source_commit: "eeaa531b55e7127ab4b5e0bdc5ceba686df59c6a"
 upstream_commit: "32c531d3e7159081afd8dee72e8266153821095d"
 core_version: "0.2"
+version_basis:
+  kind: file
+  path: "src/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "GAM4980"
 cores:
   - gam4980

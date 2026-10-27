@@ -6,6 +6,10 @@ upstream: "https://github.com/cyxx/bermuda"
 source_commit: "c3aaa0337daca116eab5804456673bd01396bbb4"
 profiled_date: "2026-10-20"
 core_version: "0.1.7"
+version_basis:
+  kind: tag
+  tag: "0.1.7"
+  distance: 0
 display_name: "Bermuda Syndrome (bs)"
 cores: [bsyndrome]
 systems: [bsyndrome]

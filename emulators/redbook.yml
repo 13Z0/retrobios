@@ -5,6 +5,10 @@ source: "https://github.com/libretro/redbook"
 profiled_date: "2026-03-25"
 source_commit: "43544bb988f37a8f3df5af5d2c6f89dd255b8235"
 core_version: "1.0"
+version_basis:
+  kind: file
+  path: "libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Redbook Audio Player"
 cores:
   - redbook

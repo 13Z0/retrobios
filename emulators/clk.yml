@@ -4,7 +4,11 @@ source: "https://github.com/TomHarte/CLK"
 upstream: "https://github.com/TomHarte/CLK"
 profiled_date: "2026-03-26"
 source_commit: "9020107b563b68595ffdb6ef18aacdec85c78d69"
-core_version: "2026-07-28"
+core_version: "2026-07-23-136-g9020107"
+version_basis:
+  kind: tag
+  tag: "2026-07-23"
+  distance: 136
 display_name: "Clock Signal"
 cores: [clk]
 systems:

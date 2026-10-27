@@ -5,6 +5,11 @@ source: "https://singeengine.com"
 upstream: "https://singeengine.com"
 profiled_date: "2026-10-20"
 core_version: "2.10"
+version_basis:
+  kind: package
+  url: "https://singeengine.com"
+  pattern: 'Singe-v(\d+\.\d+)-Windows'
+  artifact: "Singe-v2.10-Windows-x86_64.exe"
 display_name: "Laserdisc (Singe 2)"
 mode: standalone
 cores:

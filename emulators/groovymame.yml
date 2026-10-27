@@ -8,7 +8,11 @@ source_commit: "953db38f4aaab1d75faa4ac79e1b45686214f987"
 upstream_commit: "f34f02505e32c1993c6a782b6814232cbfc74e36"
 logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/MAMElogo.svg"
 profiled_date: "2026-10-26"
-core_version: "0.289"
+core_version: "gm0289sr222f"
+version_basis:
+  kind: tag
+  tag: "gm0289sr222f"
+  distance: 0
 display_name: "Arcade (GroovyMAME)"
 
 cores:

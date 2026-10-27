@@ -6,6 +6,11 @@ upstream: "https://github.com/project64/project64"
 profiled_date: "2026-08-12"
 source_commit: "24376e868350792a181d2121fec20d37354559d6"
 core_version: "Dev-4.0.0"
+version_basis:
+  kind: file
+  path: "Source/Project64-core/Version.h.in"
+  pattern: '#define VERSION_MAJOR\s+(\d+)\s*\n#define VERSION_MINOR\s+(\d+)\s*\n#define VERSION_REVISION\s+(\d+)[\s\S]*?#define VERSION_PREFIX\s+"([^"]*)"'
+  format: "{4}{1}.{2}.{3}"
 display_name: "Nintendo - Nintendo 64 (Project64)"
 cores:
   - project64

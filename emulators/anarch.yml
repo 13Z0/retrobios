@@ -6,6 +6,10 @@ upstream: "https://gitlab.com/drummyfish/anarch"
 profiled_date: "2026-03-22"
 source_commit: "187050344ef440c4eaf3135304a020093564fa3f"
 core_version: "1.1d"
+version_basis:
+  kind: file
+  path: "texts.h"
+  pattern: '#define\s+SFG_VERSION_STRING\s+"([^"]+)"'
 display_name: "Anarch"
 cores: [anarch]
 systems: []

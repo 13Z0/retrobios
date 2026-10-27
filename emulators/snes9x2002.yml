@@ -7,6 +7,10 @@ profiled_date: "2026-03-25"
 source_commit: "6ffbf9ef4f0063e1f1b78a40d10c50fc52f2524c"
 upstream_commit: "1bcc369e89f08243e0a462882fb1f3e42e51de3a"
 core_version: "7.2.0"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Nintendo - SNES / SFC (Snes9x 2002)"
 cores:
   - snes9x2002

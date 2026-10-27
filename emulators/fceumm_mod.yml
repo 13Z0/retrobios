@@ -5,7 +5,11 @@ source: "https://github.com/Tippek/libretro-fceumm-mod"
 upstream: "https://github.com/libretro/libretro-fceumm"
 profiled_date: "2026-10-22"
 source_commit: "f0ea52190427b136a51da4490e49087fe2ca2abb"
-core_version: "SVN"
+core_version: "0.9.45.1.0.0.D7a"
+version_basis:
+  kind: file
+  path: "src/drivers/libretro/libretro.c"
+  pattern: 'library_version\s*=\s*"\(([^)"]+)\)"'
 display_name: "Nintendo - NES / Famicom (FCEUmm Mod)"
 cores:
   - "fceumm_mod"

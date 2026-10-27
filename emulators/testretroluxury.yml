@@ -5,7 +5,11 @@ source: "https://github.com/libretro/retroluxury"
 upstream: "https://github.com/leiradel/retroluxury"
 profiled_date: "2026-03-25"
 source_commit: "fdcd94fe4099735edcbea638760da3f2297bc520"
-core_version: "v1"
+core_version: "0.1"
+version_basis:
+  kind: file
+  path: "test/libretro.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "Test RetroLuxury"
 cores:
   - testretroluxury

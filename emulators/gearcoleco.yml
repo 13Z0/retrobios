@@ -5,7 +5,11 @@ source: "https://github.com/drhelius/Gearcoleco"
 upstream: "https://github.com/drhelius/Gearcoleco"
 profiled_date: "2026-09-17"
 source_commit: "be1a3716d2db312c1add1639753258e365f2dfd4"
-core_version: "1.7.4-24-g23d0ec2"
+core_version: "1.7.4-35-gbe1a371"
+version_basis:
+  kind: tag
+  tag: "1.7.4"
+  distance: 35
 display_name: "Coleco - ColecoVision / ADAM (Gearcoleco)"
 cores:
   - gearcoleco
