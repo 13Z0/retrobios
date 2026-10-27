@@ -672,10 +672,13 @@ class TheInterpreterIsInTheSandbox(unittest.TestCase):
             real = root / "uv" / "cpython-3.13.12" / "bin"
             real.mkdir(parents=True)
             (real / "python3.13").write_text("")
+            version = f"python{sys.version_info.major}.{sys.version_info.minor}"
+            (root / "uv" / "cpython-3.13.12" / "lib" / version).mkdir(parents=True)
             alias = root / "uv" / "cpython-3.13"
             alias.symlink_to(root / "uv" / "cpython-3.13.12")
             venv = root / "venv" / "bin"
             venv.mkdir(parents=True)
+            (root / "venv" / "pyvenv.cfg").write_text("home = x\n")
             (venv / "python").symlink_to(alias / "bin" / "python3.13")
             with mock.patch.object(core_probe.sys, "executable", str(venv / "python")), \
                     mock.patch.object(core_probe.sys, "prefix", str(root / "venv")), \
@@ -684,6 +687,36 @@ class TheInterpreterIsInTheSandbox(unittest.TestCase):
         self.assertIn(root / "venv", paths)
         self.assertIn(alias, paths)
         self.assertIn(root / "uv" / "cpython-3.13.12", paths)
+        # The venv's own link sits in the venv, bound already.
+        self.assertNotIn(venv / "python", paths)
+
+    def test_a_link_in_a_shared_folder_binds_only_itself(self):
+        """~/.local/bin/python3 must not expose ~/.local: only the link file
+        and the proven Python prefix behind it are bound."""
+        from unittest import mock  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            prefix = root / "share" / "cpython"
+            (prefix / "bin").mkdir(parents=True)
+            (prefix / "bin" / "python3").write_text("")
+            version = f"python{sys.version_info.major}.{sys.version_info.minor}"
+            (prefix / "lib" / version).mkdir(parents=True)
+            local = root / "dotlocal"
+            (local / "bin").mkdir(parents=True)
+            (local / "secrets.txt").write_text("x")
+            (local / "bin" / "python3").symlink_to(prefix / "bin" / "python3")
+            with mock.patch.object(core_probe.sys, "executable", str(local / "bin" / "python3")), \
+                    mock.patch.object(core_probe.sys, "prefix", str(prefix)), \
+                    mock.patch.object(core_probe.sys, "base_prefix", str(prefix)):
+                paths = core_probe.interpreter_paths()
+        self.assertNotIn(local, paths)
+        self.assertIn(local / "bin" / "python3", paths)
+        self.assertIn(prefix, paths)
+
+    def test_home_and_root_are_never_a_prefix(self):
+        self.assertFalse(core_probe._python_prefix(Path("/")))
+        self.assertFalse(core_probe._python_prefix(Path.home()))
 
     def test_a_link_is_mounted_at_its_own_path(self):
         with tempfile.TemporaryDirectory() as tmp:
