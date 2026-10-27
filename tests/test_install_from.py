@@ -379,7 +379,7 @@ class MisplacedInTheBiosFolder(Scratch):
         for name, data in PAYLOAD.items():
             self.assertEqual((self.dest / name).read_bytes(), data)
             self.assertEqual((self.dest / "system" / name).read_bytes(), data)
-        self.assertIn("4 files fixed from copies already in the BIOS folder.", proc.stdout)
+        self.assertIn("4 files copied from the wrong place in the BIOS folder.", proc.stdout)
         self.assertIn("nested folder: it is at system/system/scph5501.bin", proc.stdout)
 
     def test_a_pack_extracted_into_a_folder_of_its_own_is_fixed(self):
@@ -405,7 +405,7 @@ class MisplacedInTheBiosFolder(Scratch):
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual((self.dest / "gba_bios.bin").read_bytes(), GBA)
         self.assertEqual((self.dest / "GBA_BIOS.BIN").read_bytes(), GBA)
-        self.assertIn("1 file fixed from copies already in the BIOS folder.", proc.stdout)
+        self.assertIn("1 file copied from the wrong place in the BIOS folder.", proc.stdout)
 
     def test_a_file_left_in_its_zip_is_extracted(self):
         self.complete("gba_bios.bin")
@@ -1008,10 +1008,10 @@ class TheSummaryLine(unittest.TestCase):
 
     def test_one_file_and_fixes(self):
         self.assertEqual(install.sources_line([("/old", 1)], fixed=3, downloaded=0, missing=0),
-                         "1 file copied from /old, 3 fixed from copies already in the "
+                         "1 file copied from /old, 3 copied from the wrong place in the "
                          "BIOS folder.")
         self.assertEqual(install.sources_line([], fixed=2, downloaded=1, missing=0),
-                         "2 files fixed from copies already in the BIOS folder, "
+                         "2 files copied from the wrong place in the BIOS folder, "
                          "1 downloaded.")
 
     def test_nothing_copied_is_no_line(self):

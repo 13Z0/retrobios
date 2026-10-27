@@ -696,7 +696,7 @@ class Flow(unittest.TestCase):
         self.assertIn("RetroBIOS: No connection", install.tui_view(state, 80, 24)[0])
         self.assertEqual(state.screen, "error")
         self.assertEqual([row.action for row in install.tui_rows(state)],
-                         ["retry", "back", "quit"])
+                         ["retry", "elsewhere", "quit"])
         self.assertEqual(press(state, "enter"), [("fetch", "retroarch")])
         install.tui_receive(state, ("manifest_failed", "retroarch", "No connection", ["no"], 1))
         press(state, "down", "down", "enter")
@@ -1598,8 +1598,9 @@ class AuditRoundTwo(unittest.TestCase):
         self.assertEqual(state.ticked, ticked)
         for cols, rows in ((80, 24), (40, 15)):
             text = "\n".join(install.tui_view(state, cols, rows))
-            self.assertIn("3 files to download, 600 B", text)
-            self.assertIn("For your 1 of 3 systems", text)
+            # tui_audit_6 P3-4: the headline counts the ticked systems.
+            self.assertIn("About 1 file, 16.0 KB, for 1 of 3 systems", " ".join(text.split()))
+            self.assertNotIn("3 files to download", text)
 
     def test_p2_4_no_network_is_said_at_once(self):
         import socket
@@ -1622,7 +1623,7 @@ class AuditRoundTwo(unittest.TestCase):
             press(state, "enter")
         install.tui_receive(state, (kind, plat, title, lines, code))
         self.assertEqual([row.action for row in install.tui_rows(state)],
-                         ["retry", "back", "quit"])
+                         ["retry", "elsewhere", "quit"])
 
     def test_p2_4_the_clock_says_so(self):
         import ssl
@@ -2043,7 +2044,7 @@ class CopyFromAnOldCard(unittest.TestCase):
         state.local_dests = {"scph5500.bin": (str(SYSTEM_DIR), "nested folder: bios/a")}
         state.finished = [("scph5500.bin", True, ""), ("gba_bios.bin", True, "")]
         text = " ".join(" ".join(install.tui_outcome(state)[1]).split())
-        self.assertIn("1 file fixed from copies already in the BIOS folder, 1 downloaded. "
+        self.assertIn("1 file copied from the wrong place in the BIOS folder, 1 downloaded. "
                       "Your copies in the wrong place were left as they are.", text)
 
     def test_a_local_copy_is_no_download_speed(self):
@@ -2119,12 +2120,12 @@ class AuditRoundThree(unittest.TestCase):
         rules = {rule.name: rule for rule in install._card_rules()}
         self.assertLessEqual({"muOS", "Onion", "spruceOS", "CrossMix-OS", "Allium", "Koriki",
                               "KNULLI", "ROCKNIX"}, set(rules))
-        device = {rule.name: rule for rule in install._EMBEDDED_RULES
-                  if rule.values and rule.values[0].startswith(install._CARD_MOUNTS)}
-        for name, rule in device.items():
-            if rule.bios and rule.manifest:
-                with self.subTest(system=name):
-                    self.assertTrue(rule.bios.endswith("/" + rules[name].bios))
+        # Only a marker on the part its BIOS folder is on names the card:
+        # plumOS's and the Anbernic firmware's are on another part.
+        for setup in install.card_setups():
+            if setup.rules:
+                with self.subTest(system=setup.name):
+                    self.assertEqual(rules[setup.name].bios, setup.below)
         self.assertEqual(install.DEFAULT_DESTS["knulli"], Path("/userdata") / "bios")
         self.assertEqual(install.DEFAULT_DESTS["rocknix"], Path("/storage") / "roms/bios")
 
@@ -2189,7 +2190,8 @@ class AuditRoundThree(unittest.TestCase):
         root = self.card({"roms/": ""})
         proc = install_run("--platform", "muos", "--dest", str(root), "--yes")
         self.assertEqual(proc.returncode, 1)
-        self.assertIn(f"{root} is not a muOS card: it holds no MUOS.", proc.stderr)
+        self.assertIn(f"{root} is not a muOS SD card: no muOS files on it. muOS keeps "
+                      "MUOS at the root of its card.", proc.stderr)
         self.assertIn("--dest <card>/MUOS/bios", proc.stderr)
         self.assertEqual(list(root.iterdir()), [root / "roms"])
         # Its BIOS folder named outright is taken as given.
@@ -2210,7 +2212,7 @@ class AuditRoundThree(unittest.TestCase):
         with self.assertRaises(SystemExit), \
                 contextlib.redirect_stderr(io.StringIO()) as err:
             install.card_dest("muos", "retroarch", stray)
-        self.assertIn("is not a muOS card", err.getvalue())
+        self.assertIn("is not a muOS SD card", err.getvalue())
         self.assertEqual(install.card_dest("muos", "retroarch", root / "muos" / "BIOS"),
                          ("retroarch", root / "muos" / "BIOS"))
 
@@ -2385,8 +2387,8 @@ class AuditRoundThree(unittest.TestCase):
         state.summary = {"installed": 4, "up_to_date": 0, "failed": [
             {"dest": "fc/disksys.rom", "reason": "HTTP 404"}]}
         _title, lines = install.tui_outcome(state)
-        self.assertEqual(lines[1], "2 files copied from OLD, 1 fixed from copies "
-                                   "already in the BIOS folder, 1 downloaded, 1 still missing.")
+        self.assertEqual(lines[1], "2 files copied from OLD, 1 copied from the wrong place "
+                                   "in the BIOS folder, 1 downloaded, 1 still missing.")
         # The line mode's own sentence, from the same counts.
         self.assertEqual(lines[1], install.sources_line([("OLD", 2)], 1, 1, 1))
 
@@ -2862,7 +2864,7 @@ class ACardSystemNamedOnAComputer(unittest.TestCase):
                 contextlib.redirect_stdout(io.StringIO()) as out:
             dest = install.card_install_dest("onion", "retroarch", interactive=True)
         self.assertEqual(dest, onion / "BIOS")
-        self.assertIn("Mount the card, then type its root folder.", out.getvalue())
+        self.assertIn("Mount the card, then type its top folder.", out.getvalue())
         ask.assert_called_once()
         knulli = self.card({"roms/a": ""})
         with mock.patch.object(install, "_mounted_cards", return_value=[]), \
@@ -2892,8 +2894,8 @@ class ACardSystemNamedOnAComputer(unittest.TestCase):
             dest = install.card_install_dest("onion", "retroarch", interactive=True)
         self.assertEqual(dest, onion / "BIOS")
         self.assertEqual(len(asked), 3)
-        self.assertIn("8 does not exist, or is not a folder. Type the root of the Onion card.",
-                      out.getvalue())
+        self.assertIn("8 does not exist, or is not a folder. Type the top folder of the Onion "
+                      "card.", out.getvalue())
         self.assertFalse((REPO_ROOT / "tmp" / "no-such").exists())
 
     def test_a_typed_root_that_is_no_card_of_that_system_is_asked_again(self):
@@ -2904,7 +2906,8 @@ class ACardSystemNamedOnAComputer(unittest.TestCase):
                 contextlib.redirect_stdout(io.StringIO()) as out:
             dest = install.card_install_dest("onion", "retroarch", interactive=True)
         self.assertEqual((dest, len(asked)), (onion / "BIOS", 2))
-        self.assertIn(f"{blank} is not a Onion card: it holds no .tmp_update.", out.getvalue())
+        self.assertIn(f"{blank} is not an Onion SD card: no Onion files on it. Onion keeps "
+                      ".tmp_update at the root of its card.", out.getvalue())
 
     def test_a_minui_root_is_a_minui_card(self):
         blank = self.card({"roms/a": ""})
@@ -2915,31 +2918,45 @@ class ACardSystemNamedOnAComputer(unittest.TestCase):
             dest = install.card_install_dest("nextui", "nextui", interactive=True)
         self.assertEqual((dest, len(asked)), (minui, 3))
         self.assertIn(f"is inside a NextUI card, whose root is {minui}", out.getvalue())
-        self.assertIn("holds no .system/version.txt: it is not a NextUI card", out.getvalue())
+        self.assertIn("is not a NextUI SD card: no NextUI files on it. NextUI keeps "
+                      ".system/version.txt at the root of its card.", out.getvalue())
 
     def test_the_mounted_drives_are_listed_and_taken_by_number(self):
         """tui_audit_5 P3-8.4: the screen lists the mounted cards, the
-        prompt did not."""
+        prompt did not. tui_audit_6 P3-8, code_audit_13 P3-6: it listed
+        every drive, a muOS card beside Onion's question, and the muOS card
+        taken by number made the run a muOS install."""
         muos, blank = self.card({"MUOS/bios/x": ""}), self.card({"roms/a": ""})
-        patcher, _asked = self.ask("2")
-        with mock.patch.object(install, "_mounted_cards", return_value=[muos, blank]), \
+        first, second = (self.card({"system/batocera.conf": "system.hostname=KNULLI\n"})
+                         for _card in range(2))
+        patcher, asked = self.ask("3", "2")
+        with mock.patch.object(install, "_mounted_cards",
+                               return_value=[muos, first, blank, second]), \
                 patcher, contextlib.redirect_stdout(io.StringIO()) as out:
             dest = install.card_install_dest("knulli", "knulli", interactive=True)
-        self.assertEqual(dest, blank / "bios")
-        self.assertIn(f"2) {blank} (card or drive)", out.getvalue())
-        self.assertIn(f"1) {muos} (muOS card)", out.getvalue())
+        self.assertEqual((dest, len(asked)), (second / "bios", 2))
+        self.assertIn(f"1) {first.name} (KNULLI card, {first})", out.getvalue())
+        self.assertIn(f"2) {second.name} (KNULLI card, {second})", out.getvalue())
+        self.assertNotIn(str(muos), out.getvalue())
+        self.assertNotIn(str(blank), out.getvalue())
+        self.assertIn("Type 1 to 2, or a folder.", out.getvalue())
 
     def test_creating_several_folders_on_the_card_is_asked(self):
+        """tui_audit_6 P3-8: N to the question ended the whole run where it
+        meant "not that card"."""
         root = self.card({"roms/a.txt": ""})
         rocknix = root / "R"
         rocknix.mkdir()
-        patcher, asked = self.ask(str(rocknix), "n")
+        card = self.card({"roms/a": ""})
+        make_card(card, "ROCKNIX")
+        patcher, asked = self.ask(str(rocknix), "n", str(card))
         with mock.patch.object(install, "_mounted_cards", return_value=[]), patcher, \
-                contextlib.redirect_stdout(io.StringIO()), \
-                self.assertRaises(SystemExit) as stop:
-            install.card_install_dest("rocknix", "rocknix", interactive=True)
-        self.assertEqual(stop.exception.code, 2)
-        self.assertIn("[y/N]", asked[-1])
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            dest = install.card_install_dest("rocknix", "rocknix", interactive=True)
+        self.assertEqual(dest, card / "roms" / "bios")
+        self.assertIn("[y/N]", asked[1])
+        self.assertEqual(asked[2], "Card root (Ctrl+C to stop): ")
+        self.assertIn("Not created.", out.getvalue())
         self.assertFalse((rocknix / "roms").exists())
 
     def test_the_menu_asks_a_card_system_for_its_card(self):
@@ -3018,13 +3035,16 @@ class ACardSystemNamedOnAComputer(unittest.TestCase):
             install._browse_to(state, blank)
             effects = press(state, "enter")
             self.assertEqual((effects, state.screen), ([], "browse"))
-            self.assertIn(f"{blank} is not a Onion card: it holds no .tmp_update.",
-                          state.status)
+            self.assertIn("Not an Onion SD card: no Onion files on it.", state.status)
+            self.assertIn(f"{blank} is not an Onion SD card", state.status_more)
             self.assertIsNone(state.dest)
-            # A muOS card gets the folder muOS reads, as --dest does.
+            # tui_audit_6 P3-8: a muOS card made the run a muOS install
+            # without a word.
             install._browse_to(state, muos)
             press(state, "enter")
-        self.assertEqual(state.dest, muos / "MUOS" / "bios")
+            self.assertEqual(state.status, "That is a muOS card, not an Onion card. Choose "
+                             "the card's top folder.")
+        self.assertIsNone(state.dest)
 
     def test_a_typed_card_root_is_checked_on_the_path_screen(self):
         with mock.patch.object(install, "_mounted_cards", return_value=[]), \
@@ -3036,8 +3056,8 @@ class ACardSystemNamedOnAComputer(unittest.TestCase):
             state.path_text = str(REPO_ROOT / "tmp" / "no-such-card")
             effects = press(state, "enter")
         self.assertEqual((effects, state.screen), ([], "path"))
-        self.assertIn("does not exist, or is not a folder. Choose the root of the "
-                      "ROCKNIX card.", state.status)
+        self.assertEqual("That folder does not exist. Choose the card's top folder.",
+                         state.status)
 
     def test_a_dest_that_is_no_card_of_that_system_is_refused(self):
         blank = self.card({"roms/a": ""})
@@ -3047,7 +3067,7 @@ class ACardSystemNamedOnAComputer(unittest.TestCase):
             state, effects = install.tui_start(_args(platform="onion", dest=str(blank)),
                                                "linux")
         self.assertEqual((effects, state.screen), ([], "folder"))
-        self.assertIn("is not a Onion card", state.status)
+        self.assertIn("Not an Onion SD card", state.status)
 
     def test_change_folder_names_the_folder_it_reuses(self):
         """code_audit_12 P3-1: Use this folder on the card screen named
@@ -3125,14 +3145,22 @@ class TheSetupFilterKnowsDevices(unittest.TestCase):
 
     def test_the_right_column_names_what_matched(self):
         rows = self.rows("miyoo")
-        retroarch = {row.value: row for row in rows}["retroarch"]
-        self.assertEqual(retroarch.right, "MiyooCFW")
+        # tui_audit_6 P1-1, code_audit_13 P2-3: MiyooCFW stayed on the
+        # RetroArch row, which opened this computer's folder.
+        self.assertNotIn("retroarch", [row.value for row in rows if row.action == "platform"])
         self.assertEqual([row.label for row in rows if row.action == "cardsystem"],
-                         ["spruceOS, SD card", "Onion, SD card", "Allium, SD card",
-                          "Koriki, SD card"])
+                         ["Allium, SD card", "Koriki, SD card", "MiyooCFW, SD card",
+                          "Onion, SD card", "spruceOS, SD card"])
+        spruce = {row.label: row for row in rows}["spruceOS, SD card"]
+        self.assertEqual(spruce.right, "Miyoo A30, Miyoo Flip, Miyoo Mini, Miyoo Mini Plus, "
+                         "Miyoo Mini Flip")
+        # Cut at a comma, never inside a name ("Miyoo ...s").
+        self.assertIn("Miyoo A30, Miyoo Flip, +3", spruce.narrow)
+        line = str(install._row_line(spruce, False, 60))
+        self.assertTrue(line.rstrip().endswith(("+1", "+2", "+3", "+4")), line)
         deck = {row.value: row for row in self.rows("steam deck")}
         self.assertEqual(deck["retroarch"].right, "Steam Deck")
-        self.assertIn("muOS", {row.value: row for row in self.rows("")}["retroarch"].right)
+        self.assertEqual({row.value: row for row in self.rows("")}["retroarch"].right, "")
 
     def test_the_handheld_lists_are_the_guides(self):
         try:
@@ -3160,16 +3188,17 @@ class ACardSetupIsOneDesign(unittest.TestCase):
         return state
 
     def test_a_handheld_typed_in_the_filter_asks_for_its_card(self):
-        for needle in ("onion", "miyoo mini", "rg35xx"):
+        for needle in ("onion", "miyoo mini", "rg35xx", "r36s", "arkos", "anbernic"):
             with self.subTest(needle=needle):
                 state = self.platforms(needle)
                 with mock.patch.object(install, "_mounted_cards", return_value=[]):
                     row = install.tui_rows(state)[1]
                     effects = press(state, "enter")
                     text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
-                self.assertEqual(row.action, "cardsystem")
+                plat, name = row.value if row.action == "cardsystem" else (row.value,) * 2
                 self.assertEqual((effects, state.screen), ([], "folder"))
-                self.assertEqual(state.card_bound, install.card_bound(row.value[1], "retroarch"))
+                self.assertIsNotNone(state.card_bound)
+                self.assertEqual(state.card_bound, install.card_bound(name, plat))
                 self.assertIn("Where is the SD card?", text)
                 self.assertNotIn("default", [r.action for r in install.tui_rows(state)])
                 self.assertNotIn(str(SYSTEM_DIR), text)
@@ -3313,7 +3342,9 @@ class OneSystemInFewPresses(unittest.TestCase):
         state = self.long_list("keys")
         state.stack.append("systems")
         state.focus["systems"] = 5
-        self.assertEqual(press(state, "enter"), [("run", "install")])
+        # tui_audit_6 P2-1: Continue opens Confirm, which waits for A.
+        self.assertEqual(press(state, "enter"), [("run", "confirm")])
+        self.assertEqual((state.screen, state.must_confirm), ("confirm", True))
         self.assertEqual(len(state.ticked), 66)
 
     def test_left_and_right_page_inside_muxterm_only(self):
@@ -3499,8 +3530,10 @@ class AuditFive(unittest.TestCase):
                         "reason": "misplaced"}]
         with mock.patch.object(install.LOCAL, "pack", mock.Mock()):
             text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
-            self.assertIn("1 copied from this machine,", text)
-            self.assertIn("from the pack", text)
+            # tui_audit_6 P3-3: one count, "4 files to install" above "3 from
+            # the pack", where "3 to install from the pack" sat over "4".
+            self.assertIn("4 files to install, 1.0 MB", text)
+            self.assertIn("3 from the pack, 1 copied from this machine", text)
             self.assertNotIn("downloaded", text)
             self.assertNotIn("of them", text)
             state.finished = [(FILES[0]["dest"], True, ""), (FILES[1]["dest"], True, "")]
@@ -3529,7 +3562,7 @@ class AuditFive(unittest.TestCase):
         state.stack.append("systems")
         state.focus["systems"] = 3
         lines = install.tui_view(state, 40, 12)
-        self.assertIn(" +1 shared: counted once", lines)
+        self.assertIn(" Shared, counted once", lines)
 
     def test_the_save_folder_remedy_is_the_same_on_both_screens(self):
         summary = {"skipped": [{"reason": "no_save_directory", "files": 1}]}
@@ -3550,7 +3583,9 @@ class AuditFive(unittest.TestCase):
         state.focus["systems"] = 3
         bar = install.tui_view(state, 40, 15)[-1]
         self.assertIn("A Tick", bar)
-        self.assertTrue(bar.strip().startswith("Start Only this system"))
+        self.assertTrue(bar.strip().startswith("Start Only this"))
+        # tui_audit_6 P3-9.1: Back was the entry given up at 40 columns.
+        self.assertIn("R2 Back", bar)
 
     def test_muxterm_help_names_no_home_key(self):
         state = self.long_list()
@@ -3573,14 +3608,20 @@ class LineModeOffline(unittest.TestCase):
                         "--dest", str(repo.dest), "--offline"], env)
             term.wait("q) quit")
             term.send("\r")
-            term.close()
+            code = term.close()
             out = term.raw.decode("utf-8", "replace")
-        self.assertIn("--offline: only the files found on this machine are installed.", out)
+        self.assertIn("--offline: only the files found on this machine are installed, and no "
+                      "--from names a folder to copy them from.", out)
+        self.assertIn("Enter) install what is found on this machine", out)
         self.assertIn("5 files need the internet, which --offline does not use.", out)
         self.assertNotIn("Downloading", out)
         self.assertNotIn("failed", out.lower())
-        self.assertIn("Nothing installed: 5 files not downloaded, which --offline does not do.",
-                      out.replace("\r\n", " ").replace("\n", " "))
+        # tui_audit_6 P2-3, code_audit_13 P1-1: nothing installed ended on
+        # exit 0, where the screen's run gives 2.
+        self.assertIn("Nothing installed: 5 files need the internet, which --offline does "
+                      "not use.", out.replace("\r\n", " ").replace("\n", " "))
+        self.assertNotIn("already up to date", out)
+        self.assertEqual(code, 2)
 
     def test_the_data_files_are_counted_before_the_question(self):
         files = [{"dest": "a.bin", "size": 1024}]
@@ -5028,6 +5069,484 @@ class AFocusesNoSystemFolder(unittest.TestCase):
         names = {r.value.name for r in self.state.browse_rows if r.action == "dir"}
         if "bin" in names and names - install._POSIX_ROOT_SYSTEM - {""}:
             self.assertEqual(row.action, "dir")
+
+
+
+def _card_from_rules(root: Path, setup: install.CardSetup) -> Path:
+    """A card as setup's system leaves it, written from the rules that
+    tell it: a test that names each marker by hand misses the next one."""
+    root.mkdir(parents=True, exist_ok=True)
+    if setup.plat in install.CARD_PLATFORMS:
+        (root / ".system").mkdir(exist_ok=True)
+        prefix = next(prefix for name, _marker, prefix in install._CARD_RULES
+                      if name == setup.plat)
+        (root / install.CARD_MARKER).write_text(f"{prefix}20250101\n", encoding="utf-8")
+    for rule in setup.rules[:1]:
+        if rule.method == "file_matches":
+            path, pattern = rule.values
+            text = re.sub(r"\\(.)", r"\1", pattern.strip("^$").replace(r"\s*", ""))
+            (root / path).parent.mkdir(parents=True, exist_ok=True)
+            (root / path).write_text(text + "\n", encoding="utf-8")
+            continue
+        for value in rule.values:
+            (root / value).parent.mkdir(parents=True, exist_ok=True)
+            (root / value).write_text("", encoding="utf-8")
+    return root
+
+
+def _setup_folder(setup: install.CardSetup, card: Path) -> Path:
+    return card / setup.below if setup.below else card
+
+
+class EveryCardSetupGoesToItsCard(unittest.TestCase):
+    """code_audit_13 P2-3, tui_audit_6 P1-1: the card setups were fixed one
+    by one, and UnofficialOS, ArchR, ArkOS, MiyooCFW and the Anbernic
+    firmware stayed on the RetroArch row, which listed them and opened this
+    computer's folder. Each system that runs from its SD card, from every
+    way in, goes to its card."""
+
+    def setUp(self):
+        self.root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.root, True)
+        self.setups = install.card_setups()
+
+    def test_one_list_holds_every_card_system(self):
+        names = {setup.name for setup in self.setups}
+        self.assertLessEqual({rule.name for rule in install._card_rules()}, names)
+        self.assertLessEqual(set(install._systems_reading()["retroarch"]), names)
+        self.assertLessEqual({install.display_name(plat) for plat in install.CARD_PLATFORMS},
+                             names)
+        self.assertLessEqual({"Onion", "spruceOS", "muOS", "JELOS", "ROCKNIX", "KNULLI",
+                              "ArkOS", "dArkOS", "UnofficialOS", "ArchR", "MiyooCFW",
+                              "Anbernic stock firmware", "Allium", "Koriki", "CrossMix-OS",
+                              "MinUI", "NextUI", "MyMinUI"}, names)
+        self.assertEqual(len(names), len(self.setups))
+        # A system the guide writes is one of them.
+        try:
+            import yaml
+        except ImportError:
+            return
+        guides = yaml.safe_load((REPO_ROOT / "platforms" / "_guides.yml").read_text())
+        for system in guides["handheld_guide"]["systems"]:
+            with self.subTest(system=system["name"]):
+                self.assertIn(system["name"], names)
+
+    def test_its_folder_is_the_one_the_guide_names(self):
+        try:
+            import yaml
+        except ImportError:
+            self.skipTest("pyyaml is not installed")
+        guides = yaml.safe_load((REPO_ROOT / "platforms" / "_guides.yml").read_text())
+        below = {setup.name: setup.below for setup in self.setups}
+        for system in guides["handheld_guide"]["systems"]:
+            folder = re.search(r"`([^`]+)`", system.get("folder", ""))
+            if folder:
+                with self.subTest(system=system["name"]):
+                    self.assertTrue(folder.group(1).endswith(below[system["name"]]),
+                                    (folder.group(1), below[system["name"]]))
+
+    def platforms(self, needle: str = "") -> install.TuiState:
+        state = fresh_state()
+        state.stack = ["setup", "platforms"]
+        state.filters["platforms"] = needle
+        return state
+
+    def test_the_setup_list_has_a_row_for_each_without_the_filter(self):
+        state = self.platforms()
+        rows = install.tui_rows(state)
+        self.assertEqual({row.value: row for row in rows if row.action == "platform"}[
+            "retroarch"].right, "")
+        for setup in self.setups:
+            with self.subTest(system=setup.name):
+                state = self.platforms()
+                rows = install.tui_rows(state)
+                index = next(i for i, row in enumerate(rows)
+                             if row.label == f"{setup.name}, SD card")
+                state.focus["platforms"] = index
+                with mock.patch.object(install, "_mounted_cards", return_value=[]):
+                    effects = press(state, "enter")
+                    text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+                self.assertEqual((effects, state.screen), ([], "folder"))
+                self.assertEqual(state.card_bound, (setup.name, setup.below))
+                self.assertIsNone(state.folder_default)
+                self.assertIn("Where is the SD card?", text)
+                self.assertNotIn(str(SYSTEM_DIR), text)
+
+    def test_its_name_in_the_filter_finds_its_row(self):
+        for setup in self.setups:
+            with self.subTest(system=setup.name):
+                rows = install.tui_rows(self.platforms(setup.name))
+                self.assertIn(f"{setup.name}, SD card", [row.label for row in rows])
+
+    def test_platform_named_on_a_computer_asks_for_the_card(self):
+        for setup in self.setups:
+            with self.subTest(system=setup.name):
+                plat = install.normalize_platform(setup.name, say=False)
+                self.assertEqual(plat, setup.plat)
+                self.assertEqual(install.card_bound(setup.name, plat),
+                                 (setup.name, setup.below))
+                with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                        contextlib.redirect_stderr(io.StringIO()) as err, \
+                        self.assertRaises(SystemExit) as stop:
+                    install.card_install_dest(setup.name, plat, interactive=False)
+                self.assertEqual(stop.exception.code, 1)
+                self.assertIn(f"{setup.name} keeps its BIOS files on its SD card",
+                              err.getvalue())
+                with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                        mock.patch.object(install, "detect_platforms", return_value=[
+                            ("retroarch", SYSTEM_DIR)]), \
+                        mock.patch.object(install, "detect_frontends", return_value=[]):
+                    state, effects = install.tui_start(_args(platform=setup.name), "linux")
+                self.assertEqual((effects, state.screen), ([], "folder"))
+                self.assertEqual(state.card_bound, (setup.name, setup.below))
+                self.assertIsNone(state.folder_default)
+
+    def test_the_line_menu_offers_it_and_asks_for_its_card(self):
+        offered = [name for name, _label in install._line_setups()]
+        for setup in self.setups:
+            with self.subTest(system=setup.name):
+                key = setup.plat if setup.name == install.display_name(setup.plat) \
+                    else setup.name
+                self.assertIn(key, offered)
+                card = _card_from_rules(self.root / f"menu{offered.index(key)}", setup)
+                with mock.patch.object(install, "_choose_platform", return_value=key), \
+                        mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                        mock.patch.object(install, "_ask", return_value=str(card)), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    chosen = install._prompt_manual_platform("linux", ask=False)
+                self.assertEqual(chosen, [(setup.plat, _setup_folder(setup, card))])
+
+    def test_its_card_gives_one_folder_whichever_way_it_is_named(self):
+        for index, setup in enumerate(self.setups):
+            with self.subTest(system=setup.name):
+                card = _card_from_rules(self.root / f"card{index}", setup)
+                want = (_setup_folder(setup, card) if setup.known() or not setup.below
+                        else card)
+                with contextlib.redirect_stdout(io.StringIO()):
+                    by_dest = install.card_dest(setup.name, setup.plat, card)
+                self.assertEqual(by_dest, (setup.plat, want))
+                with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                        mock.patch.object(install, "detect_platforms", return_value=[]), \
+                        mock.patch.object(install, "detect_frontends", return_value=[]):
+                    state, _effects = install.tui_start(
+                        _args(platform=setup.name, dest=str(card)), "linux")
+                    self.assertEqual(state.dest, want)
+                    # --dest alone, then the setup's row: the folder of the
+                    # same --dest (code_audit_13 P2-2).
+                    state, _effects = install.tui_start(_args(dest=str(card)), "linux")
+                    if state.screen == "platforms":
+                        rows = install.tui_rows(state)
+                        label = (f"{setup.name}, SD card")
+                        state.focus["platforms"] = [row.label for row in rows].index(label)
+                        press(state, "enter")
+                    self.assertEqual(state.dest, want)
+                # Its card chosen as a card's root: its BIOS folder below it.
+                if setup.known():
+                    choice = install.card_root_folder(setup.name, setup.plat, card)
+                    self.assertEqual((choice.refused, choice.folder),
+                                     ("", _setup_folder(setup, card)))
+
+    def test_another_systems_card_is_refused_for_each(self):
+        """code_audit_13 P2-1, tui_audit_6 P2-5: KNULLI and ROCKNIX took a
+        muOS or an Onion card, and wrote their layout into it."""
+        cards = {}
+        for name in ("muOS", "Onion", "MinUI"):
+            setup = next(item for item in self.setups if item.name == name)
+            cards[name] = _card_from_rules(self.root / name, setup)
+        for setup in self.setups:
+            for name, card in cards.items():
+                if name == setup.name or (name == "MinUI"
+                                          and setup.plat in install.CARD_PLATFORMS):
+                    continue
+                with self.subTest(system=setup.name, card=name):
+                    choice = install.card_root_folder(setup.name, setup.plat, card)
+                    self.assertIn(f"is {install._a(name)} card, not "
+                                  f"{install._a(setup.name)} card", choice.refused)
+                    self.assertTrue(install.card_choice(setup.name, setup.plat,
+                                                        card).refused)
+                    with mock.patch.object(install, "_mounted_cards",
+                                           return_value=list(cards.values())):
+                        self.assertNotIn(card, install.mounted_cards_of(setup.name,
+                                                                        setup.plat))
+
+    def test_a_blank_drive_is_refused_where_the_card_always_names_its_system(self):
+        blank = self.root / "BLANK"
+        blank.mkdir()
+        for setup in self.setups:
+            with self.subTest(system=setup.name):
+                choice = install.card_root_folder(setup.name, setup.plat, blank)
+                if setup.known() and not setup.fresh:
+                    self.assertIn(f"is not {install._a(setup.name)} SD card", choice.refused)
+                else:
+                    self.assertEqual((choice.refused, choice.folder),
+                                     ("", _setup_folder(setup, blank)))
+                    self.assertTrue(choice.note)
+
+
+class AuditSix(unittest.TestCase):
+    """tui_audit_6 and code_audit_13: what remains of each finding."""
+
+    def setUp(self):
+        self.root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.root, True)
+
+    def onion(self, name: str = "ONION") -> Path:
+        card = self.root / name
+        make_card(card, "Onion")
+        return card
+
+    def test_continue_never_installs_without_confirm(self):
+        """P2-1: A on a system, the ticks unchanged, installed at once,
+        offline too where the plan had no Install."""
+        state = checked_state()
+        press(state, "down", "enter")
+        self.assertEqual(state.screen, "systems")
+        state.focus["systems"] = 3
+        self.assertEqual(install._primary(state), "A/Enter Continue")
+        self.assertEqual(press(state, "enter"), [("run", "confirm")])
+        self.assertEqual(state.screen, "confirm")
+        # The confirm run's plan is the same: it still waits for A.
+        install.tui_receive(state, ("event", state.run_id, dict(CHECK)))
+        self.assertEqual(install.tui_receive(state, ("ended", state.run_id, 0, [])), [])
+        self.assertEqual(state.screen, "confirm")
+
+    def test_offline_with_nothing_on_hand_runs_nothing_from_the_list(self):
+        state = checked_state()
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            state.focus["plan"] = [row.action for row in install.tui_rows(state)].index(
+                "systems")
+            press(state, "enter")
+            state.focus["systems"] = 3
+            effects = press(state, "enter")
+            self.assertEqual(effects, [("run", "confirm")])
+            install.tui_receive(state, ("event", state.run_id, dict(CHECK)))
+            for event in FILES:
+                install.tui_receive(state, ("event", state.run_id, dict(event)))
+            install.tui_receive(state, ("ended", state.run_id, 0, []))
+            self.assertEqual([row.action for row in install.tui_rows(state)], ["back"])
+            view = install.tui_view(state, 40, 12)
+            text = " ".join(" ".join(view).split())
+        self.assertEqual(state.screen, "confirm")
+        # code_audit_13 P3-3: Back alone, no word of an Install.
+        self.assertNotIn("before Install", text)
+        self.assertNotIn("backup folder", text)
+        self.assertIn("Copy them from your old card", text)
+        self.assertEqual(view[-1].strip(), "A/Enter Back  ? Help")
+
+    def test_a_refusal_shows_at_40x12_on_type_a_path(self):
+        """P2-2: Enter seemed to do nothing, the refusal drawn below the
+        last line."""
+        blank = self.root / "USBSTICK"
+        blank.mkdir()
+        state = fresh_state()
+        state.stack = ["setup", "folder", "path"]
+        state.platform, state.card_bound = "retroarch", ("Onion", "BIOS")
+        state.path_text = str(blank)
+        press(state, "enter")
+        self.assertEqual(state.screen, "path")
+        text = " ".join(" ".join(install.tui_view(state, 40, 12)).split())
+        self.assertIn("Not an Onion SD card: no Onion files on it.", text)
+        self.assertNotIn("Ctrl-U clears", text)
+        # P3-1: no hidden folder named in the short form, the detail after.
+        self.assertNotIn(".tmp_update", state.status)
+        self.assertIn(".tmp_update", state.status_more)
+        # code_audit_13 P3-5: the prompt asks for the card.
+        self.assertIn("The top folder of the Onion SD card:", text)
+
+    def test_the_help_says_the_refusal_in_full(self):
+        state = fresh_state()
+        state.stack = ["setup", "folder"]
+        state.platform, state.card_bound = "retroarch", ("Onion", "BIOS")
+        blank = self.root / "STICK"
+        blank.mkdir()
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            install._choose_card(state, blank)
+            press(state, "?")
+            text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+        self.assertIn("STICK is not an Onion SD card: no Onion files on it. Onion keeps "
+                      ".tmp_update at the root of its card.", text)
+
+    def test_wsl_drive_letters_are_taken_as_typed(self):
+        """P2-4: the screen says D:, and D: typed was refused."""
+        with mock.patch.dict(install._WSL, {"active": True}):
+            for typed in ("D:", "D:\\", "d:\\", "\"D:\\\""):
+                with self.subTest(typed=typed):
+                    self.assertEqual(install._typed_folder(typed), Path("/mnt/d"))
+                    self.assertEqual(install.typed_path(typed), Path("/mnt/d"))
+            self.assertEqual(install._typed_folder("E:\\bios"), Path("/mnt/e/bios"))
+            args = _args(dest=Path("D:\\"))
+            install._wsl_dest(args)
+            self.assertEqual(args.dest, Path("/mnt/d"))
+            card = Path("/mnt/d")
+            with mock.patch.object(install, "_card_what", return_value="Onion card"):
+                self.assertEqual(install.card_line(card), "D: (Onion card, /mnt/d)")
+        self.assertEqual(install._typed_folder("D:"), Path("D:"))
+
+    def test_a_dest_refused_on_the_setup_list_names_dest(self):
+        """code_audit_13 P3-2: "Choose the root of the Onion card", where
+        --dest fixes the folder, and the refused system stayed chosen."""
+        blank = self.root / "USBSTICK"
+        blank.mkdir()
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "detect_platforms", return_value=[]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]):
+            state, _effects = install.tui_start(_args(dest=str(blank)), "linux")
+            state.filters["platforms"] = "onion"
+            state.focus["platforms"] = 1
+            self.assertEqual(install.tui_rows(state)[1].label, "Onion, SD card")
+            self.assertEqual(press(state, "enter"), [])
+        self.assertEqual(state.screen, "platforms")
+        self.assertIn("--dest names it: choose another setup.", state.status)
+        self.assertNotIn("Choose the card's top folder", state.status)
+        self.assertEqual((state.platform, state.card_bound), ("", None))
+
+    def test_on_the_device_a_folder_typed_is_taken_as_typed(self):
+        """code_audit_13 P3-1: a KNULLI got bios added to what was typed."""
+        share = self.root / "userdata" / "share"
+        share.mkdir(parents=True)
+        state = fresh_state()
+        state.stack = ["setup", "platforms"]
+        state.platform, state.card_bound = "knulli", ("KNULLI", "bios")
+        install._open_folder_screen(state, Path("/userdata/bios"), "found")
+        state.stack.append("path")
+        state.path_text = str(share)
+        text = " ".join(install.tui_view(state, 80, 24))
+        self.assertIn("The folder for KNULLI:", text)
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            press(state, "enter")
+        self.assertEqual(state.dest, share)
+
+    def test_a_card_in_a_reader_asks_for_its_card_once(self):
+        """code_audit_13 P3-9, tui_audit_6 P3-7: "Which folder? Onion reads
+        its BIOS files from" on a computer, the same card listed twice."""
+        first, second = self.onion("D"), self.onion("E")
+        with mock.patch.object(install, "_mounted_cards", return_value=[first, second]), \
+                mock.patch.object(install, "detect_platforms",
+                                  return_value=[("retroarch", SYSTEM_DIR)]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]):
+            state, _effects = install.tui_start(_args(), "linux")
+            self.assertEqual(len(state.setups), 3)
+            state.focus["setup"] = len(state.setups)
+            press(state, "enter")
+            state.filters["platforms"] = "onion"
+            state.focus["platforms"] = 1
+            press(state, "enter")
+            rows = install.tui_rows(state)
+            title = install.tui_view(state, 80, 24)[0]
+        self.assertIn("Where is the SD card?", title)
+        self.assertEqual([(row.action, row.value) for row in rows][:2],
+                         [("card", first), ("card", second)])
+        self.assertNotIn("default", [row.action for row in rows])
+        # The RetroArch row stays this computer's, never the card's folder.
+        state.stack = ["setup", "platforms"]
+        state.filters["platforms"] = ""
+        state.focus["platforms"] = install._platform_focus(state, "retroarch")
+        with mock.patch.object(install, "_mounted_cards", return_value=[first, second]):
+            press(state, "enter")
+        self.assertEqual(state.folder_default, SYSTEM_DIR)
+
+    def test_browsing_for_a_card_starts_on_the_drives(self):
+        """tui_audit_6 P3-2: the browser opened on the home folder, Use this
+        folder focused, saying to go back, the cards listed under it."""
+        card = self.onion()
+        state = fresh_state()
+        state.stack = ["setup", "platforms"]
+        state.platform, state.card_bound = "retroarch", ("Onion", "BIOS")
+        with mock.patch.object(install, "_mounted_cards", return_value=[card]):
+            install._open_folder_screen(state, None)
+            state.focus["folder"] = [row.action for row in install.tui_rows(state)].index(
+                "browse")
+            press(state, "enter")
+            rows = install.tui_rows(state)
+        self.assertEqual(state.screen, "browse")
+        self.assertEqual(rows[state.focus["browse"]].value, card)
+        self.assertEqual(state.status, "Choose the card below, or open the folder that holds it.")
+
+    def test_a_number_outside_the_list_is_said(self):
+        """tui_audit_6 P3-1: 9 was read as a folder."""
+        card, other = self.onion(), self.onion("SECOND")
+        answers = iter(["9", "0", "2"])
+        with mock.patch.object(install, "_mounted_cards", return_value=[card, other]), \
+                mock.patch.object(install, "_ask", side_effect=lambda _p: next(answers)), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            dest = install.card_install_dest("onion", "retroarch", True)
+        self.assertEqual(dest, other / "BIOS")
+        self.assertEqual(out.getvalue().count("Type 1 to 2, or a folder."), 2)
+
+    def test_the_articles_read(self):
+        self.assertEqual([install._a(name) for name in ("Onion", "Allium", "ArkOS", "muOS",
+                                                        "KNULLI")],
+                         ["an Onion", "an Allium", "an ArkOS", "a muOS", "a KNULLI"])
+
+    def test_every_card_row_reads_the_same(self):
+        """tui_audit_6 P3-6: KNULLI, ROCKNIX and the MinUI family asked for
+        their card without saying so."""
+        state = fresh_state()
+        state.stack = ["setup", "platforms"]
+        labels = {row.value: row.label for row in install.tui_rows(state)
+                  if row.action == "platform"}
+        for plat in ("knulli", "rocknix", "minui", "nextui", "myminui"):
+            self.assertEqual(labels[plat], f"{install.display_name(plat)}, SD card")
+        self.assertEqual(labels["retroarch"], "RetroArch")
+        # On the device itself it is that device's setup, not a card.
+        share = Path("/userdata/bios")
+        state.setups.append(("knulli", share, "KNULLI"))
+        with mock.patch.dict(install._DETECTED_OS, {("knulli", share): "KNULLI"}):
+            labels = {row.value: row.label for row in install.tui_rows(state)
+                      if row.action == "platform"}
+        self.assertEqual(labels["knulli"], "KNULLI")
+
+    def test_offline_plan_counts_agree(self):
+        """code_audit_13 P3-4: "3 downloaded" under "3 need the internet";
+        tui_audit_6 P3-9.2: the data files read as if on hand."""
+        state = checked_state()
+        state.found = [{"event": "found", "platform": "retroarch", "dest": FILES[0]["dest"],
+                        "folder": "/media/old", "path": "/media/old/x", "member": "",
+                        "reason": ""}]
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+            self.assertNotIn("downloaded", text)
+            state.found = []
+            state.check = dict(state.check, data_missing=2636, data_bytes=40 * 1024 * 1024)
+            text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("4 files and 2636 data files (40.0 MB) need the internet, which "
+                      "--offline does not use", text)
+
+    def test_the_error_row_and_the_bar_agree(self):
+        """tui_audit_6 P3-9.3: "Choose another setup or folder" over
+        "A/Enter Back"."""
+        state = checked_state()
+        state.run = "check"
+        install._fail(state, ["went wrong"], 1)
+        state.focus["error"] = 0
+        self.assertEqual(install.tui_rows(state)[0].label, "Choose another setup or folder")
+        self.assertEqual(install._primary(state), "A/Enter Choose")
+        press(state, "enter")
+        self.assertNotEqual(state.screen, "error")
+
+    def test_a_long_name_keeps_a_size_at_40_columns(self):
+        """tui_audit_6 P3-5: Nintendo Game Boy Advance lost its size."""
+        row = install.TuiRow("system", "[x] Nintendo Game Boy Advance", "1 file, 16.0 KB",
+                             "nintendo-gba", narrow=("16.0 KB", install._compact_size(16384)))
+        self.assertTrue(str(install._row_line(row, False, 38)).rstrip().endswith("16 KB"))
+
+    def test_the_shared_note_keeps_its_line(self):
+        """tui_audit_6 P3-5: the page held 4, 3 and 5 systems as the note
+        came and went, and "+19" read as 19 more."""
+        state = OneSystemInFewPresses().long_list("keys")
+        state.files = [{"event": "file", "dest": "mame.zip", "size": 10,
+                        "systems": ["sys-00", "sys-01"]},
+                       {"event": "file", "dest": "two.zip", "size": 10,
+                        "systems": ["sys-00", "sys-01"]}]
+        state.stack.append("systems")
+        footers = set()
+        for focus in range(3, 12):
+            state.focus["systems"] = focus
+            lines = install.tui_view(state, 40, 12)
+            footers.add(next(i for i, line in enumerate(lines) if "of 66 systems:" in line))
+        self.assertEqual(len(footers), 1, footers)
+        state.focus["systems"] = 3
+        self.assertIn(" +2 shared: counted once", install.tui_view(state, 40, 12))
 
 
 if __name__ == "__main__":

@@ -4230,9 +4230,26 @@ class DestAloneFollowsWhatIsFoundHere(unittest.TestCase):
                 unittest.mock.patch("builtins.input", lambda _prompt="": answer), \
                 contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):
             try:
-                return install._platform_for_dest("linux", Path("/media/card"), interactive), out.getvalue()
+                plat, folder = install._platform_for_dest("linux", Path("/media/card"),
+                                                          interactive)
+                self.assertEqual(folder, Path("/media/card"))
+                return plat, out.getvalue()
             except SystemExit as exc:
                 return exc, out.getvalue()
+
+    def test_a_card_system_chosen_checks_the_folder(self):
+        """code_audit_13 P2-3: the menu offered no card system, and one
+        chosen now reads --dest as --platform does."""
+        root = Path(_tempdir(self))
+        answers = iter(["Onion", "retroarch"])
+        out = io.StringIO()
+        with unittest.mock.patch.object(install, "detect_platforms", return_value=[]), \
+                unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                contextlib.redirect_stdout(out):
+            plat, folder = install._platform_for_dest("linux", root, True)
+        self.assertEqual((plat, folder), ("retroarch", root))
+        self.assertIn(f"{root} is not an Onion SD card", out.getvalue())
+        self.assertIn("Onion, SD card (RetroArch files)", out.getvalue())
 
     def test_nothing_found_is_retroarch_said_aloud(self):
         plat, out = self._pick([])
