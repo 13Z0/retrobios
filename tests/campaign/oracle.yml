@@ -14,6 +14,9 @@
 #               cores:. A line a core logs and then carries on (a fallback to a
 #               built-in BIOS) is not an error pattern.
 # error_screens per core, the sha1 of a frame that shows its BIOS error message.
+# bios_patterns per core, log lines by which it says it loaded the console's
+#               own BIOS: they stand for the bios-stage screens of a core
+#               that hides them by default.
 #
 # A run that reaches no reference frame, matches no pattern or screen and
 # does not end on one colour is `unknown`: frames that differ from another
@@ -47,7 +50,11 @@ cores:
       Without a BIOS, or with one of the wrong size, it logs "Using HLE BIOS"
       and runs its own (frontend/libretro.c:3893-3899 at c8816799). The BIOS
       boot logo is off by default (pcsx_rearmed_show_bios_bootlogo), so its
-      runs reach no bios-stage screen.
+      runs reach no bios-stage screen: the line it logs once a file passes
+      its signature check and is kept stands for them.
+    bios_patterns:
+      - pattern: '^found (US|EU|JP) BIOS file, crc32 '
+        source_ref: frontend/libretro.c:3646-3669 at c8816799
     error_patterns: []
     error_screens: []
   "PCSX1":

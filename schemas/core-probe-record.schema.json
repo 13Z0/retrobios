@@ -1004,11 +1004,18 @@
                   }
                 }
               }
+            },
+            "bios_patterns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Log lines by which the core says it loaded the console's own BIOS: they add the bios stage when its screens are hidden."
             }
           }
         }
       ],
-      "description": "What the verdicts were judged against: the reference frames of this content and core, the core's error patterns and error screens, from the oracle file at its sha256. Null when the run had no oracle entry."
+      "description": "What the verdicts were judged against: the reference frames of this content and core, the core's error patterns, error screens and BIOS load patterns, from the oracle file at its sha256. Null when the run had no oracle entry."
     }
   }
 }

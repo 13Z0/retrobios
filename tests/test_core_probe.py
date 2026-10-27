@@ -211,6 +211,13 @@ class OracleTests(unittest.TestCase):
         self.assertEqual((evidence["rule"], evidence["frame"], evidence["stages"]),
                          ("reference_frame", 20, ["bios", "game"]))
 
+    def test_a_bios_load_line_stands_for_hidden_bios_screens(self) -> None:
+        oracle = {**self.ORACLE, "bios_patterns": [r"^found US BIOS file"]}
+        verdict, evidence = core_probe.judge(
+            self.rep(frames((0, self.TITLE)), logs=["found US BIOS file, crc32 1: x"]), oracle)
+        self.assertEqual((verdict, evidence["stages"]), ("boots", ["bios", "game"]))
+        self.assertEqual(core_probe.judge(self.rep(frames((0, self.TITLE))), oracle)[1]["stages"], ["game"])
+
     def test_the_bios_screens_alone_are_not_a_boot(self) -> None:
         # A console that shows its logo and then refuses the disc never reached the game.
         verdict, evidence = core_probe.judge(
@@ -275,6 +282,7 @@ class OracleTests(unittest.TestCase):
         picked = core_probe.oracle_for(data, "a" * 40, "Fake")
         self.assertEqual(picked["references"], [{"sha1": self.TITLE, "stage": "game", "shows": "t"}])
         self.assertEqual(picked["error_patterns"], ["shared", "own"])
+        self.assertEqual(picked["bios_patterns"], [])
         self.assertEqual(core_probe.oracle_for(data, "b" * 40, "Fake")["references"], [])
         self.assertEqual(core_probe.oracle_for(data, "a" * 40, "Nobody")["error_patterns"], ["shared"])
 
@@ -283,7 +291,7 @@ class OracleTests(unittest.TestCase):
         data = yaml.safe_load(core_probe.DEFAULT_ORACLE.read_text(encoding="utf-8"))
         patterns = list(data.get("error_patterns") or ())
         for core in (data.get("cores") or {}).values():
-            patterns += core.get("error_patterns") or []
+            patterns += (core.get("error_patterns") or []) + (core.get("bios_patterns") or [])
             for screen in core.get("error_screens") or ():
                 self.assertRegex(screen["sha1"], r"^[0-9a-f]{40}$")
         for pattern in patterns:

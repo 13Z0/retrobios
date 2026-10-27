@@ -891,7 +891,9 @@ content by the sha1 of the file handed to the core and a core by its library
 name. A reference frame is recorded once with the full BIOS set and reviewed
 by looking at its PNG. An error pattern is a log line after which the core
 stops, read from its source: a line a core logs before it falls back to a
-built-in BIOS is not one. Frames that differ from another run never make a
+built-in BIOS is not one. A BIOS load pattern is the line a core logs once
+it keeps the console's BIOS: it adds the `bios` stage for a core that hides
+the BIOS screens by default (PCSX-ReARMed). Frames that differ from another run never make a
 boot.
 
 | Option | Effect |
@@ -1000,7 +1002,7 @@ python scripts/campaign.py install-timer     # opt-in: writes the autorun units,
 
 | Verdicts | Field | Written |
 |----------|-------|---------|
-| `none` boots | `hle_fallback` | `true` |
+| `none` boots, and the file changes the run: alone or as a wrong file, another verdict or other stages than with no BIOS | `hle_fallback` | `true`. A file the game never uses settles nothing: a core can open every file of the folder to hash it |
 | `none` fails (`bios_error`, `crash`, `hang`) and the file alone boots | `required`, `hle_fallback` | `true`, `false` |
 | Zeros of the file's size refused while the file boots | `validation` | a content check is proven. Agreeing adds evidence, a profile with no md5, sha1, sha256, crc32 or adler32 is an open finding |
 | Zeros used while the file boots | `validation` | no content check. A profile that declares one is an open finding |
@@ -1026,16 +1028,18 @@ prints the record id with the screens that stay on for 3 samples or more in
 every repetition. A reviewer opens those PNGs and writes the chosen frames
 into `tests/campaign/oracle.yml` with their stage and what they show.
 
-A run that agrees with the profile adds its record id to `evidence:` and
+The rules run on every pass, from the kept records when no check needs to run
+again, so a change of the table applies without a run. A run that agrees with
+the profile adds its record id to `evidence:` and
 resolves an open finding of the same field. The profile is edited as text and
 the edit is refused unless the result parses to the same profile with only
 those fields changed.
 
 State lives in `.cache/campaign/state.json` of the main checkout: each check
 is `done`, `failed` (with the reason and its log) or `pending` (with the
-reason), with the core sha256, the profile digest, the oracle sha256 and the
-record version it ran against. A pass skips a check that is done or failed
-against the same four, so it
+reason), with the core sha256, the profile digest, the oracle entries of its
+content and core (by sha1) and the record version it ran against. A pass
+skips a check that is done or failed against the same four, so it
 takes new nightlies, changed profiles, newly fetched content and pending
 checks. The campaign's own `evidence:` writes do not count as a profile change.
 

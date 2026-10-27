@@ -155,6 +155,14 @@ class RuleTable(unittest.TestCase):
         optional = rules.rule_need(NONE_BOOTS, PRESENT, {"name": "a", "required": False})
         self.assertEqual([v.field for v in optional], ["hle_fallback"])
 
+    def test_a_file_the_content_never_uses_settles_nothing(self) -> None:
+        unused = run(rules.BOOTS, "bios.bin", ("game",))
+        self.assertFalse(rules.read(NONE_BOOTS, unused, unused, unused))
+        self.assertEqual(rules.rule_need(NONE_BOOTS, unused, self.ENTRY, used=False), [])
+        # A wrong file that hangs where no file boots: the core reads it.
+        self.assertTrue(rules.read(NONE_BOOTS, unused, run(rules.HANG), unused))
+        self.assertTrue(rules.read(NONE_BOOTS, PRESENT, None, None))
+
     def test_fails_without_and_boots_alone_settles_required(self) -> None:
         for failure in rules.FAILS:
             verdicts = rules.rule_need(run(failure, "none"), PRESENT, self.ENTRY)
@@ -396,6 +404,19 @@ class StateAndResume(Workspace):
         self.assertTrue(campaign.should_run(done, "a", "e"))
         self.assertTrue(campaign.should_run({**done, "status": "pending"}, "a", "d"))
         self.assertFalse(campaign.should_run({**done, "status": "failed"}, "a", "d"))
+
+    def test_only_its_own_oracle_entries_make_a_check_run_again(self) -> None:
+        key = [hashlib.sha1(b"GAME").hexdigest(), "Fake"]
+        before = self.make().oracle_digest(key)
+        data = yaml.safe_load(self.oracle.read_text())
+        data["content"][0]["references"]["Other"] = {"recorded_from": "2026-10-27-000000000000",
+                                                     "frames": [{"sha1": "a" * 40, "stage": "game",
+                                                                 "shows": "x"}]}
+        self.oracle.write_text(yaml.safe_dump(data), encoding="utf-8")
+        self.assertEqual(self.make().oracle_digest(key), before)
+        data["cores"] = {"Fake": {"error_patterns": [{"pattern": "BIOS", "reason": "r"}]}}
+        self.oracle.write_text(yaml.safe_dump(data), encoding="utf-8")
+        self.assertNotEqual(self.make().oracle_digest(key), before)
 
     def test_evidence_does_not_change_the_digest(self) -> None:
         profile = yaml.safe_load(PROFILE)

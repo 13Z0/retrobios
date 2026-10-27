@@ -11,7 +11,7 @@ BIOS at all, `present` with the file alone, and wrong files staged under its
 name (zeros of its size, its first half, another region's dump).
 
   runs                                          field          settled
-  none boots                                    hle_fallback   true
+  none boots, the file changes the run          hle_fallback   true
   none fails, present boots                     required       true
                                                 hle_fallback   false
   zeros refused, present boots                  validation     a content check
@@ -123,9 +123,20 @@ def agrees(entry: dict, verdict: Verdict) -> bool:
     return current(entry, verdict.field) == verdict.value
 
 
-def rule_need(none: Run, present: Run, entry: dict) -> list[Verdict]:
-    """No BIOS at all against the file alone: required and hle_fallback."""
+def read(none: Run, *runs: Run) -> bool:
+    """True when the file changes the run: alone or as a wrong file, one
+    variant ends otherwise than the run with no BIOS, or reaches other
+    stages. A core can open a file without using it for this content (a
+    scan that hashes every file of the folder)."""
+    return any(run.verdict != none.verdict or run.stages != none.stages for run in runs if run)
+
+
+def rule_need(none: Run, present: Run, entry: dict, used: bool = True) -> list[Verdict]:
+    """No BIOS at all against the file alone: required and hle_fallback. A
+    file the content never uses settles nothing."""
     name = entry["name"]
+    if none.verdict == BOOTS and not used:
+        return []
     if none.verdict == BOOTS:
         out = [Verdict("boots_without_file", "hle_fallback", True,
                        f"the core boots the content with no BIOS at all, {name} included",
