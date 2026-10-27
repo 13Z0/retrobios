@@ -31,6 +31,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.request
 from collections.abc import Callable, Iterable
 from pathlib import Path
@@ -267,6 +268,26 @@ def local_resolver() -> Callable[[dict], Path | None]:
     return local
 
 
+BUSY = 3  # core_probe's exit status when it refuses to record on a busy host
+POLL_S = 15
+
+
+def probe_when_idle(argv: list[str], max_wait: float,
+                    clock: Callable[[], float] = time.monotonic,
+                    pause: Callable[[float], None] = time.sleep,
+                    runner: Callable[..., subprocess.CompletedProcess] = subprocess.run
+                    ) -> subprocess.CompletedProcess:
+    """core_probe, run again while it refuses a busy host, as the campaign
+    does: every POLL_S seconds until max_wait seconds have passed. The load
+    threshold stays core_probe's own."""
+    started = clock()
+    while True:
+        proc = runner(argv, cwd=ROOT, capture_output=True, text=True)
+        if proc.returncode != BUSY or clock() - started >= max_wait:
+            return proc
+        pause(POLL_S)
+
+
 def run(args: argparse.Namespace) -> int:
     from common import load_emulator_profiles  # noqa: PLC0415
 
@@ -299,7 +320,7 @@ def run(args: argparse.Namespace) -> int:
                     argv += ["--core-artifact", url]
                 for dest, src in sorted(variants[label].items()):
                     argv += ["--system-file", f"{dest}={src}"]
-                proc = subprocess.run(argv, cwd=ROOT, capture_output=True, text=True)
+                proc = probe_when_idle(argv, args.max_load_wait)
                 status = "recorded" if proc.returncode == 0 else f"exit {proc.returncode}"
                 print(json.dumps({"game": game["name"], "variant": label, "status": status,
                                   "error": proc.stderr.strip()[-400:] if proc.returncode else None}),
@@ -354,6 +375,8 @@ def main(argv: list[str] | None = None) -> int:
                     help="where romfetch keeps the test games (default: .cache/test-content)")
     go.add_argument("--variants", nargs="*", choices=VARIANTS, help="a subset of the four runs")
     go.add_argument("--timeout", type=int, default=900, help="seconds per run")
+    go.add_argument("--max-load-wait", type=int, default=1800,
+                    help="seconds a run waits for a busy host to settle before it is given up (default 1800)")
     sub.add_parser("report", allow_abbrev=False, help="the outcomes the records hold, as JSON")
     args = parser.parse_args(argv)
     if args.command == "run":

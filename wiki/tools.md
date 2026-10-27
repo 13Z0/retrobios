@@ -1096,6 +1096,7 @@ python scripts/region_check.py report        # the outcome of every region recor
 | `--content-dir` | where romfetch keeps the test games (default `.cache/test-content`) |
 | `--variants` | a subset of `full`, `own`, `others` and `pack` |
 | `--timeout` | seconds per run (default 900) |
+| `--max-load-wait` | seconds a run refused on a busy host is tried again, every 15 seconds, before it is given up (default 1800). The load threshold stays core_probe's |
 
 The file the core opened in the `full` run, read from strace, settles the
 claim: `confirmed` when its `region:` holds the game's region, `contradicted`

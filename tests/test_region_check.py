@@ -59,6 +59,35 @@ class Entries(unittest.TestCase):
         self.assertRegex(slug, rc.SUBJECT)
 
 
+class BusyHost(unittest.TestCase):
+    def _run(self, codes: list[int], max_wait: float) -> tuple[int, int]:
+        import subprocess
+
+        now = [0.0]
+        calls = []
+
+        def runner(argv, **_kwargs):
+            calls.append(argv)
+            return subprocess.CompletedProcess(argv, codes[min(len(calls), len(codes)) - 1], "", "")
+
+        def pause(seconds: float) -> None:
+            now[0] += seconds
+
+        proc = rc.probe_when_idle(["probe"], max_wait, clock=lambda: now[0], pause=pause, runner=runner)
+        return proc.returncode, len(calls)
+
+    def test_a_refused_run_is_tried_again_once_the_host_settles(self) -> None:
+        self.assertEqual(self._run([rc.BUSY, rc.BUSY, 0], 600), (0, 3))
+
+    def test_it_gives_up_after_the_wait(self) -> None:
+        code, calls = self._run([rc.BUSY], 60)
+        self.assertEqual(code, rc.BUSY)
+        self.assertEqual(calls, 60 // rc.POLL_S + 1)
+
+    def test_another_failure_is_not_retried(self) -> None:
+        self.assertEqual(self._run([1, 0], 600), (1, 1))
+
+
 class Outcome(unittest.TestCase):
     ENTRIES = rc.region_entries(PROFILE, "sony-playstation")
     ALL = ["scph5500.bin", "scph5501.bin", "scph5502.bin"]
