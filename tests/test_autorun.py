@@ -17,6 +17,7 @@ import sys
 import tempfile
 import time
 import unittest
+import unittest.mock
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -832,6 +833,30 @@ class BiosIntegrity(Scratch):
     @property
     def db_path(self) -> str:
         return str(self.tmp / "database.json")
+
+
+class SubjectsFollowTheRepositoryHook(unittest.TestCase):
+    """The vocabulary rules live in the commit-msg hook alone: a copy in the
+    runner put the very words the history refuses into a tracked file."""
+
+    def test_a_refusal_comes_from_the_hook(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            hook = Path(tmp) / "commit-msg"
+            hook.write_text('#!/bin/sh\ngrep -q forbiddenword "$1" && echo refused && exit 1\nexit 0\n')
+            hook.chmod(0o755)
+            real = subprocess.run
+            def fake(argv, *args, **kwargs):
+                if argv[:3] == ["git", "rev-parse", "--git-path"]:
+                    return subprocess.CompletedProcess(argv, 0, stdout=str(hook) + "\n", stderr="")
+                return real(argv, *args, **kwargs)
+            with unittest.mock.patch.object(ar.subprocess, "run", side_effect=fake):
+                self.assertEqual(ar.check_subject("chore: tidy the cache"), [])
+                self.assertEqual(ar.check_subject("chore: add forbiddenword"), ["refused"])
+
+    def test_the_shape_is_checked_without_a_hook(self):
+        problems = ar.check_subject("not a subject that follows the type rule at all, too long")
+        self.assertTrue(any("50 at most" in p for p in problems))
+        self.assertTrue(any("type: description" in p for p in problems))
 
 
 if __name__ == "__main__":
