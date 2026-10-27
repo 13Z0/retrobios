@@ -9508,7 +9508,7 @@
   "libs/ymir-core/include/ymir/sys/memory_defs.hpp",
   "libs/ymir-core/src/ymir/db/ipl_db.cpp"
  ],
- "github.com/ymir-emu/Ymir@b471cff9652b99044a4c44a9dbcb1b537c9164ac": [
+ "github.com/ymir-emu/Ymir@fe439e98abc555c243a8a197850c71777ff664f4": [
   ".github/workflows/build.yaml",
   "apps/ymir-sdl3/CMakeLists.txt",
   "apps/ymir-sdl3/src/app/app.cpp",
