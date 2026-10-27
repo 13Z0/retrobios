@@ -828,8 +828,8 @@ class OfflineLeavesFilesMissing(Scratch):
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertNotIn("Would download", proc.stdout)
         self.assertIn("4 files (", proc.stdout)
-        self.assertIn("need the internet, which --offline does not use. Without --offline "
-                      "they would go to", proc.stdout)
+        self.assertIn("need the internet, which --offline does not use. Run without "
+                      "--offline, and they would go to", proc.stdout)
 
     def test_an_archive_not_read_is_only_its_error(self):
         listed = manifest()
@@ -967,7 +967,7 @@ class AuditFifteenOffline(Scratch):
         # The screen reads that summary as missing files, not failures.
         state = install.TuiState()
         state.summary = summary
-        with unittest.mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+        with unittest.mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: install.OFFLINE_FLAG_VALUE}):
             title, lines = install.tui_outcome(state)
         self.assertEqual(title, "Finished with files missing")
         self.assertIn("1 installed, 3 not fetched (--offline).", lines[0])

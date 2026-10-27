@@ -3468,9 +3468,25 @@ class OfflineInTheInterface(unittest.TestCase):
     forbids."""
 
     def setUp(self):
-        patcher = mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"})
+        # The value --offline gives the variable.
+        patcher = mock.patch.dict(os.environ,
+                                  {install.OFFLINE_VARIABLE: install.OFFLINE_FLAG_VALUE})
         patcher.start()
         self.addCleanup(patcher.stop)
+
+    def test_the_variable_is_named_when_it_made_the_run_offline(self):
+        """tui_audit_11 P3-12: "(--offline)" and "without --offline" with
+        RETROBIOS_INSTALL_OFFLINE=1 and no --offline: nothing to remove."""
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            inbox = queue.Queue()
+            install._tui_fetch("retroarch", inbox, io.StringIO())
+            text = " ".join(inbox.get_nowait()[3])
+            self.assertIn("(RETROBIOS_INSTALL_OFFLINE=1)", text)
+            self.assertIn("with RETROBIOS_INSTALL_OFFLINE unset", text)
+            self.assertNotIn("--offline", text)
+            plan = " ".join(" ".join(install.tui_view(checked_state(), 120, 40)).split())
+            self.assertIn("which RETROBIOS_INSTALL_OFFLINE=1 does not use", plan)
+            self.assertNotIn("without --offline", plan)
 
     def test_no_list_names_the_ways_that_work(self):
         inbox = queue.Queue()
@@ -5962,7 +5978,7 @@ class AuditSix(unittest.TestCase):
         state.found = [{"event": "found", "platform": "retroarch", "dest": FILES[0]["dest"],
                         "folder": "/media/old", "path": "/media/old/x", "member": "",
                         "reason": ""}]
-        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: install.OFFLINE_FLAG_VALUE}):
             text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
             self.assertNotIn("downloaded", text)
             state.found = []
@@ -6918,6 +6934,82 @@ class LineModeAndScreenDecideAlike(unittest.TestCase):
             install._install(args, real)
         self.assertIn("Done. 2 files installed", real.getvalue())
         self.assertIn("Installed: 1 BIOS file and 1 game data file.", real.getvalue())
+
+    # code_audit_18 P3-5, tui_audit_11 P3-10 and P3-21: line mode wording.
+
+    def test_one_row_says_type_1(self):
+        with mock.patch.object(install, "_ask", side_effect=["2", "q"]), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                self.assertRaises(SystemExit):
+            install._prompt_platform_choice([("retroarch", self.here)], other=lambda: [])
+        self.assertIn("Type 1, o for another setup or folder, or q to quit.", out.getvalue())
+        self.assertNotIn("1 to 1", out.getvalue())
+
+    def test_a_number_out_of_range_at_copy_from_is_said_as_one(self):
+        stick = self.root / "media" / "STICK"
+        stick.mkdir(parents=True)
+        with mock.patch.object(install, "_mounted_cards", return_value=[stick]), \
+                mock.patch.object(install, "_ask", side_effect=["2", ""]), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            install._ask_from_folder([], self.here)
+        self.assertIn("Type 1, a folder, or Enter.", out.getvalue())
+        self.assertNotIn("does not exist", out.getvalue())
+
+    def test_the_copy_line_names_the_folder_it_copies_from(self):
+        payload = b"gba"
+        files = [self.entry("gba_bios.bin", payload, ["nintendo-gba"])]
+        listing = self.listing("retroarch", files)
+        old = self.root / "OLD"
+        old.mkdir()
+        (old / "gba_bios.bin").write_bytes(payload)
+        args = _args(manifest=listing, dest=self.here, declared_only=False, offline=True)
+        setattr(args, "from", [old])
+        text, _asked = self.line_run(args, [""])
+        self.assertIn(f"Copying 1 file copied from {old}", text)
+        self.assertNotIn("found on this machine (", text)
+
+    def test_the_save_lines_name_the_frontend_both_times(self):
+        onion = self.card("ONION", "Onion")
+        files = [self.entry("gba_bios.bin", b"g", ["nintendo-gba"]),
+                 self.entry("x/keys.txt", b"k", ["nintendo-3ds"], root="save")]
+        listing = self.listing("retroarch", files, base_destination="RetroArch",
+                               save_directory={"folder": "saves", "by_core": False})
+        text, _asked = self.line_run(_args(manifest=listing, dest=onion, declared_only=False,
+                                           offline=False), [], mounts=[onion])
+        self.assertNotIn("Onion's save directory", text)
+        self.assertIn("RetroArch's save directory", text)
+
+    def test_line_mode_repeats_the_command_after_enter(self):
+        payload = b"gba"
+        files = [self.entry("gba_bios.bin", payload, ["nintendo-gba"])]
+        listing = self.listing("retroarch", files)
+        old = self.root / "OLD"
+        old.mkdir()
+        (old / "gba_bios.bin").write_bytes(payload)
+        args = _args(manifest=listing, declared_only=False, offline=True)
+        setattr(args, "from", [old])
+        real = io.StringIO()
+        install.LOCAL.reset()
+        self.addCleanup(install.LOCAL.reset)
+        invocation = install.Invocation()
+        invocation.os_type = "linux"
+        invocation.record(args)
+        with mock.patch.object(install, "_INVOCATION", invocation), \
+                mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "detect_platforms",
+                                  return_value=[("retroarch", self.here)]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(install.sys.stdin, "isatty", return_value=True), \
+                mock.patch.object(install, "_is_terminal", return_value=True), \
+                mock.patch.object(install, "_ask", return_value=""), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()):
+            install._install(args, real)
+        said = real.getvalue()
+        self.assertIn("Same choice without questions: python3 install.py --platform retroarch "
+                      f"--dest {self.here}", said)
+        self.assertIn("To check this later, run that command with --check.", said)
 
     def test_line_mode_says_the_card_it_found_and_names_its_folder(self):
         onion = self.card("ONION", "Onion")
@@ -8064,7 +8156,7 @@ class AuditFifteenAndEightScreens(unittest.TestCase):
         old.mkdir()
         state = checked_state()
         state.from_folders = [old]
-        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: install.OFFLINE_FLAG_VALUE}):
             lines = [str(line) for line in install._plan_lines(state.check, state.dest,
                                                               state)]
         said = [line for line in lines if "USBSTICK" in line]
@@ -8930,6 +9022,55 @@ class AuditEighteenAndEleven(unittest.TestCase):
             install._choose_narrowing(one_core, [], {}, None)
         self.assertNotIn("Cores:", out.getvalue())
         self.assertEqual(asked.call_count, 0)
+
+    # code_audit_18 P3-2, P3-3, tui_audit_11 P3-1: the remedies of a card.
+
+    def test_a_full_card_is_freed_never_left_for_another_drive(self):
+        with mock.patch.object(install.shutil, "disk_usage",
+                               return_value=mock.Mock(free=10)), \
+                contextlib.redirect_stderr(io.StringIO()) as err, \
+                self.assertRaises(SystemExit):
+            install._check_free_space(self.root, 1000, "retroarch", card=True)
+        said = err.getvalue()
+        self.assertIn("on the card, then run it again", said)
+        self.assertNotIn("--platform", said)
+        self.assertNotIn("another drive", said)
+
+    def test_line_mode_names_the_way_to_another_folder(self):
+        hint = install.Invocation()
+        with mock.patch.object(install, "_folder_writable", return_value=False), \
+                mock.patch.object(install, "_on_read_only_mount", return_value=False):
+            lines = install.folder_warnings("retroarch", self.root, [], hint, True, False)
+        self.assertIn("You cannot write to this folder: run it again with another --dest.",
+                      lines)
+        self.assertNotIn("choose another one", " ".join(lines))
+        with mock.patch.object(install, "_folder_writable", return_value=False), \
+                mock.patch.object(install, "_on_read_only_mount", return_value=True):
+            lines = install.folder_warnings("retroarch", self.root, [], hint, True, True)
+        self.assertEqual(lines, [install.read_only_words(self.root)])
+
+    def test_a_card_plan_offers_one_remedy_first(self):
+        for facts, locked in (({"free": 50 * 1024 ** 3, "writable": False, "cores": []}, True),
+                              ({"free": 10, "writable": True, "cores": []}, False)):
+            with self.subTest(locked=locked):
+                state = checked_state(facts)
+                with mock.patch.object(install, "_on_its_card", return_value=True), \
+                        mock.patch.object(install, "_on_read_only_mount", return_value=locked):
+                    rows = install.tui_rows(state)
+                    text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+                    effects = install.tui_update(state, Key("enter"))
+                self.assertEqual(rows[0].action, "recheck")
+                self.assertEqual("install" in [row.action for row in rows], not locked)
+                self.assertNotIn("choose another one", text)
+                self.assertEqual(effects, [("run", "check")])
+
+    def test_nothing_installable_focuses_the_copy(self):
+        """tui_audit_11 P3-8: offline with nothing to copy, the plan focused
+        Choose systems, whose systems need the internet too."""
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            state = checked_state()
+            rows = install.tui_rows(state)
+        self.assertEqual(rows[state.focus.get("plan", 0)].action, "fromcard")
 
     def test_the_card_marker_table_is_written_from_the_rules(self):
         """code_audit_18 P3-6, tui_audit_11 P2-2: the table left out the

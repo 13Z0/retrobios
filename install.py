@@ -3691,9 +3691,9 @@ def fetch_manifest(plat: str) -> dict:
                     message=words if code != "network"
                     else f"the file list could not be fetched: {words}")
         if code == "offline":
-            print(f"  No file list for {plat}: {OFFLINE_WORDS}. Give it with "
+            print(f"  No file list for {plat}: {offline_words()}. Give it with "
                   "--manifest FILE (a copy of install/<platform>.json) or "
-                  "--from-pack PACK, or run without --offline.", file=sys.stderr)
+                  f"--from-pack PACK, or run {offline_undo()}.", file=sys.stderr)
             sys.exit(1)
         if code != "network":
             print(f"  Could not fetch the file list for {plat}.", file=sys.stderr)
@@ -4990,7 +4990,7 @@ def _download_one(
     if LOCAL.pack is not None:
         return _extract_from_pack(f, bios_path, dest, progress)
     if offline_requested():
-        return f["dest"], False, OfflineReason(f"not fetched: {OFFLINE_WORDS}")
+        return f["dest"], False, OfflineReason(f"not fetched: {offline_words()}")
     if f.get("release_asset"):
         url = RELEASE_URL.format(asset=urllib.parse.quote(f["release_asset"], safe=""))
     else:
@@ -5634,6 +5634,7 @@ def _report_outcome(
     sources: str = "",
     offline: int = 0,
     kinds: list[int] | None = None,
+    same_choice: str = "",
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
     kinds is [BIOS files, game data files] installed, said apart.
@@ -5720,8 +5721,8 @@ def _report_outcome(
         remedy = _offline_remedy()
         if not downloaded and not errors:
             print(f"\nNothing installed: {_plural(offline, 'file')} "
-                  f"{'needs' if offline == 1 else 'need'} the internet, which --offline "
-                  "does not use.")
+                  f"{'needs' if offline == 1 else 'need'} the internet, which "
+                  f"{offline_named()} does not use.")
             print(f"  {remedy}")
             for line in kept:
                 print(line)
@@ -5732,12 +5733,12 @@ def _report_outcome(
         failed = f", {errors} failed" if errors else ""
         if downloaded:
             print(f"\nFinished with files missing. {_plural(downloaded, 'file')} installed, "
-                  f"{offline} not fetched (--offline){failed}.")
+                  f"{offline} not fetched ({offline_named()}){failed}.")
         else:
             # Nothing written: "Finished with files missing. 0 files installed"
             # read as a part done.
             print(f"\nNothing installed: {_plural(offline, 'file')} not fetched "
-                  f"(--offline){failed}.")
+                  f"({offline_named()}){failed}.")
         if sources:
             print(f"  {sources}")
         # Under the files it is about: after the save-directory line, "They"
@@ -5792,6 +5793,12 @@ def _report_outcome(
             print(line)
     for line in hints or []:
         print(line)
+    if same_choice:
+        # After the questions, as the screen's result ends: "the same
+        # command" was one that asked them (tui_audit_11 P3-21).
+        print(f"Same choice without questions: {screen_text(same_choice)}")
+        print("To check this later, run that command with --check.")
+        return
     print("To check this later, run the same command with --check.")
 
 
@@ -5805,9 +5812,9 @@ def _offline_remedy(folders: list[str] | None = None) -> str:
     if labels:
         named = ", ".join(screen_text(shown_path(label)) for label in labels)
         return (f"They are not in {named}: run the installer again with a pack "
-                "(--from-pack) or without --offline.")
+                f"(--from-pack) or {offline_undo()}.")
     return ("Copy them from your old card or a folder (--from), or run the installer "
-            "again with a pack (--from-pack) or without --offline.")
+            f"again with a pack (--from-pack) or {offline_undo()}.")
 
 
 def _check_fetch_line(fetch: int, beside: str) -> str:
@@ -5817,7 +5824,7 @@ def _check_fetch_line(fetch: int, beside: str) -> str:
         if not fetch:
             return "  Run the same command without --check to copy them into place."
         return (f"  {_plural(fetch, 'file')} {'needs' if fetch == 1 else 'need'} the "
-                f"internet, which --offline does not use. {_offline_remedy()}")
+                f"internet, which {offline_named()} does not use. {_offline_remedy()}")
     return ("  Run the same command without --check to fetch them. A file with a wrong "
             f"hash is replaced, and the one in place kept in {BACKUP_DIR} beside {beside}.")
 
@@ -5983,8 +5990,8 @@ def _print_plan(
         # internet".
         one = len(to_download) + tree_files == 1
         print(f"\n{' and '.join(parts)} {'needs' if one else 'need'} the internet, which "
-              "--offline does not use. Without --offline they would go to "
-              f"{shown_path(bios_path)}:")
+              f"{offline_named()} does not use. Run {offline_undo()}, and they would go "
+              f"to {shown_path(bios_path)}:")
     elif parts:
         source = " from the pack" if LOCAL.pack is not None else ""
         print(f"\nWould {verb} {' and '.join(parts)}{source} to {shown_path(bios_path)}:")
@@ -6033,7 +6040,8 @@ def _print_plan(
     print("\n  Nothing was written. Run without --dry-run to install.")
 
 
-def _check_free_space(bios_path: Path, needed: int, plat: str = "", code: int = 2) -> None:
+def _check_free_space(bios_path: Path, needed: int, plat: str = "", code: int = 2,
+                      card: bool = False) -> None:
     """Stop before writing when the volume cannot hold the download.
 
     Reported against the nearest existing ancestor, since the destination
@@ -6053,6 +6061,12 @@ def _check_free_space(bios_path: Path, needed: int, plat: str = "", code: int = 
     print(f"\nNot enough space on the drive holding {bios_path}.", file=sys.stderr)
     print(f"  Needed: {format_size(needed)}. Free: {format_size(free)}.",
           file=sys.stderr)
+    if card:
+        # Its system reads this card alone: another drive, with RetroArch's
+        # list, was offered for an Onion card (code_audit_18 P3-2).
+        print(f"  Free up {format_size(needed - free)} on the card, then run it again: "
+              "its system reads its BIOS files there only.", file=sys.stderr)
+        sys.exit(code)
     if not plat:
         print(f"  Free up {format_size(needed - free)}, or use --dest to install "
               "to another drive.", file=sys.stderr)
@@ -7065,9 +7079,10 @@ def _prompt_platform_choice(
     if other is not None:
         print("  o) another setup or folder")
     print("  q) quit")
-    usage = (f"  Type a number from 1 to {len(platforms)}"
-             + (", o for another setup or folder" if other is not None else "")
-             + ", or q to quit.")
+    # "a number from 1 to 1" for a single row (code_audit_18 P3-5).
+    usage = ("  Type 1" if len(platforms) == 1 else
+             f"  Type a number from 1 to {len(platforms)}") + (
+        ", o for another setup or folder" if other is not None else "") + ", or q to quit."
     while True:
         choice = _ask(f"> [Enter for {named[0]}] ").lower()
         if not choice:
@@ -7243,12 +7258,26 @@ def folder_warnings(plat: str, bios_path: Path, files: list[dict], hint: Invocat
     a setup that runs from that card, whose own folder is the one it reads."""
     lines = []
     if not _folder_writable(bios_path):
-        lines.append("You cannot write to this folder: choose another one.")
-        lines += write_remedy(bios_path, plat, hint, commands)
+        lines += cannot_write_words(bios_path, plat, hint, commands, card)
     short = _space_short(bios_path, files)
     if short is not None:
         lines.append(space_words(short[0], short[1], card))
     return lines
+
+
+def cannot_write_words(bios_path: Path, plat: str, hint: Invocation, commands: bool,
+                       card: bool, screen: bool = False, remedy: bool = True) -> list[str]:
+    """What the plan says of a folder this user cannot write, one remedy
+    for a card: unlock it, never another folder its system does not read.
+    Line mode has no folder row: "choose another one" there offered no way
+    to (code_audit_18 P3-3), so it names --dest, the screen its row."""
+    said = write_remedy(bios_path, plat, hint, commands) if remedy else []
+    if card and _on_read_only_mount(bios_path):
+        return said
+    another = ("choose another one" if screen
+               else "run it again with another --dest" if commands
+               else "run it again and choose another one")
+    return [f"You cannot write to this folder: {another}."] + said
 
 
 def space_words(needed: int, free: int, card: bool) -> str:
@@ -7364,7 +7393,7 @@ def _prompt_custom_selection(
         if offline:
             # Said before the menu: "install everything" was offered, then
             # nothing came and the run said Done.
-            print("  --offline: only the files found on this machine are installed"
+            print(f"  {offline_named()}: only the files found on this machine are installed"
                   + ("." if LOCAL.folders else ", and no --from names a folder to copy "
                      "them from."))
         # A dry run installs nothing: "install everything" was asked before it.
@@ -7469,7 +7498,9 @@ def _print_menu_head(
     for line in folder_warnings(plat, bios_path, shown, _INVOCATION, True,
                                 on_its_card(plat, bios_path)):
         print(f"  {line}")
-    for line in save_lines(shown, kept_omitted, bios_path, name or display_name(plat)):
+    # The frontend's save directory, named as the end of the run and the
+    # screen name it: "Onion's" before the menu, "RetroArch's" after.
+    for line in save_lines(shown, kept_omitted, bios_path, display_name(plat, manifest)):
         print(f"  {line}")
 
 
@@ -8206,7 +8237,30 @@ class _Offline(OSError):
 # full-screen interface starts inherits. RETROBIOS_OFFLINE stays the build
 # scripts' own: CI and the test suite set it for every process they start.
 OFFLINE_VARIABLE = "RETROBIOS_INSTALL_OFFLINE"
-OFFLINE_WORDS = "this run makes no network request (--offline)"
+OFFLINE_WORDS = "this run makes no network request"
+# The value --offline gives the variable: the words then name the option,
+# and the variable itself where it was set (tui_audit_11 P3-12).
+OFFLINE_FLAG_VALUE = "--offline"
+
+
+def offline_named() -> str:
+    """What made this run offline, as the words name it."""
+    value = os.environ.get(OFFLINE_VARIABLE, "")
+    return (f"{OFFLINE_VARIABLE}={value}" if value not in ("", "0", OFFLINE_FLAG_VALUE)
+            else "--offline")
+
+
+def offline_undo() -> str:
+    """How a run gets the network back: without the option, or with the
+    variable unset. "without --offline" told a user who never typed it to
+    remove it."""
+    return ("without --offline" if offline_named() == "--offline"
+            else f"with {OFFLINE_VARIABLE} unset")
+
+
+def offline_words() -> str:
+    """This run makes no network request, and what said so."""
+    return f"{OFFLINE_WORDS} ({offline_named()})"
 
 
 def offline_requested() -> bool:
@@ -8217,7 +8271,7 @@ def _network_allowed(what: str) -> None:
     if LOCAL.pack is not None:
         raise _Offline(f"{what}: this run reads a pack and makes no network request")
     if offline_requested():
-        raise _Offline(f"{what}: {OFFLINE_WORDS}")
+        raise _Offline(f"{what}: {offline_words()}")
 
 
 def read_local_manifest(path: Path, plat: str) -> dict:
@@ -10220,12 +10274,13 @@ def main() -> None:
         ):
             if given:
                 parser.error(reason)
-    if args.offline:
-        # The runs the full-screen interface starts read it from here.
-        os.environ[OFFLINE_VARIABLE] = "1"
+    if args.offline and not offline_requested():
+        # The runs the full-screen interface starts read it from here, and
+        # the words name the option, not a variable nobody set.
+        os.environ[OFFLINE_VARIABLE] = OFFLINE_FLAG_VALUE
     if offline_requested() and (args.target or args.list_targets):
         parser.error("--target and --list-targets read a core list from the network, "
-                     "which --offline does not use")
+                     f"which {offline_named()} does not use")
     install_bounded_opener()
     if args.from_pack and args.target:
         parser.error("--target reads a core list from the network, which --from-pack "
@@ -10427,6 +10482,12 @@ def _ask_from_folder(files: list[dict] | None = None, bios_path: Path | None = N
             _quit()
         if raw.isdigit() and 1 <= int(raw) <= len(drives):
             label = str(drives[int(raw) - 1])
+        elif raw.isdigit() and drives and not _is_dir(_typed_folder(raw)):
+            # A number out of range, said as one: "2" was read as the folder
+            # ./2 (tui_audit_11 P3-10).
+            count = "1" if len(drives) == 1 else f"a number from 1 to {len(drives)}"
+            print(f"  Type {count}, a folder, or Enter.")
+            continue
         else:
             label = os.path.normpath(str(_typed_folder(raw).absolute()))
         refused = copy_source_refusal(Path(label), bios_path)
@@ -12191,7 +12252,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 rest = (f" and {'copying' if LOCAL.pack is not None else 'downloading'} "
                         f"{len(fetched)}" if fetched else "")
                 where = f" from {LOCAL.pack.name}" if fetched and LOCAL.pack is not None else ""
-                print(f"\nCopying {_plural(len(copies), 'file')} found on this machine"
+                # Named by the folder they come from, as the line above
+                # names it: "found on this machine" followed "from E:\".
+                sources = list(dict.fromkeys(copy.index.label for copy in copies.values()))
+                named = ", ".join(screen_text(shown_path(label)) for label in sources)
+                origin = (f"copied from {named}" if all(copy.index is not bios_index for copy in copies.values())
+                          else "found on this machine")
+                print(f"\nCopying {_plural(len(copies), 'file')} {origin}"
                       f"{rest}{where} ({format_size(dl_size)})...")
             elif LOCAL.pack is not None:
                 print(f"\nCopying {len(to_download)} files ({format_size(dl_size)}) "
@@ -12202,7 +12269,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                   "carries on from here.")
             # Checked before the folder is created: a run stopped for space
             # left an empty BIOS folder behind.
-            _check_free_space(bios_path, dl_size, plat_name, 1 if total_downloaded else 2)
+            _check_free_space(bios_path, dl_size, plat_name, 1 if total_downloaded else 2,
+                              on_its_card(plat_name, bios_path))
             created = not bios_path.exists()
             try:
                 bios_path.mkdir(parents=True, exist_ok=True)
@@ -12270,7 +12338,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     # Left out as the BIOS files above are: counted missing,
                     # not as one failure per tree.
                     print(f"  {entry['ref']}: {counts['present']} already up to date, "
-                          f"{counts['absent']} need the internet (--offline)")
+                          f"{counts['absent']} need the internet ({offline_named()})")
                     total_offline += counts["absent"]
                     files_pending += counts["absent"]
                     continue
@@ -12357,6 +12425,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             platform_of={path: plat for plat, path in platforms},
             hints=bulk_lines,
             kinds=kinds_done,
+            same_choice=(_INVOCATION.command(*platforms[0])
+                         if interactive and len(platforms) == 1 else ""),
             sources=_run_sources(bios_indexes, total_downloaded,
                                  total_errors + total_offline),
             offline=total_offline,
@@ -13455,20 +13525,35 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
         # Nothing here to copy, and the network refused: Install would
         # only fail every file, in this folder or another.
         rows = []
-    if state.facts.get("writable") is False or _short_of_space(state, check):
+    if _on_its_card(state) and (state.facts.get("writable") is False
+                                or _short_of_space(state, check)):
+        # Its system reads this card alone: room is made on it, or it is
+        # unlocked, then counted again, first in focus. Install anyway on
+        # a mount nobody can write would only fail (tui_audit_11 P3-1).
+        locked = state.facts.get("writable") is False
+        rows = [TuiRow("recheck", "Check again"), TuiRow("folder", "Choose another folder"),
+                *([TuiRow("install", "Install anyway")] if rows and not locked else [])]
+    elif state.facts.get("writable") is False or _short_of_space(state, check):
         # Every file would fail alike, or the run would stop before the
         # first one: the way out is another folder.
         rows = [TuiRow("folder", "Choose another folder"),
                 *([TuiRow("install", "Install anyway")] if rows else [])]
     # --system given: the choice stays offered, the list widened when it is
     # opened. With one system named it was neither shown nor changeable.
+    copy = TuiRow("fromcard", "Copy the BIOS files from your old card or a folder")
+    if not rows:
+        # Nothing can be installed: the remedy the plan names comes first,
+        # in focus. Choose systems was, whose systems need the internet
+        # too (tui_audit_11 P3-8).
+        rows.append(copy)
     if "systems" in recorded_axes((state.manifest or {}).get("files", [])) and (
             len(state.systems) > 1 or state.cli_systems):
         rows.append(TuiRow("systems", "Choose systems"))
     game_data = _game_data_row(state)
     if game_data is not None:
         rows.append(game_data)
-    rows.append(TuiRow("fromcard", "Copy the BIOS files from your old card or a folder"))
+    if copy not in rows:
+        rows.append(copy)
     if _tui_misplaced(state):
         rows.append(TuiRow("misplaced", "Show the files in the wrong place"))
     if state.unreadable:
@@ -14327,6 +14412,8 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             return _open_from_browser(state)
         if action in ("misplaced", "unreadable"):
             return _push(state, action)
+        if action == "recheck":
+            return _start_check(state)
         if action == "gamedata":
             # One press, then counted again, as Back from Options counts.
             state.no_game_data = not state.no_game_data
@@ -15452,6 +15539,7 @@ _ROW_VERBS = {
     "fromcard": "Choose", "from": "Add a folder", "misplaced": "Show", "zip": "Copy from it",
     "unreadable": "Show", "exit": "Exit", "addapp": "Put it on the card",
     "cardsystem": "Choose", "rescan": "Look again", "elsewhere": "Choose", "drive": "Choose",
+    "recheck": "Check again", "gamedata": "Change", "share": "Choose",
 }
 
 
@@ -15686,7 +15774,8 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         # folder off a 40x15 screen. The Options row spells it out.
         where = ", ".join(f"{len(events)} found in {_last_name(folder)}"
                           for folder, events in elsewhere.items())
-        headline = (f"{where}, {fetch} need the internet (--offline)" if fetch and offline
+        headline = (f"{where}, {fetch} need the internet ({offline_named()})"
+                    if fetch and offline
                     else f"{where}, {fetch} to download ({format_size(fetch_bytes)})"
                     if fetch else f"{where}, nothing to download")
     elif need and fetch and offline:
@@ -15713,8 +15802,8 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         # they read as if they were on hand.
         both = fetch + data > 1
         headline += ((f" and {_plural(data, 'data file')}{data_size}" if data else "")
-                     + f" {'need' if both else 'needs'} the internet, which --offline does "
-                     "not use")
+                     + f" {'need' if both else 'needs'} the internet, which "
+                     f"{offline_named()} does not use")
     elif need:
         if data:
             headline += f", and {_plural(data, 'data file')}{data_size}"
@@ -15732,7 +15821,10 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         _styled(f"BIOS folder: {_short_path(_plan_folder(state, dest), state.home)}", "path"),
     ]
     if state.facts.get("writable") is False:
-        lines.append("You cannot write to this folder: choose another one.")
+        # The remedy itself comes below, after the counts.
+        lines += cannot_write_words(dest, state.platform, tui_hint(state),
+                                    state.pad not in TUI_PAD_ROUTES, _on_its_card(state),
+                                    screen=True, remedy=False)
     # Said again where it is the BIOS folder: the browser said it, and the
     # plan named ~ alone.
     lines += filter(None, [_no_setup_reads(state, dest)])
@@ -15801,7 +15893,7 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
             # by "They are not in USBSTICK".
             offline_lines = [f"{', '.join(empty)} {'holds' if len(empty) == 1 else 'hold'} "
                              "none of these files: run the installer again with a pack "
-                             "(--from-pack) or without --offline."]
+                             f"(--from-pack) or {offline_undo()}."]
         else:
             offline_lines = [f"{name} holds none of these files." for name in empty] \
                 + offline_lines
@@ -16465,11 +16557,11 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
                 if total else "Stopped. Run again to carry on: what is done stays done.")
     elif left and installed:
         title = "Finished with files missing"
-        head = f"{installed} installed, {left} not fetched (--offline){errors}."
+        head = f"{installed} installed, {left} not fetched ({offline_named()}){errors}."
     elif left:
         title = "Nothing installed"
         head = (f"Nothing was installed: {_plural(left, 'file')} not fetched "
-                f"(--offline){errors}.")
+                f"({offline_named()}){errors}.")
     elif failed and installed:
         title = "Finished with errors"
         head = f"{installed} installed, {len(failed)} failed."
@@ -17123,11 +17215,11 @@ def _tui_fetch(plat: str, inbox: queue.Queue, log: io.StringIO) -> None:
             # Asked for, not a failure: no Try again, and the two ways a
             # run without the network gets its list.
             inbox.put(("manifest_failed", plat, TUI_OFFLINE_TITLE, [
-                "This run makes no network request (--offline), and the list of "
-                "BIOS files comes from the network.",
+                f"This run makes no network request ({offline_named()}), and the list "
+                "of BIOS files comes from the network.",
                 "Run the installer again with the list saved as a file "
                 "(--manifest FILE, a copy of install/<platform>.json) or with a pack "
-                "(--from-pack PACK), or without --offline."], 1))
+                f"(--from-pack PACK), or {offline_undo()}."], 1))
             return
         title = {"clock": "The clock is wrong",
                  "no_ca": "No trusted certificates"}.get(code, "No connection")
