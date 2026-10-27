@@ -238,6 +238,22 @@ started it, the one thing that can resume it: started from a terminal app's
 `-e`, a desktop entry or a launcher's `sh -c`, the key is ignored and the bar
 says why.
 
+A mouse or a touch screen works too, beside the keys and buttons. A click or
+a tap on a row moves the cursor there, and a second one on the row under the
+cursor does what Enter does: one row of a terminal is far smaller than a
+finger. The entries of the bottom line press their key, the line that says
+which rows are in view shows the next page, and the wheel scrolls a list or a
+text without moving the cursor unless it would leave the screen. Nothing
+happens until the button or the finger comes up, and only where it went down.
+The right and middle buttons do nothing. The installer asks the terminal for
+clicks only on a terminal that reports them (`TERM` not `linux`, `dumb` or
+unset), never on a handheld route (`RETROBIOS_PAD`) or with
+`RETROBIOS_NO_MOUSE=1`, and gives them back on every way out, a stop with
+Ctrl+Z included. On the result, the command line screen, any screen showing
+a command and the screen where a path is typed, the terminal keeps the mouse,
+so text is selected, copied and pasted as usual. Elsewhere, hold Shift while selecting (Option in macOS
+Terminal and iTerm2). `--plain` never asks for clicks.
+
 - `--tui` asks for the full screen, and names the reason when it cannot open
   (code 2).
 - `--plain`, `RETROBIOS_PLAIN=1` or `ACCESSIBLE=1` keep the questions line by
@@ -1623,6 +1639,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
 | `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `gptokeyb_muxterm`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
 | `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 130, or with the code of the error or result screen it closed on |
+| `RETROBIOS_NO_MOUSE` | Set to anything but `0`: the full screen never asks the terminal for clicks, and the mouse selects text everywhere as it does outside the installer |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong

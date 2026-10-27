@@ -144,7 +144,9 @@ class KeyDecoding(unittest.TestCase):
         for sequence in ("\x1b[25~", "\x1b[1;5A", "\x1b[M !!", "\x1b[<0;10;5M", "\x1b[?1;2c",
                          "\x1bOZ"):
             with self.subTest(sequence=sequence):
-                self.assertEqual(self.feed(sequence + "x"), keys("char:x"))
+                # A mouse report is a report (MouseReports), never typed.
+                self.assertEqual([key for key in self.feed(sequence + "x")
+                                  if key.name != "mouse"], keys("char:x"))
 
     def test_an_incomplete_sequence_is_dropped_at_the_timeout(self):
         self.assertEqual(self.feed("\x1b[1"), [])
@@ -1933,6 +1935,9 @@ class WorkFolders(unittest.TestCase):
             return 80, 24
 
         def draw(self, lines, cols) -> None:
+            pass
+
+        def set_mouse(self, on: bool) -> None:
             pass
 
         def keys(self, timeout):
@@ -3891,6 +3896,9 @@ class Crash(unittest.TestCase):
         def draw(self, lines, cols) -> None:
             pass
 
+        def set_mouse(self, on: bool) -> None:
+            pass
+
         def keys(self, timeout):
             raise RuntimeError("a defect")
 
@@ -5311,6 +5319,12 @@ class TheTerminalComesBack(unittest.TestCase):
         raw = term.raw[since:]
         self.assertGreater(raw.rfind(b"\x1b[?1049l"), raw.rfind(b"\x1b[?1049h"), raw[-200:])
         self.assertGreater(raw.rfind(b"\x1b[?25h"), raw.rfind(b"\x1b[?25l"), raw[-200:])
+        # Clicks are given back too: a shell left with them on reads each
+        # one as a line of escape bytes.
+        for mode in (b"1000", b"1006"):
+            self.assertGreater(raw.rfind(b"\x1b[?" + mode + b"l"),
+                               raw.rfind(b"\x1b[?" + mode + b"h"), raw[-200:])
+        self.assertNotIn(b"\x1b[?1003h", raw)
 
     def assertModesBack(self, modes: list) -> None:
         fresh = self.fresh_modes()
@@ -5323,6 +5337,10 @@ class TheTerminalComesBack(unittest.TestCase):
         self.repo()
         term = self.start()
         term.wait("Where do you play?")
+        # Every way out below starts with the clicks asked for, written
+        # right after the frame.
+        term.settle()
+        self.assertIn(install._MOUSE_ON.encode(), term.raw)
         how(term)
         return term
 
@@ -5395,6 +5413,9 @@ class TheTerminalComesBack(unittest.TestCase):
         self.assertIn(b"\x1b[?1049h", term.raw[mark:])
         term.wait("Where do you play?")
         self.assertFalse(termios.tcgetattr(term.fd)[3] & termios.ECHO)
+        # The clicks come back with the screen.
+        term.settle()
+        self.assertIn(install._MOUSE_ON.encode(), term.raw[mark:])
         term.send("q")
         term.wait("PROMPT$")
         self.typed(term, "exit")
@@ -9721,6 +9742,497 @@ class TheAndroidResultReadsWhole(unittest.TestCase):
         self.assertIn(f"into {bios / 'jazz2' / 'Source'}{os.sep}", said)
         self.assertIn("files a game or a game engine reads", said)
         self.assertNotIn("Needed to start an emulator", said)
+
+
+MOUSE_SIZES = ((40, 12), (80, 24), (120, 40))
+
+
+def sgr(col: int, row: int, button: int = 0, release: bool = False) -> str:
+    """An SGR mouse report, the cell counted from 1."""
+    return f"\x1b[<{button};{col};{row}{'m' if release else 'M'}"
+
+
+def x10(col: int, row: int, button: int = 0) -> str:
+    """A legacy report: 32 plus each value."""
+    return "\x1b[M" + "".join(chr(32 + value) for value in (button, col, row))
+
+
+def drawn(state: install.TuiState, cols: int, rows: int) -> list:
+    """The frame as the loop draws it, its targets kept as the loop keeps them."""
+    state.cols, state.rows = cols, rows
+    lines = install.tui_view(state, cols, rows)
+    state.hits = install.tui_hits(state, lines)
+    return lines
+
+
+def tap(state: install.TuiState, col: int, row: int, button: int = 0) -> list:
+    """Press and release on one cell, columns and lines counted from 0."""
+    effects = install.tui_update(state, install.TuiMouse(button, col + 1, row + 1))
+    return effects + install.tui_update(state, install.TuiMouse(button, col + 1, row + 1,
+                                                                True))
+
+
+class MouseReports(unittest.TestCase):
+    """Mouse reports come out of the decoder as reports, never as keys."""
+
+    def feed(self, *chunks: str) -> list:
+        decoder = install.KeyDecoder()
+        found = []
+        for chunk in chunks:
+            found += decoder.feed(chunk)
+        return found + decoder.flush()
+
+    def test_sgr_press_release_and_wheel(self):
+        Mouse = install.TuiMouse
+        self.assertEqual(self.feed(sgr(10, 5), sgr(10, 5, release=True)),
+                         [Mouse(0, 10, 5), Mouse(0, 10, 5, True)])
+        self.assertEqual(self.feed(sgr(3, 4, 64), sgr(3, 4, 65)),
+                         [Mouse(64, 3, 4), Mouse(65, 3, 4)])
+        self.assertEqual(self.feed(sgr(1, 1, 2)), [Mouse(2, 1, 1)])
+
+    def test_sgr_past_the_legacy_limit(self):
+        self.assertEqual(self.feed(sgr(300, 250)), [install.TuiMouse(0, 300, 250)])
+
+    def test_sgr_split_across_reads(self):
+        report = sgr(12, 7)
+        for cut in range(1, len(report)):
+            with self.subTest(cut=cut):
+                decoder = install.KeyDecoder()
+                found = decoder.feed(report[:cut])
+                found += decoder.feed(report[cut:] + "j")
+                self.assertEqual(found, [install.TuiMouse(0, 12, 7), Key("char", "j")])
+
+    def test_legacy_reports(self):
+        Mouse = install.TuiMouse
+        self.assertEqual(self.feed(x10(5, 6), x10(5, 6, 3), x10(5, 6, 64)),
+                         [Mouse(0, 5, 6), Mouse(3, 5, 6, True), Mouse(64, 5, 6)])
+
+    def test_legacy_bytes_are_never_keys(self):
+        """A position past 95 is a byte UTF-8 replaces: the report is
+        dropped, and none of its bytes is read as a key press."""
+        for tail in ("�!!", "!�!", " qj"):
+            with self.subTest(tail=tail):
+                found = self.feed("\x1b[M" + tail, "k")
+                self.assertEqual([key for key in found if key.name != "mouse"],
+                                 [Key("char", "k")])
+
+    def test_a_cut_report_is_dropped_whole(self):
+        self.assertEqual(self.feed("\x1b[<0;10"), [])
+        self.assertEqual(self.feed("\x1b[<0;10;1;7M", "j"), [Key("char", "j")])
+
+
+class MouseEnabled(unittest.TestCase):
+    """Clicks are asked for only where they can come and are wanted."""
+
+    class Tty(io.StringIO):
+        def isatty(self) -> bool:
+            return True
+
+    def blocker(self, env: dict, interactive: bool = True) -> str:
+        stream = self.Tty() if interactive else io.StringIO()
+        return install.tui_mouse_blocker(stream, stream, env)
+
+    def test_an_xterm_like_terminal_takes_clicks(self):
+        for term in ("xterm", "xterm-256color", "screen-256color", "tmux-256color",
+                     "alacritty", "foot", "xterm-kitty", "rxvt-unicode-256color"):
+            with self.subTest(term=term):
+                self.assertEqual(self.blocker({"TERM": term}), "")
+
+    def test_what_keeps_them_off(self):
+        for env, interactive in (
+                ({"TERM": "linux"}, True), ({"TERM": "dumb"}, True), ({}, True),
+                ({"TERM": "vt100"}, True), ({"TERM": "xterm"}, False),
+                ({"TERM": "xterm", install.TUI_PAD_ENV: "gptokeyb"}, True),
+                ({"TERM": "xterm", install.TUI_MOUSE_ENV: "1"}, True)):
+            with self.subTest(env=env, interactive=interactive):
+                self.assertNotEqual(self.blocker(env, interactive), "")
+        self.assertEqual(self.blocker({"TERM": "xterm", install.TUI_MOUSE_ENV: "0"}), "")
+
+    def test_a_windows_console_reads_no_clicks(self):
+        with mock.patch.object(install.os, "name", "nt"):
+            self.assertIn("Windows", self.blocker({"TERM": "xterm"}))
+
+    def test_the_terminal_writes_a_change_only(self):
+        terminal = install._TuiTerminal.__new__(install._TuiTerminal)
+        written = []
+        terminal.write = written.append
+        terminal.mouse_allowed, terminal.mouse, terminal.entered = True, False, True
+        terminal.set_mouse(True)
+        terminal.set_mouse(True)
+        terminal.set_mouse(False)
+        self.assertEqual(written, [install._MOUSE_ON, install._MOUSE_OFF])
+        terminal.mouse_allowed = False
+        terminal.set_mouse(True)
+        self.assertEqual(len(written), 2)
+
+    def test_modes_asked_for(self):
+        self.assertEqual(install._MOUSE_ON, "\x1b[?1000h\x1b[?1006h")
+        self.assertIn(install._MOUSE_OFF, install._SCREEN_OFF)
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        for mode in ("1002h", "1003h", "1005h", "1015h"):
+            self.assertNotIn("?" + mode, source)
+
+    def test_the_text_to_copy_keeps_the_terminal_selection(self):
+        states = golden_states()
+        for name in ("result", "command", "path"):
+            with self.subTest(screen=name):
+                state = states[name]
+                self.assertFalse(install.tui_wants_mouse(state, drawn(state, 80, 24)))
+        for name in ("setup", "platforms", "plan", "systems", "options", "error", "quit"):
+            with self.subTest(screen=name):
+                state = states[name]
+                self.assertTrue(install.tui_wants_mouse(state, drawn(state, 80, 24)))
+
+    def test_a_plan_naming_a_command_keeps_the_selection(self):
+        state = checked_state({"free": 50 * 1024 ** 3, "writable": False,
+                               "cores": ["pcsx_rearmed"]})
+        with mock.patch.object(install, "_on_read_only_mount", return_value=False):
+            lines = drawn(state, 120, 40)
+            self.assertIn("install.py", " ".join(lines))
+            self.assertFalse(install.tui_wants_mouse(state, lines))
+
+    def test_the_view_adds_no_text(self):
+        """A frame drawn with its targets is the frame drawn without them."""
+        patcher = mock.patch.object(install, "_mounted_cards", return_value=[])
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        for name, state in golden_states().items():
+            for cols, rows in MOUSE_SIZES:
+                with self.subTest(screen=name, size=f"{cols}x{rows}"):
+                    path = GOLDEN / f"{name}-{cols}x{rows}.txt"
+                    if not path.exists():
+                        continue
+                    lines = drawn(state, cols, rows)
+                    text = "\n".join(line.rstrip() for line in lines) + "\n"
+                    self.assertEqual(text, path.read_text(encoding="utf-8"))
+
+
+class MouseOnEveryScreen(unittest.TestCase):
+    """A tap does on each screen what its key does, at each size."""
+
+    def setUp(self):
+        patcher = mock.patch.object(install, "_mounted_cards", return_value=[])
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    @staticmethod
+    def twin(state: install.TuiState) -> install.TuiState:
+        import copy  # noqa: PLC0415
+
+        return copy.deepcopy(state)
+
+    def test_rows_and_bar_buttons(self):
+        checked = 0
+        for name, base in golden_states().items():
+            for cols, rows in MOUSE_SIZES:
+                lines = drawn(base, cols, rows)
+                hits = base.hits
+                for line, first, end, target in hits.targets:
+                    with self.subTest(screen=name, size=f"{cols}x{rows}", target=target):
+                        state, keyed = self.twin(base), self.twin(base)
+                        if target[0] == "row":
+                            index = target[1]
+                            row_list = install.tui_rows(state)
+                            focus = max(0, min(state.focus.get(state.screen, 0),
+                                               len(row_list) - 1))
+                            self.assertEqual(lines[line].style == "focus", index == focus)
+                            # The whole width, the text's end or not.
+                            effects = tap(state, cols - 1, line)
+                            if index == focus:
+                                self.assertEqual(effects,
+                                                 install.tui_update(keyed, Key("enter")))
+                                self.assertEqual(state.stack, keyed.stack)
+                            else:
+                                self.assertEqual(effects, [])
+                                self.assertEqual(state.focus[state.screen], index)
+                                self.assertEqual(state.stack, base.stack)
+                        elif target[0] == "key":
+                            label = str(lines[line])[first:end].split(" ", 1)[0]
+                            self.assertIn(label, install._BAR_CLICKS)
+                            effects = tap(state, first, line)
+                            self.assertEqual(effects, install.tui_update(keyed, target[1]))
+                            self.assertEqual((state.stack, state.help),
+                                             (keyed.stack, keyed.help))
+                        checked += 1
+        self.assertGreater(checked, 200)
+
+    def test_two_taps_activate_a_row(self):
+        state = fresh_state()
+        lines = drawn(state, 80, 24)
+        another = next(index for index, line in enumerate(lines)
+                       if "Choose another" in line or "another" in line.lower())
+        self.assertEqual(tap(state, 30, another), [])
+        self.assertEqual(state.screen, "setup")
+        drawn(state, 80, 24)
+        tap(state, 30, another)
+        self.assertEqual(state.screen, "platforms")
+
+    def test_release_acts_not_press(self):
+        state = fresh_state()
+        lines = drawn(state, 80, 24)
+        row = next(i for i, line in enumerate(lines) if line.style != "focus"
+                   and getattr(line, "mark", None) and line.mark[0] == "row")
+        install.tui_update(state, install.TuiMouse(0, 5, row + 1))
+        self.assertEqual(state.focus.get("setup", 0), 0)
+        # Released on another row: a swipe, which does nothing.
+        focused = next(i for i, line in enumerate(lines) if line.style == "focus")
+        install.tui_update(state, install.TuiMouse(0, 5, focused + 1, True))
+        self.assertEqual(state.focus.get("setup", 0), 0)
+        self.assertIsNone(state.pressed)
+        # A release with no press before it does nothing either.
+        install.tui_update(state, install.TuiMouse(0, 5, row + 1, True))
+        self.assertEqual(state.focus.get("setup", 0), 0)
+
+    def test_legacy_release_names_no_button(self):
+        state = fresh_state()
+        lines = drawn(state, 80, 24)
+        row = next(i for i, line in enumerate(lines) if line.style != "focus"
+                   and getattr(line, "mark", None) and line.mark[0] == "row")
+        decoder = install.KeyDecoder()
+        for event in decoder.feed(x10(5, row + 1) + x10(5, row + 1, 3)):
+            install.tui_update(state, event)
+        self.assertEqual(state.focus["setup"], lines[row].mark[1])
+
+    def test_right_middle_and_modified_clicks_do_nothing(self):
+        for button in (1, 2, 4, 8, 16, 32):
+            with self.subTest(button=button):
+                state = fresh_state()
+                lines = drawn(state, 80, 24)
+                row = next(i for i, line in enumerate(lines) if line.style != "focus"
+                           and getattr(line, "mark", None) and line.mark[0] == "row")
+                self.assertEqual(tap(state, 5, row, button), [])
+                self.assertEqual(state.focus.get("setup", 0), 0)
+
+    def test_a_click_on_another_frame_does_nothing(self):
+        """Read against the frame on screen when it came: Enter, typed in
+        the same read, opened the next screen before the click was read."""
+        state = fresh_state()
+        lines = drawn(state, 80, 24)
+        row = next(i for i, line in enumerate(lines) if line.style != "focus"
+                   and getattr(line, "mark", None) and line.mark[0] == "row")
+        install.tui_update(state, Key("char", "?"))
+        self.assertEqual(tap(state, 5, row), [])
+        self.assertTrue(state.help)
+        state = fresh_state()
+        drawn(state, 80, 24)
+        state.stack.append("platforms")
+        self.assertEqual(tap(state, 5, row), [])
+        self.assertEqual(state.focus.get("platforms", 0), 0)
+        # The same screen with its rows changed under the frame.
+        state = fresh_state()
+        drawn(state, 80, 24)
+        state.setups = state.setups[1:]
+        tap(state, 5, row)
+        self.assertEqual(state.focus.get("setup", 0), 0)
+        # A frame of another size.
+        state = fresh_state()
+        drawn(state, 80, 24)
+        state.cols = 100
+        self.assertEqual(tap(state, 5, row), [])
+        self.assertEqual(state.focus.get("setup", 0), 0)
+
+    def test_a_tap_closes_the_help(self):
+        state = golden_states()["help"]
+        drawn(state, 80, 24)
+        tap(state, 3, 5)
+        self.assertFalse(state.help)
+
+    def long_list(self, cols: int = 40, rows: int = 12) -> install.TuiState:
+        state = fresh_state()
+        state.stack = ["setup", "platforms"]
+        drawn(state, cols, rows)
+        self.assertIsNotNone(state.hits.listing)
+        return state
+
+    def test_the_wheel_scrolls_a_list_and_keeps_the_focus_in_view(self):
+        for cols, rows in MOUSE_SIZES[:2]:
+            with self.subTest(size=f"{cols}x{rows}"):
+                state = self.long_list(cols, rows)
+                first, shown, total = state.hits.listing
+                self.assertEqual(state.focus.get("platforms", 0), 0)
+                install.tui_update(state, install.TuiMouse(65, 5, 4))
+                lines = drawn(state, cols, rows)
+                newfirst, _shown, _total = state.hits.listing
+                self.assertEqual(newfirst, first + install.TUI_WHEEL_LINES)
+                # Out of view, the focus came to the first row in view.
+                self.assertEqual(state.focus["platforms"], newfirst)
+                focused = [line.mark[1] for line in lines if line.style == "focus"]
+                self.assertEqual(focused, [newfirst])
+                # Down again: the row in focus is still in view, and stays.
+                state.focus["platforms"] = newfirst + shown - 1
+                drawn(state, cols, rows)
+                install.tui_update(state, install.TuiMouse(64, 5, 4))
+                drawn(state, cols, rows)
+                self.assertEqual(state.hits.listing[0], first)
+                self.assertEqual(state.focus["platforms"], first + shown - 1)
+                # To the end and no further.
+                for _notch in range(total):
+                    install.tui_update(state, install.TuiMouse(65, 5, 4))
+                    drawn(state, cols, rows)
+                self.assertEqual(state.hits.listing[0], total - shown)
+                # A key afterwards moves the focus from where the wheel put it.
+                at = state.focus["platforms"]
+                install.tui_update(state, Key("down"))
+                self.assertEqual(state.focus["platforms"], at + 1)
+
+    def test_the_wheel_scrolls_a_text(self):
+        state = golden_states()["preview"]
+        state.dry_files = [{**FILES[0], "dest": f"file{n}.bin"} for n in range(40)]
+        drawn(state, 40, 12)
+        self.assertEqual(state.hits.scroll, "pager")
+        install.tui_update(state, install.TuiMouse(65, 5, 4))
+        self.assertEqual(state.focus["preview"], install.TUI_WHEEL_LINES)
+        install.tui_update(state, install.TuiMouse(64, 5, 4))
+        self.assertEqual(state.focus["preview"], 0)
+        install.tui_update(state, install.TuiMouse(64, 5, 4))
+        self.assertEqual(state.focus["preview"], 0)
+
+    def test_the_wheel_scrolls_a_long_message(self):
+        state = golden_states()["error"]
+        state.error = [f"Line {n} of a long message." for n in range(30)]
+        drawn(state, 40, 12)
+        self.assertEqual(state.hits.scroll, "error")
+        focus = state.focus.get("error", 0)
+        install.tui_update(state, install.TuiMouse(65, 5, 4))
+        self.assertEqual(state.focus["error_text"], install.TUI_WHEEL_LINES)
+        self.assertEqual(state.focus.get("error", 0), focus)
+
+    def test_a_tap_on_the_count_shows_the_next_page(self):
+        state = self.long_list()
+        lines = drawn(state, 40, 12)
+        where = next(i for i, line in enumerate(lines)
+                     if getattr(line, "mark", None) and line.mark[0] == "scroll")
+        before = state.hits.listing[0]
+        tap(state, 2, where)
+        drawn(state, 40, 12)
+        self.assertGreater(state.hits.listing[0], before)
+        last = len(install.tui_rows(state)) - 1
+        for _page in range(40):
+            if state.focus["platforms"] == last:
+                break
+            tap(state, 2, where)
+            drawn(state, 40, 12)
+        self.assertEqual(state.focus["platforms"], last)
+        # From the last page it goes back to the first.
+        tap(state, 2, where)
+        drawn(state, 40, 12)
+        self.assertEqual((state.focus["platforms"], state.hits.listing[0]), (0, 0))
+
+    def test_a_tap_on_a_row_ends_the_typing_of_a_filter(self):
+        state = self.long_list(80, 24)
+        install.tui_update(state, Key("char", "/"))
+        install.tui_update(state, Key("char", "r"))
+        lines = drawn(state, 80, 24)
+        row = next(i for i, line in enumerate(lines) if line.style != "focus"
+                   and getattr(line, "mark", None) and line.mark[0] == "row"
+                   and line.mark[2][0] == "platform")
+        tap(state, 5, row)
+        self.assertEqual(state.editing, "")
+        self.assertEqual(state.focus["platforms"], lines[row].mark[1])
+        self.assertEqual(state.filters["platforms"], "r")
+
+
+@unittest.skipUnless(pyte and pty and hasattr(pty, "fork"),
+                     "screen tests need pyte (pip install pyte==0.8.2) and a pty")
+class MouseOnAPty(unittest.TestCase):
+    """The real install.py --tui, clicked through a pseudo-terminal."""
+
+    repo = EndToEnd.repo
+    start = EndToEnd.start
+
+    @staticmethod
+    def line_of(term: Pty, needle: str) -> int:
+        return next(index for index, line in enumerate(term.screen.display) if needle in line)
+
+    def click(self, term: Pty, col: int, row: int) -> None:
+        term.send(sgr(col + 1, row + 1), sgr(col + 1, row + 1, release=True))
+
+    def test_taps_choose_a_row_and_press_the_bar(self):
+        self.repo()
+        term = self.start()
+        term.wait("Where do you play?")
+        term.settle()
+        self.assertIn(install._MOUSE_ON.encode(), term.raw)
+        row = self.line_of(term, "Another setup")
+        self.click(term, 60, row)
+        term.settle()
+        self.assertTrue(term.screen.buffer[row][3].reverse, term.text())
+        self.assertIn("Where do you play?", term.text())
+        self.click(term, 60, row)
+        term.wait("Which setup?")
+        # The bar's ? Help, pressed by a click.
+        bar = term.screen.display[-1]
+        self.click(term, bar.index("? Help") + 1, len(term.screen.display) - 1)
+        term.wait("Any key closes this help")
+        self.click(term, 10, 5)
+        term.wait("Which setup?")
+        # Legacy reports move the focus the same way.
+        row = self.line_of(term, " > ") + 2
+        term.send(x10(20, row + 1), x10(20, row + 1, 3))
+        term.settle()
+        self.assertTrue(term.screen.buffer[row][3].reverse, term.text())
+        term.send("q")
+        self.assertEqual(term.close(), 130)
+        raw = term.raw
+        self.assertGreater(raw.rfind(b"\x1b[?1000l"), raw.rfind(b"\x1b[?1000h"))
+
+    def test_the_result_gives_the_mouse_back(self):
+        self.repo()
+        term = self.start()
+        term.wait("Where do you play?")
+        term.send("\r")
+        term.wait("files to download")
+        self.click(term, 20, self.line_of(term, "> Install"))
+        term.wait("files installed.")
+        term.settle()
+        mark = term.raw.rfind(b"files installed")
+        self.assertGreater(term.raw.rfind(b"\x1b[?1000l"), term.raw.rfind(b"\x1b[?1000h"))
+        self.assertNotIn(install._MOUSE_ON.encode(), term.raw[mark:])
+        term.send("\r")
+        self.assertEqual(term.close(), 0)
+
+    def test_no_clicks_asked_when_turned_off(self):
+        for name, value in ((install.TUI_MOUSE_ENV, "1"), (install.TUI_PAD_ENV, "gptokeyb")):
+            with self.subTest(env=name):
+                self.repo()
+                self.env[name] = value
+                term = self.start()
+                term.wait("RetroBIOS")
+                term.settle()
+                term.send("\x03")
+                term.close()
+                self.assertNotIn(b"\x1b[?1000h", term.raw)
+
+    def test_line_mode_asks_for_no_clicks(self):
+        self.repo()
+        term = self.start("--plain")
+        term.settle(quiet=1.0)
+        term.send("\x03")
+        term.close()
+        self.assertNotIn(b"\x1b[?1000h", term.raw)
+        self.assertNotIn(b"\x1b[?1006h", term.raw)
+
+    def test_a_crash_gives_the_clicks_back(self):
+        """The crash path ends in _tui_cleanup, as every other way out."""
+        master, slave = os.openpty()
+        self.addCleanup(os.close, master)
+        self.addCleanup(os.close, slave)
+        given = open(slave, encoding="utf-8", closefd=False)  # noqa: SIM115
+        shown = open(slave, "w", encoding="utf-8", closefd=False)  # noqa: SIM115
+        self.addCleanup(given.close)
+        self.addCleanup(shown.close)
+        terminal = install._TuiTerminal(given, shown)
+        terminal.mouse_allowed = True
+        terminal.enter()
+        terminal.set_mouse(True)
+        problems = install._tui_cleanup(terminal, [], {}, fresh_state())
+        self.assertEqual(problems, [])
+        raw = b""
+        while select.select([master], [], [], 0.2)[0]:
+            raw += os.read(master, 65536)
+        for mode in (b"1000", b"1006"):
+            self.assertGreater(raw.rfind(b"\x1b[?" + mode + b"l"),
+                               raw.rfind(b"\x1b[?" + mode + b"h"))
 
 
 if __name__ == "__main__":
