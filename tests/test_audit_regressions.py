@@ -4360,31 +4360,44 @@ class EmulatorPagesStateTheirDataForMachines(unittest.TestCase):
 
         data = emulator_structured_data({
             "emulator": "DuckStation", "source": "https://github.com/stenzek/duckstation",
-            "source_commit": "4122fed9", "profiled_date": "2026-03-23",
+            "source_commit": "4122fed9", "core_version": "v0.1-12070",
+            "profiled_date": "2026-03-23",
             "files": [{"name": "scph5501.bin", "md5": "490F666E", "sha1": ["a" * 40]},
                       {"name": "free.bin"}],
         })
         self.assertEqual(data["about"]["codeRepository"], "https://github.com/stenzek/duckstation")
-        self.assertEqual(data["about"]["version"], "4122fed9")
+        # The release the profile describes, never the pin (round 5, 3.5).
+        self.assertEqual(data["about"]["version"], "v0.1-12070")
+        self.assertNotIn("description", data["about"])
         self.assertEqual(data["dateModified"], "2026-03-23")
         self.assertEqual(data["hasPart"][0]["identifier"], ["sha1:" + "a" * 40, "md5:490f666e"])
         self.assertNotIn("identifier", data["hasPart"][1])
 
-    def test_every_repository_with_its_own_pin(self):
-        """xemu's libretro build lives in another repository at another
-        commit, and a port's upstream_commit was never published."""
+    def test_every_repository_with_its_own_release(self):
+        """xemu's libretro build lives in another repository. Each source
+        repository states the release of its build, a version holding a
+        commit id states none, and a port's upstream is another code base."""
         from scripts.generate_site import emulator_structured_data
 
         data = emulator_structured_data({
-            "emulator": "xemu",
-            "source": {"standalone": "https://github.com/xemu-project/xemu",
-                       "libretro": "https://github.com/LibretroAdmin/xemu-libretro"},
+            "emulator": "MesenCE",
+            "source": {"standalone": "https://github.com/nesdev-org/MesenCE",
+                       "libretro": "https://github.com/libretro/MesenCE"},
             "source_commit": {"standalone": "f9b14039", "libretro": "d9804db7"},
-            "upstream": "https://github.com/mborgerson/xemu", "upstream_commit": "aa11",
+            "core_version": {"standalone": "2.2.1", "libretro": "2.0.0"},
+            "upstream": "https://github.com/SourMesen/Mesen2", "upstream_commit": "aa11",
         })
         self.assertEqual(
             [(a["codeRepository"].rsplit("/", 1)[1], a.get("version")) for a in data["about"]],
-            [("xemu", "f9b14039"), ("xemu-libretro", "d9804db7"), ("xemu", "aa11")])
+            [("MesenCE", "2.2.1"), ("MesenCE", "2.0.0"), ("Mesen2", None)])
+        xemu = emulator_structured_data({
+            "emulator": "xemu",
+            "source": {"standalone": "https://github.com/xemu-project/xemu",
+                       "libretro": "https://github.com/LibretroAdmin/xemu-libretro"},
+            "core_version": {"standalone": "0.8.139-2-g25e1ee2fd5",
+                             "libretro": "libretro-experimental"},
+        })
+        self.assertEqual([a.get("version") for a in xemu["about"]], [None, None])
 
 
 
