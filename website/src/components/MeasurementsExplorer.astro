@@ -1,0 +1,169 @@
+---
+// The Measurements page: every test of the measurements index, filtered in
+// the browser. Reads public/data/measurements/index.json, which
+// scripts/sync_measurements.py writes from the records at the pinned commit.
+// Each row keeps its method and the computer it ran on beside the result,
+// and links its full record. The filters answer from the index alone: no
+// SQL engine is loaded.
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+---
+
+<div class="rb-measure" data-base={base}>
+	<div class="rb-measure-filters">
+		<label>Emulator <select data-filter="emulator"><option value="">All</option></select></label>
+		<label>System <select data-filter="system"><option value="">All</option></select></label>
+		<label>Result <select data-filter="status"><option value="">All</option></select></label>
+		<label>Kind <select data-filter="kind"><option value="">All</option></select></label>
+		<label class="rb-measure-text">Search <input type="search" data-filter="text" placeholder="Claim, method, computer or date" /></label>
+	</div>
+	<p class="rb-measure-count" role="status" aria-live="polite">Loading the measurements...</p>
+	<div class="rb-measure-scroll">
+		<table>
+			<thead>
+				<tr>
+					<th scope="col">Date</th>
+					<th scope="col">Emulator</th>
+					<th scope="col">Test and method</th>
+					<th scope="col">Result</th>
+					<th scope="col">Ran on</th>
+					<th scope="col">Record</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</div>
+
+<script>
+	type Item = {
+		emulator: string;
+		emulator_name: string;
+		profiled: boolean;
+		systems: string[];
+		system_names: string[];
+		subject: string;
+		kind: string;
+		claim: string | null;
+		method: string | null;
+		status: string;
+		statement: string;
+		content: string | null;
+		date: string;
+		host: string;
+		runs: number;
+		record_url: string;
+		data_url: string;
+		sqlite: string;
+		core: { library: string; commit: string | null };
+	};
+	type Index = { commit: string | null; records: number; count: number; items: Item[] };
+
+	const text = (tag: string, value: string, className = '') => {
+		const node = document.createElement(tag);
+		node.textContent = value;
+		if (className) node.className = className;
+		return node;
+	};
+	const link = (href: string, label: string) => {
+		const a = document.createElement('a');
+		a.href = href;
+		a.textContent = label;
+		return a;
+	};
+
+	for (const root of document.querySelectorAll<HTMLElement>('.rb-measure')) {
+		const base = root.dataset.base ?? '/';
+		const count = root.querySelector<HTMLElement>('.rb-measure-count')!;
+		const tbody = root.querySelector('tbody')!;
+		const filters = Object.fromEntries(
+			[...root.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-filter]')].map((el) => [el.dataset.filter!, el]),
+		);
+		let index: Index;
+		try {
+			index = await fetch(`${base}data/measurements/index.json`).then((r) => r.json());
+		} catch {
+			count.textContent = 'The measurements index could not be read.';
+			continue;
+		}
+		const fill = (name: string, pairs: [string, string][]) => {
+			const select = filters[name] as HTMLSelectElement;
+			for (const [value, label] of pairs.sort((a, b) => a[1].localeCompare(b[1], 'en'))) select.add(new Option(label, value));
+		};
+		const emulators = new Map(index.items.map((i) => [i.emulator, i.emulator_name]));
+		const systems = new Map(index.items.flatMap((i) => i.systems.map((s, k) => [s, i.system_names[k] ?? s] as [string, string])));
+		fill('emulator', [...emulators]);
+		fill('system', [...systems]);
+		fill('status', [...new Set(index.items.map((i) => i.status))].map((s) => [s, s]));
+		fill('kind', [...new Set(index.items.map((i) => i.kind))].map((s) => [s, s]));
+
+		const params = new URLSearchParams(location.search);
+		for (const [name, el] of Object.entries(filters)) {
+			const preset = params.get(name);
+			if (preset) el.value = preset;
+		}
+
+		const row = (item: Item) => {
+			const tr = document.createElement('tr');
+			tr.append(text('td', item.date.slice(0, 10)));
+			const emu = document.createElement('td');
+			emu.append(item.profiled ? link(`${base}emulators/${item.emulator}/#tested`, item.emulator_name) : text('span', item.emulator_name));
+			if (item.system_names.length) emu.append(text('small', item.system_names.join(', ')));
+			tr.append(emu);
+			const test = document.createElement('td');
+			test.append(text('strong', item.claim ?? `Benchmark of ${item.content ?? 'the core alone'}`));
+			if (item.method) {
+				const details = document.createElement('details');
+				details.append(text('summary', 'Method'), text('p', item.method));
+				test.append(details);
+			}
+			tr.append(test);
+			const result = document.createElement('td');
+			result.append(text('code', item.status), text('small', item.statement));
+			tr.append(result);
+			const host = document.createElement('td');
+			host.append(text('span', item.host), text('small', `Core ${item.core.library}${item.core.commit ? ` at ${item.core.commit.slice(0, 12)}` : ''}`));
+			tr.append(host);
+			const record = document.createElement('td');
+			record.append(link(item.record_url, 'Record'), document.createTextNode(' '), link(item.data_url, 'data'));
+			record.append(text('small', item.runs === 1 ? '1 run' : `${item.runs} runs`));
+			tr.append(record);
+			return tr;
+		};
+
+		const render = () => {
+			const want = Object.fromEntries(Object.entries(filters).map(([k, el]) => [k, el.value.trim().toLowerCase()]));
+			const shown = index.items.filter((i) =>
+				(!want.emulator || i.emulator === want.emulator) &&
+				(!want.system || i.systems.includes(want.system)) &&
+				(!want.status || i.status === want.status) &&
+				(!want.kind || i.kind === want.kind) &&
+				(!want.text || [i.claim, i.method, i.host, i.date, i.subject, i.content, i.statement]
+					.some((field) => (field ?? '').toLowerCase().includes(want.text))))
+				.sort((a, b) => b.date.localeCompare(a.date));
+			tbody.replaceChildren(...shown.map(row));
+			count.textContent = `${shown.length} of ${index.count} tests, ${index.records} records${index.commit ? ` at ${index.commit.slice(0, 12)}` : ''}.`;
+			const url = new URL(location.href);
+			for (const [name, value] of Object.entries(want)) {
+				if (value) url.searchParams.set(name, (filters[name] as HTMLInputElement).value);
+				else url.searchParams.delete(name);
+			}
+			history.replaceState(null, '', url);
+		};
+		for (const el of Object.values(filters)) el.addEventListener('input', render);
+		render();
+	}
+</script>
+
+<style is:global>
+	.rb-measure .rb-measure-filters { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: end; }
+	.rb-measure .rb-measure-filters label { display: flex; flex-direction: column; gap: 0.25rem; margin: 0; font-weight: 600; font-size: 0.9rem; }
+	.rb-measure .rb-measure-text { flex: 1 1 14rem; }
+	.rb-measure .rb-measure-text input { width: 100%; }
+	.rb-measure .rb-measure-count { margin-top: 1rem; font-weight: 600; }
+	.rb-measure .rb-measure-scroll { overflow-x: auto; max-width: 100%; }
+	.rb-measure table { font-size: 0.85rem; }
+	.rb-measure td { vertical-align: top; }
+	.rb-measure td small { display: block; color: var(--sl-color-gray-3); }
+	.rb-measure td details { margin-top: 0.25rem; }
+	.rb-measure td details p { max-width: 40rem; }
+</style>

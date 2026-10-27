@@ -248,6 +248,13 @@ class SourceLinksOnlyWhereTheFileIs(unittest.TestCase):
     def test_every_rendered_link_is_recorded(self):
         record = json.loads(sitesources.SOURCE_PATHS.read_text(encoding="utf-8"))
         pages = sorted(_built(DOCS / "emulators").rglob("*.md*")) + sorted(DOCS.glob("gaps*.md*"))
+        import sync_measurements  # noqa: PLC0415
+
+        # A Tested block links the measurements repository at its pin. The
+        # record of source trees does not cover it: those paths are checked
+        # against the pinned tree of the clone itself.
+        measured_slug = urllib.parse.urlsplit(sync_measurements.load_pin()["repo"]).path.strip("/")
+        measured: dict[str, set[str]] = {}
         checked, stray = 0, []
         for page in pages:
             for found in _PERMALINK.finditer(page.read_text(encoding="utf-8")):
@@ -256,7 +263,17 @@ class SourceLinksOnlyWhereTheFileIs(unittest.TestCase):
                 key = f"{found['host']}/{found['slug']}@{found['pin']}"
                 path = urllib.parse.unquote(found["path"])
                 checked += 1
-                if path not in record.get(key, ()):
+                if found["slug"] == measured_slug:
+                    if found["pin"] not in measured:
+                        if not sync_measurements.has_commit(sync_measurements.CLONE, found["pin"]):
+                            stray.append((page.name, key, "pin not in the measurements clone"))
+                            measured[found["pin"]] = set()
+                            continue
+                        measured[found["pin"]] = set(
+                            sync_measurements.tree_files(sync_measurements.CLONE, found["pin"]))
+                    if path not in measured[found["pin"]]:
+                        stray.append((page.name, key, path))
+                elif path not in record.get(key, ()):
                     stray.append((page.name, key, path))
         self.assertGreater(checked, 1000)
         self.assertEqual(stray[:20], [])

@@ -28,6 +28,7 @@ COMPONENTS = {
     "Tabs": "@astrojs/starlight/components",
     "TabItem": "@astrojs/starlight/components",
     "FilePicker": "components/FilePicker.astro",
+    "MeasurementsExplorer": "components/MeasurementsExplorer.astro",
 }
 
 # Pages of file cards: level 3 headings by the hundred, so the table of

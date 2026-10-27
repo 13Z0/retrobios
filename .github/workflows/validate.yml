@@ -29,6 +29,7 @@ on:
       - "database.json"
       - "release.json"
       - "derivable.json"
+      - "measurements-pin.json"
       - "website/**"
   # Spelled out twice because the workflow parser reads no YAML anchor. A test
   # holds the two lists equal.
@@ -53,6 +54,7 @@ on:
       - "database.json"
       - "release.json"
       - "derivable.json"
+      - "measurements-pin.json"
       - "website/**"
 
 permissions:
@@ -257,11 +259,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # The measurement records at their pin, as deploy-site.yml reads them:
+      # the pages and the schema check read the same lines.
+      - name: Clone the measurements at their pin
+        run: |
+          repo=$(python -c "import json; print(json.load(open('measurements-pin.json'))['repo'])")
+          commit=$(python -c "import json; print(json.load(open('measurements-pin.json'))['commit'])")
+          git init -q .cache/measurements
+          git -C .cache/measurements fetch -q --depth 1 "$repo" "$commit"
+          git -C .cache/measurements checkout -q --detach "$commit"
+
       # The pages are gitignored, and the tests that read them fail
       # in CI without it. The suite runs whatever this step returned, so a
       # generator that stops still leaves every other test reporting.
       - name: Generate the site
-        run: python scripts/generate_site.py
+        run: python scripts/generate_site.py --require-measurements
 
       - name: Run test suite
         if: ${{ !cancelled() }}

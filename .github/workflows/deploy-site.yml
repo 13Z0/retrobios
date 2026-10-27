@@ -30,6 +30,7 @@ on:
       - "scripts/largefiles.py"
       - "scripts/launchers.py"
       - "scripts/manifestselect.py"
+      - "scripts/measurement_records.py"
       - "scripts/nativemode.py"
       - "scripts/packextras.py"
       - "scripts/packpaths.py"
@@ -46,6 +47,7 @@ on:
       - "scripts/sitediagrams.py"
       - "scripts/siteguides.py"
       - "scripts/sitemarkup.py"
+      - "scripts/sitemeasurements.py"
       - "scripts/siteexports.py"
       - "scripts/siterender.py"
       - "scripts/sitesources.py"
@@ -55,6 +57,7 @@ on:
       - "scripts/slots.py"
       - "scripts/sourceref.py"
       - "scripts/split_pack.py"
+      - "scripts/sync_measurements.py"
       - "scripts/truth.py"
       - "scripts/upstream.py"
       - "scripts/validate_schemas.py"
@@ -69,6 +72,7 @@ on:
       - "database.json"
       - "release.json"
       - "derivable.json"
+      - "measurements-pin.json"
       # The Starlight project: config, components, styles, lockfile. Its
       # generated folders are gitignored and never trigger anything.
       - "website/**"
@@ -114,6 +118,18 @@ jobs:
 
       - run: npm ci --prefix website
 
+      # The core probe records live in Abdess/retrobios-measurements, read
+      # at the commit measurements-pin.json names and never at its head: a
+      # record reaches the site when the pin moves. One shallow fetch of that
+      # commit, with git alone.
+      - name: Clone the measurements at their pin
+        run: |
+          repo=$(python -c "import json; print(json.load(open('measurements-pin.json'))['repo'])")
+          commit=$(python -c "import json; print(json.load(open('measurements-pin.json'))['commit'])")
+          git init -q .cache/measurements
+          git -C .cache/measurements fetch -q --depth 1 "$repo" "$commit"
+          git -C .cache/measurements checkout -q --detach "$commit"
+
       - name: Validate data contracts
         run: python scripts/validate_schemas.py
 
@@ -133,7 +149,7 @@ jobs:
 
       - name: Generate site
         run: |
-          python scripts/generate_site.py
+          python scripts/generate_site.py --require-measurements
           python scripts/generate_readme.py --db database.json --platforms-dir platforms
           # starlight-links-validator fails the build on a dead link or anchor.
           npm run build --prefix website

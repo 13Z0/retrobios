@@ -60,6 +60,7 @@ from common import (
     yaml_load,
 )
 from artifacts import ArtifactLockBusy, artifact_lock
+from artifacts import json_text as _json_text
 from cross_reference import FileConsumers, held_copy
 from nativemode import digest_algorithm, reads_file_contents
 
@@ -108,6 +109,8 @@ from siteguides import (
     trust_box,
 )
 import release_record
+import sitemeasurements
+import sync_measurements
 
 # The Starlight project, and where its pages go inside it.
 STARLIGHT_DIR = "website"
@@ -903,15 +906,6 @@ def composition_sentence(db: dict) -> str:
 
 def generate_stats(stats: dict) -> str:
     return json.dumps(stats, indent=2) + "\n"
-
-
-def _json_text(value: object) -> str:
-    """Stable scalar representation for CSV and SQLite exports."""
-    if value is None:
-        return ""
-    if isinstance(value, (dict, list, tuple, bool)):
-        return json.dumps(value, ensure_ascii=False, sort_keys=True)
-    return str(value)
 
 
 HASH_ALGORITHMS = ("sha1", "sha256", "md5", "crc32")
@@ -1748,6 +1742,9 @@ def generate_data_exports(
         (downloads / "accepted-hashes.csv", "Accepted hashes, one row per value", "text/csv", None),
         (downloads / "provenance-wanted.csv", "Catalogued dumps the collection lacks", "text/csv", None),
         (downloads / "retrobios.sqlite", "SQLite snapshot", "application/vnd.sqlite3", None),
+        *([(downloads / "measurements.sqlite", "Core probe measurements (SQLite)",
+            "application/vnd.sqlite3", None)]
+          if (downloads / "measurements.sqlite").is_file() else []),
     ]
     catalog_items: list[dict] = []
     published: list[dict] = []
@@ -2076,7 +2073,7 @@ def _join_names(names: list[str]) -> str:
     return names[0] if len(names) == 1 else ", ".join(names[:-1]) + f" and {names[-1]}"
 
 
-def generate_data_page(exports: list[dict]) -> str:
+def generate_data_page(exports: list[dict], measurements_sqlite: Path | None = None) -> str:
     manifest_schema = json.loads(
         (_REPO_ROOT / "schemas" / "install-manifest.schema.json").read_text(encoding="utf-8"))
     snippet = (_REPO_ROOT / "scripts" / "check_platform_folder.py").read_text(encoding="utf-8")
@@ -2344,6 +2341,8 @@ def generate_data_page(exports: list[dict]) -> str:
         "- `curated`, `shared_group` and `mirror_of` mark an entry the platform's "
         "own file does not carry.",
         "",
+        *(sitemeasurements.data_page_section(measurements_sqlite)
+          if measurements_sqlite and measurements_sqlite.is_file() else []),
         "## Hosting, rate limits and caching",
         "",
         "- Static files on GitHub Pages, read with a plain GET. No key, no account.",
@@ -2452,6 +2451,7 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
         "cross-reference.md": "Every emulator core each retrogaming platform runs, the systems it emulates and the upstream project it comes from.",
         "gaps.md": "Current RetroBIOS verification gaps, platform-to-emulator divergences, missing files and documented source limitations.",
         "exports.md": "Each platform's own BIOS list (System.dat, batocera-systems, es_bios.xml and the rest) with the hashes and files the emulator source code shows, offered to its maintainers.",
+        sitemeasurements.EXPLORER_PAGE: "Emulator cores run headless in real conditions: each test with its claim, result, method, computer and full record, filterable, and as SQLite.",
         "provenance.md": "Hash-based comparison of RetroBIOS metadata with No-Intro, Redump and TOSEC catalog snapshots.",
         "explore.md": "Systems, emulators and installer options to explore, with the figures of the BIOS collection.",
         "which-pack.md": "Pick your device or setup and get its BIOS files: the folder they go in, one command that installs and checks them, or a ZIP pack to extract.",
@@ -3000,7 +3000,7 @@ def search_weight(relative: Path, level: str) -> float | None:
 
 _REFERENCE_PAGES = {
     "gaps.md", "cross-reference.md", "provenance.md", "exports.md", "data.md",
-    "files/index.md", "wiki/data-model.md",
+    "files/index.md", "wiki/data-model.md", sitemeasurements.EXPLORER_PAGE,
 }
 
 
@@ -8438,6 +8438,8 @@ def _said_as_list(items: list[str]) -> str:
 # Data directory members and revisions, read once per build.
 _DATA_MEMBERS: dict[str, dict[str, dict]] = {}
 _DATA_REVISIONS: dict[str, dict] = {}
+# The measurement index items of each emulator, for its Tested block.
+_MEASUREMENT_ITEMS: dict[str, list[dict]] = {}
 # The emulator pages that list each data directory, by ref.
 _DATA_READERS: dict[str, list[tuple[str, str]]] = {}
 
@@ -9026,6 +9028,8 @@ def emulator_pages(
                 part_pages[stem] = _emulator_part_page(
                     name, emu_name, number, parts, [cards[i] for i in entries],
                     [files[i] for i in entries])
+
+    lines.extend(sitemeasurements.tested_section(name, _MEASUREMENT_ITEMS.get(name, [])))
 
     blocks = _render_structured_blocks(profile)
     if blocks:
@@ -10944,6 +10948,7 @@ def generate_nav(
             (60, {"Data and API": "data.md"}, "Data"),
             (64, {"Data model": "wiki/data-model.md"}, "Data"),
             (68, {"Updated platform files": "exports.md"}, "Data"),
+            (69, {"Measurements": sitemeasurements.EXPLORER_PAGE}, "Data"),
         ],
         "contribute": [(0, "contributing.md")],
     }
@@ -11001,6 +11006,11 @@ def main() -> None:
         "--docs-dir", default=None,
         help="directory the pages are written to (default: the project's "
              "content collection, src/content/docs)",
+    )
+    parser.add_argument(
+        "--require-measurements", action="store_true",
+        help="fail when the measurements clone does not hold the pinned commit "
+             "(the deploy build passes it; without it the site lists no measurements)",
     )
     args = parser.parse_args()
     if args.docs_dir is None:
@@ -11158,12 +11168,27 @@ def _generate(args: argparse.Namespace) -> None:
     if clash:
         raise RuntimeError(f"a console page takes a manufacturer's address: {sorted(clash)}")
 
+    print("Compiling the measurements at their pin...")
+    measured = sync_measurements.build(
+        public, emulators_dir=Path(args.emulators_dir), require=args.require_measurements,
+        system_names={sys_id: system_name(sys_id) for sys_id in sorted(set(_system_page_map))},
+    )
+    for path in measured.paths:
+        _record(path)
+    _MEASUREMENT_ITEMS.clear()
+    _MEASUREMENT_ITEMS.update(sitemeasurements.by_emulator(measured.index))
+    print(f"  {measured.index['records']} records, {measured.index['count']} tests")
+    write_if_changed(str(docs / sitemeasurements.EXPLORER_PAGE),
+                     sitemeasurements.generate_explorer_page(measured.index) + reference_next())
+
     print("Generating static API and bulk data exports...")
     exports = generate_data_exports(
         public, db, coverages, profiles, stats, gap_report, consumers
     )
     write_release_advertised(Path(args.site_dir) / "src" / "generated")
-    write_if_changed(str(docs / "data.md"), generate_data_page(exports) + reference_next())
+    write_if_changed(str(docs / "data.md"),
+                     generate_data_page(exports, public / sync_measurements.SQLITE_PATH)
+                     + reference_next())
     PAGE_DATA["data.md"] = dataset_structured_data(exports, db)
 
     export_reports = load_export_reports()
@@ -11319,6 +11344,10 @@ def _generate(args: argparse.Namespace) -> None:
         for src_file in wiki_src.glob("*.md"):
             shutil.copy2(src_file, wiki_dest / src_file.name)
             _record(wiki_dest / src_file.name)
+    method_page = docs / sitemeasurements.METHOD_PAGE
+    if method_page.is_file():
+        write_if_changed(str(method_page), sitemeasurements.with_hosts(
+            method_page.read_text(encoding="utf-8"), measured.index))
     table_page = docs / SETUP_TABLE_PAGE
     if table_page.is_file():
         write_if_changed(str(table_page), with_setup_table(

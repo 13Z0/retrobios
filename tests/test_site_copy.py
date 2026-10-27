@@ -36,6 +36,10 @@ START_PAGES = {
     "wiki/faq.md": 450,
     "wiki/glossary.md": 200,
 }
+# Reference pages written for anyone, held to the Start here budgets.
+START_LEVEL_PAGES = {
+    "wiki/measurements.md": 300,
+}
 # Level 1: the guide part of each setup page, above its Reference heading.
 SETUP_CEILING = 220
 # The setup index is a card per setup, one sentence each.
@@ -321,7 +325,8 @@ def measure(page: Page) -> dict:
 
 def held_pages(docs: Path) -> list[tuple[str, str, int]]:
     """(relative path, level, ceiling) for every page the budgets hold."""
-    pages = [(name, "start", ceiling) for name, ceiling in START_PAGES.items()]
+    pages = [(name, "start", ceiling)
+             for name, ceiling in {**START_PAGES, **START_LEVEL_PAGES}.items()]
     pages += [
         (sitepages.name(path), "setup", SETUP_CEILING)
         for path in sorted((docs / "platforms").glob("*.md*"))
