@@ -6691,10 +6691,64 @@ def share_targets(plat: str) -> list[tuple[str, Path]]:
     targets = []
     for mount in _mounted_cards():
         found = card_system(mount)
-        if found is not None and found[0] != plat:
+        doubt = share_doubt(mount)[0]
+        if (found is not None and found[0] != plat) or (doubt and plat not in doubt):
             continue
         targets.append((f"{_mount_name(mount)}: bios", mount / "bios"))
     return targets
+
+
+def drive_targets(plat: str) -> list[tuple[str, Path]]:
+    """(row label, BIOS folder) of each drive mounted here offered at the
+    folder question of a setup that runs from no card (RetroArch here): a
+    card of a system that reads plat's list by its own BIOS folder, a drive
+    nothing names by its bios folder. A drive's root is no answer: no setup
+    reads its BIOS files there, and RetroArch's list landed beside the roms/
+    and system/ of a Batocera SHARE drive (code_audit_18 P2-2, tui_audit_11
+    P1-2). Another system's card or drive, and one two systems fit, are
+    reached through their own setup (drives_left_out)."""
+    targets = []
+    for mount in _mounted_cards():
+        found = card_system(mount)
+        if (found is not None and found[0] != plat) or share_doubt(mount)[0]:
+            continue
+        name = _mount_name(mount)
+        if found is not None:
+            below = found[1].relative_to(mount).as_posix() if found[1] != mount else ""
+            what = f"{found[2]} {_card_word(found)}"
+            targets.append((f"{name}: {below} ({what})" if below else f"{name} ({what})",
+                            found[1]))
+        else:
+            targets.append((f"{name}: bios (card or drive)", mount / "bios"))
+    return targets
+
+
+def _card_word(system: tuple[str, Path, str]) -> str:
+    """A mounted drive's kind as the first screen writes it: SD card, or
+    SHARE drive."""
+    return "SD card" if drive_kind(system) == "card" else drive_kind(system)
+
+
+def drives_left_out(plat: str) -> str:
+    """Why the drives mounted here that another system reads are not offered
+    at plat's folder question, in words, "" for none."""
+    others = []
+    for mount in _mounted_cards():
+        found = card_system(mount)
+        doubt = share_doubt(mount)[0]
+        # The options that reach it, which work wherever this is asked: the
+        # setup list is not offered once a platform is named.
+        if doubt:
+            names = " or ".join(f"--platform {name}" for name in doubt)
+            others.append(f"{_mount_name(mount)} ({_doubt_kinds(doubt)}: {names} "
+                          f"--dest {shown_path(mount)})")
+        elif found is not None and found[0] != plat:
+            word = _name_key(found[2]) or found[0]
+            others.append(f"{_mount_name(mount)} ({found[2]} {_card_word(found)}: "
+                          f"--platform {word} --dest {shown_path(mount)})")
+    if not others:
+        return ""
+    return (f"Not offered here, each reads its own system's files: {', '.join(others)}.")
 
 
 def ask_platform_folder(os_type: str, plat: str, ask: bool = True,
@@ -6718,15 +6772,15 @@ def ask_platform_folder(os_type: str, plat: str, ask: bool = True,
     elif default is not None:
         state = "" if _exists(default) else " (it does not exist yet and will be created)"
         print(f"  {name}'s default BIOS folder: {shown_path(default)}{state}.")
-    if shared:
-        targets = share_targets(plat)
-        for index, (label, folder) in enumerate(targets, 1):
-            made = "" if _is_dir(folder) else ", created"
-            print(f"    {index}) {label} ({shown_path(folder)}{made})")
-    else:
-        targets = [(card_line(mount), mount) for mount in _mounted_cards()]
-        for index, (label, _mount) in enumerate(targets, 1):
-            print(f"    {index}) {label}")
+    # A drive is offered by the BIOS folder its system reads, the screen's
+    # rows: never its root, and never for a system that reads another list.
+    targets = share_targets(plat) if shared else drive_targets(plat)
+    for index, (label, folder) in enumerate(targets, 1):
+        made = "" if _is_dir(folder) else ", created"
+        print(f"    {index}) {label} ({shown_path(folder)}{made})")
+    left_out = "" if shared else drives_left_out(plat)
+    if left_out:
+        print(f"  {left_out}")
     numbers = "" if not targets else (" or 1" if len(targets) == 1
                                       else f" or 1 to {len(targets)}")
     why = ("" if default is not None or shared
@@ -6741,10 +6795,8 @@ def ask_platform_folder(os_type: str, plat: str, ask: bool = True,
         if raw is None:
             return default
         if raw.isdigit() and 1 <= int(raw) <= len(targets):
-            folder = targets[int(raw) - 1][1]
-            if shared:
-                # The screen's row, taken as it takes it.
-                return folder
+            # The screen's row, taken as it takes it.
+            return targets[int(raw) - 1][1]
         else:
             # Named in full on BIOS folder:, Created and Location:, where
             # "q" alone said nothing of the folder it was in.
@@ -10077,7 +10129,10 @@ def _open_local_sources(args: argparse.Namespace) -> None:
                   f"{display_name(plat)}.", file=sys.stderr)
             sys.exit(1)
     elif len(spelled) == 1:
+        # Named by the pack, not by the user: the setups that read its list
+        # are offered, as for a --manifest.
         args.platform = spelled[0]
+        args.platform_from_list = True
     else:
         among = (" (" + ", ".join(spelled) + ")") if spelled else ""
         print(f"Error: name the platform {pack.name} is installed for with "
@@ -11277,6 +11332,15 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             platforms = [(args.platform, card_install_dest(
                 named, args.platform, interactive,
                 not (args.check or args.dry_run or args.yes)))]
+        elif interactive and getattr(args, "platform_from_list", False) and len(
+                _line_setups(setups, mounted, os_type)) > 1:
+            # A list or a pack that card setups read too: they are offered,
+            # RetroArch first, as the screen offers them. Its folder question
+            # alone left ArkOS, muOS and JELOS out of reach (tui_audit_11 P1-2).
+            print(f"  {display_name(args.platform)} was not found here.")
+            platforms = _prompt_manual_platform(
+                os_type, not (args.check or args.dry_run or args.yes), True,
+                f"Which setup is the {display_name(args.platform)} list for?", setups, mounted)
         elif interactive:
             # Asked as the screen asks, never taken: the default folder was
             # filled with a card mounted in the reader, and with nothing
@@ -13064,10 +13128,10 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
                      for label, folder in share_targets(state.platform)]
         if not bound:
             # The drives mounted here, as line mode numbers them at the same
-            # question: a stick in the reader was offered there and not here.
+            # question, each by the BIOS folder its system reads.
             drives = [] if state.folder_kind == "share" else [
-                TuiRow("drive", f"{_mount_name(mount)} ({_card_what(mount)})", value=mount)
-                for mount in _mounted_cards()]
+                TuiRow("drive", label, value=folder)
+                for label, folder in drive_targets(state.platform)]
             return rows + [TuiRow("browse", "Browse for a folder"),
                            TuiRow("type", "Type a path")] + drives
         # Only the cards whose own files say they run the system: A on the
@@ -13891,10 +13955,8 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
     if screen == "folder":
         if action == "default":
             return _choose(state, state.platform, state.folder_default, proposed=True)
-        if action == "share":
+        if action in ("share", "drive"):
             return _choose(state, state.platform, row.value, proposed=True)
-        if action == "drive":
-            return _choose_card(state, row.value)
         if action in ("card", "rescan"):
             if action == "rescan":
                 state.cards = mounted_cards_of(_tui_card_bound(state)[0], state.platform)
@@ -15571,6 +15633,9 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
     else:
         title = "Which folder?"
         before = [f"No usual {name} folder here: browse for it or type it."]
+    if not bound and state.folder_kind != "share":
+        left_out = drives_left_out(state.platform)
+        before += [left_out] if left_out else []
     return (title, _compose(state, width, height, before, tui_rows(state), _status_after(state),
                             pinned=state.refused),
             ("A/Enter Choose", "B/Esc Back", "? Help"))
@@ -16486,7 +16551,7 @@ def found_setups(os_type: str) -> tuple[list[tuple[str, Path, str]], set]:
     # than the old one, comes first (tui_audit_11 P3-15).
     taken.sort(key=lambda item: (systems.index(item[0][2]), counts.get(item[1], -1)))
     for card, mount in taken:
-        kind = "SHARE drive" if drive_kind(card) != "card" else "SD card"
+        kind = _card_word(card)
         held = counts.get(mount)
         what = ("" if held is None else ", no BIOS folder" if held < 0
                 else f", {_plural(held, 'BIOS file')}")
@@ -16571,6 +16636,14 @@ def tui_start(
             return state, _choose(state, plat, matched[0][1], proposed=True)
         if matched:
             state.setups = matched
+            return state, []
+        if (getattr(args, "platform_from_list", False) and not bound and len(setup_list(
+                state.setups, state.mounted_setups, "", os_type, LOCAL.serves())) > 1):
+            # A list or a pack card setups read too: the setup list, filtered
+            # to them and RetroArch first, as line mode asks (tui_audit_11
+            # P1-2). The folder question alone left them out of reach.
+            state.stack = ["platforms"]
+            state.focus["platforms"] = _platform_focus(state, plat)
             return state, []
         state.platform = plat
         state.card_bound = bound

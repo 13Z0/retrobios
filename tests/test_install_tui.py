@@ -6704,6 +6704,86 @@ class LineModeAndScreenDecideAlike(unittest.TestCase):
                     self.assertIn("a run without questions installs for one", text)
                     self.assertRegex(text, r"--platform \w+ --dest ")
 
+    def share(self, name: str = "SHARE") -> Path:
+        share = self.root / "media" / name
+        (share / "system").mkdir(parents=True)
+        (share / "roms").mkdir()
+        (share / "system" / "batocera.conf").write_text("system.hostname=BATOCERA\n")
+        return share
+
+    def test_a_drive_is_offered_by_the_folder_its_system_reads(self):
+        """code_audit_18 P2-2, tui_audit_11 P1-2: RetroArch's folder question
+        numbered a Batocera SHARE drive and a KNULLI card, and one press put
+        RetroArch's list at their root, beside roms/ and system/. A drive
+        nothing names went to its root too. Now another system's drive is
+        left out and said, in both modes, and a drive is its bios folder."""
+        share, knulli = self.share(), self.card("KNULLI", "KNULLI")
+        stick = self.root / "media" / "EASYROMS"
+        (stick / "bios").mkdir(parents=True)
+        onion = self.card("ONION", "Onion")
+        mounts = [share, knulli, stick, onion]
+        with mock.patch.object(install, "_mounted_cards", return_value=mounts), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                mock.patch.object(install, "_ask", side_effect=["q"]), \
+                self.assertRaises(SystemExit):
+            install.ask_platform_folder("linux", "retroarch")
+        text = out.getvalue()
+        self.assertIn(f"1) EASYROMS: bios (card or drive) ({stick / 'bios'})", text)
+        self.assertIn(f"2) ONION: BIOS (Onion SD card) ({onion / 'BIOS'})", text)
+        self.assertNotIn("3)", text)
+        self.assertIn("Not offered here, each reads its own system's files: SHARE (Batocera "
+                      f"SHARE drive: --platform batocera --dest {share}), KNULLI (KNULLI SD "
+                      f"card: --platform knulli --dest {knulli}).", text)
+        state = install.TuiState(os_type="linux", home=HOME)
+        state.platform, state.stack = "retroarch", ["folder"]
+        state.folder_default, state.folder_kind = SYSTEM_DIR, "usual"
+        with mock.patch.object(install, "_mounted_cards", return_value=mounts), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()):
+            rows = install.tui_rows(state)
+            screen = " ".join(install.tui_view(state, 120, 40))
+            state.focus["folder"] = next(index for index, row in enumerate(rows)
+                                         if row.action == "drive")
+            install.tui_update(state, Key("enter"))
+        self.assertEqual([row.value for row in rows if row.action == "drive"],
+                         [stick / "bios", onion / "BIOS"])
+        self.assertIn("Not offered here", screen)
+        self.assertEqual(state.dest, stick / "bios")
+
+    def test_a_list_card_setups_read_offers_them_first(self):
+        """tui_audit_11 P1-2: with a RetroArch pack or list and nothing found,
+        the first screen was RetroArch's folder question: ArkOS, muOS and
+        JELOS, which read the same list, were out of reach. Both modes now
+        open on the setups that read it, RetroArch first."""
+        stick = self.root / "media" / "EASYROMS"
+        (stick / "bios").mkdir(parents=True)
+        args = dict(manifest=self.list, declared_only=False, offline=False)
+        text, asked = self.line_run(_args(**args), [], mounts=[stick])
+        self.assertIn("Which setup is the RetroArch list for?", text)
+        self.assertIn("ArkOS", text)
+        self.assertNotIn("Batocera", text)
+        self.assertIn("[Enter for RetroArch]", asked[0])
+        with mock.patch.object(install, "_mounted_cards", return_value=[stick]), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()), \
+                mock.patch.object(install, "detect_platforms", return_value=[]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]):
+            install._DETECTED_OS.clear()
+            state = screen_keys(_args(**args), [])
+            with contextlib.redirect_stdout(io.StringIO()):
+                install._open_local_sources(_args(**args))
+            rows = install.tui_rows(state)
+            labels = [row.label for row in rows]
+            focused = rows[state.focus["platforms"]]
+            install._DETECTED_OS.clear()
+            ark = screen_keys(_args(**args), ["end", Key("char", "/"), *[
+                Key("char", c) for c in "arkos"], "enter", "enter"])
+        self.assertEqual(state.screen, "platforms")
+        self.assertEqual(focused.value, "retroarch")
+        self.assertTrue(any(label.startswith("ArkOS") for label in labels), labels)
+        self.assertFalse(any(label.startswith("Batocera") for label in labels), labels)
+        self.assertEqual(ark.screen, "folder")
+        self.assertEqual(install._tui_card_bound(ark)[0], "ArkOS")
+
     def test_line_mode_says_the_card_it_found_and_names_its_folder(self):
         onion = self.card("ONION", "Onion")
         with mock.patch.object(install, "_mounted_cards", return_value=[onion]), \
@@ -6741,7 +6821,8 @@ class LineModeAndScreenDecideAlike(unittest.TestCase):
                 mock.patch.object(install, "detect_os", return_value="linux"), \
                 mock.patch.object(install.sys.stdin, "isatty", return_value=True), \
                 mock.patch.object(install, "_is_terminal", return_value=True), \
-                mock.patch.object(install, "_ask", return_value=str(self.here)), \
+                mock.patch.object(install, "_ask", side_effect=lambda prompt: (
+                    "" if prompt.startswith(">") else str(self.here))), \
                 mock.patch.object(install, "_prompt_custom_selection", menu), \
                 contextlib.redirect_stdout(io.StringIO()) as out, \
                 self.assertRaises(SystemExit):
@@ -7089,13 +7170,16 @@ class LineModeAndScreenDecideAlike(unittest.TestCase):
                 mock.patch.object(install, "_ask", side_effect=["1"]), \
                 mock.patch.object(install, "_missing_dest", return_value=True):
             folder = install.ask_platform_folder("linux", "retroarch")
-        self.assertEqual(folder, stick)
+        # tui_audit_11 P1-2: a drive is offered by its bios folder, never its
+        # root, which no setup reads.
+        self.assertEqual(folder, stick / "bios")
         state = install.TuiState(os_type="linux", home=HOME)
         state.platform, state.stack = "retroarch", ["folder"]
         state.folder_default, state.folder_kind = SYSTEM_DIR, "usual"
         with mock.patch.object(install, "_mounted_cards", return_value=mounts):
             rows = install.tui_rows(state)
-        self.assertEqual([row.value for row in rows if row.action == "drive"], [stick])
+        self.assertEqual([row.value for row in rows if row.action == "drive"],
+                         [stick / "bios"])
 
     def test_the_systems_are_listed_by_title_in_the_screen_order(self):
         """tui_audit_10 P3-7: line mode listed ids, nintendo-3ds before

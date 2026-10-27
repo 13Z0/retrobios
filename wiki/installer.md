@@ -1031,9 +1031,16 @@ and `--plain` gives the same list numbered, in the same order, with `--dest`
 too. Both find the SD cards mounted here, the screen under **Found on this
 machine**. With a setup found, the setup screen lists it with **Another setup
 or folder**, and `--plain` asks the same: Enter takes the first, `o` opens the
-numbered list and then the folder, `q` quits. A platform named, or read from
-a list or a pack, and found nowhere gets its folder asked, its usual one under
-Enter, the mounted drives numbered. A folder typed is read from the current
+numbered list and then the folder, `q` quits. A platform named and found
+nowhere gets its folder asked, its usual one under Enter, the mounted drives
+numbered. A list or a pack read by card setups too (RetroArch's, read by Onion,
+muOS, ArkOS and the others) opens the setup list instead, filtered to the
+setups that read it, RetroArch first: Enter on it asks RetroArch's folder. At
+that question a drive is numbered by the folder its system reads (`ONION:
+BIOS`), a drive nothing names by its `bios` folder (`EASYROMS: bios`), never
+by its root, which no setup reads. Another system's card or SHARE drive, and a
+drive two systems fit, are left out, and a line names them: each is reached
+through its own setup. A folder typed is read from the current
 one when it is not a full path, and named in full after. `q` quits there too
 (a folder named `q` is typed `./q`), and Enter with no default says what to
 type. On a computer Batocera and Recalbox have no default: the drives are
