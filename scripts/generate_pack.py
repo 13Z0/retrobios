@@ -4759,11 +4759,25 @@ def pack_systems(install_manifest: dict) -> dict:
     ("the file list comes from an older release") and offered no Choose
     systems, the route of a handheld without Wi-Fi.
     """
+    files = install_manifest.get("files", [])
+    entries = [*files, *install_manifest.get("omitted_files", [])]
+    # What the install list narrows by, the installer's recorded_axes: with
+    # the pack alone it names that list as the way to --core and --region
+    # only when the list records them. It named install/misterfpga.json for
+    # --core, a list that records no core.
+    records = {"systems"} if any("systems" in entry for entry in entries) else set()
+    if any(copy.get("cores") for entry in files
+           for copy in [entry, *entry.get("alternatives", []),
+                        *entry.get("slot_choices", [])]):
+        records.add("cores")
+    if records or any("regions" in entry for entry in entries):
+        records.add("regions")
     return {
         "files": {entry["dest"]: list(entry.get("systems") or [])
-                  for entry in install_manifest.get("files", []) if "systems" in entry},
+                  for entry in files if "systems" in entry},
         "system_titles": dict(install_manifest.get("system_titles") or {}),
         "system_names": dict(install_manifest.get("system_names") or {}),
+        "list_records": sorted(records),
     }
 
 
@@ -4779,6 +4793,8 @@ def annotate_pack_systems(manifest: dict, systems: dict | None) -> None:
     for key in ("system_titles", "system_names"):
         if systems.get(key):
             manifest[key] = systems[key]
+    if "list_records" in systems:
+        manifest["list_records"] = systems["list_records"]
 
 
 def inject_manifest(zip_path: str, manifest: dict) -> None:

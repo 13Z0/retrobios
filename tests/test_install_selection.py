@@ -612,7 +612,8 @@ class TheOneLinerNarrows(unittest.TestCase):
         with FakeRepository(selection=False) as repo:
             proc = repo.run("--region", "us")
             self.assertEqual(proc.returncode, 1)
-            self.assertIn("records no systems or regions", proc.stderr)
+            self.assertIn("records no regions, so --region cannot narrow it", proc.stderr)
+            self.assertIn("older release", proc.stderr)
             self.assertEqual(repo.installed(), [])
 
     def test_a_pinned_ref_is_named_as_the_way_out(self):
@@ -675,18 +676,19 @@ class TheOneLinerNarrows(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("script"), "script(1) provides the terminal")
     def test_the_custom_mode_at_a_terminal(self):
-        """Typed answers: customise, PlayStation only, no core, US first."""
+        """Typed answers: customise, PlayStation only, US first. Its one
+        core is not asked about (tui_audit_11 P3-10)."""
         with FakeRepository() as repo:
             command = " ".join(shlex.quote(part) for part in repo.command())
             proc = subprocess.run(
                 ["script", "-qec", command, "/dev/null"],
-                input="c\n2\n\n2\n\n", env=repo.env(), capture_output=True,
+                input="c\n2\n2\n\n", env=repo.env(), capture_output=True,
                 text=True, timeout=60, check=False,
             )
             out = proc.stdout
             self.assertEqual(proc.returncode, 0, out + proc.stderr)
             self.assertIn("choose systems, cores and regions", out)
-            self.assertIn("pcsx_rearmed", out)
+            self.assertNotIn("Cores:", out)
             self.assertIn("--system sony-playstation --region north-america", out)
             self.assertEqual(repo.installed(), ["pcsx/extra.bin", "scph5501.bin"])
 

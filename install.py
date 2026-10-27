@@ -4000,9 +4000,31 @@ def _chosen(entry: dict, wanted: set[str]) -> bool:
     return bool(wanted & set(systems))
 
 
+def recorded_axes(files: list[dict], omitted: list[dict] = ()) -> frozenset:
+    """What a file list lets --system, --core and --region narrow by: its
+    systems, its cores, its regions. A list from an older release records
+    none. The MinUI family's records cores and regions and no system: all
+    three were refused on it, by a remedy that fetched the same list
+    (tui_audit_11 P2-1)."""
+    entries = [*files, *omitted]
+    systems = any("systems" in entry for entry in entries)
+    if not systems and not any("regions" in entry for entry in entries):
+        # Systems and regions came in one release: a list with neither is
+        # older, its cores read by nothing that narrows.
+        return frozenset()
+    # A current list records the regions of the files a region selects, and
+    # none when it has no such file: --region then keeps every file, as the
+    # pack built with it does.
+    axes = {"regions", *(["systems"] if systems else [])}
+    if any(copy.get("cores") for entry in files
+           for copy in [entry, *entry.get("alternatives", []), *entry.get("slot_choices", [])]):
+        axes.add("cores")
+    return frozenset(axes)
+
+
 def records_selection(files: list[dict]) -> bool:
-    """Whether a manifest carries what narrowing reads. Older ones do not."""
-    return any("systems" in entry for entry in files)
+    """Whether a manifest records anything narrowing reads. Older ones do not."""
+    return bool(recorded_axes(files))
 
 
 def available_choices(files: list[dict], omitted: list[dict]) -> dict[str, list[str]]:
@@ -7235,9 +7257,12 @@ def _prompt_custom_selection(
             print(f"  Enter) install {whole}")
         if installed is not None and current != INSTALLED_ONLY:
             print(f"  i) only what the installed cores read: {_sized(installed[0])}")
+        # What c asks, named: "systems, cores and regions" was offered with
+        # a pack that records systems only (tui_audit_11 P3-10).
+        axes = narrowing_words(files, omitted) if choosable else ""
+        choosable = bool(axes)
         if choosable:
-            print("  c) choose systems, cores and regions"
-                  + (" again" if current is not given else ""))
+            print(f"  c) choose {axes}" + (" again" if current is not given else ""))
         # The screen's "Copy the BIOS files from your old card or a folder".
         copying = not dry_run
         if copying:
@@ -7312,11 +7337,27 @@ def _print_menu_head(
         print(f"  {line}")
 
 
+def narrowing_words(files: list[dict], omitted: list[dict]) -> str:
+    """What c chooses among for these files, in words, "" for nothing: a
+    question with one answer is not asked (tui_audit_11 P3-10)."""
+    axes = recorded_axes(files, omitted)
+    choices = available_choices(files, omitted)
+    named = [word for word, axis, enough in (
+        ("systems", "systems", len(listed_systems(files)) > 1),
+        ("cores", "cores", len(choices["cores"]) > 1),
+        ("regions", "regions", bool(choices["regions"]))) if axis in axes and enough]
+    return f"{', '.join(named[:-1])} and {named[-1]}" if len(named) > 1 else "".join(named)
+
+
 def _choose_narrowing(files: list[dict], omitted: list[dict], manifest: dict | None,
                       bios_path: Path | None) -> tuple[list[str], list[str], list[str]]:
     """Systems, cores and regions asked one after the other, the systems
-    titled and ordered as the screen's Choose systems lists them."""
-    systems_listed = systems_in_order(listed_systems(files), files, manifest, bios_path)
+    titled and ordered as the screen's Choose systems lists them. A question
+    with one answer is skipped: "Cores: 1) azahar" was asked after the 3DS
+    alone was chosen."""
+    listed = listed_systems(files) if "systems" in recorded_axes(files, omitted) else []
+    systems_listed = (systems_in_order(listed, files, manifest, bios_path)
+                      if len(listed) > 1 else [])
     if OTHER_SYSTEMS in systems_listed:
         print(f"\n'{OTHER_TITLE}' holds what cores load for systems this platform")
         print("does not list, such as game engines and extra computers.")
@@ -7332,7 +7373,7 @@ def _choose_narrowing(files: list[dict], omitted: list[dict], manifest: dict | N
 
     cores: list[str] = []
     core_names = available_choices(kept, kept_omitted)["cores"]
-    if core_names:
+    if len(core_names) > 1:
         print("\nThe platform's own files for these systems are always kept.")
         print("The extra files each core loads can be narrowed.")
         cores = _pick("Cores:", [
@@ -7567,6 +7608,28 @@ def _older_list_advice(plat: str = "") -> str:
             "installer again to fetch the current one.")
 
 
+def _narrowing_advice(plat: str, axis: str, flag: str, recorded: frozenset,
+                      pack_alone: bool) -> str:
+    """What to do when a list or a pack records no axis: only a remedy
+    that changes the outcome. The pack's remedy named install/minui.json,
+    refused the same way, and the list's fetched the same list again."""
+    works = [name for name, field in (("--system", "systems"), ("--core", "cores"),
+                                      ("--region", "regions")) if field in recorded]
+    rest = f"Run it without {flag}" + (f", or narrow with {' and '.join(works)}"
+                                       if works else "") + "."
+    if pack_alone:
+        listed = LOCAL.pack.list_records if LOCAL.pack is not None else None
+        if listed is not None and axis not in listed:
+            # The pack says its platform's own list lacks the axis too.
+            return f"  {display_name(plat)}'s own file list records no {axis} either. {rest}"
+        when = "which records them" if listed is not None else f"when that list records {axis}"
+        return f"  Add --manifest FILE, a copy of install/{plat}.json, {when}. {rest}"
+    if recorded:
+        # A current list: the platform has no such axis.
+        return f"  {rest}"
+    return _older_list_advice(plat)
+
+
 def _narrow_to_emulators(
     names: list[str], manifest: dict, plat: str,
     files: list[dict], omitted: list[dict],
@@ -7613,25 +7676,26 @@ def _requested_narrowing(
     """The systems, cores and regions named on the command line, checked."""
     if not (args.system or args.core or args.region):
         return None
-    if not records_selection(files):
-        # Without the fields, a region filter would match nothing and install
-        # everything: refused rather than ignored.
-        print(
-            f"Error: the {plat} file list records no systems or regions, so "
-            "--system, --core and --region cannot narrow it.",
-            file=sys.stderr,
-        )
-        print(_older_list_advice(plat), file=sys.stderr)
-        sys.exit(1)
-    if LOCAL.pack is not None and LOCAL.manifest is None:
+    pack_alone = LOCAL.pack is not None and LOCAL.manifest is None
+    recorded = recorded_axes(files, omitted)
+    if pack_alone:
         # A pack records the systems of its files, not their cores or
         # regions: either filter would keep everything, and is refused.
-        for flag, given in (("--core", args.core), ("--region", args.region)):
-            if given:
-                print(f"Error: {LOCAL.pack.name} records the systems of its files, not "
-                      f"what {flag} narrows by.", file=sys.stderr)
-                print(_older_list_advice(plat), file=sys.stderr)
-                sys.exit(1)
+        recorded = recorded & {"systems"}
+    asked = [(flag, axis) for flag, given, axis in (
+        ("--system", args.system, "systems"), ("--core", args.core, "cores"),
+        ("--region", args.region, "regions")) if given]
+    for flag, axis in asked:
+        if axis in recorded:
+            continue
+        # Without the field, a filter would match nothing and install
+        # everything: refused rather than ignored, by the axis the list
+        # lacks, with what works on it.
+        source = LOCAL.pack.name if pack_alone else f"the {plat} file list"
+        print(f"Error: {source} records no {axis}, so {flag} cannot narrow it.",
+              file=sys.stderr)
+        print(_narrowing_advice(plat, axis, flag, recorded, pack_alone), file=sys.stderr)
+        sys.exit(1)
     choices = available_choices(files, omitted)
     try:
         systems = resolve_choices(
@@ -7780,6 +7844,10 @@ class PackSource:
         self.members: dict[str, tuple[zipfile.ZipFile, zipfile.ZipInfo]] = {}
         # The system titles and names the pack's list records, if any.
         self.names: dict[str, dict] = {}
+        # What its platform's install list narrows by (systems, cores,
+        # regions), None for a pack that does not say: the remedy for an
+        # option the pack cannot apply names that list only when it can.
+        self.list_records: frozenset | None = None
         try:
             for path in self.files:
                 archive = zipfile.ZipFile(path)
@@ -7867,6 +7935,9 @@ class PackSource:
         # A pack is a file anyone can hand over: an id or a name holding a
         # control character would reach the terminal as an escape, and is
         # dropped.
+        records = data.get("list_records")
+        if isinstance(records, list) and all(isinstance(axis, str) for axis in records):
+            self.list_records = frozenset(records) & {"systems", "cores", "regions"}
         for key in ("system_titles", "system_names"):
             held = data.get(key)
             if isinstance(held, dict):
@@ -10260,9 +10331,9 @@ def _read_from_folder(label: str) -> FolderIndex:
     return index
 
 
-def _refuse_closed(dest: Path, named: str, then: str = "") -> None:
+def _refuse_closed(dest: Path, named: str) -> None:
     """End the run, with its name, on a folder above dest this user cannot
-    open. then is a line said after the error, which it continues."""
+    open."""
     closed = closed_folder(dest)
     if closed is None:
         return
@@ -10271,8 +10342,6 @@ def _refuse_closed(dest: Path, named: str, then: str = "") -> None:
     print(f"Error: {screen_text(message)}. Give this user access to it, run as "
           f"its owner, or choose another folder than the one {named}.",
           file=sys.stderr)
-    if then:
-        print(f"  {then}", file=sys.stderr)
     sys.exit(1)
 
 
@@ -11478,9 +11547,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             named = (f"used by default, since {display_name(name)} was not found"
                      if path in assumed_dests
                      else f"{found_in[0]} names" if found_in else "detected here")
-            _refuse_closed(path, f"{named} (name another with --dest)",
-                           "Nothing was installed. Name one platform with --platform "
-                           "to install it alone." if len(platforms) > 1 else "")
+            # One setup by now: two found without questions stopped above.
+            _refuse_closed(path, f"{named} (name another with --dest)")
 
     total_downloaded = 0
     total_up_to_date = 0
@@ -13221,7 +13289,7 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
                 *([TuiRow("install", "Install anyway")] if rows else [])]
     # --system given: the choice stays offered, the list widened when it is
     # opened. With one system named it was neither shown nor changeable.
-    if records_selection((state.manifest or {}).get("files", [])) and (
+    if "systems" in recorded_axes((state.manifest or {}).get("files", [])) and (
             len(state.systems) > 1 or state.cli_systems):
         rows.append(TuiRow("systems", "Choose systems"))
     rows.append(TuiRow("fromcard", "Copy the BIOS files from your old card or a folder"))
@@ -13341,8 +13409,10 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
         # The interface said "Name it with --save-dir" and had no row for it.
         rows.append(TuiRow("savedir", f"Save folder: {_save_folder_words(state)}",
                            "--save-dir", style="path"))
+    if not LOCAL.offline:
+        # From a pack, or offline, nothing is downloaded (tui_audit_11 P3-16).
+        rows.append(TuiRow("jobs", f"Parallel downloads: {state.jobs}", "--jobs"))
     rows += [
-        TuiRow("jobs", f"Parallel downloads: {state.jobs}", "--jobs"),
         TuiRow("folder", f"BIOS folder: {_short_path(state.dest, state.home)}", "--dest",
                style="path"),
         TuiRow("from", f"Copy from: {copied}", "--from", style="path"),

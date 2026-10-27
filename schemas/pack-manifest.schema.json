@@ -43,6 +43,12 @@
     "system_names": {
       "type": "object",
       "additionalProperties": { "type": "array", "items": { "type": "string" } }
+    },
+    "list_records": {
+      "description": "What the platform's install list narrows by: the installer names that list as the remedy for --core or --region given with the pack alone only when it records them.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["systems", "cores", "regions"] }
     }
   }
 }

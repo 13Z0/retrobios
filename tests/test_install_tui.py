@@ -7432,7 +7432,7 @@ class AuditSeventeenAndTen(unittest.TestCase):
         with contextlib.redirect_stderr(err), self.assertRaises(SystemExit):
             install._requested_narrowing(_args(system=["nintendo-gba"]), "retroarch",
                                          install.LOCAL.pack.manifest("retroarch")["files"], [])
-        self.assertIn("add --manifest FILE, a copy of install/retroarch.json", err.getvalue())
+        self.assertIn("Add --manifest FILE, a copy of install/retroarch.json", err.getvalue())
         self.assertNotIn("older release", err.getvalue())
 
     def test_a_pack_cannot_write_escapes_through_its_system_names(self):
@@ -8659,6 +8659,139 @@ class AuditEighteenAndEleven(unittest.TestCase):
         self.assertEqual([label for _plat, _path, label in setups],
                          ["Onion SD card (ONION, no BIOS folder)",
                           "Onion SD card (OLDONION, 6 BIOS files)"])
+
+    # tui_audit_11 P2-1: a list or a pack that records some axes only.
+
+    def minui(self, plat: str = "minui", systems: bool = False, cores: bool = True,
+              regions: bool = True) -> tuple[Path, Path, dict]:
+        """A list of plat's shape (the MinUI family records cores and regions,
+        no system), the pack built from it and the files' payloads."""
+        from test_install_offline import GBA, JP, US  # noqa: PLC0415
+
+        payloads = {"Bios/MGBA/gba_bios.bin": (GBA, "nintendo-gba", "mgba", None),
+                    "Bios/PS/scph5501.bin": (US, "sony-playstation", "pcsx_rearmed",
+                                             "north-america"),
+                    "Bios/PS/scph5500.bin": (JP, "sony-playstation", "pcsx_rearmed", "japan")}
+        files = []
+        for dest, (data, system, core, region) in payloads.items():
+            entry = {"dest": dest, "sha1": hashlib.sha1(data).hexdigest(), "size": len(data),
+                     "repo_path": f"bios/{dest}", "cores": [core] if cores else None}
+            if systems:
+                entry["systems"] = [system]
+            if regions and region:
+                entry.update(regions=[region], region_groups=["ps"])
+            files.append(entry)
+        listing = self.root / f"{plat}.json"
+        install_list = {"manifest_version": 2, "platform": plat, "files": files}
+        listing.write_text(json.dumps(install_list))
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        self.addCleanup(sys.path.remove, str(REPO_ROOT / "scripts"))
+        import generate_pack  # noqa: PLC0415
+
+        pack_list = {"files": [{"path": dest, "sha1": entry["sha1"], "size": entry["size"]}
+                               for dest, entry in zip(payloads, files)]}
+        generate_pack.annotate_pack_systems(pack_list, generate_pack.pack_systems(install_list))
+        name = {"minui": "MinUI", "misterfpga": "MiSTer_FPGA"}[plat]
+        pack = self.root / f"{name}_v1_BIOS_Pack.zip"
+        with zipfile.ZipFile(pack, "w") as archive:
+            for dest, (data, *_rest) in payloads.items():
+                archive.writestr(dest, data)
+            archive.writestr("manifest.json", json.dumps(pack_list))
+        return listing, pack, pack_list
+
+    def narrowed(self, plat: str, **given) -> tuple[int, str, list]:
+        """(exit code, what was said, the files kept) of a --dry-run narrowed
+        as given."""
+        dest = self.root / "dest"
+        if not dest.exists():
+            make_card(dest, "MinUI")
+        stream = io.StringIO()
+        code = 0
+        with mock.patch.object(install.EVENTS, "stream", stream), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            try:
+                install._install(_args(platform=plat, dest=dest, dry_run=True, events=True,
+                                       no_input=True, declared_only=False, **given),
+                                 io.StringIO())
+            except SystemExit as stop:
+                code = stop.code
+            finally:
+                install.LOCAL.reset()
+        kept = [json.loads(line)["dest"] for line in stream.getvalue().splitlines()
+                if '"event": "file"' in line]
+        return code, out.getvalue() + err.getvalue(), kept
+
+    def test_a_list_without_systems_narrows_by_what_it_records(self):
+        """tui_audit_11 P2-1: install/minui.json records cores and regions,
+        no system, and all three options were refused with a remedy that
+        fetched the same list."""
+        listing, _pack, _listed = self.minui()
+        code, text, kept = self.narrowed("minui", manifest=listing, core=["mgba"])
+        self.assertEqual(code, 0, text)
+        self.assertEqual(kept, ["Bios/MGBA/gba_bios.bin"])
+        code, text, kept = self.narrowed("minui", manifest=listing, region=["us"])
+        self.assertEqual(code, 0, text)
+        self.assertNotIn("Bios/PS/scph5500.bin", kept)
+        code, text, _kept = self.narrowed("minui", manifest=listing,
+                                          system=["nintendo-gba"])
+        self.assertEqual(code, 1)
+        self.assertIn("records no systems, so --system cannot narrow it", text)
+        self.assertIn("Run it without --system, or narrow with --core and --region", text)
+        self.assertNotIn("one-line installer", text)
+        # The remedy followed: what it names works.
+        code, text, _kept = self.narrowed("minui", manifest=listing, core=["mgba"],
+                                          region=["us"])
+        self.assertEqual(code, 0, text)
+
+    def test_a_pack_names_its_list_only_when_that_list_records_it(self):
+        """tui_audit_11 P2-1: a MinUI pack sent --core to install/minui.json,
+        refused the same way, and a MiSTer pack to install/misterfpga.json,
+        which records no core. The pack now records what its list narrows
+        by, and each remedy changes the outcome."""
+        listing, pack, listed = self.minui()
+        self.assertEqual(listed["list_records"], ["cores", "regions"])
+        code, text, _kept = self.narrowed("minui", from_pack=[pack], core=["mgba"])
+        self.assertEqual(code, 1)
+        self.assertIn("Add --manifest FILE, a copy of install/minui.json, which records them",
+                      text)
+        code, text, kept = self.narrowed("minui", from_pack=[pack], manifest=listing,
+                                         core=["mgba"])
+        self.assertEqual((code, kept), (0, ["Bios/MGBA/gba_bios.bin"]), text)
+        mister_list, mister, listed = self.minui("misterfpga", systems=True, cores=False,
+                                                 regions=False)
+        self.assertEqual(listed["list_records"], ["regions", "systems"])
+        code, text, _kept = self.narrowed("misterfpga", from_pack=[mister], core=["x"])
+        self.assertEqual(code, 1)
+        self.assertIn("MiSTer FPGA's own file list records no cores either. Run it without "
+                      "--core, or narrow with --system.", text)
+        self.assertNotIn("--manifest", text)
+        code, text, kept = self.narrowed("misterfpga", from_pack=[mister],
+                                         system=["nintendo-gba"])
+        self.assertEqual((code, kept), (0, ["Bios/MGBA/gba_bios.bin"]), text)
+        self.assertTrue(mister_list.exists())
+
+    def test_line_mode_offers_what_can_be_chosen(self):
+        """tui_audit_11 P3-10: "c) choose systems, cores and regions" with a
+        pack that records systems only, and "Cores: 1) azahar" asked with
+        one answer."""
+        _listing, _pack, listed = self.minui("misterfpga", systems=True, cores=False,
+                                             regions=False)
+        files = [{"dest": f["path"], "sha1": f["sha1"], "size": f["size"],
+                  "repo_path": "x", "systems": f["systems"]} for f in listed["files"]]
+        self.assertEqual(install.narrowing_words(files, []), "systems")
+        listing, _pack, _listed = self.minui()
+        minui = json.loads(listing.read_text())["files"]
+        self.assertEqual(install.narrowing_words(minui, []), "cores and regions")
+        one_core = [{**entry, "systems": ["nintendo-3ds"], "cores": ["azahar"]}
+                    for entry in minui[:1]]
+        with mock.patch.object(install, "_ask", side_effect=["", ""]) as asked, \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            install._choose_narrowing(one_core, [], {}, None)
+        self.assertNotIn("Cores:", out.getvalue())
+        self.assertEqual(asked.call_count, 0)
 
     def test_the_card_marker_table_is_written_from_the_rules(self):
         """code_audit_18 P3-6, tui_audit_11 P2-2: the table left out the

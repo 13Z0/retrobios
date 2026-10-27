@@ -615,7 +615,9 @@ It keeps what those cores read and drops the systems none of them emulates,
 the rule `--installed-cores` applies.
 
 `c` walks through three numbered lists, each answered with numbers such as
-`1,4,7-9`, or Enter to keep everything on that axis.
+`1,4,7-9`, or Enter to keep everything on that axis. The letter names the
+lists it asks (`c) choose systems` with a MiSTer pack), and a list with one
+answer is not asked.
 
 - **Systems.** The consoles and computers the platform declares, titled and
   ordered as the full screen's Choose systems lists them, the id `--system`
@@ -636,6 +638,16 @@ without questions, every other option of the run in it, for instance
 `python3 install.py --platform retroarch --dest /home/me/.config/retroarch/system
 --system sony-playstation --region north-america`. Enter then installs, and
 `c` chooses again.
+
+An option is refused by the axis the list does not record, with what works
+instead. The MinUI, NextUI and MyMinUI lists record cores and regions and no
+system: `--core` and `--region` narrow them, `--system` is refused with
+`Run it without --system, or narrow with --core and --region`. A pack records
+the systems of its files and what its platform's list narrows by: with the
+pack alone, `--core` or `--region` names that list (`--manifest FILE`, a copy
+of `install/minui.json`) only when it records them, and MiSTer FPGA's pack
+says its list records no cores. A list from an older release records none of
+the three, and the one-line installer fetches the current one.
 
 The same choices on the command line:
 
