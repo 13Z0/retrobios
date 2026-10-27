@@ -740,7 +740,8 @@ until a green run on `main` follows.
 State is `.cache/autorun/state.json`, logs are
 `.cache/autorun/logs/<job>/<date>.log`, kept 30 days. A job's `report` key
 names a JSON file one of its steps writes, and the runner keeps it in the
-job's status. Exit codes: 0 for `ok`,
+job's status. A report holding an `alert` raises the `job:<name>` alert
+until a report without one. Exit codes: 0 for `ok`,
 75 for `deferred`, 1 otherwise.
 
 | Job | Schedule | What it does |
@@ -849,12 +850,16 @@ python scripts/core_probe.py check --core core.so --content disc.cue \
 Each repetition runs in a fresh process under `strace -f -e trace=openat,open`
 when strace is installed. The worker starts with an empty environment and
 clears its own before it loads the core, keeping only the `--env` values.
-When bubblewrap works on the host, the worker runs in it: the whole tree
-read-only, the staged system directory and the scratch folder writable, no
-network, and `~/.config`, `~/.ssh`, `~/.gnupg`, `~/.git-credentials` and
-`~/.netrc` masked. Each repetition names what it ran under in `isolation`
-(`bwrap`, or `environment only` with the reason). A timeout kills the
-worker's whole process group. The files the core opened under the system
+When bubblewrap works on the host, the worker runs in it, built as an
+allowlist: `/usr` and the `/lib*`, `/bin`, `/sbin` links, the files of `/etc`
+the loader, fonts, TLS, the clock and user lookups read, all read-only. Home,
+`/tmp` and `/mnt` are empty, the core, the content folder and the staged
+system directory are read-only, and only the repetition's scratch folder is
+writable. Every namespace is unshared, the network included, so nothing of
+the user (`~/.config`, `~/.ssh`, `~/.git-credentials`) or of the checkout is
+there to read. Each repetition names what it ran under in `isolation`
+(`bwrap`, or `environment only` with the reason), and `--require-sandbox`
+refuses to run without it. A timeout kills the worker's whole process group. The files the core opened under the system
 directory come from the kernel, each hashed again after the run. Without
 strace the record says that tracing was unavailable.
 
@@ -950,7 +955,7 @@ python scripts/campaign.py install-timer     # the autorun units, the campaign's
 
 | Step | What happens |
 |------|--------------|
-| Core | The x86_64 Linux nightly from `buildbot.libretro.com`, for each name of the profile's `cores:` the buildbot publishes, downloaded again only when its `ETag` or `Last-Modified` changes. The record keeps the artifact URL, the `.so` sha256 and the `retro_get_system_info` version. With no nightly, the profile's `source_commit` is cloned and built once with `make` (`Makefile.libretro` first), the failure kept so it is not tried again for that commit. git clones with the allowlisted environment, and `make` runs in the same bubblewrap sandbox as a core, its source tree writable, with a private `/tmp`. The record's `build_command` says which isolation was used. A standalone emulator is `pending: standalone` |
+| Core | The x86_64 Linux nightly from `buildbot.libretro.com`, for each name of the profile's `cores:` the buildbot publishes, downloaded again only when its `ETag` or `Last-Modified` changes. The record keeps the artifact URL, the `.so` sha256 and the `retro_get_system_info` version. With no nightly, the profile's `source_commit` is cloned and built once with `make` (`Makefile.libretro` first), the failure kept so it is not tried again for that commit. git clones with the allowlisted environment, and `make` runs in the same bubblewrap sandbox as a core, its source tree the one writable folder. The record's `build_command` says which isolation was used. A standalone emulator is `pending: standalone` |
 | Content | Each system's games come from `tests/campaign/content.yml`, by catalog name and with the reason each was chosen. They are read from `.cache/test-content/<romfetch system>/<name>/`, each file checked against its `identity.json`. Missing content is fetched with `romfetch get <system> <name> --json` when romfetch is on `PATH`, in `RETROBIOS_ROMFETCH` or given with `--romfetch`. Otherwise the checks are `pending: content`, with romfetch's exit code and error code when it failed. Content never enters git, and a record keeps only its identity |
 | Checks | `files` stages every declared file the collection holds and reads which ones the core opens (strace). `boot` runs the game with no file and with the declared one (`boot_file:`, else the entry of the game's region). An entry the `files` run left unread is staged `alone`, then where the core looked for it (`path`) and under the names it looked for (`alias`). `variants` runs each `.variants/` copy of a file the core opened. `bench` times the game, warm-up excluded, 5 repetitions |
 | Rules | `campaign_rules.py`, a fixed table of pure functions (below). A field the table settles is written into the profile, with `evidence:` naming the record ids. Anything else is a line of `measurements/findings.jsonl` |
@@ -981,6 +986,7 @@ checks. The campaign's own `evidence:` writes do not count as a profile change.
 |-------|------|
 | Lock | The host-wide autorun lock. Under the `campaign` job, autorun holds it and says so with `RETROBIOS_AUTO_LOCK_HELD` |
 | Environment | `core_probe.py`, git and `make` get autorun's allowlist, romfetch the same plus its `ROMFETCH_*` settings. None sees a token or a password |
+| Sandbox | Fails closed: without a working bubblewrap the pass is `refused` (exit 3) and nothing third-party runs, every probe is started with `--require-sandbox`, and a build is refused. `--allow-unsandboxed` overrides. Under autorun the refusal raises the `job:campaign` alert |
 | Load | Before each run, waits while the 1-minute load is above a quarter of the CPUs, up to `--max-load-wait` seconds, then the pass stops as `paused` |
 | Disk | Below `--min-free-gb` (default 30) the pass stops as `paused` |
 | Budget | No check starts after `--budget` |
