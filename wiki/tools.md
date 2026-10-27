@@ -1055,7 +1055,7 @@ checks. The campaign's own `evidence:` writes do not count as a profile change.
 | Guard | Rule |
 |-------|------|
 | Lock | The host-wide autorun lock. Under the `campaign` job, autorun holds it and says so with `RETROBIOS_AUTO_LOCK_HELD` |
-| Probe lock | Not held by the pass: each core_probe it starts takes the host probe lock for its own run, so two passes, or a pass and another agent's runs, interleave. Do not wrap `campaign.py run` in `flock` |
+| Probe lock | Not held by the pass: each core_probe it starts takes the host probe lock for its own run, so the pass and other measurements (pack_probe, a core_probe loop, a campaign of another checkout) interleave. Two passes of one checkout still exclude each other through the automation lock, since they share `state.json`. Do not wrap `campaign.py run` in `flock` |
 | Environment | `core_probe.py`, git and `make` get autorun's allowlist, romfetch the same plus its `ROMFETCH_*` settings. None sees a token or a password |
 | Sandbox | Fails closed: without a working bubblewrap the pass is `refused` (exit 3) and nothing third-party runs, every probe is started with `--require-sandbox`, and a build is refused. `--allow-unsandboxed` overrides. Under autorun the refusal raises the `job:campaign` alert |
 | Load | Before each run, waits while the 1-minute load is above a quarter of the CPUs, up to `--max-load-wait` seconds, then the pass stops as `paused` |
