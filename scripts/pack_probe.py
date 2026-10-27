@@ -27,16 +27,21 @@ the verdict, every file the core opened mapped to the pack entry that put it
 there, and the findings: a file the core looked for that the layout lacks,
 or holds under another path.
 
+Each core_probe run holds the host's probe lock (~/.local/state/retrobios/
+probe.lock, RETROBIOS_PROBE_LOCK) and releases it before the next: other
+probes run between ours. Building and extracting the pack take no lock.
+
 Usage:
-    flock ~/.local/state/retrobios/probe.lock \\
-        python scripts/pack_probe.py run --platform retroarch [--system sony-playstation]
+    python scripts/pack_probe.py run --platform retroarch [--system sony-playstation]
     python scripts/pack_probe.py plan --platform batocera
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
 import datetime as dt
+import fcntl
 import hashlib
 import json
 import os
@@ -80,6 +85,8 @@ VERDICTS = ("boots", "bios_error", "crash", "hang", "unknown")
 MAX_ROUNDS = 6
 PROBE_TIMEOUT = 900
 IDLE_WAIT = 1800
+PROBE_LOCK = Path(os.environ.get("RETROBIOS_PROBE_LOCK")
+                  or Path.home() / ".local" / "state" / "retrobios" / "probe.lock")
 EXIT_BUSY = 3
 
 # The hardware target each platform is probed for: the one whose libretro
@@ -452,17 +459,33 @@ def wait_idle(limit: float = IDLE_WAIT, poll: float = 30.0) -> None:
         waited += poll
 
 
+@contextlib.contextmanager
+def probe_lock(path: Path | None = None):
+    """The host's probe lock, for one run: one probe at a time on the host,
+    released between runs so a pass never holds it for its whole length."""
+    path = path or PROBE_LOCK
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a") as handle:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
+
+
 def core_probe(argv: list[str], staged: set[str], layout: Layout, work: Path) -> tuple[int, dict | None, str]:
-    """core_probe.py run, the system files passed in an argument file."""
-    if "--record" in argv:
-        wait_idle()
+    """core_probe.py run under the probe lock, the system files passed in an
+    argument file."""
     work.mkdir(parents=True, exist_ok=True)
     argfile = work / "system-files.args"
     argfile.write_text("".join(f"--system-file\n{rel}={layout.root / rel}\n" for rel in sorted(staged)),
                        encoding="utf-8")
     command = [sys.executable, str(ROOT / "scripts" / "core_probe.py"), *argv, f"@{argfile}"]
-    proc = subprocess.run(command, capture_output=True, text=True, check=False, cwd=ROOT,
-                          timeout=PROBE_TIMEOUT * 2 + 120)
+    with probe_lock():
+        if "--record" in argv:
+            wait_idle()
+        proc = subprocess.run(command, capture_output=True, text=True, check=False, cwd=ROOT,
+                              timeout=PROBE_TIMEOUT * 2 + 120)
     record = None
     if proc.returncode == 0:
         try:

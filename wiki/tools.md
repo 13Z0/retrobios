@@ -1078,12 +1078,13 @@ Schemas: `campaign-finding.schema.json` and `campaign-run.schema.json`.
 
 Tests what the project promises: a platform's pack, installed the way a user
 installs it, starts that platform's games. A maintainer starts it, nothing
-runs it on a schedule. Run it under the probe lock, one run on the host at a
-time:
+runs it on a schedule. It takes the host's probe lock
+(`~/.local/state/retrobios/probe.lock`, `RETROBIOS_PROBE_LOCK`) around each
+`core_probe` run and releases it before the next, so other probes run between
+its runs. Never wrap the whole command in `flock`:
 
 ```bash
-flock ~/.local/state/retrobios/probe.lock \
-  python scripts/pack_probe.py run --platform retroarch
+python scripts/pack_probe.py run --platform retroarch
 python scripts/pack_probe.py run --platform batocera --system sega-saturn --install pack
 python scripts/pack_probe.py plan --platform retrobat   # systems, games and cores, nothing run
 ```
@@ -1094,7 +1095,7 @@ python scripts/pack_probe.py plan --platform retrobat   # systems, games and cor
 | Games | `tests/campaign/content.yml` and `tests/campaign/pack_content.yml`, same format, read from `.cache/test-content` of the main checkout and checked against their `identity.json`. `--fetch` gets a missing one through romfetch |
 | Cores | `resolve_platform_cores` with the target of the platform (`linux-x86_64` for RetroArch, `x86_64` for Batocera, `windows` for RetroBat), kept when the profile serves the system and its libretro build runs there: not a `standalone_cores` entry, unless `dual_mode_cores` names it. The `.so` is the buildbot's x86_64 Linux nightly, every build the target names, else the one named after the profile, else the first of its `cores:`. Kept in `.cache/pack-probe/cores` with its URL and `Last-Modified` |
 | Staging | `core_probe.py` copies what it stages, and a pack holds gigabytes, so the probe stages what the core can reach: the profile's libretro entries (path or name, and aliases), the platform's list for the system, every file of the folders those sit in, and for a profile with `found_by: content` every root file of a size it declares. A file or folder the core then looks for that the layout holds is staged and the run repeated, up to 6 runs |
-| Run | `core_probe.py run --require-sandbox --record`, the game's frames and frame sampling from its content entry, no core option set. The first run is recorded. When the staging grew, the closed staging runs again, recorded with `--supersedes` the first. Before a recorded run the probe waits for the 1-minute load to fall to a quarter of the CPUs, up to 30 minutes, then stops with exit 3 |
+| Run | `core_probe.py run --require-sandbox --record`, the game's frames and frame sampling from its content entry, no core option set. The first run is recorded. When the staging grew, the closed staging runs again, recorded with `--supersedes` the first. Each run holds the probe lock. Before a recorded run, lock held, the probe waits for the 1-minute load to fall to a quarter of the CPUs, up to 30 minutes, then stops with exit 3 |
 
 Each probe is one line of `measurements/pack-probes.jsonl`
 (`pack-probe.schema.json`): the platform and its version, the install path,

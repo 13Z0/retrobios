@@ -246,6 +246,41 @@ class SitePages(unittest.TestCase):
         self.assertEqual(sm.pack_tested_section([]), [])
 
 
+class Lock(unittest.TestCase):
+    """The probe lock is held for one core_probe run and released after it."""
+
+    def test_held_for_each_run_only(self) -> None:
+        import fcntl
+        import subprocess
+        import unittest.mock
+
+        work = TMP / "lock"
+        shutil.rmtree(work, ignore_errors=True)
+        lock = work / "probe.lock"
+        held = []
+
+        def try_lock() -> bool:
+            with lock.open("a") as handle:
+                try:
+                    fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    return True
+                fcntl.flock(handle, fcntl.LOCK_UN)
+                return False
+
+        def fake_run(command, **kwargs):
+            held.append(try_lock())
+            return subprocess.CompletedProcess(command, 2, "", "refused")
+
+        lay = layout({"a.bin": 1})
+        with unittest.mock.patch.object(pp, "PROBE_LOCK", lock), \
+                unittest.mock.patch.object(pp.subprocess, "run", fake_run):
+            for _ in range(2):
+                self.assertEqual(pp.core_probe(["run"], {"a.bin"}, lay, work), (2, None, "refused"))
+        self.assertEqual(held, [True, True])
+        self.assertFalse(try_lock())
+
+
 def collection_on_disk() -> bool:
     return (REPO_ROOT / "bios" / "Sony" / "PlayStation" / "scph5501.bin").is_file()
 
