@@ -5,8 +5,8 @@
   "categorized": true,
   "platform": "romm",
   "display_name": "RomM",
-  "version": "1.0",
-  "generated": "2026-10-26T22:11:28Z",
+  "version": "5.4.0",
+  "generated": "2026-10-27T10:27:58Z",
   "base_destination": "bios",
   "detect": [
     {

@@ -215,12 +215,12 @@ class Scraper(BaseScraper):
             if not entry["docs"]:
                 del entry["docs"]
 
+        # The BiosDB has no release: the date it was built is the only
+        # version the list carries, and the manifest needs one.
         timestamp = data.get("timestamp")
-        released = (
-            datetime.fromtimestamp(timestamp, timezone.utc).strftime("%Y-%m-%d")
-            if isinstance(timestamp, (int, float))
-            else ""
-        )
+        if not isinstance(timestamp, (int, float)):
+            raise RuntimeError(f"{self.url}: the BiosDB records no timestamp")
+        released = datetime.fromtimestamp(timestamp, timezone.utc).strftime("%Y-%m-%d")
 
         return {
             "platform": "MiSTer FPGA",

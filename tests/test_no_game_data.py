@@ -92,7 +92,7 @@ class _Fixture(unittest.TestCase):
         for key, profile in PROFILES.items():
             (self.emulators / f"{key}.yml").write_text(yaml.dump(profile))
         platform = {
-            "platform": "Handheld", "verification_mode": "existence",
+            "platform": "Handheld", "version": "2.1", "verification_mode": "existence",
             "cores": ["emu", "doomcore"],
             "systems": {
                 "console": {"files": [{"name": "firmware.rom", "destination": "firmware.rom"}]},

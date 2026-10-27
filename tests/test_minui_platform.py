@@ -193,6 +193,7 @@ class PackPlacesCoreFilesUnderTheTag(unittest.TestCase):
 
         platform = {
             "platform": "MinUI Test",
+            "version": "2025-11-27",
             "base_destination": "",
             "verification_mode": "existence",
             "cores": ["gambatte", "arcadecore", "unlisted"],

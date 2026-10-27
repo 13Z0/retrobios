@@ -224,6 +224,7 @@ class TestE2E(unittest.TestCase):
     def _create_existence_platform(self):
         config = {
             "platform": "TestExistence",
+            "version": "9.1",
             "verification_mode": "existence",
             "base_destination": "system",
             "systems": {
@@ -3676,6 +3677,51 @@ class TestE2E(unittest.TestCase):
             self.assertIsInstance(f["size"], int)
             self.assertGreater(len(f["sha1"]), 0)
 
+    def test_91_manifest_version_is_the_platform_list_version(self):
+        """The manifest names the version of the list it was built from.
+
+        It was the constant "1.0" for every platform, so the installer could
+        not tell which Batocera or Recalbox release a list described. Two
+        platforms of different versions show the value comes from each YAML.
+        A YAML without one, an inheriting child included, is refused rather
+        than written with a stand-in or its parent's version.
+        """
+        from common import _platform_config_cache
+        from generate_pack import generate_manifest
+
+        registry_path = os.path.join(self.platforms_dir, "_test_registry_version.yml")
+        with open(registry_path, "w") as fh:
+            yaml.dump({"platforms": {}}, fh)
+        with open(os.path.join(self.platforms_dir, "test_md5.yml")) as fh:
+            config = yaml.safe_load(fh)
+        config["version"] = "41"
+        with open(os.path.join(self.platforms_dir, "versioned_md5.yml"), "w") as fh:
+            yaml.dump(config, fh)
+        del config["version"]
+        with open(os.path.join(self.platforms_dir, "unversioned.yml"), "w") as fh:
+            yaml.dump(config, fh)
+        _platform_config_cache.clear()
+
+        def version_of(name: str) -> str:
+            return generate_manifest(
+                name, self.platforms_dir, self.db, self.bios_dir, registry_path,
+                emulators_dir=self.emulators_dir, offline=True,
+            )["version"]
+
+        self.assertEqual(version_of("test_existence"), "9.1")
+        self.assertEqual(version_of("versioned_md5"), "41")
+        for name in ("unversioned", "test_inherited"):
+            with self.subTest(platform=name), \
+                    self.assertRaisesRegex(ValueError, "records no version"):
+                version_of(name)
+        with open(os.path.join(self.platforms_dir, "test_inherited.yml")) as fh:
+            child = yaml.safe_load(fh)
+        child["version"] = "2"
+        with open(os.path.join(self.platforms_dir, "test_inherited.yml"), "w") as fh:
+            yaml.dump(child, fh)
+        _platform_config_cache.clear()
+        self.assertEqual(version_of("test_inherited"), "2")
+
     def test_91b_manifest_hash_points_at_a_fetchable_file(self):
         """A declared hash no local file carries must not blank repo_path.
 
@@ -5726,6 +5772,7 @@ struct BurnDriver BurnDrvneogeo = {
         self.db = self._build_db()
         config = {
             "platform": "RegionPlat",
+            "version": "3.0",
             "verification_mode": "existence",
             "systems": {
                 "region-console": {

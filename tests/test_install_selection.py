@@ -1021,7 +1021,7 @@ class AHeldFileTheInstallerCannotFetch(unittest.TestCase):
         self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
         Path("platforms").mkdir()
         Path("platforms/p.yml").write_text(json.dumps({
-            "platform": "P", "verification_mode": "existence", "cores": ["core"],
+            "platform": "P", "version": "2.1", "verification_mode": "existence", "cores": ["core"],
             "systems": {"sys": {"files": []}},
         }))
         Path("platforms/_registry.yml").write_text(
@@ -1096,7 +1096,7 @@ class AStandaloneLayoutBelowTheBiosFolder(unittest.TestCase):
         self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
         Path("platforms").mkdir()
         Path("platforms/p.yml").write_text(json.dumps({
-            "platform": "P", "verification_mode": "existence",
+            "platform": "P", "version": "2.1", "verification_mode": "existence",
             "base_destination": "bios", "cores": ["dsa", "other"],
             "standalone_cores": ["dsa"], "systems": {"sys": {"files": []}},
         }))

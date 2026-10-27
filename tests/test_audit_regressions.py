@@ -2080,6 +2080,59 @@ def _git_paths(*args: str, stdin: list[str] | None = None) -> set[str] | None:
     return {p for p in result.stdout.split("\0") if p}
 
 
+class ManifestVersionIsThePlatformsOwn(unittest.TestCase):
+    """Every install manifest named its list "1.0", and an inheriting YAML
+    took its parent's version: Lakka was published as RetroArch v1.22.2.
+    The installer compares the list's version with the one a machine runs,
+    so each manifest states the version its own platform YAML records."""
+
+    def setUp(self):
+        from scripts.common import _platform_config_cache
+        _platform_config_cache.clear()
+
+    def test_committed_manifests_state_their_platform_version(self):
+        from scripts.common import load_platform_config
+        manifests = sorted((ROOT / "install").glob("*.json"))
+        self.assertTrue(manifests)
+        for path in manifests:
+            with self.subTest(manifest=path.name):
+                data = json.loads(path.read_text())
+                config = load_platform_config(data["platform"], str(ROOT / "platforms"))
+                self.assertTrue(config.get("version"))
+                self.assertEqual(data["version"], str(config["version"]))
+
+    def test_no_child_shows_its_parents_version(self):
+        from scripts.common import load_platform_config
+        platforms = ROOT / "platforms"
+        children = {}
+        for path in sorted(platforms.glob("*.yml")):
+            raw = yaml.safe_load(path.read_text()) or {}
+            if isinstance(raw, dict) and raw.get("inherits"):
+                children[path.stem] = raw
+        self.assertIn("lakka", children)
+        for name, raw in children.items():
+            with self.subTest(platform=name):
+                parent = yaml.safe_load(
+                    (platforms / f"{raw['inherits']}.yml").read_text())
+                version = load_platform_config(name, str(platforms)).get("version")
+                self.assertEqual(version, raw.get("version"))
+                self.assertNotEqual(version, parent.get("version"))
+
+    def test_an_unversioned_child_has_no_version(self):
+        from scripts.common import load_platform_config
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            Path(tmp, "parent.yml").write_text("platform: P\nversion: '2.0'\nsystems: {}\n")
+            Path(tmp, "child.yml").write_text("inherits: parent\nplatform: C\n")
+            self.assertNotIn("version", load_platform_config("child", tmp))
+
+    def test_lakka_names_the_release_its_cores_are_read_at(self):
+        platforms = ROOT / "platforms"
+        lakka = yaml.safe_load((platforms / "lakka.yml").read_text())
+        targets = yaml.safe_load((platforms / "targets" / "lakka.yml").read_text())
+        tag = re.search(r"/blob/([^/]+)/", targets["source"]).group(1)
+        self.assertEqual(lakka["version"], tag)
+
+
 class EveryManifestEntryIsFetchable(unittest.TestCase):
     """An install manifest may not list a file the installer cannot get.
 

@@ -5,8 +5,8 @@
   "categorized": true,
   "platform": "bizhawk",
   "display_name": "BizHawk",
-  "version": "1.0",
-  "generated": "2026-10-26T22:11:28Z",
+  "version": "2.11.1",
+  "generated": "2026-10-27T10:27:58Z",
   "base_destination": "Firmware",
   "detect": [
     {

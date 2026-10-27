@@ -47,6 +47,7 @@ class FrontendDigestDecides(unittest.TestCase):
         )
         (self.platforms / "digestplat.yml").write_text(yaml.safe_dump({
             "platform": "DigestPlat",
+            "version": "2.1",
             "verification_mode": "md5",
             "base_destination": "bios",
             "systems": {"psx": {"files": [{
