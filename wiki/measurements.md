@@ -38,9 +38,9 @@ shown without them.
 ## Where results are kept
 
 Each result is a full record in the
-[retrobios-measurements](https://github.com/Abdess/retrobios-measurements)
-project. A record is never changed once added. A new run is added beside it,
-and a correction names the record it replaces.
+[`measurements/`](https://github.com/Abdess/retrobios/tree/main/measurements)
+folder of this project. A record is never changed once added. A new run is
+added beside it, and a correction names the record it replaces.
 
 The results so far ran on these computers:
 
