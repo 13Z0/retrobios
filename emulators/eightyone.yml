@@ -6,8 +6,10 @@ upstream: "https://github.com/charlierobson/EightyOne"
 profiled_date: "2026-10-17"
 source_commit: "39ea0cc26453f4026458cfff62f10223a6bb1724"
 core_version: "v1.2"
+pin_frozen: "Recalbox, the only platform that ships this core, builds its tag v1.2 (Recalbox package/libretro-eightyone/libretro-eightyone.mk:8 at tag 10.1.1)."
 display_name: "Sinclair - ZX81 / ZX Spectrum (EightyOne, Recalbox)"
 cores: ["eightyone"]
+built_by: [recalbox]
 systems:
   - sinclair-zx81
   - sinclair-zx80

@@ -9,6 +9,7 @@ core_version: "v0.9"
 display_name: "Amstrad - CPC / GX4000 (Sugarbox2)"
 cores:
   - "sugarbox2"
+built_by: [recalbox]
 systems:
   - "amstrad-cpc"
 
