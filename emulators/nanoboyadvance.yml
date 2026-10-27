@@ -5,7 +5,11 @@ source: "https://github.com/nba-emu/NanoBoyAdvance"
 profiled_date: "2026-10-17"
 source_commit: "3bb6f478f977dbfd3106508536e5fbce90d1898b"
 pin_frozen: "ROCKNIX 20261001 builds this revision of the SDL2 frontend (v1.6 plus four commits). Later upstream work is not part of that build."
-core_version: "1.6"
+core_version: "v1.6-4-g3bb6f47"
+version_basis:
+  kind: tag
+  tag: "v1.6"
+  distance: 4
 display_name: "Nintendo - Game Boy Advance (NanoBoyAdvance)"
 cores:
   - "nanoboyadvance"

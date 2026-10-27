@@ -5,7 +5,11 @@ source: "https://github.com/adventuregamestudio/ags"
 source_branch: release-3.6.0
 source_commit: "6802bad8dc3189462003d4a169fc591f64cfb9b6"
 profiled_date: "2026-10-20"
-core_version: "3.6.0.60"
+core_version: "v3.6.0.60"
+version_basis:
+  kind: tag
+  tag: "v3.6.0.60"
+  distance: 0
 display_name: "Adventure Game Studio (AGS)"
 cores:
   - ags

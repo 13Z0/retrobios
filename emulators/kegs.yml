@@ -8,6 +8,11 @@ version_source:
   pattern: 'Download the KEGS v(\d+\.\d+) zip'
 profiled_date: "2026-08-08"
 core_version: "1.38"
+version_basis:
+  kind: package
+  url: "https://kegs.sourceforge.net/kegs.1.38.zip"
+  pattern: 'kegs\.(\d+\.\d+)\.zip'
+  artifact: "kegs.1.38.zip"
 display_name: "Apple - Apple IIGS (KEGS)"
 cores:
   - kegs

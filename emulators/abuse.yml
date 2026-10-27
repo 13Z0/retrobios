@@ -6,6 +6,10 @@ upstream: "https://github.com/Xenoveritas/abuse"
 profiled_date: "2026-10-04"
 source_commit: "c855a923cd7fb27b629b4e1af78b1fcc5f263d01"
 core_version: "v0.9.1"
+version_basis:
+  kind: tag
+  tag: "v0.9.1"
+  distance: 0
 display_name: "Abuse"
 cores: [abuse]
 systems: []

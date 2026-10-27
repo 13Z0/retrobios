@@ -5,7 +5,11 @@ source: "https://github.com/simple64/simple64"
 upstream: "https://github.com/simple64/simple64"
 profiled_date: "2026-08-08"
 source_commit: "d8c969c7b932e3d76e6a25549d76348839dbaefd"
-core_version: "v2024.12.1"
+core_version: "v2024.12.1-5-gd8c969c"
+version_basis:
+  kind: tag
+  tag: "v2024.12.1"
+  distance: 5
 display_name: "Nintendo - Nintendo 64 (simple64)"
 cores:
   - simple64

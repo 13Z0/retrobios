@@ -8,6 +8,12 @@ version_source:
   pattern: 'The Latest Version of ColEm is (\d+(?:\.\d+)+)'
 profiled_date: "2026-08-08"
 core_version: "5.6"
+version_basis:
+  kind: package
+  url: "https://fms.komkon.org/ColEm/ColEm56-Source.zip"
+  pattern: 'ColEm(\d)(\d+)-Source\.zip'
+  format: "{1}.{2}"
+  artifact: "ColEm56-Source.zip"
 display_name: "Coleco - ColecoVision / Adam (ColEm)"
 cores:
   - colem

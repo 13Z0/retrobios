@@ -5,7 +5,11 @@ source: "https://gitlab.com/DavidGriffith/frotz"
 upstream: "https://gitlab.com/DavidGriffith/frotz"
 profiled_date: "2026-10-17"
 source_commit: "042d7bcadc1e2a8090cf737c841d8b7fc14b6eff"
-core_version: "2.55pre"
+core_version: "2.56pre"
+version_basis:
+  kind: file
+  path: "Makefile"
+  pattern: '^VERSION\s*=\s*(\S+)'
 display_name: "Infocom Z-Machine (SDL Frotz)"
 cores:
   - "frotz"

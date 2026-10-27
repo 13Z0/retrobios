@@ -5,6 +5,11 @@ source: "https://github.com/TheXTech/TheXTech"
 upstream: "https://github.com/TheXTech/TheXTech"
 profiled_date: "2026-10-04"
 source_commit: "e07c5bfb92377d315d0ab33177092fa7cadeb84e"
+core_version: "1.8-dev"
+version_basis:
+  kind: file
+  path: "version.cmake"
+  pattern: 'set\(THEXTECH_ANDROID_VERSION_NAME "([^"]+)"\)'
 display_name: "TheXTech"
 cores: []
 systems: [smbx]

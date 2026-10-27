@@ -6,6 +6,10 @@ upstream: "https://github.com/Rosalie241/RMG"
 profiled_date: "2026-10-04"
 source_commit: "4777ed3f1fb7f1e4a0e70438a27dc4a5e9fb1927"
 core_version: "v0.9.0"
+version_basis:
+  kind: file
+  path: "VERSION"
+  pattern: '^(v?[0-9][^\s]*)'
 display_name: "Nintendo - Nintendo 64 (Rosalie's Mupen GUI)"
 cores:
   - rosalies-mupen-gui

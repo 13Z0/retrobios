@@ -5,6 +5,10 @@ source: "https://github.com/Cxbx-Reloaded/Cxbx-Reloaded"
 profiled_date: "2026-10-20"
 source_commit: "31ff15ba1d91a9a00221546c665efb133889f53a"
 core_version: "CI-31ff15b"
+version_basis:
+  kind: tag
+  tag: "CI-31ff15b"
+  distance: 0
 display_name: "Microsoft - Xbox / Sega Chihiro (Cxbx-Reloaded 31ff15b)"
 cores:
   - chihiro

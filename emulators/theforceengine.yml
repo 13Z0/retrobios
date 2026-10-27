@@ -6,6 +6,10 @@ upstream: "https://github.com/TheForceEngine/TheForceEngine"
 profiled_date: "2026-10-04"
 source_commit: "cc25205cc94c36a396f6f50295772f6ec83069a2"
 core_version: "v1.22.420"
+version_basis:
+  kind: tag
+  tag: "v1.22.420"
+  distance: 0
 display_name: "The Force Engine"
 cores: [theforceengine, tfe]
 systems: [dark-forces, outlaws]

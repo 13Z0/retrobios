@@ -6,6 +6,11 @@ upstream: "https://github.com/lightspark/lightspark"
 profiled_date: "2026-08-08"
 source_commit: "6f07fd65cb95b88ff73e905bf78a1a8b1ddf6049"
 core_version: "0.10.0"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'SET\(MAJOR_VERSION "(\d+)"\)\s*\nSET\(MINOR_VERSION "(\d+)"\)\s*\nSET\(PATCH_VERSION "(\d+)"\)'
+  format: "{1}.{2}.{3}"
 display_name: "Adobe Flash (Lightspark)"
 cores:
   - lightspark

@@ -5,7 +5,11 @@ source: "https://github.com/FWGS/xash3d-fwgs"
 upstream: "https://github.com/FWGS/xash3d-fwgs"
 profiled_date: "2026-10-04"
 source_commit: "27092af50d912432887faa43a1cccddfae569b2d"
-core_version: "0.21+git"
+core_version: "0.21"
+version_basis:
+  kind: file
+  path: "engine/common/com_strings.h"
+  pattern: '#define\s+XASH_VERSION\s+"([^"]+)"'
 display_name: "Xash3D FWGS"
 cores: [xash3d_fwgs, xash3d]
 systems: [halflife, cstrike, czero, czeror, dmc, gearbox, bshift, ricochet, tfc]

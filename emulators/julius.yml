@@ -5,7 +5,12 @@ source: "https://github.com/bvschaik/julius"
 upstream: "https://github.com/bvschaik/julius"
 profiled_date: "2026-10-17"
 source_commit: "34d1ecd54befb845c0139b371fa8a0438210dac1"
-core_version: "v1.8.0"
+core_version: "1.8.0"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'set\(PROJECT_VERSION_MAJOR (\d+)\)\s*\nset\(PROJECT_VERSION_MINOR (\d+)\)\s*\nset\(PROJECT_VERSION_PATCH (\d+)\)'
+  format: "{1}.{2}.{3}"
 display_name: "Caesar III (Julius)"
 cores:
   - "julius"

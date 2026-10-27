@@ -8,6 +8,11 @@ version_source:
   pattern: 'Latest Release Notes \((v[0-9.]+[a-z]?)\)'
 profiled_date: "2026-10-20"
 core_version: "v0.320"
+version_basis:
+  kind: package
+  url: "https://www.zsnes.com/files/SuperZSNES_v0.320.zip"
+  pattern: 'SuperZSNES_(v\d+\.\d+)\.zip'
+  artifact: "SuperZSNES_v0.320.zip"
 display_name: "Nintendo - SNES / SFC (SUPER ZSNES)"
 cores:
   - superzsnes

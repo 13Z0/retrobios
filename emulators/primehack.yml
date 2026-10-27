@@ -7,6 +7,10 @@ profiled_date: "2026-03-26"
 source_commit: "53f53e0f5bad27ad62a807cb93b136d84f68777f"
 upstream_commit: "d8558142ead21b3fa39809c4aedb982fbfc85feb"
 core_version: "1.0.9"
+version_basis:
+  kind: tag
+  tag: "1.0.9"
+  distance: 0
 display_name: "PrimeHack (Dolphin fork for Metroid Prime)"
 cores:
   - primehack

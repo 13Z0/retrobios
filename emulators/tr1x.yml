@@ -6,6 +6,12 @@ source: "https://github.com/LostArtefacts/TRX"
 upstream: "https://github.com/LostArtefacts/TRX"
 source_commit: "4d55f7d3130f9d04bdc1fefb85bf4d8fa93a22d3"
 upstream_commit: "3d39911a1b839c753b6efad236db67d9fb2b273e"
+core_version: "trx-1.11.1-784-g4d55f7d"
+version_basis:
+  kind: tag
+  match: "trx-*"
+  tag: "trx-1.11.1"
+  distance: 784
 profiled_date: "2026-10-04"
 cores: []
 systems:

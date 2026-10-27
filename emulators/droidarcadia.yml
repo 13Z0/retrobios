@@ -9,6 +9,10 @@ version_source:
 author: "James Jacobs (Amigan Software)"
 profiled_date: "2026-10-24"
 core_version: "4.75"
+version_basis:
+  kind: package
+  url: "https://amigan.1emu.net/releases/"
+  artifact: "DroidArcadia-src.rar, release 4.75 on the author's releases page"
 display_name: "Emerson Arcadia 2001 / Interton VC 4000 (DroidArcadia)"
 cores:
   - droidarcadia

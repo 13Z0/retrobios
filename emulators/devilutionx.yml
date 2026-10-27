@@ -6,6 +6,10 @@ upstream: ~
 profiled_date: "2026-10-04"
 source_commit: "9d4871587e1a8d9606f97a43d85e939b82f77900"
 core_version: "1.6.0-dev"
+version_basis:
+  kind: file
+  path: "VERSION"
+  pattern: '^(\S+)$'
 display_name: "Diablo (DevilutionX)"
 cores: [devilutionx]
 systems: [diablo]

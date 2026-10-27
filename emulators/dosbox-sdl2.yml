@@ -5,7 +5,11 @@ source: "https://github.com/duganchen/dosbox"
 upstream: "https://sourceforge.net/projects/dosbox/"
 profiled_date: "2026-10-20"
 source_commit: "e6b88ad03202d1f74e329f54f213d3b070bd6202"
-core_version: "0.74-2"
+core_version: "r3911-xbrz-428-ge6b88ad"
+version_basis:
+  kind: tag
+  tag: "r3911-xbrz"
+  distance: 428
 display_name: "DOS (DOSBox SDL2)"
 cores: [dosbox-sdl2, "DOSBOXSDL2"]
 systems: [dos]

@@ -7,6 +7,10 @@ profiled_date: "2026-08-12"
 source_commit: "51893cab7e8a3d1298734848f4fd616f2e1831fb"
 upstream_commit: "3e8054b4627624398e4589f7f27b3d40a6b9718e"
 core_version: "1.7"
+version_basis:
+  kind: file
+  path: "Mariani.xcodeproj/project.pbxproj"
+  pattern: "MARKETING_VERSION = ([^;]+);"
 display_name: "Apple - Apple II (Mariani)"
 cores:
   - mariani

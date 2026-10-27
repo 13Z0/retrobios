@@ -9,7 +9,11 @@ upstream_commit: "f13d7ad2dcf141f59a999090dbc0f78be196e665"
 upstream_frozen: "The dojo branch carries flyinghead/flycast up to this commit, with the Dojo commits on top and no later merge."
 logo: "https://raw.githubusercontent.com/blueminder/flycast-dojo/master/shell/linux/flycast-dojo.png"
 profiled_date: "2026-10-27"
-core_version: "dojo-7.9"
+core_version: "dojo-7.9-1-gfa518ac"
+version_basis:
+  kind: tag
+  tag: "dojo-7.9"
+  distance: 1
 display_name: "Sega - Dreamcast/Naomi (Flycast Dojo)"
 cores:
   - flycast-dojo

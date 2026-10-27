@@ -6,6 +6,10 @@ upstream: "https://github.com/ioquake/ioq3"
 profiled_date: "2026-10-17"
 source_commit: "650bd625eb725446279c6176804b554e2e1c98f3"
 core_version: "1.36"
+version_basis:
+  kind: file
+  path: "Makefile"
+  pattern: 'VERSION=([0-9][\w.+-]*)'
 display_name: "Quake III Arena (vkQuake3)"
 cores: ["vkquake3"]
 systems: [quake3, teamarena]

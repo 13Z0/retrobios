@@ -5,7 +5,11 @@ source: "https://github.com/KaosOverride/CapriceRPI"
 upstream: "https://sourceforge.net/projects/caprice32/"
 source_commit: "7d86ebdc6a5e645220c6f30cf407ac57c3256054"
 profiled_date: "2026-10-20"
-core_version: "1.3c"
+core_version: "V1.3d"
+version_basis:
+  kind: file
+  path: "src/cap32.h"
+  pattern: '#define\s+VERSION_STRING\s+"\s*(V[0-9][^ ]*)'
 display_name: "Amstrad - CPC (CapriceRPI)"
 cores:
   - capricerpi

@@ -6,6 +6,9 @@ upstream_gone: "The emuplace GitHub account answers 404 and sudachi.emuplace.app
 profiled_date: "2026-10-20"
 source_commit: "c7431bd420d66c54df277ba0a0b71de42cf0a5bf"
 core_version: "1.0.15"
+version_basis:
+  kind: unverified
+  why: host_gone
 display_name: "Sudachi (Nintendo Switch)"
 cores:
   - sudachi

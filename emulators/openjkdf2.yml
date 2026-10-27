@@ -6,6 +6,10 @@ upstream: "https://github.com/shinyquagsire23/OpenJKDF2"
 profiled_date: "2026-10-04"
 source_commit: "798f930402525a23b94671d85b97b00390342fa0"
 core_version: "0.9.9.0"
+version_basis:
+  kind: file
+  path: "cmake_modules/version.cmake"
+  pattern: 'set\(OPENJKDF2_PROJECT_VERSION\s+([0-9.]+)\)'
 display_name: "OpenJKDF2"
 cores: []
 systems:

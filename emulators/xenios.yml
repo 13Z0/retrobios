@@ -6,7 +6,12 @@ upstream: "https://github.com/has207/xenia-edge"
 source_commit: "87b176a078c316fde3adf67a217f0c44615b0e0d"
 upstream_commit: "07021f019cf55105bc26c0474e0b0835808353e2"
 profiled_date: "2026-08-23"
-core_version: "2.0.1"
+core_version: "v2.0.1-2-g87b176a"
+version_basis:
+  kind: tag
+  match: "v[0-9]*.[0-9]*.[0-9]*"
+  tag: "v2.0.1"
+  distance: 2
 display_name: "Microsoft - Xbox 360 (XeniOS)"
 cores:
   - "xenios"

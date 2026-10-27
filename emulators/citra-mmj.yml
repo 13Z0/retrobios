@@ -6,6 +6,10 @@ upstream: "https://github.com/weihuoya/citra"
 profiled_date: "2026-08-11"
 source_commit: "9198dc24df2eb534b8fe7fa1c5c457081a7244ab"
 core_version: "20251112"
+version_basis:
+  kind: tag
+  tag: "20251112"
+  distance: 0
 display_name: "Nintendo - 3DS (Citra MMJ)"
 cores:
   - citra-mmj

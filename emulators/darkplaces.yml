@@ -6,7 +6,11 @@ upstream: "https://github.com/xonotic/darkplaces"
 source_branch: div0-stable
 profiled_date: "2026-10-20"
 source_commit: "ddabe55ae766087df0b82d214ca4b6d79a443345"
-core_version: "div0-stable"
+core_version: "xonotic-v0.8.6-2-gddabe55"
+version_basis:
+  kind: tag
+  tag: "xonotic-v0.8.6"
+  distance: 2
 display_name: "Quake (DarkPlaces)"
 cores:
   - darkplaces-quake

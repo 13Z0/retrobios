@@ -10,6 +10,11 @@ pin_frozen: "the classic build is this revision. v0.7 ships a newer shim, and it
 source_commit: "8e17e584884e19b0a912f1988730d576d6d5aa84"
 upstream_commit: "1d1f795dfc70e38da67724c7298779260f513889"
 core_version: "2.2n-3668-Turnip-v0.7"
+version_basis:
+  kind: package
+  url: "https://github.com/nckstwrt/NetherSX2-Turnip/releases/download/v0.7/NetherSX2-Classic-v2.2n-3668-Turnip-v0.7.apk"
+  pattern: 'NetherSX2-Classic-v(.+)\.apk'
+  artifact: "NetherSX2-Classic-v2.2n-3668-Turnip-v0.7.apk"
 display_name: "Sony - PlayStation 2 (NetherSX2-Turnip Classic)"
 mode: standalone
 cores:

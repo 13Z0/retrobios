@@ -5,6 +5,11 @@ source: "https://github.com/ZDoom/Raze"
 upstream: "https://github.com/ZDoom/Raze"
 profiled_date: "2026-10-04"
 source_commit: "76fe82f5eb318fdeb30ba9fb27093a9a10bc3821"
+core_version: "1.12pre"
+version_basis:
+  kind: file
+  path: "source/core/version.h"
+  pattern: '^#define VERSIONSTR "([^"]+)"'
 display_name: "Raze"
 cores: []
 systems: [duke3d, blood, shadow-warrior, powerslave, exhumed, redneck, nam, ww2gi]

@@ -4,7 +4,11 @@ core_classification: other
 source: "https://github.com/jonathan-markland/Jynx"
 profiled_date: "2026-10-20"
 source_commit: "c1247f2c957b78d3ca6f2b814ee346a298f3573c"
-core_version: "1.0.8"
+core_version: "v1.0.8"
+version_basis:
+  kind: tag
+  tag: "v1.0.8"
+  distance: 0
 display_name: "Camputers - Lynx (Jynx)"
 cores:
   - jynx

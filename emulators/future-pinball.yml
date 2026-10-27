@@ -8,6 +8,10 @@ version_source:
   pattern: 'The current version is ([0-9.]+)'
 profiled_date: "2026-08-11"
 core_version: "1.9.1.20101231"
+version_basis:
+  kind: package
+  url: "https://futurepinball.com/home.html"
+  artifact: "Future Pinball release labelled 1.9.1.20101231 on futurepinball.com, Future Pinball.exe"
 display_name: "Future Pinball"
 cores:
   - fpinball

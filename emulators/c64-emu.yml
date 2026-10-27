@@ -7,6 +7,10 @@ profiled_date: "2026-08-11"
 source_commit: "1c12fac5ce49badaadff2e2f210dcc30b89f4943"
 upstream_commit: "46b1bc4393251f838ce3dadd241c1f567d9371d1"
 core_version: "1.5.85"
+version_basis:
+  kind: file
+  path: "EmuFramework/CMakeLists.txt"
+  pattern: 'project\(\s*EmuFramework\s+VERSION\s+([0-9.]+)'
 display_name: "Commodore - C64 (C64.emu)"
 mode: standalone
 cores:

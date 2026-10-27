@@ -5,7 +5,11 @@ source: "https://github.com/Lime3DS/lime3ds-archive"
 upstream: "https://github.com/Lime3DS/lime3ds-archive"
 profiled_date: "2026-08-08"
 source_commit: "c9dbb5bb40d90dfa6a2b085d152ae6ecf915b2f9"
-core_version: "2119.1"
+core_version: "2119.1-2-gc9dbb5b"
+version_basis:
+  kind: tag
+  tag: "2119.1"
+  distance: 2
 display_name: "Nintendo - 3DS (Lime3DS)"
 cores:
   - lime3ds
