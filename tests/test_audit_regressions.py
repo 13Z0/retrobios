@@ -790,16 +790,6 @@ class FaqRegressions(unittest.TestCase):
     existence platform. Readers act on all three.
     """
 
-    _MAME_GENERATIONS = {
-        "MAME 2000": "mame2000",
-        "MAME 2003": "mame2003",
-        "MAME 2009": "mame2009",
-        "MAME 2010": "mame2010",
-        "MAME 2015": "mame2015",
-        "MAME 2016": "mame2016",
-        "current MAME": "mame",
-    }
-
     @staticmethod
     def _faq() -> str:
         # The questions about hashes and checks moved to the technical FAQ.
@@ -813,17 +803,23 @@ class FaqRegressions(unittest.TestCase):
         with (ROOT / "emulators" / f"{key}.yml").open(encoding="utf-8") as handle:
             return yaml.safe_load(handle)
 
-    def test_mame_versions_match_their_profiles(self):
-        # The list is wrapped, so a label and its version can straddle a line.
-        faq = " ".join(self._faq().split())
-        for label, key in self._MAME_GENERATIONS.items():
-            match = re.search(rf"{re.escape(label)} \(([^)]+)\)", faq)
-            self.assertIsNotNone(match, f"FAQ no longer states a version for {label}")
-            self.assertEqual(
-                match.group(1),
-                self._profile(key)["core_version"],
-                f"FAQ version for {label} has drifted from emulators/{key}.yml",
-            )
+    def test_the_romset_table_is_written_from_the_profiles(self):
+        # Typed by hand, the table and the prose under it kept MAME 0.160
+        # and FinalBurn Neo 1.0.0.2, versions no source at the pins states,
+        # and the test holding them to the profiles kept the errors in step.
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import generate_site  # noqa: PLC0415
+        from common import load_emulator_profiles  # noqa: PLC0415
+
+        profiles = load_emulator_profiles(str(ROOT / "emulators"), skip_aliases=False)
+        page = (ROOT / "wiki" / "technical-faq.md").read_text(encoding="utf-8")
+        self.assertEqual(
+            page, generate_site.with_romset_table(page, profiles),
+            "wiki/technical-faq.md romset table is stale: run scripts/generate_site.py",
+        )
+        prose = page.split("### How this is known", 1)[1].split("\n## ", 1)[0]
+        self.assertIsNone(re.search(r"\(0\.\d", prose),
+                          "the prose under the table types a version again")
 
     def test_adler32_is_attributed_to_the_files_that_carry_it(self):
         dolphin = self._profile("dolphin")
