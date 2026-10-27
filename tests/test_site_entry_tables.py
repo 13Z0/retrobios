@@ -131,7 +131,7 @@ class ALongEmulatorPageIsOneTable(unittest.TestCase):
         # and in the card.
         md5 = f"{9:032x}"
         self.assertIn(f'MD5 <code title="{md5}">{md5[:12]}</code>', optional)
-        self.assertIn(f'MD5: <code class="rb-hash">{md5}</code>', optional)
+        self.assertRegex(optional, rf'MD5: <code class="rb-hash"[^>]*>{md5}</code>')
 
     def test_a_shorter_page_keeps_its_cards(self):
         files = [_archive(i) for i in range(gs.EMULATOR_TABLE_MIN - 1)]

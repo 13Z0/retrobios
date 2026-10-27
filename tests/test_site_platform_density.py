@@ -102,7 +102,7 @@ class ARowPerFile(unittest.TestCase):
         details, button = row.split("</details>")
         self.assertNotIn("<button", details)
         self.assertEqual(button, f'<button class="rb-copy" data-copy="{md5}" '
-                                 f'aria-label="Copy MD5 {md5[:8]}">{md5[:8]}</button>')
+                                 f'aria-label="Copy MD5 {md5[:generate_site.SHORT_HASH]}">{md5[:generate_site.SHORT_HASH]}</button>')
         # Every hash whole in the details, with the size.
         for value in (md5, sha1, "0badf00d"):
             self.assertIn(value, details)
@@ -140,7 +140,7 @@ class ARowPerFile(unittest.TestCase):
         values = ["1" * 32, "2" * 32, "3" * 32]
         row = self._row({"name": "x", "status": "ok"}, {"md5": ",".join(values)})
         self.assertIn(f'data-copy="{values[0]}"', row)
-        self.assertIn(f">{values[0][:8]} +2</button>", row)
+        self.assertIn(f">{values[0][:generate_site.SHORT_HASH]} +2</button>", row)
         for value in values:
             self.assertIn(f'<code class="rb-hash">{value}</code>', row)
 

@@ -3426,8 +3426,6 @@ def _launcher_refs(platform: str, config: dict) -> dict[str, list[str]]:
     return found
 
 
-# The characters of a hash a row shows, as many as the served copy's sha1.
-SHORT_HASH = 8
 # The hash a row shows first, when the list does not say which it checks.
 _ROW_HASHES = ("sha1", "md5", "sha256", "crc32")
 # An untested entry whose reason is a hash the bytes do not match.
@@ -5856,7 +5854,8 @@ _CARD_HASHES = ("SHA1", "MD5", "CRC32", "SHA256")
 # The words a card's fold names its other facts by.
 _CARD_MORE_WORDS = {"Romset": "romset", "Collection path": "collection path",
                     "Catalogued": "catalogues"}
-# A SHA1 shown short: as long as the card's own address (sha1-<12 hex>).
+# A hash shown short, in a card, a platform row or an emulator table: as long
+# as the card's own address (sha1-<12 hex>), one length across the site.
 SHORT_HASH = 12
 
 

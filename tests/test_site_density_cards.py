@@ -260,7 +260,9 @@ class TheScriptWiresBoth(unittest.TestCase):
         self.assertIn("\ninstallPickers();\n", source)
         self.assertIn("\ncopyButtons();\n", source)
         self.assertIn("const SETUP_KEY = 'rb-setup';", source)
-        self.assertIn("const COPYABLE = '[data-copy], .rb-sys-file dd.rb-hash';", source)
+        self.assertIn("const COPYABLE = '[data-copy]:not(button), .rb-sys-file dd.rb-hash';", source)
+        # A platform row's button carries its own data-copy: never given a second button.
+        self.assertIn("const own = button.dataset.copy;", source)
 
 
 # Visible words of each built page: measured before the round and after it,
