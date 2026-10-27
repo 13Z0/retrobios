@@ -742,7 +742,7 @@ def build_parser() -> argparse.ArgumentParser:
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      fromfile_prefix_chars="@")
     sub = parser.add_subparsers(dest="mode", required=True)
-    common = argparse.ArgumentParser(add_help=False, fromfile_prefix_chars="@")
+    common = argparse.ArgumentParser(add_help=False, allow_abbrev=False, fromfile_prefix_chars="@")
     common.add_argument("--core", required=True, help="libretro .so to load")
     common.add_argument("--content", help="content to load (a .cue is identified with its tracks)")
     common.add_argument("--content-label", help="identity of the content, e.g. its Redump name")
@@ -976,4 +976,8 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    # The worker runs under -I, which leaves the script directory off sys.path.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from common import run_cli
+
+    run_cli(main)

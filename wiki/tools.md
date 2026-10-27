@@ -734,6 +734,8 @@ strace the record says that tracing was unavailable.
 | Option | Effect |
 |--------|--------|
 | `--system-file DEST=SRC` | copy SRC into a staged system directory as DEST |
+| `--content-label` | identity of the content, such as its Redump name, copied into the record |
+| `--work-dir`, `--timeout` | scratch directory for the staged runs, and seconds allowed per repetition (default 1800) |
 | `--option KEY=VALUE` | core option. Unset options take the first value the core declares |
 | `--frames`, `--warmup` | frames timed, and frames run before timing starts |
 | `--press FRAME:BUTTON[:LEN]` | hold a libretro joypad button on port 0 (`a`, `b`, `start`, `up`...). A menu may need 15 frames or more to see it |
