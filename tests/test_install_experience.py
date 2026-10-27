@@ -337,6 +337,21 @@ class ProgressOutput(unittest.TestCase):
         self.assertIn("failed: x.bin (HTTP 404)", out)
         self.assertIn("2.0 KB downloaded in 0:02", out)
 
+    def test_files_not_set_aside_get_a_remedy_not_a_retry(self):
+        # A real Android run: 25 files whose backup folder was refused, told
+        # to run again, which refuses them the same way.
+        reason = f"{install.NOT_KEPT} (/sdcard/RetroArch/retrobios-backup belongs to another user)"
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf), self.assertRaises(SystemExit) as end:
+            install._report_outcome(
+                [Path("/b")], 3, 0, 2, 0, False,
+                failures=[("a.zip", reason), ("b.zip", reason)],
+            )
+        out = buf.getvalue()
+        self.assertEqual(end.exception.code, 1)
+        self.assertIn("The files in place were left as they were", out)
+        self.assertNotIn("retry only those", out)
+
 
 class CommandLine(unittest.TestCase):
     def test_a_dry_run_writes_nothing(self):
