@@ -323,16 +323,21 @@ names `~/Emulation/saves/retroarch/saves`. RetroPie, ROCKNIX, AmberELEC and
 EmuELEC keep saves beside each game, and RomM keeps them in the browser: their
 lists record these files as omitted.
 
-A RetroArch run into an empty folder printed this on 2026-10-21:
+A RetroArch dry run into an empty folder printed this on 2026-10-27:
 
 ```
 Fetching file index for retroarch...
-  8069 files (6.5 GB)
-  Not installable: 11 files (1 required, not found: 11).
+  106 files read from RetroArch's save directory go to a folder per core under /home/me/.config/retroarch/saves
+  8358 files (6.6 GB)
+    3269 BIOS files (4.1 GB) and 5089 game data files (2.5 GB).
+  Not installable: 37 files (1 required, not found: 37).
 
 Checking existing files...
-  0/8069 present (0 verified, 0 wrong hash)
+  0/8358 present (0 verified, 0 wrong hash)
 ```
+
+The second line divides the first, and every later count of the run (the
+menu, the plan, `--dry-run`, the result) is taken from the same list.
 
 When the manifest leaves entries out (a file the collection cannot supply, or
 one that failed its hash check), a `Not installable:` line under the index count
@@ -631,25 +636,28 @@ By default the installer fetches everything the platform runs. At a terminal,
 the plan screen of the [full-screen interface](#the-full-screen-interface)
 offers **Install**, **Choose systems** and **Options**. With `--plain`, or where
 the full screen cannot open (a terminal smaller than 40x12, `TERM=dumb`), the
-same choice comes as questions after detection:
+same choice comes as questions after detection. A RetroArch run with `--plain`
+printed this on 2026-10-27:
 
 ```
-RetroArch: 8348 files, 7.1 GB.
-  3259 BIOS files (4.4 GB) and 5089 game data files (2.7 GB).
+RetroArch: 8358 files, 6.6 GB, and 2636 data files (38.5 MB).
+  3269 BIOS files (4.1 GB) and 5089 game data files (2.5 GB).
   BIOS folder: /home/me/.config/retroarch/system
+  106 files read from RetroArch's save directory go to a folder per core under /home/me/.config/retroarch/saves
   Enter) install everything
-  i) only what the installed cores read: 100 files, 44.2 MB
+  i) only what the installed cores read: 87 files, 43.8 MB
   c) choose systems, cores and regions
   f) copy from a folder or an old card
-  g) leave out the 5089 game data files (2.7 GB), game data: files a game or a game engine reads, of no use to the other cores
+  g) leave out the 5089 game data files (2.5 GB), game data: files a game or a game engine reads, of no use to the other cores
   q) quit
 ```
 
 A list that marks its game data counts it apart from the BIOS files, on the
-plan, in this menu and on the result (`Installed: 3259 BIOS files and 5089 game
-data files.`). `g` leaves it out, as `--no-game-data` does, and counts again
+plan, in this menu and on the result (`Installed: 3269 BIOS files, 5089 game
+data files and 2636 data files.`), the parts adding up to the total. `g` leaves
+the game data of the choice out, as `--no-game-data` does, and counts again
 (`g` then keeps it). The plan screen has the same choice as a row of its own,
-**Game data (5089 files, 2.7 GB): kept, leave out**, one press toggling it,
+**Game data (5089 files, 2.5 GB): kept, leave out**, one press toggling it,
 and Options keeps its **Game data** row too.
 
 `i` appears for RetroArch, Lakka and RetroPie when cores are found installed,
