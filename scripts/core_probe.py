@@ -682,27 +682,53 @@ def _bwrap_base(bwrap: str, network: bool) -> list[str]:
     return argv
 
 
+def _python_prefix(path: Path) -> bool:
+    """A Python installation or a venv, and nothing wider: it holds
+    lib/pythonX.Y or a pyvenv.cfg, and it is neither / nor the home folder
+    nor a folder above it."""
+    home = Path.home().resolve()
+    resolved = path.resolve()
+    if resolved == Path("/") or resolved == home or resolved in home.parents:
+        return False
+    version = f"python{sys.version_info.major}.{sys.version_info.minor}"
+    return (path / "pyvenv.cfg").is_file() or (path / "lib" / version).is_dir()
+
+
 def interpreter_paths() -> list[Path]:
-    """The trees the worker's Python lives in, when the sandbox's system
-    binds do not hold them: CI's setup-python under /opt/hostedtoolcache, a
-    venv, pyenv or uv. Each link on the way to the interpreter is a path too:
-    a venv's python points at uv's unversioned name, itself a link to the
-    versioned tree. Without them the worker could not start in the sandbox,
-    and every run crashed."""
+    """What the worker's Python needs inside the sandbox when the system
+    binds do not hold it: CI's setup-python under /opt/hostedtoolcache, a
+    venv, pyenv or uv. Without it the worker could not start, and every run
+    crashed.
+
+    Only Python installation prefixes are bound whole (sys.prefix,
+    sys.base_prefix and the prefix of each link's target, each proven by
+    lib/pythonX.Y or pyvenv.cfg). Every link on the way to the interpreter
+    is bound as itself, a single file, so ~/.local/bin/python3 never exposes
+    ~/.local."""
     system = ("/usr/", "/bin/", "/lib")
     found: list[Path] = []
-    candidates = [Path(sys.prefix), Path(sys.base_prefix)]
+
+    def add(path: Path) -> None:
+        path = Path(os.path.abspath(path))
+        # Inside a tree already bound, a path is there already: bwrap cannot
+        # mount over a link in a read-only tree, and the run would not start.
+        if any(path == bound or bound in path.parents for bound in found):
+            return
+        if not str(path).startswith(system) and path.exists():
+            found.append(path)
+
+    for prefix in (Path(sys.prefix), Path(sys.base_prefix)):
+        if _python_prefix(prefix):
+            add(prefix)
     hop = Path(sys.executable)
     for _ in range(16):
-        candidates.append(hop.parent.parent)
+        if _python_prefix(hop.parent.parent):
+            add(hop.parent.parent)
         if not hop.is_symlink():
             break
+        add(hop)
         target = Path(os.readlink(hop))
         hop = target if target.is_absolute() else hop.parent / target
-    for path in candidates:
-        path = Path(os.path.abspath(path))
-        if not str(path).startswith(system) and path not in found and path.exists():
-            found.append(path)
     return found
 
 
