@@ -209,7 +209,15 @@ class OracleTests(unittest.TestCase):
                      logs=["BIOS not found"]), self.ORACLE)
         self.assertEqual(verdict, "boots")
         self.assertEqual((evidence["rule"], evidence["frame"], evidence["stages"]),
-                         ("reference_frame", 10, ["bios", "game"]))
+                         ("reference_frame", 20, ["bios", "game"]))
+
+    def test_the_bios_screens_alone_are_not_a_boot(self) -> None:
+        # A console that shows its logo and then refuses the disc never reached the game.
+        verdict, evidence = core_probe.judge(
+            self.rep(frames((0, self.LOGO), (10, self.BLACK), (20, self.BLACK)), uniform=[self.BLACK]),
+            self.ORACLE)
+        self.assertEqual((verdict, evidence["rule"], evidence["stages"]), ("hang", "uniform_tail", ["bios"]))
+        self.assertIn("no screen of the game", evidence["detail"])
 
     def test_an_error_pattern_or_screen_without_a_reference_is_a_bios_error(self) -> None:
         verdict, evidence = core_probe.judge(

@@ -21,6 +21,151 @@
 
 error_patterns: []
 
-cores: {}
+cores:
+  # The PlayStation cores below log a missing or wrong BIOS and boot a
+  # built-in one: none of those lines is an error pattern.
+  "Beetle PSX":
+    note: >-
+      A missing BIOS logs "Firmware is missing" and loads the embedded
+      OpenBIOS, a wrong one logs "Firmware found but has invalid SHA1" and is
+      loaded anyway (libretro.c:849, 856, 3504-3511 at 7fea57a5).
+    error_patterns: []
+    error_screens: []
+  "Beetle PSX HW":
+    note: The same code as Beetle PSX, built with the hardware renderers.
+    error_patterns: []
+    error_screens: []
+  "SwanStation":
+    note: >-
+      "No BIOS image found for <region> region" is followed by the built-in
+      OpenBIOS (src/core/host_interface.cpp:182, src/core/system.cpp:678-682
+      at 631f0fb3).
+    error_patterns: []
+    error_screens: []
+  "PCSX-ReARMed":
+    note: >-
+      Without a BIOS, or with one of the wrong size, it logs "Using HLE BIOS"
+      and runs its own (frontend/libretro.c:3893-3899 at c8816799). The BIOS
+      boot logo is off by default (pcsx_rearmed_show_bios_bootlogo), so its
+      runs reach no bios-stage screen.
+    error_patterns: []
+    error_screens: []
+  "PCSX1":
+    note: An HLE BIOS stands in when none is found, and the run logs nothing about it.
+    error_patterns: []
+    error_screens: []
 
-content: []
+content:
+  - name: "Bust-A-Move 2 - Arcade Edition (USA)"
+    catalog: redump
+    # The sha1 of the .cue handed to the core.
+    sha1: ed4a437a6f653cc71ad6ac0da68cc85eb093f298
+    references:
+      "Beetle PSX":
+        recorded_from: 2026-10-27-b0150a15670d
+        frames:
+          - sha1: 7b72ebae83893b63f9fffd1685f03b1d048d9fa9
+            stage: bios
+            shows: the Sony Computer Entertainment logo
+          - sha1: 0905c920a1de996664eddca94f93f75d0dcd4c52
+            stage: bios
+            shows: the PlayStation logo licensed by Sony Computer Entertainment America
+          - sha1: d51ab7783f8eeafc63a28f14ce39f8e2babeffb3
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: 63a96bd6d1d487da1824e10d37f6658506edc451
+            stage: game
+            shows: the Acclaim and Taito credits text, CREDIT 6
+          - sha1: 6628416f377d2e25df45e5fa2126f8f9313551f0
+            stage: game
+            shows: the Acclaim logo, CREDIT 6
+          - sha1: d68892362e0f33c41cc59dac1b5a2077fe5428ee
+            stage: game
+            shows: the Taito logo on white, CREDIT 6
+          - sha1: 56330c6c7646c2c261acb3f48450825cb289845a
+            stage: game
+            shows: a black screen with CREDIT 6
+      "Beetle PSX HW":
+        recorded_from: 2026-10-27-ee69ad83c9f8
+        frames:
+          - sha1: 7b72ebae83893b63f9fffd1685f03b1d048d9fa9
+            stage: bios
+            shows: the Sony Computer Entertainment logo
+          - sha1: 0905c920a1de996664eddca94f93f75d0dcd4c52
+            stage: bios
+            shows: the PlayStation logo licensed by Sony Computer Entertainment America
+          - sha1: d51ab7783f8eeafc63a28f14ce39f8e2babeffb3
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: 63a96bd6d1d487da1824e10d37f6658506edc451
+            stage: game
+            shows: the Acclaim and Taito credits text, CREDIT 6
+          - sha1: 6628416f377d2e25df45e5fa2126f8f9313551f0
+            stage: game
+            shows: the Acclaim logo, CREDIT 6
+          - sha1: d68892362e0f33c41cc59dac1b5a2077fe5428ee
+            stage: game
+            shows: the Taito logo on white, CREDIT 6
+          - sha1: 56330c6c7646c2c261acb3f48450825cb289845a
+            stage: game
+            shows: a black screen with CREDIT 6
+      "SwanStation":
+        recorded_from: 2026-10-27-717f780131fc
+        frames:
+          - sha1: fad859d9b8211ce9f35ad3a05b0b7d184fe14d83
+            stage: bios
+            shows: the Sony Computer Entertainment logo
+          - sha1: 593a6e2600946040fefd6eb9aebdc5c0d56f0555
+            stage: bios
+            shows: the PlayStation logo licensed by Sony Computer Entertainment America
+          - sha1: e5af1f2023d0d729ce7aabf52d8e03f75bb8d230
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: dd6dac23da6b8f4f256b8090568c52e8f8428425
+            stage: game
+            shows: the Acclaim and Taito credits text, CREDIT 6
+          - sha1: 533715dd946ba1984af1b9356e06989c7770e04a
+            stage: game
+            shows: the Acclaim logo, CREDIT 6
+          - sha1: 0d17db6e9a2d5793695884c85dd2177093420fdc
+            stage: game
+            shows: the Taito logo on white, CREDIT 6
+          - sha1: 2238516839dc43c0b22c00db5fe76128f5fb6f3f
+            stage: game
+            shows: a black screen with CREDIT 6
+      "PCSX-ReARMed":
+        recorded_from: 2026-10-27-8154bab7bf80
+        frames:
+          - sha1: e5af1f2023d0d729ce7aabf52d8e03f75bb8d230
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: dd6dac23da6b8f4f256b8090568c52e8f8428425
+            stage: game
+            shows: the Acclaim and Taito credits text, CREDIT 6
+          - sha1: 533715dd946ba1984af1b9356e06989c7770e04a
+            stage: game
+            shows: the Acclaim logo, CREDIT 6
+          - sha1: 0d17db6e9a2d5793695884c85dd2177093420fdc
+            stage: game
+            shows: the Taito logo on white, CREDIT 6
+          - sha1: 2238516839dc43c0b22c00db5fe76128f5fb6f3f
+            stage: game
+            shows: a black screen with CREDIT 6
+      "PCSX1":
+        recorded_from: 2026-10-27-2905a9dd4b0a
+        frames:
+          - sha1: e5af1f2023d0d729ce7aabf52d8e03f75bb8d230
+            stage: game
+            shows: Now Loading with the yellow bubble
+          - sha1: dd6dac23da6b8f4f256b8090568c52e8f8428425
+            stage: game
+            shows: the Acclaim and Taito credits text, CREDIT 6
+          - sha1: e10f642259f2906bb39ae07fcb4b5a36eae18287
+            stage: game
+            shows: the Acclaim logo with a stray strip at its right edge, CREDIT 6
+          - sha1: 0d17db6e9a2d5793695884c85dd2177093420fdc
+            stage: game
+            shows: the Taito logo on white, CREDIT 6
+          - sha1: 2238516839dc43c0b22c00db5fe76128f5fb6f3f
+            stage: game
+            shows: a black screen with CREDIT 6
