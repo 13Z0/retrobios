@@ -9,6 +9,7 @@ import importlib.util
 import io
 import json
 import os
+import stat
 import shlex
 import re
 import shutil
@@ -5740,11 +5741,35 @@ class AFileYouHadIsKept(unittest.TestCase):
 
     @unittest.skipUnless(hasattr(os, "getuid"), "user ids are POSIX")
     def test_a_holder_another_user_owns_is_refused(self):
-        (self.home / install.BACKUP_DIR).mkdir()
-        with self.assertRaises(OSError):
-            with unittest.mock.patch.object(install.os, "getuid", return_value=os.getuid() + 1):
-                install._check_holder(self.home / install.BACKUP_DIR)
-        install._check_holder(self.home / install.BACKUP_DIR)
+        holder = self.home / install.BACKUP_DIR
+        holder.mkdir()
+        real = os.lstat
+
+        def planted(path, *args, **kwargs):
+            info = real(path, *args, **kwargs)
+            if Path(path) != holder:
+                return info
+            fields = list(info)
+            fields[stat.ST_UID] = info.st_uid + 2
+            return os.stat_result(fields)
+
+        with self.assertRaises(OSError), \
+                unittest.mock.patch.object(install.os, "lstat", side_effect=planted):
+            install._check_holder(holder)
+        install._check_holder(holder)
+
+    @unittest.skipUnless(hasattr(os, "getuid"), "user ids are POSIX")
+    def test_a_storage_with_one_owner_for_every_file_takes_the_holder(self):
+        # Android's shared storage, seen from Termux on Android 17: a folder
+        # the run has just made is shown as another user's, like every other
+        # file there. Refusing it left 25 files unreplaced on a real phone.
+        holder = self.home / install.BACKUP_DIR
+        holder.mkdir()
+        with unittest.mock.patch.object(install.os, "getuid", return_value=os.getuid() + 1):
+            install._check_holder(holder)
+            (self.bios / "x.bin").write_bytes(self.OLD)
+            self.assertTrue(self._download("x.bin")[1])
+        self.assertEqual((self._run_folder() / "system" / "x.bin").read_bytes(), self.OLD)
 
     def test_restore_refuses_a_folder_the_installer_did_not_write(self):
         planted = self.home / install.BACKUP_DIR / "20260101-000000"

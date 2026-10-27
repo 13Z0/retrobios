@@ -4505,15 +4505,19 @@ def _check_holder(holder: Path) -> os.stat_result:
 
     A link would send them wherever it points. On a system with user ids, a
     folder another user owns was not made by this user's runs, and its owner
-    could read or swap what is moved in. Returns what was checked, so the
-    caller can confirm the same folder is still there once it has written
-    into it.
+    could read or swap what is moved in. A storage that keeps no owner per
+    file gives every file one owner: Android's shared storage shows a folder
+    Termux has just made as another user's, as does a FAT card. A holder
+    owned like the folder it sits in is that storage's owner, not someone
+    else's folder. Returns what was checked, so the caller can confirm the
+    same folder is still there once it has written into it.
     """
     info = os.lstat(holder)
     if not stat.S_ISDIR(info.st_mode):
         raise OSError(errno.ELOOP, f"{holder} is a link or not a folder")
     getuid = getattr(os, "getuid", None)
-    if getuid is not None and info.st_uid != getuid():
+    if (getuid is not None and info.st_uid != getuid()
+            and info.st_uid != os.lstat(holder.parent).st_uid):
         raise OSError(errno.EPERM, f"{holder} belongs to another user")
     return info
 
@@ -5575,6 +5579,12 @@ def _report_outcome(
                       "(or delete them), then run again.")
     if any(isinstance(reason, NetworkReason) for _dest, reason in failures or []):
         advice.append(NETWORK_FAILURE_ADVICE)
+    if any(str(reason).startswith(NOT_KEPT) for _dest, reason in failures or []):
+        # The same run fails the same way: "retry only those" sent a phone
+        # user round the loop with nothing changed.
+        advice.append("  The files in place were left as they were, as no backup folder could "
+                      "be made for them. Move them out of the folder, then run again to "
+                      "install the new ones.")
     paths = paths + [folder for folder in elsewhere if folder not in paths]
 
     if offline:
@@ -5632,7 +5642,8 @@ def _report_outcome(
         print(f"Location: {_locations(paths)}")
         for line in kept + advice:
             print(line)
-        print("Run the same command again to retry only those.")
+        if not all(str(reason).startswith(NOT_KEPT) for _dest, reason in failures or []):
+            print("Run the same command again to retry only those.")
         sys.exit(1)
 
     print(f"\nDone. {_plural(downloaded, 'file')} installed, "
