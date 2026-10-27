@@ -2335,15 +2335,17 @@ def version_warning(
     ``passed_release`` is a later release the pin already contains, which
     core_version should name instead.
     """
-    if report is None or not report.tag_commit or not pin:
+    if report is None or not pin:
         return None
-    if report.tag_commit == pin and not passed_release:
-        return None
+    # Before the tag guard: parallel-launcher declared 9.0.5, a name no tag
+    # carries (v9.0-6), and the release its HEAD contains went unsaid.
     if passed_release:
         return (
             f"core_version {report.declared} is older than the code: the pin "
             f"{pin[:7]} already contains release {passed_release}"
         )
+    if not report.tag_commit or report.tag_commit == pin:
+        return None
     where = ""
     if relation is not None:
         ahead, behind = relation
@@ -3892,7 +3894,8 @@ def build_parser() -> argparse.ArgumentParser:
         description="Confront emulator profiles with their upstream source"
     )
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--emulator", help="a single profile")
+    # Repeatable: a stored value kept only the last of several --emulator.
+    group.add_argument("--emulator", action="append", help="a profile, repeatable")
     group.add_argument("--all", action="store_true", help="every profile")
     group.add_argument(
         "--changed", action="store_true",
@@ -4073,7 +4076,9 @@ def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
             print(f"the branch {verb} no profile against {args.base}", file=sys.stderr)
         return selected
     if args.emulator:
-        if args.emulator not in profiles:
+        names = [args.emulator] if isinstance(args.emulator, str) else args.emulator
+        unknown = [name for name in names if name not in profiles]
+        if unknown:
             # Suggested from what the listing it names shows: counted over the
             # alias and test profiles too, "lists all 553" pointed at 530 lines.
             listed = sorted(
@@ -4081,10 +4086,10 @@ def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
                 if profile.get("type") not in ("alias", "test")
             )
             raise SystemExit(
-                f"ERROR: unknown profile {args.emulator}. "
-                + suggest_names([args.emulator], listed, "verify.py --list-emulators")
+                f"ERROR: unknown profile {', '.join(unknown)}. "
+                + suggest_names(unknown, listed, "verify.py --list-emulators")
             )
-        return {args.emulator: profiles[args.emulator]}
+        return {name: profiles[name] for name in dict.fromkeys(names)}
 
     # --system matches as verify.py --list-systems lists and --system selects:
     # by normalized id, so `saturn` reaches the profiles declaring sega-saturn.
@@ -4443,10 +4448,59 @@ def _attach_version(
         print(f"{report.name}: tag ancestry unread: {exc}", file=sys.stderr)
         newer = None
     report.version_warning = version_warning(version, report.pin, relation, passed) or (
-        f"release {newer} is newer than core_version {version.declared} and the pin: "
+        f"{'release' if version.latest_release else 'tag'} {newer} is newer than core_version {version.declared} and the pin: "
         "profile it, or hold the pin with pin_frozen and the reason"
         if newer else None
     )
+
+
+# A tag that reads as a version number: 1.1, v107, v9.0-6, 2.55, 1.1d.
+# Nightly, continuous and latest tags do not.
+_VERSION_TAG_RE = re.compile(r"v?\d+(?:[._-]\d+)*[a-z]?", re.IGNORECASE)
+
+
+def published_version(version: VersionReport | None) -> str | None:
+    """The latest version the project published: its latest release, or for
+    a project that publishes no release, its newest tag when that tag reads
+    as a version number.
+
+    GitLab and Codeberg projects often tag without a release: eightyone sat
+    on v1.2 and higan on 106 while v1.3 and v107 were tagged, and nothing
+    compared them.
+    """
+    if version is None:
+        return None
+    if version.latest_release:
+        return version.latest_release
+    tag = version.latest_tag
+    if tag and _VERSION_TAG_RE.fullmatch(tag):
+        return tag
+    return None
+
+
+def _later_number(candidate: str, declared: str) -> bool:
+    """Whether both read as numbers of one scheme and the candidate's is higher.
+
+    One scheme means the same major number: libretro forks tag RetroArch's
+    numbers (mame2015 0.160 beside v1.4.1) and some projects tag dates
+    (np2pi 0.83 beside 20120302). Trailing zeros do not count: v1 is v1.0.
+    """
+    if not (_VERSION_TAG_RE.fullmatch(candidate) and _VERSION_TAG_RE.fullmatch(declared)):
+        return False
+
+    def key(text: str) -> tuple[int, ...]:
+        numbers = [int(n) for n in re.findall(r"\d+", text)]
+        while len(numbers) > 1 and numbers[-1] == 0:
+            numbers.pop()
+        return tuple(numbers)
+
+    high, low = key(candidate), key(declared)
+    if (len(high) == 1) != (len(low) == 1):
+        return False
+    if len(high) == 1:
+        # higan 106 and v107 are one scheme, openlara v1 and 20170424 two.
+        return len(str(high[0])) == len(str(low[0])) and high > low
+    return high[0] == low[0] and high > low
 
 
 def _newer_release(
@@ -4461,11 +4515,12 @@ def _newer_release(
     0.1.3, armsx2 on 2.8 and x1-box on 1.2.6 while 0.3.6, 2.9 and 1.3.2 were
     out, and nothing said so. A held pin (pin_frozen) is left alone.
     """
-    if not version or not pin or not version.tag_commit or not version.latest_release:
+    published = published_version(version)
+    if not version or not pin or not version.tag_commit or not published:
         return None
-    if version.latest_release == version.declared:
+    if published == version.declared:
         return None
-    commit = upstream.tag_commit(repo, version.latest_release, args.cache_dir, args.offline)
+    commit = upstream.tag_commit(repo, published, args.cache_dir, args.offline)
     if not commit or commit == pin:
         return None
     after_tag = upstream.ancestry(repo, version.tag_commit, commit, args.cache_dir, args.offline)
@@ -4474,7 +4529,7 @@ def _newer_release(
     after_pin = upstream.ancestry(repo, pin, commit, args.cache_dir, args.offline)
     if not after_pin or after_pin[0] == 0:
         return None
-    return version.latest_release
+    return published
 
 
 def _passed_release(
@@ -4490,11 +4545,17 @@ def _passed_release(
     sort first on many forges. The latest release is a version the project
     published as such.
     """
-    if not version or not pin or not version.latest_release:
+    published = published_version(version)
+    if not version or not pin or not published:
         return None
-    if version.latest_release == version.declared:
+    if published == version.declared:
         return None
-    commit = upstream.tag_commit(repo, version.latest_release, args.cache_dir, args.offline)
+    if not version.tag_commit and not _later_number(published, version.declared):
+        # No tag to order them: only a release numbered past the declared
+        # version says it is older. "latest", "continuous" or 1.53 under a
+        # declared 1.61 say nothing.
+        return None
+    commit = upstream.tag_commit(repo, published, args.cache_dir, args.offline)
     if not commit:
         return None
     if version.tag_commit and version.tag_commit != commit:
@@ -4504,10 +4565,10 @@ def _passed_release(
         if older and older[1] == 0:
             return None
     if commit == pin:
-        return version.latest_release
+        return published
     relation = upstream.ancestry(repo, commit, pin, args.cache_dir, args.offline)
     if relation and relation[1] == 0:
-        return version.latest_release
+        return published
     return None
 
 

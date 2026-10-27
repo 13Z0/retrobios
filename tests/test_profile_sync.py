@@ -2209,6 +2209,9 @@ def _args(**kwargs):
         flag = "--" + key.replace("_", "-")
         if value is True:
             argv.append(flag)
+        elif isinstance(value, list):
+            for item in value:
+                argv.extend([flag, str(item)])
         else:
             argv.extend([flag, str(value)])
     return build_parser().parse_args(argv)
@@ -2218,6 +2221,13 @@ class TestSelectProfiles(unittest.TestCase):
     def test_single_emulator(self):
         self.assertEqual(
             list(select_profiles(PROFILES, _args(emulator="alpha"))), ["alpha"]
+        )
+
+    def test_emulator_repeats(self):
+        # A stored --emulator kept only the last of several.
+        self.assertEqual(
+            list(select_profiles(PROFILES, _args(emulator=["alpha", "beta", "alpha"]))),
+            ["alpha", "beta"],
         )
 
     def test_all_excludes_aliases(self):
@@ -2886,7 +2896,9 @@ class TestDeliberatelyFrozenPin(TestBuildReport):
         # A frozen revision whose tree lacks a build the live one documents
         # keeps its own type: DuckStation 56ac3d6c has no libretro frontend
         # under src/, only duckstation-nogui and duckstation-qt.
-        builds_differ = {("duckstation-legacy", "duckstation")}
+        # RetroPie builds ppsspp-1.5.4 as PPSSPPSDL alone: the frozen build
+        # is the standalone half of a project that also ships a core.
+        builds_differ = {("duckstation-legacy", "duckstation"), ("ppsspp-1.5.4", "ppsspp")}
         from common import load_emulator_profiles  # noqa: PLC0415
 
         root = Path(__file__).resolve().parents[1] / "emulators"
@@ -3365,6 +3377,65 @@ class ANewerReleaseThanTheTag(unittest.TestCase):
     def test_an_older_or_unrelated_release_is_not(self):
         self.assertIsNone(self._newer((0, 5), (0, 5)))
         self.assertIsNone(self._newer((3, 4), (3, 4)))
+
+
+class AProjectThatOnlyTags(unittest.TestCase):
+    """eightyone sat on v1.2 and higan on 106 while v1.3 and v107 were tagged:
+    with no release published, nothing compared them."""
+
+    def test_a_version_tag_stands_in_for_the_missing_release(self):
+        version = profile_sync.VersionReport("v1.2", "v1.3", None, None, True, "tag12")
+        self.assertEqual(profile_sync.published_version(version), "v1.3")
+        for tag in ("v107", "1.1d", "v9.0-6", "2.55"):
+            version = profile_sync.VersionReport("x", tag, None, None, False, None)
+            self.assertEqual(profile_sync.published_version(version), tag)
+
+    def test_a_nightly_tag_does_not(self):
+        for tag in ("latest-nightly", "continuous", "nightly-20261001"):
+            version = profile_sync.VersionReport("v1.2", tag, None, None, True, "t")
+            self.assertIsNone(profile_sync.published_version(version))
+
+    def test_a_release_wins_over_a_newer_tag(self):
+        version = profile_sync.VersionReport("1.0", "1.2", "1.1", "2026-01-01", True, "t")
+        self.assertEqual(profile_sync.published_version(version), "1.1")
+
+    def test_a_newer_tag_is_named(self):
+        from unittest import mock  # noqa: PLC0415
+
+        version = profile_sync.VersionReport("v1.2", "v1.3", None, None, True, "tag12")
+        args = argparse.Namespace(cache_dir="c", offline=True)
+        with mock.patch.object(profile_sync.upstream, "tag_commit", return_value="tag13"), \
+                mock.patch.object(profile_sync.upstream, "ancestry", return_value=(7, 0)):
+            self.assertEqual(profile_sync._newer_release(args, "repo", version, "tag12"), "v1.3")
+
+
+class APassedReleaseUnderAnUntaggedVersion(unittest.TestCase):
+    """parallel-launcher declared 9.0.5, a name no tag carries, and its HEAD
+    already held release v9.0-6: the missing tag silenced the warning."""
+
+    def test_the_passed_release_is_named_without_a_declared_tag(self):
+        version = profile_sync.VersionReport("9.0.5", "v9.0-6", "v9.0-6", "2026-08-08", False, None)
+        warning = version_warning(version, "head", None, "v9.0-6")
+        self.assertIn("already contains release v9.0-6", warning)
+
+    def test_only_a_higher_number_counts_without_a_tag(self):
+        from unittest import mock  # noqa: PLC0415
+
+        args = argparse.Namespace(cache_dir="c", offline=True)
+        cases = {("9.0.5", "v9.0-6"): "v9.0-6", ("1.61", "1.53"): None,
+                 ("v0.1-12070", "latest"): None, ("Git", "v2.7"): None, ("5.2", "v5.2"): None,
+                 ("v1", "v1.0"): None, ("0.83", "20120302"): None, ("0.160", "v1.4.1"): None,
+                 ("0.0.35", "v0.0.43"): "v0.0.43", ("106", "v107"): "v107", ("v1", "20170424"): None}
+        for (declared, release), expected in cases.items():
+            version = profile_sync.VersionReport(declared, release, release, "d", False, None)
+            with self.subTest(declared=declared, release=release), \
+                    mock.patch.object(profile_sync.upstream, "tag_commit", return_value="rel"), \
+                    mock.patch.object(profile_sync.upstream, "ancestry", return_value=(3, 0)):
+                self.assertEqual(profile_sync._passed_release(args, "repo", version, "pin"), expected)
+
+    def test_no_tag_and_nothing_passed_stays_quiet(self):
+        version = profile_sync.VersionReport("9.0.5", None, None, None, False, None)
+        self.assertIsNone(version_warning(version, "head"))
 
 
 class TestAncestry(unittest.TestCase):

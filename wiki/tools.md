@@ -573,7 +573,11 @@ only after the path as written has failed everywhere, and the result is
 reported as `RENAMED` so `--rebase-refs` cleans the profile.
 
 `--check-version` compares `core_version` with the latest upstream tag and
-release. `--detect-new-files` lists filename literals at HEAD the profile
+release. A project that publishes no release is read by its newest tag when
+that tag is a version number. It warns when the pin already contains a later
+release than `core_version` names, or when a later one is out and the pin is
+not held. A `core_version` that names no tag is compared by number, within
+one numbering scheme. `--detect-new-files` lists filename literals at HEAD the profile
 does not declare. `--watch-hashes` lists hash literals added upstream that
 match no entry. Both land in the `--json` report (`new_files`, with
 `since_pin` true for a name the pinned file did not carry, and
