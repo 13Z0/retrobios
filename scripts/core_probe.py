@@ -619,6 +619,17 @@ def stage_system_dir(base: dict[str, Path], variant: Variant, target: Path) -> d
     return staged
 
 
+def host_paths_hidden(text: str, places: Sequence[tuple[str, str]]) -> str:
+    """A core log line with the probe's own directories named, not spelled.
+
+    Cores print the paths they open. Those paths belong to the host that ran
+    the probe and would make two identical runs on two machines differ.
+    """
+    for prefix, name in places:
+        text = text.replace(prefix, name)
+    return text
+
+
 def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_out: Path | None,
              png_dir: Path | None) -> dict:
     save_dir = scratch / "save"
@@ -650,6 +661,12 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
     if proc.returncode != 0 or not out_path.exists():
         raise ProbeError(f"worker exited {proc.returncode}: {proc.stderr.strip()[-2000:]}")
     result = json.loads(out_path.read_text(encoding="utf-8"))
+    places = [(str(system_dir.resolve()), "<system>"), (str(save_dir.resolve()), "<save>")]
+    if args.content:
+        places.append((str(Path(args.content).resolve().parent), "<content>"))
+    places.append((str(ROOT), "<repo>"))
+    for line in result.get("logs", []):
+        line["text"] = host_paths_hidden(line["text"], places)
     if strace:
         opened, probed = files_under(parse_strace(trace_path.read_text(encoding="utf-8", errors="replace")),
                                      system_dir)
@@ -822,22 +839,41 @@ def variants_for(args: argparse.Namespace) -> list[Variant]:
     return out
 
 
+def unsettled(variant: dict, observable: str) -> bool:
+    """True when a variant cannot vouch for one value of the observable.
+
+    A repetition that did not load, a file changed during the run, or two
+    repetitions that disagree on this observable. A disagreement on another
+    observable stays in the variant's flags without voiding this one.
+    """
+    reps = variant["repetitions"]
+    if any(not rep.get("loaded") for rep in reps):
+        return True
+    if any("changed during the run" in flag for flag in variant["flags"]):
+        return True
+    values = {json.dumps((rep.get("observables") or {}).get(observable), sort_keys=True) for rep in reps}
+    return len(values) > 1
+
+
 def check_result(variants: list[dict], observable: str) -> dict:
     groups: dict[str, list[str]] = {}
-    failed = [v["label"] for v in variants if v["flags"]]
+    failed = [v["label"] for v in variants if unsettled(v, observable)]
     for variant in variants:
         value = (variant["repetitions"][0].get("observables") or {}).get(observable)
         groups.setdefault(json.dumps(value, sort_keys=True), []).append(variant["label"])
     if failed:
         status = "inconclusive"
-        statement = (f"{len(failed)} of {len(variants)} variants carry flags "
-                     f"({', '.join(failed)}); no comparison is drawn from them")
+        statement = (f"{observable} is not settled in {len(failed)} of {len(variants)} variants "
+                     f"({', '.join(failed)}): no comparison is drawn")
     elif len(groups) == 1:
         status = "same"
         statement = f"{observable} is identical across all {len(variants)} variants"
     else:
         status = "differs"
         statement = f"{observable} takes {len(groups)} distinct values across {len(variants)} variants"
+    other = sorted({v["label"] for v in variants if v["flags"]} - set(failed))
+    if other:
+        statement += f". Other flags, in {len(other)} variants, are listed with them"
     return {
         "status": status,
         "statement": statement,

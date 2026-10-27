@@ -163,9 +163,9 @@ class ParsingTests(unittest.TestCase):
 
 class ResultTests(unittest.TestCase):
     @staticmethod
-    def variant(label: str, value: str, flags: list[str] | None = None) -> dict:
-        return {"label": label, "flags": flags or [],
-                "repetitions": [{"observables": {"video_sha1": value}}]}
+    def variant(label: str, value: str, loaded: bool = True) -> dict:
+        return {"label": label, "flags": [],
+                "repetitions": [{"loaded": loaded, "observables": {"video_sha1": value}}]}
 
     def test_same_differs_inconclusive(self) -> None:
         same = core_probe.check_result([self.variant("a", "1"), self.variant("b", "1")], "video_sha1")
@@ -173,9 +173,23 @@ class ResultTests(unittest.TestCase):
         differs = core_probe.check_result([self.variant("a", "1"), self.variant("b", "2")], "video_sha1")
         self.assertEqual(differs["status"], "differs")
         self.assertEqual(len(differs["groups"]), 2)
-        flagged = core_probe.check_result([self.variant("a", "1", ["x"]), self.variant("b", "1")],
+        flagged = core_probe.check_result([self.variant("a", "1", loaded=False), self.variant("b", "1")],
                                           "video_sha1")
         self.assertEqual(flagged["status"], "inconclusive")
+
+    def test_other_observable_does_not_void_the_check(self) -> None:
+        variant = {"label": "a", "flags": ["repetition 1 disagrees with repetition 0 on state_sha1"],
+                   "repetitions": [{"loaded": True, "observables": {"video_sha1": "1", "state_sha1": "x"}},
+                                   {"loaded": True, "observables": {"video_sha1": "1", "state_sha1": "y"}}]}
+        result = core_probe.check_result([variant], "video_sha1")
+        self.assertEqual(result["status"], "same")
+        self.assertIn("Other flags", result["statement"])
+        self.assertEqual(core_probe.check_result([variant], "state_sha1")["status"], "inconclusive")
+
+    def test_host_paths_hidden(self) -> None:
+        places = [("/tmp/x/system", "<system>"), ("/tmp/x", "<repo>")]
+        self.assertEqual(core_probe.host_paths_hidden("/tmp/x/system/bios.bin NOT FOUND", places),
+                         "<system>/bios.bin NOT FOUND")
 
     def test_timing_stats(self) -> None:
         stats = core_probe.timing_stats([1.0, 2.0, 3.0, 4.0, 10.0])

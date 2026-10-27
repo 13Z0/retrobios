@@ -751,8 +751,11 @@ strace the record says that tracing was unavailable.
 Observables are `frame_sha1` (last frame), `video_sha1` (every frame, chained),
 `audio_sha1`, `state_sha1` (save state at the end), plus `state:SECTION.VAR`
 and `frame_hashes` when asked for. A repetition that disagrees with the first
-one is flagged, and a `check` with a flagged variant reports `inconclusive`
-instead of a comparison. A record carries the core build (sha256 of the
+one is flagged. A `check` reports `inconclusive` instead of a comparison when,
+in any variant, the compared observable differs between repetitions, a run did
+not load, or a file changed during the run. A disagreement on another
+observable stays flagged in the record. In core log lines, the staged system,
+save and content directories read `<system>`, `<save>` and `<content>`. A record carries the core build (sha256 of the
 `.so`, the compilers its `.comment` section names), the frontend commit, the
 host (CPU, kernel, Python, load before and after) and each input by hash.
 Core log lines arrive through the libretro log interface. Floating-point
