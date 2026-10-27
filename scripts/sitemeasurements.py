@@ -23,6 +23,7 @@ import os
 import re
 import sqlite3
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -512,7 +513,7 @@ def _build(core: dict) -> str:
         else _text(core["library"])
 
 
-def _shared(items: list[dict], value) -> str | None:
+def _shared(items: list[dict], value: Callable[[dict], str]) -> str | None:
     """The value every item gives, None when they differ."""
     values = {value(item) for item in items}
     return values.pop() if len(values) == 1 else None
