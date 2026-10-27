@@ -18,9 +18,14 @@ the emulator's page shows a **Tested** block. Every result is on the
 - It runs again for each version of one file, such as a BIOS. Nothing else changes.
 - It compares what the emulator showed, played or saved, by fingerprint (a hash).
 - Each version runs at least twice, each time from a fresh start.
-- The tests run by themselves each night on an idle computer. A clear result
-  updates the emulator's page and names the test as proof. Anything else waits
-  on the [Measurements](../measurements.md) page for someone to read the code.
+
+## When tests run
+
+Tests run by themselves each night on an idle computer. A clear result updates
+the emulator's page and names the test as proof.
+
+Anything else waits on the [Measurements](../measurements.md) page for someone
+to read the code.
 
 ## What a result says
 
