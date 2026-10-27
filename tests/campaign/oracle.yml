@@ -6,7 +6,8 @@
 #               retro_get_system_info gives): the reference frames a run with
 #               the full BIOS set reaches. Each was recorded once
 #               (`recorded_from`, the record id) and reviewed by looking at its
-#               PNG. `stage: bios` is a screen only the console's own BIOS
+#               PNG, from the variant `variant` names when that run was a
+#               check. `stage: bios` is a screen only the console's own BIOS
 #               draws, `stage: game` a screen of the content. A run that reaches
 #               one of them boots.
 # error_patterns  log lines after which a core stops, read from its source
