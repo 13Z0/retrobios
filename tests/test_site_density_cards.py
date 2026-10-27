@@ -228,6 +228,32 @@ class AnInstallBoxShowsOneCommand(unittest.TestCase):
         self.assertEqual(text.count("install.sh | sh"), 3)
 
 
+class TheSetupListLooksLikeAList(unittest.TestCase):
+    """The setup list had a rule of its own without the arrow, and read as
+    a text field at 390 and 1440 px."""
+
+    def test_the_select_takes_the_site_arrow(self) -> None:
+        css = (REPO_ROOT / "website" / "src" / "styles" / "retrobios.css").read_text(encoding="utf-8")
+        shared = re.search(r"\.sl-markdown-content select \{([^}]*)\}", css)
+        self.assertIsNotNone(shared)
+        self.assertIn("appearance: none", shared.group(1))
+        self.assertIn("var(--rb-select-arrow)", shared.group(1))
+        # No rule for the install box's select overrides it.
+        self.assertNotRegex(css, r"rb-install-setup select")
+        # The arrow is defined for both themes.
+        self.assertEqual(len(re.findall(r"--rb-select-arrow:", css)), 2)
+        # The box's select sits in Markdown content, where the shared rule applies.
+        box = "\n".join(gs._console_install_block("PlayStation Portable", PAIRS))
+        self.assertIn('<label class="rb-install-setup">Your setup <select>', box)
+
+    def test_the_built_select_shows_the_arrow(self) -> None:
+        if not (DIST / "systems").is_dir():
+            self.skipTest("no built site")
+        css = "".join(path.read_text(encoding="utf-8") for path in (DIST / "_astro").glob("*.css"))
+        self.assertNotIn("rb-install-setup select", css)
+        self.assertRegex(css, r"\.sl-markdown-content select\{[^}]*--rb-select-arrow")
+
+
 class TheScriptWiresBoth(unittest.TestCase):
     def test_pickers_and_copy_buttons_run(self) -> None:
         source = SITE_TS.read_text(encoding="utf-8")

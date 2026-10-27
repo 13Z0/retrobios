@@ -574,16 +574,8 @@ body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: var(--rb-grid-width
    of every command, which wraps anywhere rather than scroll a phone. */
 .sl-markdown-content .rb-install-all code { overflow-wrap: anywhere; }
 .sl-markdown-content .rb-install-setup { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
-.sl-markdown-content .rb-install-setup select {
-	min-height: 32px;
-	max-width: 100%;
-	padding: 0 0.5rem;
-	border: 1px solid var(--rb-border-strong);
-	border-radius: 4px;
-	background: var(--sl-color-bg);
-	color: var(--sl-color-white);
-	font: inherit;
-}
+/* Its select is styled as every other choice list on the site (the
+   arrow of --rb-select-arrow, below): a rule of its own hid the arrow. */
 
 /* Collapsible blocks are quiet: a closed block must not outweigh the
    command it explains. Colour is kept for caution and danger. */
