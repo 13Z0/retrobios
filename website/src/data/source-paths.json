@@ -9165,7 +9165,7 @@
   "src/core/gba/gba.cpp",
   "src/libretro/libretro.cpp"
  ],
- "github.com/vpinball/vpinball@704f603039bb0e41850d7f3def1fe31d28ed9fd7": [
+ "github.com/vpinball/vpinball@63770cd66eee66c84c10ba2f4d2edff918ab85d3": [
   "lib/src/WebServer.cpp",
   "make/CMakeLists_app.txt",
   "make/CMakeLists_plugin_FlexDMD.txt",

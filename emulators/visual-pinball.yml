@@ -3,8 +3,9 @@ type: standalone
 core_classification: game_engine
 source: "https://github.com/vpinball/vpinball"
 upstream: "https://github.com/vpinball/vpinball"
-profiled_date: "2026-10-26"
-source_commit: "704f603039bb0e41850d7f3def1fe31d28ed9fd7"
+profiled_date: "2026-10-27"
+source_commit: "63770cd66eee66c84c10ba2f4d2edff918ab85d3"
+prose_written_at: "63770cd66eee66c84c10ba2f4d2edff918ab85d3"
 core_version: "10.8.1"
 display_name: "Visual Pinball X"
 cores:
@@ -178,7 +179,7 @@ notes: |
 
   The pinmame observations were read at d5e1921db1ff34e1ff3e744e1480c5de799a7b86,
   the revision the build scripts fetch (platforms/config.sh:11), and the libdof
-  ones at 4908f45a5bd3b05369885b23f39465d589a32c1f (platforms/config.sh:17).
+  ones at 5c54ef784ddc31738a9b2a422380f170bd63121b (platforms/config.sh:17).
 
 files:
 
