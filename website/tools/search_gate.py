@@ -70,6 +70,19 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     "gamecube bios": (("systems/nintendo-gamecube/",), 1),
     "game boy bios": (("systems/nintendo-game-boy/",), 1),
     "3ds bios": (("systems/nintendo-3ds/",), 1),
+    # A console another one's name begins with, both ways: the longer name's
+    # page holds every word of the shorter query. GBA, GBC and the
+    # PlayStation 3 are sections of their maker's page; Saturn.emu is an
+    # emulator named after its console.
+    "playstation 2 bios": (("systems/sony-playstation-2/",), 1),
+    "playstation 3 bios": (("systems/sony/",), 1),
+    "game boy advance bios": (("systems/nintendo/",), 1),
+    "game boy color bios": (("systems/nintendo/",), 1),
+    "nintendo ds bios": (("systems/nintendo-nintendo-ds/",), 1),
+    "nintendo dsi bios": (("systems/nintendo-nintendo-dsi/",), 1),
+    "wii bios": (("systems/nintendo/",), 1),
+    "wii u bios": (("systems/nintendo-wii-u/",), 1),
+    "saturn bios": (("systems/sega-saturn/",), 1),
     # The words an emulator prints, and the page that answers them.
     "bios not found": (("wiki/troubleshooting/",), 3),
     "please insert playstation cd-rom": (("wiki/troubleshooting/",), 3),

@@ -100,6 +100,83 @@ class ConsoleWordsReachTheConsole(unittest.TestCase):
         self.assertEqual(typed, set())
 
 
+class ANameAnotherPageCovers(unittest.TestCase):
+    """3.2: the PlayStation 2 page holds every word of "playstation bios".
+    A console whose words another page's consoles also hold is written once
+    more, in `exact`, on its own page, and file names reach the search as
+    their parts: "ds" found twelve dsi_* names on the DSi page."""
+
+    PAGES = {
+        "systems/sony-playstation": ["PlayStation"],
+        "systems/sony-playstation-2": ["PlayStation 2"],
+        "systems/sony": ["PlayStation 3", "PlayStation Portable"],
+        "systems/nintendo-nintendo-ds": ["Nintendo DS"],
+        "systems/nintendo-nintendo-dsi": ["Nintendo DSi"],
+        "systems/nintendo": ["Famicom Disk System", "Nintendo 64", "Super Famicom Box"],
+        "systems/arcade-nintendo-super-system": ["Nintendo Super System"],
+        "systems/sega-saturn": ["Saturn"],
+    }
+
+    def words(self) -> dict[str, set[str]]:
+        return {page: sitestarlight.page_console_words({"consoles": names}, "")
+                for page, names in self.PAGES.items()}
+
+    def test_names_another_page_covers(self):
+        covered = {page: sitestarlight.covered_names(names, page, self.words())
+                   for page, names in self.PAGES.items()}
+        self.assertEqual(covered, {
+            "systems/sony-playstation": ["PlayStation"],
+            "systems/sony-playstation-2": [],
+            # Every word of PlayStation 3 is on the PlayStation 2 page, but
+            # not "3" itself: no page covers it.
+            "systems/sony": [],
+            "systems/nintendo-nintendo-ds": ["Nintendo DS"],
+            "systems/nintendo-nintendo-dsi": [],
+            "systems/nintendo": [],
+            # Nintendo, Super and System, each in another name.
+            "systems/arcade-nintendo-super-system": ["Nintendo Super System"],
+            "systems/sega-saturn": [],
+        })
+
+    def test_words_of_a_decorated_page(self):
+        text = '<span data-pagefind-meta="consoles:Nintendo DS" hidden></span>'
+        self.assertEqual(sitestarlight.page_console_words({}, text), {"nintendo", "ds"})
+        self.assertEqual(sitestarlight.page_console_words({}, "No field."), set())
+
+    def test_the_exact_field_is_written_on_the_covered_page_only(self):
+        words = self.words()
+
+        def text(page: str) -> str:
+            return sitestarlight.finalize_page(
+                f"{page}.md", "# T\n\nBody.\n", level="0", weight=None,
+                browser_title="T", description="d", structured={"@type": "TechArticle"},
+                terms={}, authored={"consoles": self.PAGES[page]}, words_by_page=words)[1]
+
+        self.assertIn('data-pagefind-meta="exact:PlayStation"', text("systems/sony-playstation"))
+        for page in ("systems/sony-playstation-2", "systems/sega-saturn"):
+            with self.subTest(page=page):
+                self.assertNotIn('data-pagefind-meta="exact:', text(page))
+
+    def test_the_field_is_weighted_and_never_shown(self):
+        config = (REPO_ROOT / "website" / "astro.config.mjs").read_text(encoding="utf-8")
+        weights = re.search(r"metaWeights: \{([^}]*)\}", config)[1]
+        fields = dict(re.findall(r"(\w+): ([\d.]+)", weights))
+        self.assertIn("exact", fields)
+        # Below the console field, so the longer name keeps its own query.
+        self.assertLess(float(fields["exact"]), float(fields["consoles"]))
+        site = (REPO_ROOT / "website" / "src" / "scripts" / "site.ts").read_text(encoding="utf-8")
+        self.assertRegex(site, r"UNSHOWN_FIELDS = new Set\(\[[^\]]*'exact'")
+
+    def test_file_names_as_parts(self):
+        body = "".join(f'<h3 class="rb-file-title"><code>{name}</code></h3>'
+                       for name in ("dsi_bios7.bin", "DSi_Nand_USA.bin", "NDS_Bios7.bin"))
+        meta = sitestarlight.file_names_meta(body)
+        self.assertIn('data-pagefind-meta="files:DSi Nand USA bin NDS Bios7"', meta)
+        # A letter of any script is a letter.
+        self.assertIn("ファミコン", sitestarlight.file_names_meta(
+            '<h3 class="rb-file-title"><code>ファミコン_bios.rom</code></h3>'))
+
+
 class GateQueries(unittest.TestCase):
     """3.2, 3.3 and 3.6: the queries the gate runs, the pages that answer
     them and the rank they must reach."""
@@ -110,6 +187,16 @@ class GateQueries(unittest.TestCase):
         "gamecube bios": (("systems/nintendo-gamecube/",), 1),
         "game boy bios": (("systems/nintendo-game-boy/",), 1),
         "3ds bios": (("systems/nintendo-3ds/",), 1),
+        "playstation bios": (("systems/sony-playstation/",), 1),
+        "playstation 2 bios": (("systems/sony-playstation-2/",), 1),
+        "playstation 3 bios": (("systems/sony/",), 1),
+        "game boy advance bios": (("systems/nintendo/",), 1),
+        "game boy color bios": (("systems/nintendo/",), 1),
+        "nintendo ds bios": (("systems/nintendo-nintendo-ds/",), 1),
+        "nintendo dsi bios": (("systems/nintendo-nintendo-dsi/",), 1),
+        "wii bios": (("systems/nintendo/",), 1),
+        "wii u bios": (("systems/nintendo-wii-u/",), 1),
+        "saturn bios": (("systems/sega-saturn/",), 1),
         "check my bios folder": (("wiki/troubleshooting/",), 3),
         "is my bios correct": (("files/",), 3),
         "schema": (("data/",), 3),

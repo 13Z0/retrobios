@@ -3065,6 +3065,14 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
     """
     lastmod: dict[str, str] = {}
     terms = sitestarlight.glossary_terms(_REPO_ROOT / WIKI_SRC_DIR / "glossary.md")
+    # The console words of every system page, decorated or not: a console
+    # another page's words cover gets a search field of its own.
+    console_words: dict[str, set[str]] = {}
+    for path in sorted((docs / "systems").glob("*.md*")):
+        text = path.read_text(encoding="utf-8")
+        words = sitestarlight.page_console_words(_front_matter(text), text)
+        if words:
+            console_words[path.relative_to(docs).with_suffix("").as_posix()] = words
     for path in sorted(docs.rglob("*.md")):
         relative = path.relative_to(docs)
         if any(part in LOCAL_NOTE_DIRS for part in relative.parts[:-1]):
@@ -3125,6 +3133,7 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
             logo=str(authored.get("logo") or ""),
             parent=authored.get("parent"),
             authored=authored,
+            words_by_page=console_words,
         )
         write_decorated(docs / target, text)
         # One file per page: a page that gained or lost its components

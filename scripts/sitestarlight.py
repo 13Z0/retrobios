@@ -16,7 +16,7 @@ import json
 import re
 import unicodedata
 import urllib.parse
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator, Mapping
 from html import unescape
 from pathlib import Path, PurePosixPath
 
@@ -366,6 +366,8 @@ def split_title(markdown: str) -> tuple[str, str, str]:
 
 
 _CARD_NAME = re.compile(r'<h3[^>]*class="rb-file-title"(?![^>]*data-pagefind-ignore)[^>]*><code>([^<]+)</code>')
+# What separates the parts of a file name: anything but a letter or a digit.
+_NAME_PART = re.compile(r"[\W_]+")
 
 
 def search_field(key: str, words: list[str]) -> str:
@@ -384,9 +386,20 @@ def file_names_meta(body: str) -> str:
     field of the page. A page of 250 cards is long, and the search weighs a
     long page down: the Sony page, where scph5501.bin is downloaded, came
     after every short page citing the name. The field is weighted in the
-    site's ranking (astro.config.mjs, metaWeights.files)."""
+    site's ranking (astro.config.mjs, metaWeights.files).
+
+    A name is written as its parts (scph5501 bin), each once. The search
+    matches a word as the start of a longer one and scores every distinct
+    word it reaches: whole names gave "ds" twelve rare words on the DSi page
+    (dsi_bios7.bin, DSi_Nand_USA.bin...), which then ranked first for
+    "nintendo ds bios"."""
     names = sorted({unescape(name) for name in _CARD_NAME.findall(body)})
-    return search_field("files", names)
+    parts: dict[str, str] = {}
+    for name in names:
+        for part in _NAME_PART.split(name):
+            if part:
+                parts.setdefault(part.casefold(), part)
+    return search_field("files", list(parts.values()))
 
 
 # systems/ page -> the platforms' own ids for the consoles it holds, built
@@ -435,6 +448,33 @@ def console_words(names: list[str]) -> list[str]:
     return [f"{name} BIOS" for name in names]
 
 
+_CONSOLES_META = re.compile(r'data-pagefind-meta="consoles:([^"]*)"')
+
+
+def page_console_words(authored: dict, text: str) -> set[str]:
+    """The words of the consoles a page answers for: its `consoles` front
+    matter (*authored*) before decoration, its `consoles` field after."""
+    names = field_words(authored.get("consoles"))
+    if names:
+        return {word.casefold() for name in names for word in name.split()}
+    match = _CONSOLES_META.search(text)
+    return set(unescape(match[1]).casefold().split()) if match else set()
+
+
+def covered_names(names: list[str], page: str, words_by_page: Mapping[str, set[str]]) -> list[str]:
+    """The names of *names* whose every word another page's consoles also
+    hold, as a word or the start of one (PlayStation on the PlayStation 2
+    page, Nintendo DS on the DSi page, Nintendo Super System on the
+    Nintendo page). The search matches a word as the start of a longer one
+    and ignores the words a page has that the query lacks: it cannot tell
+    these pages apart by words, only by a weight the other page lacks."""
+    held = [words for other, words in words_by_page.items() if other != page]
+    return [name for name in names
+            if any(all(any(word.startswith(part) for word in words)
+                       for part in name.casefold().split())
+                   for words in held)]
+
+
 def _neighbour(rel: str, value: object) -> object:
     """A `prev:` or `next:` the page states, its link resolved like any
     other link of the page."""
@@ -476,6 +516,7 @@ def finalize_page(
     logo: str = "",
     parent: dict | None = None,
     authored: dict | None = None,
+    words_by_page: Mapping[str, set[str]] | None = None,
 ) -> tuple[str, str]:
     """The Starlight file for a page body: its path under the content
     collection and its text. *parent* ({label, link}, the link written
@@ -487,7 +528,10 @@ def finalize_page(
     page states its neighbours and its weight), and its `consoles` and
     `terms` become search fields (astro.config.mjs, metaWeights): the
     consoles a manufacturer page holds sections for, and the words a page
-    answers that its text does not say, as an error message words them."""
+    answers that its text does not say, as an error message words them.
+    *words_by_page* holds the console words of every system page, by path
+    without extension: a console another page's words cover is written
+    once more, in `exact`."""
     authored = authored or {}
     title, title_id, body = split_title(markdown)
     body = body.lstrip("\n")
@@ -509,6 +553,7 @@ def finalize_page(
         body += file_names_meta(body) + search_field("aliases", page_aliases(rel))
     consoles = field_words(authored.get("consoles"))
     body += search_field("consoles", consoles)
+    body += search_field("exact", covered_names(consoles, rel.rsplit(".", 1)[0], words_by_page or {}))
     body += search_field("terms", field_words(authored.get("terms")) + console_words(consoles))
     components = used_components(body)
     stem = rel.rsplit(".", 1)[0]

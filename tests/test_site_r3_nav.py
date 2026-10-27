@@ -65,7 +65,8 @@ class MetaFields(unittest.TestCase):
         body = ('<h3 class="rb-file-title"><code>scph5501.bin</code></h3>'
                 '<h3 class="rb-file-title"><code>a,b.bin</code></h3>')
         meta = sitestarlight.file_names_meta(body)
-        self.assertIn('data-pagefind-meta="files:a b.bin scph5501.bin"', meta)
+        # Each name as its parts, each part once (round 5, 3.2).
+        self.assertIn('data-pagefind-meta="files:a b bin scph5501"', meta)
         self.assertRegex(meta, r"<span [^>]*hidden></span>")
 
     def test_a_field_escapes_its_value(self) -> None:

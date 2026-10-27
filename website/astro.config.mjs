@@ -108,26 +108,37 @@ export default defineConfig({
 			// ten times its text, so "dolphin" finds Dolphin, and the file names of
 			// a system page (its `files` field, written by sitestarlight.py) count
 			// half, so "scph5501" finds the Sony page without a file name winning
-			// every other query. Two fields name the page's subject in other words
-			// and weigh half a title: `aliases`, the ids setups file a system under
-			// (psx, dreamcast, gba), and `devices`, the handhelds and boxes a
-			// setup's own site names (R36S, Miyoo Mini). `consoles`, the consoles a
-			// manufacturer page holds (Neo Geo, WonderSwan Color), weighs as much
-			// as a title. `terms`, the words of a task or a message on screen (bios
-			// not found, which mame version, check my dump), weighs three times
-			// that: a field match scores below a title match, and the cards of a
-			// part page keep their own weight, so below 30 the MAME parts, whose
-			// card titles name MAME files, came before the version table for
-			// "which mame version". All of them are
-			// attributes on an empty element, so no text of theirs reaches an
-			// excerpt.
+			// every other query. `devices`, the handhelds and boxes a setup's own
+			// site names (R36S, Miyoo Mini), weighs half a title. `aliases`, the ids
+			// setups file a system under (psx, dreamcast, gba), weighs a title: with
+			// file names written as their parts, half a title put GBA.emu and two
+			// more emulators above the Nintendo page for "gba bios". `terms`, the
+			// words of a task or a message on screen (bios not found, which mame
+			// version, check my dump), weighs three titles: a field match scores
+			// below a title match, and the cards of a part page keep their own
+			// weight, so below 30 the MAME parts, whose card titles name MAME files,
+			// came before the version table for "which mame version".
+			//
+			// A field adds the same score to every page whose field holds the
+			// word, whatever else the field holds, and a query word also matches
+			// the start of a longer one. `consoles`, the consoles a system page
+			// answers for, weighs ten titles: below that an emulator named after
+			// its console (Saturn.emu, BK, PIECE) came before the console. The
+			// PlayStation 2 page holds every word of "playstation bios", so
+			// `exact` repeats, on its own page, a console whose every word another
+			// page's consoles hold (PlayStation, Nintendo DS, Nintendo Super
+			// System). It weighs two titles: enough over the other page, and less
+			// than the "3" of "playstation 3 bios" adds to the Sony page. Measured
+			// on the "<console> bios" query of every system page and on
+			// tools/search_gate.py. All of them are attributes on an empty
+			// element, so no text of theirs reaches an excerpt.
 			pagefind: {
 				ranking: {
 					pageLength: 0.1,
 					termFrequency: 0.5,
 					termSaturation: 1.4,
 					termSimilarity: 9,
-					metaWeights: { title: 10, files: 0.5, aliases: 5, devices: 5, consoles: 10, terms: 30 },
+					metaWeights: { title: 10, files: 0.5, aliases: 10, devices: 5, consoles: 100, exact: 20, terms: 30 },
 				},
 			},
 			plugins: [
