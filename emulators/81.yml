@@ -7,6 +7,10 @@ profiled_date: "2026-03-22"
 source_commit: "fa7094910d040baa5fd8b11dbf6a1a618330ecd9"
 upstream_commit: "4de3cdb8cff0060ad03e43ae2681b0628a9c5f5d"
 core_version: "1.0a"
+version_basis:
+  kind: file
+  path: "src/libretro.cpp"
+  pattern: '#define\s+VERSION\s+"([^"]+)'
 display_name: "Sinclair - ZX 81 (EightyOne)"
 cores: ["81"]
 systems:

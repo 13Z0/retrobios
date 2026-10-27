@@ -6,6 +6,10 @@ upstream: "https://github.com/increpare/PuzzleScript"
 profiled_date: "2026-03-25"
 source_commit: "6d859b47092f585a7ec05804c1d51a1676a06531"
 core_version: "0.2.1"
+version_basis:
+  kind: file
+  path: "src/core.cpp"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "PuzzleScript (pzretro)"
 cores:
   - puzzlescript

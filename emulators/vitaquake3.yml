@@ -5,7 +5,11 @@ source: "https://github.com/libretro/vitaquake3"
 upstream: "https://github.com/ioquake/ioq3"
 profiled_date: "2026-03-25"
 source_commit: "61374f650f42c4f25c215ea1f8db992af162ada6"
-core_version: "git"
+core_version: "1.36_GIT_ba68b99c-2018-01-23"
+version_basis:
+  kind: file
+  path: "Makefile"
+  pattern: '-DPRODUCT_VERSION=\\"([^\\"]+)\\"'
 display_name: "Quake III: Arena (vitaQuake 3)"
 cores: [vitaquake3]
 systems: [quake3]

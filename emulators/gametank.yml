@@ -6,7 +6,11 @@ upstream: "https://github.com/clydeshaffer/GameTankEmulator"
 profiled_date: "2026-10-20"
 source_commit: "1a6f2608ae302d613ac17ae8584c7239ae47044b"
 upstream_commit: "be32deab74b7778647273fa5616d1ea92e3e1267"
-core_version: "1.0.1"
+core_version: "v1.0.1"
+version_basis:
+  kind: tag
+  tag: "v1.0.1"
+  distance: 0
 display_name: "Clydeware - GameTank (GameTank)"
 cores:
   - gametank

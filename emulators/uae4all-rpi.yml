@@ -7,6 +7,10 @@ source: "https://github.com/Chips-fr/uae4all-rpi"
 profiled_date: "2026-10-20"
 source_commit: "ae7eb74cfbe726a45f5b791484948676dcba1aef"
 core_version: "0.7"
+version_basis:
+  kind: file
+  path: "libretro/core/libretro-core.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Commodore - Amiga (UAE4ALL)"
 systems:
   - commodore-amiga

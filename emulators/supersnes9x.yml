@@ -7,6 +7,11 @@ profiled_date: "2026-10-17"
 source_commit: "691e47b40fb38fa522a5471462344a2f0206b7a8"
 pin_frozen: "ROCKNIX 20261001 builds this revision. Later commits on shanytc/snes9x rework the Super Famicom Box loader and are not part of that build."
 core_version: "1.63.29"
+version_basis:
+  kind: file
+  path: "snes9x.h"
+  pattern: '#define\s+VERSION\s+"([^"]+)"\s*\n#define\s+PATCH_VERSION\s+"([^"]+)"'
+  format: "{1}.{2}"
 display_name: "Nintendo - SNES / SFC / SGB / GB / GBC (SuperSnes9x)"
 cores:
   - "supersnes9x"

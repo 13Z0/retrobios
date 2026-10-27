@@ -11,6 +11,11 @@ profiled_date: "2026-03-24"
 source_commit: "9e4fdeb9b336470bc96beb8765b2e79c86a2da1e"
 upstream_commit: "89199f298a95345a893d814525b6668567a6d490"
 core_version: "0.4.0"
+version_basis:
+  kind: file
+  path: "Core/EmuSettings.cpp"
+  pattern: 'uint16_t major = (\d+);\s*\n\s*uint8_t minor = (\d+);\s*\n\s*uint8_t revision = (\d+);'
+  format: "{1}.{2}.{3}"
 cores: [mesen-s, mesen_s]
 systems: [nintendo-snes, nintendo-gb, nintendo-gbc, nintendo-super-game-boy, nintendo-satellaview]
 

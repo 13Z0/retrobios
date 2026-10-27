@@ -6,7 +6,11 @@ upstream: "https://github.com/vircon32/ComputerSoftware"
 profiled_date: "2026-03-25"
 source_commit: "8b4ff35efb0f3a4c2599fa85ec0e588713f83182"
 upstream_commit: "e75b5370ff2eaff986057b34df893ad2eba08ea5"
-core_version: "2026.2.18"
+core_version: "v1.7"
+version_basis:
+  kind: tag
+  tag: "v1.7"
+  distance: 0
 display_name: "Vircon32"
 cores:
   - vircon32

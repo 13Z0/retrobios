@@ -5,7 +5,9 @@ source: "https://github.com/libretro/citra2018"
 upstream: "https://github.com/citra-emu/citra"
 profiled_date: "2026-03-23"
 source_commit: "95e2f06c179c8daf44fa344c206f549cf332d21b"
-core_version: "Git"
+core_version: null
+version_basis:
+  kind: none
 display_name: "Nintendo - 3DS (Citra 2018)"
 library_name: "Citra2018"
 cores: [citra2018]

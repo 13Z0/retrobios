@@ -6,7 +6,11 @@ upstream: "https://github.com/atari800/atari800"
 profiled_date: "2026-03-23"
 source_commit: "4e7fbc73765c1a9670c7506616046ad1d4ccda51"
 upstream_commit: "98cc2dc749867c9c7317a0271ba062a6c797f886"
-core_version: "3.1.0"
+core_version: "7.0.0"
+version_basis:
+  kind: file
+  path: "libretro/config.h"
+  pattern: '#define\s+PACKAGE_VERSION\s+"([^"]+)"'
 display_name: "Atari - 400/800/600XL/800XL/130XE/5200 (Atari800)"
 cores: [atari800]
 systems: [atari-400-800, atari-5200, xegs]

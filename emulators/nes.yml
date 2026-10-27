@@ -6,6 +6,10 @@ upstream: "https://git.9front.org/plan9front/plan9front (sys/src/games/nes/)"
 profiled_date: "2026-03-24"
 source_commit: "68dfadea5889da5da7c7e171823c9b3ab24fc892"
 core_version: "1.0"
+version_basis:
+  kind: file
+  path: "nes.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "Nintendo - NES / Famicom (nes)"
 cores: [nes]
 systems: [nintendo-nes]

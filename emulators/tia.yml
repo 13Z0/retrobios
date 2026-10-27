@@ -5,7 +5,9 @@ source: "https://github.com/warmenhoven/tia"
 upstream: "https://github.com/warmenhoven/tia"
 profiled_date: "2026-09-03"
 source_commit: "6ae5bf998fe7a7842294089db17fc86fd73db1f0"
-core_version: "52+6ae5bf9"
+core_version: null
+version_basis:
+  kind: none
 display_name: "Atari - 2600 (Tia)"
 cores:
   - tia

@@ -6,6 +6,10 @@ upstream: "https://github.com/libretro/Dinothawr"
 profiled_date: "2026-03-23"
 source_commit: "62d3e1ecf85f0feea01cad6809a80303a87e8a28"
 core_version: "v1.0"
+version_basis:
+  kind: file
+  path: "libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Dinothawr"
 cores: [dinothawr]
 systems: [dinothawr]

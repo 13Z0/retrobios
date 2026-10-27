@@ -6,6 +6,10 @@ upstream: "https://sourceforge.net/projects/pokemini/"
 profiled_date: "2026-03-24"
 source_commit: "132111b76343559860532a1ccc094f93f1ed5650"
 core_version: "v0.60"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Nintendo - Pokemon Mini (PokeMini)"
 cores:
   - pokemini

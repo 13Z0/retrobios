@@ -5,7 +5,11 @@ source: "https://github.com/drhelius/Geartowns"
 upstream: "https://github.com/drhelius/Geartowns"
 profiled_date: "2026-10-27"
 source_commit: "996d42b098bd572ba66a8246bfe56cee39e5ff6e"
-core_version: "1.0.1"
+core_version: "1.0.1-5-g996d42b"
+version_basis:
+  kind: tag
+  tag: "1.0.1"
+  distance: 5
 display_name: "Fujitsu - FM Towns (Geartowns)"
 cores:
   - "geartowns"

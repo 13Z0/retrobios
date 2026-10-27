@@ -5,7 +5,11 @@ source: "https://github.com/mentalfoundry/Pokket"
 upstream: "https://github.com/mentalfoundry/Pokket"
 profiled_date: "2026-10-17"
 source_commit: "37c022ce46eb578de5b57d7b488ffda9e3b7d9f1"
-core_version: "v1.23"
+core_version: "1.23"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'project\(pokket\s+VERSION\s+([0-9][\w.+-]*)'
 display_name: "Sony - PocketStation (pokketstation)"
 cores: ["pokketstation", "pokket"]
 systems: [sony-pocketstation]

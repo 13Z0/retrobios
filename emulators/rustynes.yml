@@ -6,6 +6,10 @@ upstream: "https://github.com/doublegate/RustyNES"
 profiled_date: "2026-10-26"
 source_commit: "3d02b99dc84fb389c03fc6b1f986ffa658dda0dd"
 core_version: "3.5.0"
+version_basis:
+  kind: file
+  path: "Cargo.toml"
+  pattern: 'version\s+=\s+"([^"]+)'
 display_name: "Nintendo - NES / Famicom (RustyNES)"
 cores:
   - rustynes

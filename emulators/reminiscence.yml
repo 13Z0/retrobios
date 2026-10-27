@@ -7,6 +7,10 @@ upstream_commit: "947a4dce261aacc4f6ec0c2c90cb9d7e37712c7b"
 profiled_date: "2026-03-25"
 source_commit: "e6c0b0039258004f8bc377ddb88c0e931db131ce"
 core_version: "0.3.6"
+version_basis:
+  kind: file
+  path: "src/libretro.cpp"
+  pattern: '#define\s+RE_VERSION\s+"([^"]+)'
 display_name: "Flashback (REminiscence)"
 cores:
   - reminiscence

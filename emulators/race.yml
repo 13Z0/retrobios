@@ -7,6 +7,10 @@ profiled_date: "2026-09-17"
 source_commit: "c7810dd7f172827bfa2004813bc000b13786636b"
 upstream_commit: "065db2eb614d4414ed49a1a9e241022450bb844d"
 core_version: "v2.16"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: '#define\s+RACE_VERSION\s+"([^"]+)'
 display_name: "SNK - Neo Geo Pocket / Color (RACE)"
 cores: [race]
 systems: [snk-ngp, snk-ngpc]

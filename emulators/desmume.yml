@@ -6,7 +6,11 @@ upstream: "https://github.com/TASEmulators/desmume"
 profiled_date: "2026-03-23"
 source_commit: "95b4d798731caa809125b6c3c11d17cc332ff6ef"
 upstream_commit: "e06d11f6df8c2e35d570412c45f5a63e5e7c031d"
-core_version: "SVN"
+core_version: "0.9.12"
+version_basis:
+  kind: file
+  path: "desmume/src/version.cpp"
+  pattern: '#define\s+DESMUME_VERSION_STRING\s+" "\s+"([^"]+)"'
 display_name: "Nintendo - DS (DeSmuME)"
 cores: [desmume]
 systems: [nintendo-ds]

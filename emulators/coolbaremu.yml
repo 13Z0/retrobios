@@ -5,7 +5,11 @@ source: "https://github.com/AloysHF/CoolbarEmu"
 upstream: "https://github.com/AloysHF/CoolbarEmu"
 profiled_date: "2026-10-17"
 source_commit: "88e90440daab0bdc7bc141728b51841e0c730528"
-core_version: "0.2.0"
+core_version: "v0.2.0"
+version_basis:
+  kind: tag
+  tag: "v0.2.0"
+  distance: 0
 display_name: "Coolbar (CoolbarEmu)"
 cores:
   - "coolbaremu"

@@ -8,7 +8,11 @@ upstream: "https://github.com/mkxp-z/mkxp-z"
 profiled_date: "2026-03-24"
 source_commit: "650cb0888a07d0b5044e131160ddfa53feaf595b"
 upstream_commit: "37a04d14413454551a7b6aadbb4e93e67168accb"
-core_version: "f4bc5aa"
+core_version: "2.4.2"
+version_basis:
+  kind: file
+  path: "meson.build"
+  pattern: '^project\(\s*''mkxp-z''[^)]*?version:\s*''([^'']+)'''
 display_name: "RPG Maker XP/VX/VX Ace (mkxp-z)"
 cores:
   - mkxp-z

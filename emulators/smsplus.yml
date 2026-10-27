@@ -6,6 +6,10 @@ upstream: "https://github.com/ekeeke/smsplus-gx"
 profiled_date: "2026-03-25"
 source_commit: "3844b46caa926b6494987b97da63092818c4ddef"
 core_version: "1.8"
+version_basis:
+  kind: file
+  path: "source/system.h"
+  pattern: '#define\s+APP_VERSION\s+"([^"]+)"'
 display_name: "Sega - MS/GG (SMS Plus GX)"
 cores:
   - smsplus

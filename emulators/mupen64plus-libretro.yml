@@ -6,6 +6,10 @@ upstream: "https://github.com/libretro/mupen64plus-libretro"
 profiled_date: "2026-10-22"
 source_commit: "ab8134ac90a567581df6de4fc427dd67bfad1b17"
 core_version: "2.5"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Nintendo - Nintendo 64 (Mupen64Plus 2019)"
 cores:
   - "mupen64plus_32b"

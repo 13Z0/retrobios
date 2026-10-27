@@ -6,6 +6,10 @@ upstream: "https://github.com/FIX94/fixGB"
 profiled_date: "2026-03-23"
 source_commit: "c7865087b8c8126b8bc60fddb75b20efad992458"
 core_version: "Alpha v0.8.2"
+version_basis:
+  kind: file
+  path: "main.c"
+  pattern: 'VERSION_STRING\s*=\s*"fixGB ([^"]+)"'
 display_name: "Nintendo - Game Boy / Color (fixGB)"
 cores:
   - fixgb

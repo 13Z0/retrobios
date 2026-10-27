@@ -5,7 +5,11 @@ source: "https://github.com/icculus/mojozork"
 upstream: "https://github.com/icculus/mojozork"
 profiled_date: "2026-03-24"
 source_commit: "ff7e00742a00acec8e175ddefb97520fb270df2d"
-core_version: "0.1"
+core_version: "0.3"
+version_basis:
+  kind: file
+  path: "mojozork-libretro.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "Infocom Z-Machine (MojoZork)"
 cores:
   - mojozork

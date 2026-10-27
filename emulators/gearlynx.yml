@@ -4,7 +4,11 @@ core_classification: official_port
 source: "https://github.com/drhelius/Gearlynx"
 profiled_date: "2026-10-04"
 source_commit: "77901f3d3b318a12fdf71dd3ebb64048f0070ada"
-core_version: "1.2.36"
+core_version: "1.2.36-10-g77901f3"
+version_basis:
+  kind: tag
+  tag: "1.2.36"
+  distance: 10
 display_name: "Atari - Lynx (GearLynx)"
 cores: [gearlynx]
 systems: [atari-lynx]

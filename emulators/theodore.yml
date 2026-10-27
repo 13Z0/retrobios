@@ -5,7 +5,11 @@ source: "https://github.com/Zlika/theodore"
 upstream: "http://dcmoto.free.fr/"
 profiled_date: "2026-03-25"
 source_commit: "4d469ce0f71ee046ceb78cdbf8e9f18364aaa918"
-core_version: "Git (post-3.1)"
+core_version: "v3.2-9-g4d469ce"
+version_basis:
+  kind: tag
+  tag: "v3.2"
+  distance: 9
 display_name: "Thomson - MO/TO (Theodore)"
 cores: [theodore]
 systems: [thomson-to7, thomson-to770, thomson-to8, thomson-to8d, thomson-to9, thomson-to9plus, thomson-mo5, thomson-mo6, olivetti-pc128]

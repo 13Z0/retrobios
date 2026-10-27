@@ -6,6 +6,10 @@ upstream: "https://sourceforge.net/projects/fuse-emulator/"
 profiled_date: "2026-03-23"
 source_commit: "e997e2bc32c888348f862f69f2c53babfedf7791"
 core_version: "1.6.0"
+version_basis:
+  kind: file
+  path: "fuse/configure.ac"
+  pattern: 'm4_define\(\[fuse_version\],\s*\[([^\]]+)\]\)'
 display_name: "Sinclair - ZX Spectrum (Fuse)"
 cores:
   - fuse

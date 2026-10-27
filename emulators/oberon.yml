@@ -5,7 +5,11 @@ source: "https://github.com/libretro/oberon-risc-emu"
 upstream: "https://github.com/pdewacht/oberon-risc-emu"
 profiled_date: "2026-03-24"
 source_commit: "5be71d885b87b7cd7c635bf330764fcc4f3905fe"
-core_version: "2026-08-23"
+core_version: "v2016.1-56-g5be71d8"
+version_basis:
+  kind: tag
+  tag: "v2016.1"
+  distance: 56
 display_name: "Oberon RISC Emulator"
 cores:
   - oberon

@@ -6,7 +6,11 @@ upstream: "https://github.com/mgba-emu/mgba"
 profiled_date: "2026-10-04"
 source_commit: "f1d5975d77285f77affbfe64b7050ebd5c4b6a77"
 upstream_commit: "afd6f14eaf8bd35214ed3fb9dc69a92bfc3877a9"
-core_version: "v0.3.1"
+core_version: "0.3.1"
+version_basis:
+  kind: file
+  path: "mgba-splitscreen/package.json"
+  pattern: '"version":\s+"([^"]+)'
 display_name: "Nintendo - Game Boy Advance (mGBA Splitscreen)"
 cores:
   - mgba_splitscreen

@@ -5,7 +5,11 @@ source: "https://github.com/libretro/dosbox-core"
 upstream: "https://sourceforge.net/projects/dosbox/"
 profiled_date: "2026-03-23"
 source_commit: "d38fcb5013e4dca8d119a9786279cf41465757f2"
-core_version: "SVN"
+core_version: "r4494"
+version_basis:
+  kind: file
+  path: "libretro/svn"
+  pattern: '^(r\d+)'
 display_name: "DOS (DOSBox-core)"
 cores: [dosbox_core]
 systems: [dos]
