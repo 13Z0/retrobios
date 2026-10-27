@@ -32,5 +32,10 @@ notes: |
   line to auto-start the program (ref: src/libretro.c:614-686). It
   belongs to the content.
 
+  The core Recalbox 10.1.1 ships (x86_64 image sha1
+  b3d80ff00d46000de73c470c73b0ffa81f23c600, exel-hence_libretro.so sha256
+  34d0f171154bf903d7ebc66e60ad078d9728700fefde62d94b280e295cc8f424) holds
+  the nine embedded arrays of this tag byte for byte.
+
 exclusion_note: "BIOS, BASIC cartridges and ExelDisk DOS compiled into the core, the system directory is never read"
 files: []

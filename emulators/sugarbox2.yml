@@ -16,8 +16,14 @@ systems:
 notes: |
   Libretro core by Recalbox wrapping Tom1975's SugarboxV2
   (CPC 464, 664, 6128, 464+, 6128+ and GX-4000). Recalbox 10.1.1 builds
-  tag v1.5 from a token-gated copy of this repository, but the public
-  repository carries v0.9 only, which is the revision read here.
+  tag v1.5 from a token-gated copy of this repository, and the public
+  repository carries v0.9 only, which is the revision read here. The core
+  Recalbox ships was read against it: sugarbox2_libretro.so from the
+  10.1.1 x86_64 image (image sha1 b3d80ff00d46000de73c470c73b0ffa81f23c600,
+  core sha256 eda2d57f9b556c66db95d2b4b755e501c6645de6b9dfc46d901f1f93a1f39c5e)
+  holds the 59 compressed blobs of RomData.cpp byte for byte, reports
+  library_version 0.1, and opens the same paths. Its on-screen keyboard
+  is placed by SetOrigin where v0.9 has SetViewport.
 
   Every ROM is compiled into the core as a zlib stream: OS and BASIC for
   each model and language, AMSDOS, the Plus cartridge plus_en.cpr, the

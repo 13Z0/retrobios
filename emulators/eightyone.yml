@@ -60,4 +60,9 @@ notes: |
   linked statically.
   ref: libretro/eo_stubs.cpp:67-68, CMakeLists.txt:267-291
 
+  The core Recalbox 10.1.1 ships (x86_64 image sha1
+  b3d80ff00d46000de73c470c73b0ffa81f23c600, eightyone_libretro.so sha256
+  f3ac944a7b802f44426ec030f10f0a263c1db515d012a9fd9ca035ce8eaf04df) holds
+  the 117 embedded arrays of the files this tag compiles byte for byte.
+
 files: []
