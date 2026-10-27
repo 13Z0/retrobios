@@ -820,9 +820,10 @@ def installer_options() -> tuple[tuple[str, str], ...]:
         if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name)
         and isinstance(node.value, ast.Constant) and isinstance(node.value.value, str)
     }
-    main = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "main")
+    builder = next(node for node in tree.body
+                   if isinstance(node, ast.FunctionDef) and node.name == "build_parser")
     options = []
-    for node in ast.walk(main):
+    for node in ast.walk(builder):
         if not (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
                 and node.func.attr == "add_argument"):
             continue
@@ -957,9 +958,15 @@ def hide_hashes(markdown: str) -> str:
     return "".join(pieces)
 
 
+# The markers scripts/generate_installer_doc.py writes its tables between:
+# for the source only, the page shows the table alone.
+GENERATED_MARKER = re.compile(r"(?m)^<!-- /?generated: [a-z-]+ -->\n\n?")
+
+
 def prepare_page(markdown: str, page: Path) -> str:
     """Everything this module does to a page before it is decorated."""
     markdown = expand_glance(expand_options(expand_commands(resolve_images(localize_images(markdown, page)))))
+    markdown = GENERATED_MARKER.sub("", markdown)
     if page.parts[:1] == ("wiki",):
         markdown = hide_hashes(markdown)
     return markdown

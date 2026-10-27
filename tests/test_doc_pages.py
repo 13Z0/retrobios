@@ -688,9 +688,9 @@ class FirstInstallWalkthrough(unittest.TestCase):
         import install
 
         section = _section(self.text, "4. Wait")
-        computer = install._STOP_KEYS["keys"][0].replace("Ctrl-C", "Ctrl+C")
+        computer = install.TUI_ROUTES["keys"].stop[0].replace("Ctrl-C", "Ctrl+C")
         self.assertIn(f"{computer} stops", section)
-        self.assertIn(f"{install._STOP_KEYS['gptokeyb'][0]} on a handheld", section)
+        self.assertIn(f"{install.TUI_ROUTES['gptokeyb'].stop[0]} on a handheld", section)
 
     def test_no_hand_kept_size_before_the_run(self):
         import install
