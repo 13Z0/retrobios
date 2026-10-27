@@ -166,8 +166,27 @@ def campaign_summary(root: Path, stored: list[mr.Stored], source: dict | None) -
             "open": open_items}
 
 
+# Characters a campaign value could use to leave its place on the page: HTML
+# and MDX syntax ({ } opens an expression), code spans, emphasis and links.
+_UNSAFE = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "{": "&#123;", "}": "&#125;", "`": "&#96;",
+           "[": "&#91;", "]": "&#93;", "*": "&#42;", "_": "&#95;", "\\": "&#92;", "|": "&#124;"}
+
+
+def _plain(value: object) -> str:
+    """Text a run produced (core output, a romfetch error, a profile name),
+    shown as text: every character that is markup on the page is a
+    character reference."""
+    text = " ".join(str(value if value is not None else "").split())
+    return "".join(_UNSAFE.get(char, char) for char in text)
+
+
+def _code(value: object) -> str:
+    """A value as code that cannot close its element or open an expression."""
+    return f"<code>{_plain(value)}</code>"
+
+
 def _value(value: object) -> str:
-    return f"`{json.dumps(value)}`" if value is not None else "nothing"
+    return _code(json.dumps(value, ensure_ascii=False)) if value is not None else "nothing"
 
 
 def campaign_section(summary: dict | None) -> list[str]:
@@ -180,20 +199,20 @@ def campaign_section(summary: dict | None) -> list[str]:
         "## Campaign",
         "",
         f"Tests run by themselves every night on an idle computer ([how]({METHOD_PAGE})). "
-        f"Last pass: {last['ended_at'][:10]}, {_text(last['result'])}"
-        + (f" ({_text(last['detail'])})" if last.get("detail") else "") + ". "
-        f"{counts['done']} tests done, {counts['failed']} failed, {counts['pending']} waiting. "
+        f"Last pass: {_plain(last['ended_at'][:10])}, {_plain(last['result'])}"
+        + (f" ({_plain(last['detail'])})" if last.get("detail") else "") + ". "
+        f"{int(counts['done'])} tests done, {int(counts['failed'])} failed, {int(counts['pending'])} waiting. "
         f"{summary['applied']} profile fields were set from a run.",
         "",
     ]
     if last["pending_reasons"]:
         lines += ["| Waiting for | Tests |", "|-------------|------:|"]
-        lines += [f"| {_text(reason)} | {number} |"
+        lines += [f"| {_plain(reason)} | {int(number)} |"
                   for reason, number in sorted(last["pending_reasons"].items(), key=lambda kv: (-kv[1], kv[0]))]
         lines.append("")
     if last["failed"]:
         lines += ["Failed tests:", ""]
-        lines += [f"- {_text(item['emulator'])}, `{_text(item['check'])}`: {_text(item['reason'])}"
+        lines += [f"- {_plain(item['emulator'])}, {_code(item['check'])}: {_plain(item['reason'])}"
                   for item in last["failed"]]
         lines.append("")
     lines += ["### Open findings", ""]
@@ -203,12 +222,12 @@ def campaign_section(summary: dict | None) -> list[str]:
     lines += ["A finding is what a run showed that no rule settles. It waits for someone to "
               "read the emulator's code.", ""]
     for item in summary["open"]:
-        records = ", ".join(f"[{rid}]({link})" if link else f"`{rid}`"
+        records = ", ".join(f"[{_plain(rid)}]({link})" if link else _code(rid)
                             for rid, link in zip(item["evidence"], item["links"]))
         lines += [
-            f"- **{_text(item['emulator'])}**, `{_text(item['file'])}`, `{_text(item['field'])}` "
-            f"({item['status']}): the profile says {_value(item['profile_says'])}, the run shows "
-            f"{_value(item['run_shows'])}. {_text(item['statement'])}. Records: {records}.",
+            f"- **{_plain(item['emulator'])}**, {_code(item['file'])}, {_code(item['field'])} "
+            f"({_plain(item['status'])}): the profile says {_value(item['profile_says'])}, the run "
+            f"shows {_value(item['run_shows'])}. {_plain(item['statement'])}. Records: {records}.",
             "",
         ]
     return lines
