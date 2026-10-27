@@ -5,7 +5,7 @@ source: "https://github.com/drhelius/Gearsystem"
 upstream: "https://github.com/drhelius/Gearsystem"
 profiled_date: "2026-03-23"
 source_commit: "215c22f73d06871e12291025105c98470509468d"
-core_version: "3.2.0"
+core_version: "3.9.23"
 display_name: "Sega - MS/GG/SG-1000 (Gearsystem)"
 cores:
   - gearsystem

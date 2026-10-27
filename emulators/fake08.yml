@@ -5,7 +5,7 @@ source: "https://github.com/jtothebell/fake-08"
 upstream: "https://github.com/jtothebell/fake-08"
 profiled_date: "2026-03-23"
 source_commit: "814991a2571ad3970e386cef48f3b148aa1c27b9"
-core_version: "v0.0.2.19"
+core_version: "v0.0.2.20"
 display_name: "PICO-8 (FAKE-08)"
 cores:
   - fake08

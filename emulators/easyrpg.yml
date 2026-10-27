@@ -6,7 +6,7 @@ upstream: "https://github.com/EasyRPG/Player"
 profiled_date: "2026-03-23"
 source_commit: "a3fbb7c24fd5a39fd95388d09135256a6b19f1e4"
 upstream_commit: "096c004def987f3545198304b1b7a8352f284a50"
-core_version: "0.8.1.0"
+core_version: "0.8.1.1"
 display_name: "RPG Maker 2000/2003 (EasyRPG)"
 cores:
   - easyrpg

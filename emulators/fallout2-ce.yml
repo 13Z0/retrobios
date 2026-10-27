@@ -5,7 +5,7 @@ source: "https://github.com/alexbatalov/fallout2-ce"
 upstream: ~
 profiled_date: "2026-10-04"
 source_commit: "e97087b9582f37075db347a89898887320753f8b"
-core_version: "1.2"
+core_version: "v1.3.0"
 display_name: "Fallout 2 (Community Edition)"
 cores: [fallout2-ce]
 systems: [fallout2]

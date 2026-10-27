@@ -5,7 +5,7 @@ source: "https://github.com/habib256/pom2"
 upstream: "https://github.com/habib256/pom2"
 profiled_date: "2026-10-23"
 source_commit: "886390a806714a57f0431f0ce8ef9527b4805620"
-core_version: "0.9.8"
+core_version: "v0.9.9"
 display_name: "Apple - Apple II (POM2)"
 cores:
   - pom2
