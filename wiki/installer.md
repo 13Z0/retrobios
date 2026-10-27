@@ -120,7 +120,10 @@ they do online, and a file of the list the pack does not hold fails as
 
 `--offline` forbids every request, for a device with no Wi-Fi: `--check`
 still names the platform and its folder, then stops at the file list unless
-`--manifest` or `--from-pack` gives it.
+`--manifest` or `--from-pack` gives it. At a terminal the run installs the
+copies found on this machine and downloads nothing. The files left out are
+missing, not declined: it ends `Finished with files missing` (code 1), or
+`Nothing installed` (code 2) when none was found, as the full screen does.
 
 ## The full-screen interface { #the-full-screen-interface }
 
@@ -132,8 +135,10 @@ much space is free, before anything is written.
 
 The other choices sit one press away. **Choose systems** ticks the consoles you
 play, with the total to download under the list. A long list opens on **None**:
-A or Enter there unticks every system, and A on a system then installs that one alone. Back
-with nothing ticked keeps the ticks the list opened with. **Options** sets the
+A or Enter there unticks every system, and A on a system then takes that one alone. A
+on a system (**Continue**) always opens the confirm screen, which counts the choice
+before **Install**: it never installs by itself. Back with nothing ticked keeps the ticks
+the list opened with. **Options** sets the
 preferred regions, game data, the installed cores only, the cores, the parallel
 downloads, the folder and, for a list with files read from the frontend's save
 directory, that directory. Each row names the option it sets, and **Show the
@@ -367,8 +372,8 @@ would save, once that saving is over half:
 `--dry-run` prints the same line under its plan.
 
 When some files came from this machine rather than the network, a line under
-`Done` says where each came from (`38 files copied from E:\, 3 fixed from
-copies already in the BIOS folder, 4 downloaded.`). See
+`Done` says where each came from (`38 files copied from E:\, 3 copied from
+the wrong place in the BIOS folder, 4 downloaded.`). See
 [Copy from an old card](#copy-from-an-old-card).
 
 The word `Done` and a location are the confirmation. Any other ending
@@ -554,7 +559,7 @@ misplaced in it, in a `bios/bios/` folder, a pack extracted into a folder of
 its own, a name in capitals on a system where case counts, a ZIP never
 extracted, or one folder above, is copied where the cores open it, with no
 `--from` needed. The misplaced copy is left as it is, and the end of the run
-counts them (`3 fixed from copies already in the BIOS folder`).
+counts them (`3 copied from the wrong place in the BIOS folder`).
 
 ## Choosing what to install
 
@@ -831,9 +836,10 @@ gives for the device, below the card's root instead of its mount point:
 | `.config/system/configs/system.cfg` with `root.password=rocknix`, as ROCKNIX's first boot writes its storage | ROCKNIX | `roms/bios`, ROCKNIX's list |
 
 The full screen lists such a card on its first screen ("muOS SD card (E:\)").
-Named by its system (`--platform muos`, `--platform onion`), a `--dest` that
-is neither such a card nor its BIOS folder is refused, with the folder that
-system reads.
+Named by its system (`--platform muos`, `--platform knulli`), a `--dest` that
+is another system's card is refused. One that holds none of the system's
+files is refused where the card always carries them, and is taken as named
+for KNULLI, ROCKNIX and the systems no file on the card names.
 
 Desktop installs are read from their own configuration, and several can be
 found on one machine.
@@ -910,18 +916,32 @@ EmuELEC, `/media/fat/games` for MiSTer,
 `C:\RetroBat\bios` for RetroBat, and RetroArch's own default system
 directory for RetroArch. BizHawk has no such folder: it reads `Firmware`
 beside its executable wherever the archive was extracted, so a forced
-`--platform bizhawk` that finds no install stops and asks for `--dest`. MinUI,
-NextUI and MyMinUI keep their files on the SD card. Run on the device, the
-installer finds the card root. From a computer the card is mounted on, a
-forced `--platform minui` uses the one MinUI card mounted. Otherwise the screen
-opens **Where is the SD card?**, which lists only the cards of that system and
-offers **Look again**, and `--plain` asks `Card root`, listing the mounted
-drives by number. A root that does not exist is asked again, and so is a
-folder without the card's own files for MinUI, NextUI, MyMinUI, Onion, muOS
-and spruceOS. Without questions (`--no-input`) the run stops with a `--dest`
-example. The same holds for Onion, muOS, spruceOS, KNULLI and ROCKNIX, also
-when chosen from the setup list or its filter. A `--dest` that is a folder
-inside such a card (its `Bios/`) is refused with the root to name instead. On Android a forced `--platform retroarch` falls back to
+`--platform bizhawk` that finds no install stops and asks for `--dest`.
+
+The systems that run from an SD card keep their files there: MinUI, NextUI,
+MyMinUI, KNULLI, ROCKNIX, and each system of the
+[Linux handhelds](../platforms/linux-handhelds.md) that gets RetroArch's list
+(Onion, muOS, spruceOS, ArkOS, UnofficialOS and the others). Run on the
+device, the installer finds its folder. From a computer, each has a row of its
+own in the setup list (**Onion, SD card**), without the filter, and in the
+`--plain` menu. That row, `--platform onion` and the menu all ask for the
+card: one card of that system mounted is taken, otherwise the screen opens
+**Where is the SD card?**, which lists only that system's cards and offers
+**Look again**, and `--plain` asks `Card root`, listing the same cards by
+number. The RetroArch row is this computer's RetroArch.
+
+The card's top folder is checked the same way wherever it is chosen, listed,
+browsed, typed or named with `--dest`, and gives the same folder. A folder
+that does not exist, or that is another system's card, is refused for every
+system. One without the system's own files is refused for the MinUI family,
+Onion, muOS, spruceOS, CrossMix-OS, Allium and Koriki. KNULLI and ROCKNIX
+fill their card when they first start, and no file on the card names ArkOS,
+dArkOS, JELOS, KOLOS, UnofficialOS, ArchR, RetroOZ, plumOS, MiyooCFW or the
+Anbernic firmware: such a folder is taken, and a note says so. No to
+creating its folders asks for the card again. Under WSL a drive letter
+typed (`D:`, `D:\`) is that Windows drive. Without questions (`--no-input`)
+the run stops with a `--dest` example. A `--dest` that is a folder inside a
+MinUI card (its `Bios/`) is refused with the root to name instead. On Android a forced `--platform retroarch` falls back to
 `<shared storage>/RetroArch/system` instead, a home directory there belonging
 to Termux rather than to the frontend. Pass `--dest` to say where instead of
 relying on that. When detection met a folder this user cannot open, under the
@@ -1291,8 +1311,8 @@ fields, the installer refuses to narrow rather than install everything.
 | Code | Meaning |
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
-| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
-| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
+| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed or were left out by `--offline` while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), or `--offline` left every file out, the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question, or the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`) before an install. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 

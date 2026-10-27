@@ -81,8 +81,8 @@ It opens a menu:
 
 - **Right folder?** Press Enter.
 - **Wrong folder?** Choose **Another setup or folder**, then browse to yours.
-- **A handheld's SD card?** Choose it, or its system under **Another setup
-  or folder**: **Where is the SD card?**
+- **A handheld's SD card?** Under **Another setup or folder**, choose its
+  system: **Onion, SD card**.
 
 Arrows move, Enter chooses, Esc goes back, as A and B on a handheld.
 
