@@ -900,6 +900,11 @@ class FakeCorePasses(Workspace):
 
     @classmethod
     def setUpClass(cls) -> None:
+        # These passes prove the cores run sandboxed. Without a working bwrap
+        # the campaign refuses, and the cause is named here instead of a KeyError.
+        _prefix, isolation = campaign.core_probe.sandbox_argv([Path(tempfile.gettempdir())])
+        if isolation != campaign.core_probe.SANDBOX:
+            raise unittest.SkipTest(f"no sandbox here ({isolation}): install bubblewrap")
         TMP.mkdir(parents=True, exist_ok=True)
         cls.build = Path(tempfile.mkdtemp(dir=TMP))
         source = cls.build / "fake.c"
