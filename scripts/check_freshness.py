@@ -3,7 +3,7 @@
 
 Each layer the repository transcribes moves on its own schedule: platform
 lists, hardware targets, core-info, buildbot system assets, dump catalogs,
-romset DATs, the CI toolchain. This script asks each of them the same
+romset DATs, the measurements pin, the CI toolchain. This script asks each of them the same
 question, is the local copy the one upstream serves, and answers with one
 row per subject.
 
@@ -40,7 +40,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -80,7 +80,8 @@ INSTALLERS = ("install.sh", "install.ps1")
 
 SHOWN_ITEMS = 4  # items named in a diff summary before ", ..."
 SHOWN_NAMES = 12  # core names named in an unresolved row before ", ..."
-AREAS = ("platforms", "native", "targets", "coreinfo", "data", "catalogs", "ci", "profiles")
+AREAS = ("platforms", "native", "targets", "coreinfo", "data", "catalogs", "measurements", "ci",
+         "profiles")
 OK, STALE, UNKNOWN, ERROR, SKIPPED = "OK", "STALE", "UNKNOWN", "ERROR", "SKIPPED"
 # Every status a finding may carry, in the order the summary counts them.
 STATUSES = (STALE, UNKNOWN, ERROR, SKIPPED, OK)
@@ -914,6 +915,31 @@ def _check_buildbot_system() -> Finding:
                    detail=f"{names}{more} (_data_dirs.yml)", items=every)
 
 
+# --- measurements -----------------------------------------------------------
+
+
+def check_measurements(offline: bool, head: Callable[[str], str] | None = None,
+                       pin_path: Path | None = None) -> Finding:
+    """The measurements pin against the head of the measurements repository.
+
+    A record added there reaches the site only once the pin moves to it.
+    """
+    import sync_measurements  # noqa: PLC0415
+
+    pin = sync_measurements.load_pin(pin_path or sync_measurements.PIN_FILE)
+    local = pin["commit"][:12]
+    if offline:
+        return Finding("measurements", "records pin", SKIPPED, local=local, detail="offline")
+    try:
+        remote = (head or sync_measurements.remote_head)(pin["repo"])
+    except (sync_measurements.MeasurementsError, OSError, subprocess.TimeoutExpired) as exc:
+        return Finding("measurements", "records pin", UNKNOWN, local=local, detail=str(exc))
+    if remote == pin["commit"]:
+        return Finding("measurements", "records pin", OK, local=local, remote=remote[:12])
+    return Finding("measurements", "records pin", STALE, local=local, remote=remote[:12],
+                   detail="newer records: python scripts/sync_measurements.py --fetch --bump")
+
+
 # --- catalogs and recipes ---------------------------------------------------
 
 
@@ -1506,6 +1532,8 @@ def main() -> int:
         findings.extend(check_data(args.offline))
     if "catalogs" in areas:
         findings.extend(check_catalogs(args.cache_dir, args.offline))
+    if "measurements" in areas:
+        findings.append(check_measurements(args.offline))
     if "ci" in areas:
         findings.extend(check_ci(args.cache_dir, args.offline))
     if "profiles" in areas:

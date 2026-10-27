@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator
 import contextlib
+import json
 import os
 import tempfile
 import re
@@ -23,6 +24,15 @@ _TIMESTAMP_PATTERNS = [
     re.compile(r'<div class="rb-timestamp">[^<]*</div>'),
     re.compile(r'<time datetime="[^"]*">Data as of [^<]*</time>'),
 ]
+
+def json_text(value: object) -> str:
+    """Stable scalar representation for CSV and SQLite exports."""
+    if value is None:
+        return ""
+    if isinstance(value, (dict, list, tuple, bool)):
+        return json.dumps(value, ensure_ascii=False, sort_keys=True)
+    return str(value)
+
 
 def write_if_changed(
     path: str, content: str, normalize: Callable[[str], str] | None = None
