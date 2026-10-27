@@ -135,6 +135,11 @@ class Outcome(unittest.TestCase):
         records = {"full": record("f", self.ALL, ["scph5501.bin"], [[0, "a"]], "boots")}
         self.assertEqual(rc.outcome(records, self.ENTRIES, "japan")["claim"], "contradicted")
 
+    def test_a_core_opening_every_region_file_settles_nothing(self) -> None:
+        """PCSX-ReARMed opens the three regional files whatever the disc."""
+        records = {"full": record("f", self.ALL, self.ALL, [[0, "a"]], "boots")}
+        self.assertEqual(rc.outcome(records, self.ENTRIES, "japan")["claim"], "ambiguous")
+
     def test_region_free_bios(self) -> None:
         records = {"full": record("f", self.ALL, ["scph5501.bin"], [[0, "a"]], "boots"),
                    "own": record("o", ["scph5502.bin"], [], [[0, "a"]], "boots"),

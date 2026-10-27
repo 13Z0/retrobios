@@ -1129,7 +1129,7 @@ python scripts/region_check.py report        # the outcome of every region recor
 
 The file the core opened in the `full` run, read from strace, settles the
 claim: `confirmed` when its `region:` holds the game's region, `contradicted`
-when it does not, `unread` when the core opened none of them. Each variant's
+when it does not, `ambiguous` when the core opened its own region's file and the others too (PCSX-ReARMed opens all three), `unread` when it opened none of them. Each variant's
 result is the oracle verdict of its record. While the oracle has no reference
 frame for a game, a variant counts as booting when it samples the same frames
 as the `full` run, and the outcome says it was judged that way. Other frames give no verdict: the US disc reaches its game on the Japanese and European BIOS through another licence screen. The system

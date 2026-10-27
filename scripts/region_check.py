@@ -114,8 +114,9 @@ def outcome(records: dict[str, dict], entries: list[dict], region: str) -> dict:
     """What the four records of one game on one core settle.
 
     `selected` is the regional file the core opened with every one staged.
-    The `region:` claim is `confirmed` when the regions of what it opened
-    hold the game's region, `contradicted` when none does, `unread` when it
+    The `region:` claim is `confirmed` when every regional file it opened
+    holds the game's region, `contradicted` when none does, `ambiguous`
+    when it opened its own region's file and others too, `unread` when it
     opened none. Each variant's result is its oracle verdict. While no
     reference frame is known for the game, a variant that samples the same
     frames as the full run (`as_full`) boots, and one that does not stays
@@ -128,8 +129,12 @@ def outcome(records: dict[str, dict], entries: list[dict], region: str) -> dict:
         claim = "unrun"
     elif not selected:
         claim = "unread"
-    elif any(region in regions_of(by_dest[d]) for d in selected):
+    elif all(region in regions_of(by_dest[d]) for d in selected):
         claim = "confirmed"
+    elif any(region in regions_of(by_dest[d]) for d in selected):
+        # Opened every region's file, to hash them or to choose: the open
+        # alone does not say which one the core runs.
+        claim = "ambiguous"
     else:
         claim = "contradicted"
     results: dict[str, dict] = {}
