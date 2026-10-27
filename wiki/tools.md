@@ -950,7 +950,7 @@ python scripts/campaign.py run --commit --commit-every 10
 python scripts/campaign.py status            # done, failed, pending, and why
 python scripts/campaign.py findings          # what waits for review
 python scripts/campaign.py gate              # the checks behind a commit
-python scripts/campaign.py install-timer     # the autorun units, the campaign's among them
+python scripts/campaign.py install-timer     # opt-in: writes the autorun units, enables nothing
 ```
 
 | Step | What happens |
@@ -1002,10 +1002,14 @@ the findings it added. Logs are `.cache/campaign/logs/`, kept 30 days.
 each changed profile in its own, behind `campaign.py gate`: the measurement
 and campaign tests, `validate_schemas.py --source-only`, then `verify.py
 --emulator` and `generate_pack.py --emulator` for each changed profile. A file
-that had uncommitted changes before the pass is left alone. The nightly
-`campaign` autorun job (06:00, after `nightly`) runs a 150-minute pass in the
-automation worktree, gates it with `campaign.py gate` and commits with its
-own rules, pushing only with `--push`.
+that had uncommitted changes before the pass is left alone.
+
+A maintainer starts each pass. Scheduling is opt-in: a contributor who wants a
+schedule on their own machine installs the timer with `campaign.py
+install-timer`, which writes the autorun units and enables nothing unless
+`--enable` is passed. The `campaign` autorun job then runs a 150-minute pass
+in the automation worktree, gates it with `campaign.py gate` and commits with
+its own rules, pushing only with `--push`.
 
 Schemas: `campaign-finding.schema.json` and `campaign-run.schema.json`.
 

@@ -46,6 +46,11 @@ Usage:
     python scripts/campaign.py status [--json]
     python scripts/campaign.py findings [--all] [--json]
     python scripts/campaign.py gate
+    python scripts/campaign.py install-timer [--enable]
+
+install-timer is opt-in: a contributor who wants a schedule on their own
+machine installs the timer. It writes the units and enables nothing unless
+--enable is passed.
 """
 
 from __future__ import annotations
@@ -1827,11 +1832,18 @@ def main(argv: Sequence[str] | None = None) -> int:
     findings_p.add_argument("--all", action="store_true", help="applied and resolved too")
     findings_p.add_argument("--json", action="store_true", help="the findings as JSON")
     sub.add_parser("gate", help="tests, schemas, verify and pack of the changed profiles")
+    timer_p = sub.add_parser("install-timer",
+                             help="opt-in: write the autorun units, the campaign job's timer among them")
+    timer_p.add_argument("--enable", action="store_true",
+                         help="also reload systemd and enable the timers (never by default)")
     args = parser.parse_args(argv)
 
     paths = Paths.default()
     if args.command == "gate":
         return gate(paths.root, changed_profiles(paths.root))
+    if args.command == "install-timer":
+        command = [sys.executable, str(ROOT / "scripts" / "autorun.py"), "install-timers"]
+        return subprocess.run(command + (["--enable"] if args.enable else []), check=False).returncode
     if args.command == "findings":
         lines = open_findings(paths.root, args.all)
         if args.json:

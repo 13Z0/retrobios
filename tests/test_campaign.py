@@ -882,6 +882,24 @@ class Findings(Workspace):
         self.assertIn("would commit 'chore: add campaign measurements'", out.getvalue())
 
 
+class InstallTimer(unittest.TestCase):
+    def test_writes_the_units_and_enables_only_when_asked(self) -> None:
+        calls = []
+        real_run = subprocess.run
+
+        def fake_run(argv: list[str], **kwargs: object) -> subprocess.CompletedProcess:
+            if "install-timers" not in argv:
+                return real_run(argv, **kwargs)
+            calls.append(argv)
+            return subprocess.CompletedProcess(argv, 0)
+        with unittest.mock.patch.object(campaign.subprocess, "run", fake_run):
+            self.assertEqual(campaign.main(["install-timer"]), 0)
+            self.assertEqual(campaign.main(["install-timer", "--enable"]), 0)
+        self.assertEqual([argv[2:] for argv in calls],
+                         [["install-timers"], ["install-timers", "--enable"]])
+        self.assertTrue(calls[0][1].endswith("scripts/autorun.py"))
+
+
 class Registry(unittest.TestCase):
     def test_no_profile_takes_a_campaign_file_name(self) -> None:
         stems = {p.stem for p in (REPO_ROOT / "emulators").glob("*.yml")}
