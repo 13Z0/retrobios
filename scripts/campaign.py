@@ -44,6 +44,7 @@ import argparse
 import contextlib
 import datetime as dt
 import hashlib
+import io
 import json
 import os
 import re
@@ -51,6 +52,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import tarfile
 import time
 import urllib.error
 import urllib.request
@@ -280,6 +282,55 @@ def child_env(romfetch: bool = False) -> dict[str, str]:
     if romfetch:
         names = [k for k in os.environ if k.startswith("ROMFETCH_")] + list(ROMFETCH_PASSED)
     return autorun.safe_env(names)
+
+
+# Host-side git on a clone of a third-party project: no hook, no fsmonitor,
+# no local-file transport, no user or system config.
+GIT_SAFE = ("-c", "core.hooksPath=/dev/null", "-c", "core.fsmonitor=false",
+            "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never")
+
+
+def host_git(*args: str) -> list[str]:
+    return ["git", *GIT_SAFE, *args]
+
+
+def git_env() -> dict[str, str]:
+    env = child_env()
+    env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull, GIT_TERMINAL_PROMPT="0")
+    return env
+
+
+def export_tree(src: Path, dest: Path) -> None:
+    """The checked-out commit of src and of its submodules, recursively, as
+    plain files in a fresh dest: git archive read by tarfile, which refuses
+    absolute paths, .. and links that leave dest."""
+    if dest.exists():
+        shutil.rmtree(dest)
+    dest.mkdir(parents=True)
+
+    def one(repo: Path, target: Path) -> None:
+        archive = run_group(host_git("-C", str(repo), "archive", "--format=tar", "HEAD"),
+                            capture_output=True, check=True, env=git_env(), timeout=1800)
+        with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as handle:
+            if hasattr(tarfile, "data_filter"):
+                handle.extractall(target, filter="data")
+            else:
+                for member in handle.getmembers():
+                    name = Path(member.name)
+                    if name.is_absolute() or ".." in name.parts or member.islnk() or (
+                            member.issym() and (Path(member.linkname).is_absolute()
+                                                or ".." in Path(member.linkname).parts)):
+                        raise Unavailable(f"core: unsafe member {member.name} in {repo}")
+                handle.extractall(target)
+        listing = run_group(host_git("-C", str(repo), "ls-files", "--stage", "-z"),
+                            capture_output=True, check=True, env=git_env(), timeout=600)
+        for entry in listing.stdout.decode("utf-8", "replace").split("\0"):
+            if entry.startswith("160000 "):
+                path = entry.split("\t", 1)[1]
+                if (repo / path / ".git").exists():
+                    one(repo / path, target / path)
+
+    one(src, dest)
 
 
 @contextlib.contextmanager
@@ -641,36 +692,46 @@ class Cores:
         log = self.c.paths.logs / "builds" / f"{slug(source)}-{commit[:12]}.log"
         log.parent.mkdir(parents=True, exist_ok=True)
 
-        def step(argv: list[str], cwd: Path | None = None, timeout: int = 1800) -> None:
+        def step(argv: list[str], cwd: Path | None = None, timeout: int = 1800,
+                 env: dict[str, str] | None = None) -> None:
             with log.open("a", encoding="utf-8") as handle:
                 handle.write(f"$ {' '.join(argv)}\n")
                 handle.flush()
                 proc = self.c.host.run(argv, cwd=cwd, stdout=handle, stderr=subprocess.STDOUT,
-                                       check=False, timeout=timeout, env=child_env())
+                                       check=False, timeout=timeout, env=env or git_env())
             if proc.returncode != 0:
                 tail = log.read_text(encoding="utf-8", errors="replace").strip().splitlines()[-3:]
-                raise Unavailable(f"core: {argv[0]} {argv[1] if len(argv) > 1 else ''} exited "
-                                  f"{proc.returncode}: {' | '.join(tail)} (log {log})")
+                raise Unavailable(f"core: {argv[0]} exited {proc.returncode}: "
+                                  f"{' | '.join(tail)} (log {log})")
+        if core_probe.sandbox_argv([])[1] != core_probe.SANDBOX and not self.c.settings.allow_unsandboxed:
+            raise Unavailable(f"refused: no sandbox to build {source} in "
+                              f"({core_probe.sandbox_argv([])[1]}), --allow-unsandboxed overrides")
         if not (src / ".git").is_dir():
             src.parent.mkdir(parents=True, exist_ok=True)
-            step(["git", "clone", "--quiet", source, str(src)])
-        step(["git", "-C", str(src), "fetch", "--quiet", "origin", commit])
-        step(["git", "-C", str(src), "checkout", "--quiet", "--force", commit])
-        step(["git", "-C", str(src), "submodule", "update", "--init", "--recursive", "--quiet"])
-        makefile = "Makefile.libretro" if (src / "Makefile.libretro").is_file() else "Makefile"
+            step(host_git("clone", "--quiet", "--no-checkout", source, str(src)))
+        step(host_git("-C", str(src), "fetch", "--quiet", "origin", commit))
+        step(host_git("-C", str(src), "checkout", "--quiet", "--force", commit))
+        step(host_git("-C", str(src), "submodule", "update", "--init", "--recursive", "--quiet"))
+        # The build runs on an exported tree. The clone and its .git are never
+        # bound into the sandbox, so a build cannot plant a hook or a config
+        # line that the next host git command would run.
+        tree = self.c.paths.home / "build-trees" / f"{slug(source)}-{commit[:12]}"
+        try:
+            export_tree(src, tree)
+        except (OSError, subprocess.CalledProcessError, tarfile.TarError) as exc:
+            raise Unavailable(f"core: exporting {commit[:12]} of {source} failed: {exc}") from exc
+        makefile = "Makefile.libretro" if (tree / "Makefile.libretro").is_file() else "Makefile"
         jobs = str(max(1, (os.cpu_count() or 2) // 2))
         command = ["make", "-f", makefile, f"-j{jobs}", "platform=unix"]
-        prefix, isolation = core_probe.sandbox_argv([src])
-        if isolation != core_probe.SANDBOX and not self.c.settings.allow_unsandboxed:
-            raise Unavailable(f"refused: no sandbox to build {source} in ({isolation}), "
-                              f"--allow-unsandboxed overrides")
-        step(prefix + command, cwd=src, timeout=BUILD_TIMEOUT)
-        built = sorted(src.rglob("*_libretro.so"), key=lambda p: p.stat().st_mtime)
+        prefix, isolation = core_probe.sandbox_argv([tree])
+        step(prefix + command, cwd=tree, timeout=BUILD_TIMEOUT, env=child_env())
+        built = sorted(tree.rglob("*_libretro.so"), key=lambda p: p.stat().st_mtime)
         if not built:
             raise Unavailable(f"core: {' '.join(command)} produced no *_libretro.so (log {log})")
         out.mkdir(parents=True, exist_ok=True)
         shutil.copy2(built[-1], out / built[-1].name)
-        return out / built[-1].name, f"{' '.join(command)} (isolation: {isolation})"
+        shutil.rmtree(tree, ignore_errors=True)
+        return out / built[-1].name, f"{' '.join(command)} on git archive (isolation: {isolation})"
 
 
 # --------------------------------------------------------------------------

@@ -468,6 +468,69 @@ class FailClosed(Workspace):
         self.assertFalse(any(call[0] == "make" for call in host.calls))
 
 
+@unittest.skipUnless(shutil.which("git") and shutil.which("make"), "no git or make")
+class BuildIsolation(unittest.TestCase):
+    """A build that writes into .git must not reach the next host git command."""
+
+    def setUp(self) -> None:
+        TMP.mkdir(parents=True, exist_ok=True)
+        self.tmp = Path(tempfile.mkdtemp(dir=TMP))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.src = self.tmp / "src"
+        self.pwned = self.tmp / "PWNED"
+        hook = f"#!/bin/sh\ntouch {self.pwned}\n"
+        # A Makefile that tries to plant a hook and a config line in the clone.
+        makefile = (
+            "all:\n"
+            f"\t-mkdir -p {self.src}/.git/hooks ../.git/hooks\n"
+            f"\t-printf '{hook.replace(chr(10), '\\\\n')}' > {self.src}/.git/hooks/post-checkout\n"
+            f"\t-printf '[core]\\n\\tfsmonitor = touch {self.pwned}\\n' >> {self.src}/.git/config\n"
+            "\ttouch fake_libretro.so\n")
+        git = ["git", "-c", "user.name=t", "-c", "user.email=t@t", "-C", str(self.src)]
+        subprocess.run(["git", "init", "-q", str(self.src)], check=True)
+        (self.src / "Makefile").write_text(makefile)
+        (self.src / "a.txt").write_text("one")
+        subprocess.run([*git, "add", "Makefile", "a.txt"], check=True)
+        subprocess.run([*git, "commit", "-q", "-m", "one"], check=True)
+        (self.src / "a.txt").write_text("two")
+        subprocess.run([*git, "commit", "-q", "-am", "two"], check=True)
+        self.config = (self.src / ".git" / "config").read_text()
+
+    def test_the_build_runs_on_an_export_without_git(self) -> None:
+        prefix, isolation = campaign.core_probe.sandbox_argv([self.tmp / "tree"])
+        if isolation != campaign.core_probe.SANDBOX:
+            self.skipTest("no working bwrap on this host")
+        tree = self.tmp / "tree"
+        campaign.export_tree(self.src, tree)
+        self.assertFalse((tree / ".git").exists())
+        self.assertEqual((tree / "a.txt").read_text(), "two")
+        proc = subprocess.run(prefix + ["make"], cwd=tree, capture_output=True, text=True,
+                              check=False, env=campaign.child_env())
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertTrue((tree / "fake_libretro.so").exists())
+        self.assertFalse((self.src / ".git" / "hooks" / "post-checkout").exists())
+        self.assertEqual((self.src / ".git" / "config").read_text(), self.config)
+        subprocess.run(campaign.host_git("-C", str(self.src), "checkout", "-q", "HEAD~1"),
+                       check=True, env=campaign.git_env())
+        self.assertFalse(self.pwned.exists())
+
+    def test_host_git_runs_no_planted_hook_or_fsmonitor(self) -> None:
+        hook = self.src / ".git" / "hooks" / "post-checkout"
+        hook.write_text(f"#!/bin/sh\ntouch {self.pwned}\n")
+        hook.chmod(0o755)
+        with (self.src / ".git" / "config").open("a") as handle:
+            handle.write(f"[core]\n\tfsmonitor = touch {self.pwned}\n")
+        subprocess.run(campaign.host_git("-C", str(self.src), "checkout", "-q", "HEAD~1"),
+                       check=True, env=campaign.git_env())
+        subprocess.run(campaign.host_git("-C", str(self.src), "status", "--short"),
+                       check=True, env=campaign.git_env(), capture_output=True)
+        self.assertFalse(self.pwned.exists())
+        # The same checkout with plain git does run the hook: the test plants a live one.
+        subprocess.run(["git", "-C", str(self.src), "checkout", "-q", "HEAD@{1}"], check=True,
+                       capture_output=True)
+        self.assertTrue(self.pwned.exists())
+
+
 class ProbeRuns(Workspace):
     def completed(self, code: int, stdout: str = "", stderr: str = "") -> subprocess.CompletedProcess:
         return subprocess.CompletedProcess([], code, stdout, stderr)
