@@ -62,10 +62,13 @@ permissions:
   pull-requests: write
 
 concurrency:
-  # A push series collapses to the tip: what has to stay verified is the head
-  # of main, not every commit that passed under it.
+  # A run on main finishes before the next starts: with three sessions pushing
+  # every 25 minutes and a 40-minute suite, cancelling left main with no
+  # finished run at all. GitHub keeps one pending run per group and replaces
+  # it with each newer push, so main gets a finished run and then its tip,
+  # never a growing queue. A pull request still collapses to its latest push.
   group: validate-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   validate-bios:
