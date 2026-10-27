@@ -604,7 +604,7 @@ def short_title(item: dict) -> str:
         word = f"issue {issue[1]}" if issue else CHECK_NAMES.get(word, TERMS.get(word, word))
         if word not in axis:
             axis.append(word)
-    head = ", ".join(part for part in (f"`{thing}`" if thing else "", game) if part)
+    head = ", ".join(part for part in (thing, game) if part)
     title = f"{head} ({' '.join(axis)})" if axis and head else head or " ".join(axis)
     return title or str(item.get("subject") or "")
 
@@ -758,11 +758,28 @@ def _attr(value: object) -> str:
 
 
 def _cell(value: object) -> str:
-    """Record text placed in raw HTML: escaped, code spans kept, a semicolon
-    joining two clauses ending a sentence as on the rest of the site."""
+    """Record text placed in raw HTML: escaped as text, never read as
+    Markdown (a run's output is no markup), braces made inert for MDX. A
+    semicolon joining two clauses ends a sentence, as on the rest of the
+    site."""
     text = " ".join(str(value or "").split())
     text = re.sub(r";\s+(\w)", lambda m: ". " + m[1].upper(), text)
-    return markup.inline_html(text).translate(_BRACES)
+    return html.escape(text, quote=True).translate(_BRACES)
+
+
+_SAFE_HREF = re.compile(r"^(?:https?://[^\s\"'<>]+|/[^\s\"'<>]*|\.{0,2}/?[\w.~-][^\s\"'<>:]*)$")
+
+
+def _href(url: object) -> str | None:
+    """A link target from a record: http(s) or relative only, else none."""
+    text = str(url or "")
+    return _attr(text) if text and _SAFE_HREF.match(text) and not text.lower().startswith(
+        ("javascript:", "data:", "vbscript:")) else None
+
+
+def _link(url: object, text: str) -> str:
+    target = _href(url)
+    return f'<a href="{target}">{text}</a>' if target else text
 
 
 def _dots(item: dict) -> str:
@@ -777,7 +794,7 @@ def _dots(item: dict) -> str:
 
 def _chip(item: dict) -> str:
     words, kind = RESULT_WORDS.get(item["status"], (item["status"], "muted"))
-    return f'<span class="rb-badge rb-badge-{kind}">{html.escape(words)}</span>'
+    return f'<span class="rb-badge rb-badge-{kind}">{_cell(words)}</span>'
 
 
 def _sentence_html(label: str, value: object, markup_ready: bool = False) -> str:
@@ -788,7 +805,7 @@ def _sentence_html(label: str, value: object, markup_ready: bool = False) -> str
 
 def _details(item: dict) -> list[str]:
     core = item["core"]
-    build = _cell(core["library"]) + (f" at <code>{html.escape(core['commit'][:12])}</code>"
+    build = _cell(core["library"]) + (f" at <code>{_cell(core['commit'][:12])}</code>"
                                       if core.get("commit") else "")
     reps = f"{item['variants']} variant{'s' if item['variants'] != 1 else ''}, " \
            f"{item['repetitions']} repetition{'s' if item['repetitions'] != 1 else ''} each"
@@ -802,7 +819,7 @@ def _details(item: dict) -> list[str]:
         _sentence_html("Proves", ", ".join(item.get("proves") or [])),
         _sentence_html("Ran on", item.get("host_short") or item["host"]),
         _sentence_html("Core build", build and f"{build}. {reps}", markup_ready=True),
-        f'<p><a href="{_attr(item["record_url"])}">Full record</a>{runs}.</p>',
+        f'<p>{_link(item["record_url"], "Full record")}{runs}.</p>',
     ]
     return [line for line in lines if line]
 
@@ -823,7 +840,7 @@ def _row(item: dict, title: str, page_host: str, main_core: str) -> list[str]:
     elsewhere = (item.get("host_short") or item["host"]) != page_host
     title = _cell(title)
     if core_label(item) != main_core:
-        title += f' <small>{html.escape(core_label(item))}</small>'
+        title += f' <small>{_cell(core_label(item))}</small>'
     return [
         '<details class="rb-tested-row">',
         ("<summary>"
@@ -847,6 +864,13 @@ def by_file(items: list[dict]) -> list[tuple[str, list[dict]]]:
     for item in items:
         groups.setdefault(Path(str(item.get("variable") or "")).name, []).append(item)
     return sorted(groups.items(), key=lambda kv: kv[0] == "")
+
+
+def folded(item: dict) -> bool:
+    """A row the block folds away: a test from before the boot oracle, or a
+    run that recorded reference frames for the oracle, which a reviewer
+    reads and a visitor does not."""
+    return item["status"] == "no verdict" or str(item.get("subject") or "").startswith("references-")
 
 
 def summary_line(items: list[dict], page_host: str) -> str:
@@ -880,15 +904,15 @@ def tested_section(name: str, items: list[dict]) -> list[str]:
              f'<a href="{markup.site_href(f"downloads/measurements/{name}.sqlite")}">SQLite</a>')
     ordered = sorted(items, key=lambda i: (i["date"], i["subject"], core_label(i)), reverse=True)
     benches = [i for i in ordered if i["kind"] == "bench"]
-    earlier = [i for i in ordered if i["kind"] != "bench" and i["status"] == "no verdict"]
-    current = [i for i in ordered if i["kind"] != "bench" and i["status"] != "no verdict"]
+    earlier = [i for i in ordered if i["kind"] != "bench" and folded(i)]
+    current = [i for i in ordered if i["kind"] != "bench" and not folded(i)]
     lines = ["## Tested", "", '<div class="rb-tested">',
-             f'<p class="rb-tested-summary">{html.escape(summary_line(items, page_host))} {links}</p>']
+             f'<p class="rb-tested-summary">{_cell(summary_line(items, page_host))} {links}</p>']
     if current or earlier:
         lines.append('<div class="rb-tested-head" aria-hidden="true"><span>Test</span>'
                      "<span>Result</span><span>Variants</span><span>Date</span></div>")
     for file, group in by_file(current):
-        label = f"<code>{html.escape(file)}</code>" if file else "No file varied"
+        label = f"<code>{_cell(file)}</code>" if file else "No file varied"
         lines.append(f'<p class="rb-tested-file">{label}</p>')
         for item in group:
             lines += _row(item, titles[item["id"]], page_host, main_core)
@@ -897,9 +921,12 @@ def tested_section(name: str, items: list[dict]) -> list[str]:
                      'the same colour for the same result. <span class="rb-dot rb-dot-0 rb-dot-empty">'
                      "</span> No file staged.</p>")
     if earlier:
+        old = sum(1 for i in earlier if i["status"] == "no verdict")
+        parts = [f"{old} test{'s' if old != 1 else ''} from before the boot oracle" if old else "",
+                 (f"{len(earlier) - old} reference run{'s' if len(earlier) - old != 1 else ''}"
+                  if len(earlier) - old else "")]
         lines += ['<details class="rb-tested-earlier">',
-                  f"<summary>{len(earlier)} earlier test{'s' if len(earlier) != 1 else ''}, "
-                  "before the boot oracle</summary>"]
+                  f"<summary>{_cell(' and '.join(p for p in parts if p))}</summary>"]
         for item in earlier:
             file = Path(str(item.get("variable") or "")).name
             title = f"{file}, {titles[item['id']]}" if file else titles[item["id"]]
@@ -913,9 +940,9 @@ def tested_section(name: str, items: list[dict]) -> list[str]:
             timing = item.get("timing") or {}
             title = _cell(titles[item["id"]])
             if core_label(item) != main_core:
-                title += f' <small>{html.escape(core_label(item))}</small>'
+                title += f' <small>{_cell(core_label(item))}</small>'
             table.append(
-                f'<tr><td><a href="{_attr(item["record_url"])}">{title}</a></td>'
+                f'<tr><td>{_link(item["record_url"], title)}</td>'
                 f'<td>{timing.get("ms_per_frame", 0):.3f}</td><td>{timing.get("fps", 0):.1f}</td>'
                 f'<td>{timing.get("stdev", 0):.3f}</td><td>{item["repetitions"]}</td></tr>')
         lines.append("".join([*table, "</tbody></table>"]))
