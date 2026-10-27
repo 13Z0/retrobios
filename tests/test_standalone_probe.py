@@ -17,7 +17,7 @@ import standalone_probe as sp  # noqa: E402
 
 
 def xwd(width: int, height: int, pixels: bytes, ncolors: int = 0, pad: int = 0) -> bytes:
-    """An XWD file as Xvfb -fbdir writes it: version 7, 32 bpp, LSB first."""
+    """An XWD file as Xvfb keeps its screen: version 7, 32 bpp, LSB first."""
     name = b"Xvfb main window\0"
     header_size = 100 + len(name)
     bytes_per_line = width * 4 + pad
@@ -105,7 +105,7 @@ class Settings(unittest.TestCase):
         argv = sp.with_display(["/emu", "--", "game.cue"], Path("/fb"))
         self.assertEqual(argv[:2], ["/bin/sh", "-c"])
         self.assertEqual(argv[3:], ["xvfb", "/fb", "/emu", "--", "game.cue"])
-        self.assertIn(f"Xvfb :{sp.DISPLAY_NUMBER}", argv[2])
+        self.assertIn(f'Xvfb ":{sp.DISPLAY_NUMBER}"', argv[2])
 
 
 class Oracle(unittest.TestCase):

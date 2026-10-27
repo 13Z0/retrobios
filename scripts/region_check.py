@@ -342,18 +342,19 @@ def collect(root: Path = ROOT, stored_records: list | None = None) -> list[dict]
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
-    go = sub.add_parser("run", help="the four runs of each region game, recorded")
+    go = sub.add_parser("run", allow_abbrev=False, help="the four runs of each region game, recorded")
     go.add_argument("--emulator", required=True, help="the profile, e.g. beetle_psx")
     go.add_argument("--system", required=True, help="the system, e.g. sony-playstation")
     go.add_argument("--core-name", help="buildbot core name, e.g. mednafen_psx (downloads the nightly)")
     go.add_argument("--core", help="a core .so to use instead of the nightly")
     go.add_argument("--core-artifact", help="where --core was downloaded from")
-    go.add_argument("--content-dir", default=str(ROOT / ".cache" / "test-content"))
+    go.add_argument("--content-dir", default=str(ROOT / ".cache" / "test-content"),
+                    help="where romfetch keeps the test games (default: .cache/test-content)")
     go.add_argument("--variants", nargs="*", choices=VARIANTS, help="a subset of the four runs")
     go.add_argument("--timeout", type=int, default=900, help="seconds per run")
-    sub.add_parser("report", help="the outcomes the records hold, as JSON")
+    sub.add_parser("report", allow_abbrev=False, help="the outcomes the records hold, as JSON")
     args = parser.parse_args(argv)
     if args.command == "run":
         if not (args.core or args.core_name):

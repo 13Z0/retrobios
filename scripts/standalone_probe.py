@@ -44,6 +44,7 @@ import urllib.request
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import IO
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -198,8 +199,8 @@ def emulator_settings(emu: Emulator, bios_dir: Path, overrides: Sequence[tuple[s
 
 
 def parse_xwd(data: bytes) -> tuple[int, int, bytes]:
-    """Width, height and RGB pixels of an XWD image, as Xvfb's -fbdir
-    keeps its screen: 32 bits per pixel, least significant byte first."""
+    """Width, height and RGB pixels of an XWD image, the file Xvfb keeps
+    its screen in: 32 bits per pixel, least significant byte first."""
     if len(data) < 100:
         raise cp.ProbeError("framebuffer file shorter than an XWD header")
     fields = struct.unpack_from(">25I", data, 0)
@@ -223,11 +224,10 @@ def parse_xwd(data: bytes) -> tuple[int, int, bytes]:
 # --------------------------------------------------------------------------
 
 def github_releases(repo: str) -> list[dict]:
+    from scraper.base_scraper import github_headers  # noqa: PLC0415
+
     request = urllib.request.Request(f"https://api.github.com/repos/{repo}/releases",
-                                     headers={"Accept": "application/vnd.github+json"})
-    token = os.environ.get("GITHUB_TOKEN")
-    if token:
-        request.add_header("Authorization", f"Bearer {token}")
+                                     headers=github_headers())
     with urllib.request.urlopen(request, timeout=60) as response:
         return json.load(response)
 
@@ -293,11 +293,12 @@ def now_iso() -> str:
 
 # The X server runs inside the sandbox, on the sandbox's own /tmp: the
 # display is private to the run, and the host's /tmp/.X11-unix (read-only
-# under WSLg) is never touched. -fbdir keeps the screen as an XWD file in the
-# run's scratch folder, which the probe reads from outside.
+# under WSLg) is never touched. Its fbdir option keeps the screen as an XWD
+# file in the run's scratch folder, which the probe reads from outside.
 DISPLAY_NUMBER = 1
 XVFB_WRAPPER = (
-    f'Xvfb :{DISPLAY_NUMBER} -screen 0 {SCREEN[0]}x{SCREEN[1]}x24 -nolisten tcp -fbdir "$1" -noreset >/dev/null 2>&1 &\n'
+    f'Xvfb ":{DISPLAY_NUMBER}" -screen 0 {SCREEN[0]}x{SCREEN[1]}x24 -nolisten tcp -fbdir "$1" '
+    '-noreset >/dev/null 2>&1 &\n'
     'i=0\n'
     f'while [ ! -S /tmp/.X11-unix/X{DISPLAY_NUMBER} ]; do\n'
     '  i=$((i + 1)); [ "$i" -gt 400 ] && exit 97; sleep 0.05\n'
@@ -322,7 +323,7 @@ def stop(proc: subprocess.Popen) -> None:
 ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 
 
-def read_lines(stream, out: list[dict], samples: list) -> None:
+def read_lines(stream: IO[bytes], out: list[dict], samples: list) -> None:
     """The emulator's console, line by line, each with the sample count
     reached when it was written, colour escapes removed."""
     for raw in iter(stream.readline, b""):
@@ -632,9 +633,9 @@ def build_parser() -> argparse.ArgumentParser:
     for name, text in (("resolve", "print the asset the platform's installer picks"),
                        ("fetch", "download and unpack it into .cache/standalone/")):
         p = sub.add_parser(name, help=text)
-        p.add_argument("emulator", choices=sorted(EMULATORS))
+        p.add_argument("emulator", choices=sorted(EMULATORS), help="the emulator, by its profile name")
     common = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
-    common.add_argument("emulator", choices=sorted(EMULATORS))
+    common.add_argument("emulator", choices=sorted(EMULATORS), help="the emulator, by its profile name")
     common.add_argument("--content", required=True, help="the game: a .cue, .iso or .chd")
     common.add_argument("--content-label", help="identity of the content, its Redump or No-Intro name")
     common.add_argument("--bios-file", action="append", default=[], metavar="DEST=SRC",

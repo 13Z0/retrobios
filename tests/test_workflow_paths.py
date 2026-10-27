@@ -154,7 +154,11 @@ class ThePullRequestBuildsTheSite(unittest.TestCase):
             if not path.startswith(("scripts/", ".github/"))
         }
         self.assertIn("wiki/**", inputs)
-        self.assertEqual(sorted(inputs - watched), [])
+        # A path the deploy names inside a folder validate.yml watches
+        # whole (tests/campaign/content.yml under tests/**) is watched.
+        unwatched = [path for path in inputs - watched
+                     if not any(fnmatch.fnmatch(path, pattern) for pattern in watched)]
+        self.assertEqual(sorted(unwatched), [])
         self.assertIn("scripts/**", watched)
 
 

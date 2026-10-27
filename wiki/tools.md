@@ -1032,6 +1032,14 @@ flock ~/.local/state/retrobios/probe.lock python scripts/region_check.py run \
 python scripts/region_check.py report        # the outcome of every region record, as JSON
 ```
 
+| Option | Effect |
+|--------|--------|
+| `--core-name` | the buildbot name of the core, whose x86_64 nightly is downloaded once into `.cache/region/cores/` and named in the record |
+| `--core`, `--core-artifact` | a core `.so` to use instead, and where it was downloaded from |
+| `--content-dir` | where romfetch keeps the test games (default `.cache/test-content`) |
+| `--variants` | a subset of `full`, `own`, `others` and `pack` |
+| `--timeout` | seconds per run (default 900) |
+
 The file the core opened in the `full` run, read from strace, settles the
 claim: `confirmed` when its `region:` holds the game's region, `contradicted`
 when it does not, `unread` when the core opened none of them. Each variant's
@@ -1072,6 +1080,17 @@ flock ~/.local/state/retrobios/probe.lock python scripts/standalone_probe.py che
 | Screen | Xvfb keeps its screen as a file (`-fbdir`). The probe reads it every `--interval` seconds, `--samples` times, and hashes each sample's pixels. `--png-dir` writes each distinct sample as PNG for review |
 | Files | `strace -f` inside the sandbox: the files the emulator opened in the staged BIOS folder, and the ones it looked for there and did not find |
 | Verdict | `core_probe.judge` on each repetition, with the oracle of `tests/campaign/oracle.yml` looked up by the content's sha1 and the emulator's name, plus the emulator's own error strings this script lists (DuckStation's "No BIOS image found for", PCSX2's "Unable to auto locate a BIOS image"). An emulator that exits before the last sample is a crash |
+
+| Option | Effect |
+|--------|--------|
+| `--bios-file DEST=SRC` | copy SRC into the staged BIOS folder as DEST |
+| `--setting SECTION.KEY=VALUE` | an emulator setting written before the run |
+| `--sha256` | the fetched asset to run (default: the newest fetched) |
+| `--samples`, `--interval` | screen samples per repetition (default 60), and seconds between two (default 1) |
+| `--oracle` | the boot oracle file (default `tests/campaign/oracle.yml`, as `core_probe.py`) |
+| `--png-dir` | each distinct sampled screen of the first repetition as PNG |
+| `--record`, `--subject`, `--supersedes`, `--max-load`, `--work-dir`, `--no-trace`, `--require-sandbox` | as in `core_probe.py` |
+| `check`: `--vary`, `--observable`, `--claim`, `--method`, `--repeat` | as in `core_probe.py`, compared on `verdict` by default |
 
 Supported: DuckStation and PCSX2. Dolphin, Flycast, PPSSPP, melonDS, xemu and
 MAME are installed by EmuDeck from Flathub, Ryujinx from a Codeberg tarball and
