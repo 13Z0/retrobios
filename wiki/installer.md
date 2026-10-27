@@ -1388,7 +1388,8 @@ The tables of options, events, exit codes and keys on this page sit between
 from `EVENT_KEYS`, the codes from its `sys.exit` calls, the keys from
 `TUI_ROUTES`. The prose cells stay as written. A row the code gains stops the
 script until its text is added inside the markers, and `--check`, which a
-test runs, fails on a table behind the code.
+test runs, fails on a table behind the code. `--page FILE` renders another
+copy of the page, which the tests use.
 
 The [handheld](#on-a-handheld-the-retrobios-port) archives each carry
 `install.py`, the one the one-line command of the same commit downloads:

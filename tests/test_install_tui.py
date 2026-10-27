@@ -4921,6 +4921,8 @@ class EndToEnd(unittest.TestCase):
             with self.subTest(term=name):
                 self.env["TERM"] = name
                 term = self.start()
+                term.wait("Enter for RetroArch")
+                term.send("\r")
                 term.wait("Enter) install everything")
                 term.send("q\r")
                 term.close()
