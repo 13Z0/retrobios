@@ -117,9 +117,9 @@ def outcome(records: dict[str, dict], entries: list[dict], region: str) -> dict:
     The `region:` claim is `confirmed` when the regions of what it opened
     hold the game's region, `contradicted` when none does, `unread` when it
     opened none. Each variant's result is its oracle verdict. While no
-    reference frame is known for the game, a variant is compared with the
-    full run instead: `as_full` when it samples the same frames, which is
-    what the oracle's reference frames will name.
+    reference frame is known for the game, a variant that samples the same
+    frames as the full run (`as_full`) boots, and one that does not stays
+    without an answer: frames that differ never make a verdict.
     """
     by_dest = {entry_dest(e): e for e in entries}
     full = records.get("full")
@@ -152,10 +152,12 @@ def outcome(records: dict[str, dict], entries: list[dict], region: str) -> dict:
             return None
         if item["verdict"] != "unknown":
             return item["verdict"] == "boots"
-        # No verdict: the interim rule, as the full run behaves, and only
-        # while the full run itself is not shown to fail.
-        if full_verdict in ("boots", "unknown") and "as_full" in item:
-            return item["as_full"]
+        # No verdict: the interim rule. The same frames as the full run is a
+        # boot, while the full run itself is not shown to fail. Other frames
+        # say nothing: the US disc reaches its game on the Japanese and
+        # European BIOS through another licence screen.
+        if full_verdict in ("boots", "unknown") and item.get("as_full"):
+            return True
         return None
 
     return {
@@ -178,7 +180,7 @@ def sentence(game_region: str, result: dict) -> str:
         return f"The {word} game has no run with its own BIOS yet."
     first = f"The {word} BIOS {'boots' if own else 'does not boot'} the {word} game"
     if others is None:
-        return first + "."
+        return first + ". The other regions' BIOS have no verdict yet."
     if others:
         return first + ", and so do the other regions' BIOS."
     return first + ", the other regions' BIOS do not."

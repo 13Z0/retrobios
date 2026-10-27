@@ -1117,7 +1117,7 @@ claim: `confirmed` when its `region:` holds the game's region, `contradicted`
 when it does not, `unread` when the core opened none of them. Each variant's
 result is the oracle verdict of its record. While the oracle has no reference
 frame for a game, a variant counts as booting when it samples the same frames
-as the `full` run, and the outcome says it was judged that way. The system
+as the `full` run, and the outcome says it was judged that way. Other frames give no verdict: the US disc reaches its game on the Japanese and European BIOS through another licence screen. The system
 pages show each outcome as a sentence ("the Japanese BIOS boots the Japanese
 game, the other regions' BIOS do not") with links to the four records. A
 maintainer starts each run. Each core_probe run takes the host probe lock for itself and frees it before the next, so do not wrap the command in `flock`. Nothing runs by itself.

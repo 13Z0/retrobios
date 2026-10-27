@@ -108,7 +108,7 @@ class Outcome(unittest.TestCase):
         self.assertEqual(rc.sentence("japan", result),
                          "The Japanese BIOS boots the Japanese game, the other regions' BIOS do not.")
 
-    def test_interim_rule_compares_with_the_full_run(self) -> None:
+    def test_interim_rule_counts_the_same_frames_as_a_boot_and_nothing_else(self) -> None:
         records = {
             "full": record("f", self.ALL, ["scph5501.bin"], [[0, "a"], [10, "b"]]),
             "own": record("o", ["scph5501.bin"], ["scph5501.bin"], [[0, "a"], [10, "b"]]),
@@ -117,10 +117,12 @@ class Outcome(unittest.TestCase):
         result = rc.outcome(records, self.ENTRIES, "north-america")
         self.assertEqual(result["judged_by"], "full_run_frames")
         self.assertTrue(result["own_boots"])
-        self.assertFalse(result["others_boot"])
+        # Other frames are no verdict: a US disc reaches its game on the
+        # Japanese BIOS through another licence screen.
+        self.assertIsNone(result["others_boot"])
         self.assertIsNone(result["pack_boots"])
         self.assertEqual(rc.sentence("north-america", result),
-                         "The US BIOS boots the US game, the other regions' BIOS do not.")
+                         "The US BIOS boots the US game. The other regions' BIOS have no verdict yet.")
 
     def test_no_interim_answer_when_the_full_run_fails(self) -> None:
         records = {"full": record("f", self.ALL, [], [[0, "a"]], "bios_error"),
