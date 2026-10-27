@@ -240,9 +240,19 @@ class SitePages(unittest.TestCase):
         self.assertIn("| retroarch | sega-saturn | pack | <code>mednafen&#95;saturn</code> | Game (Japan) "
                       "| `boots` | 1 | [line](", explorer)
         page = sm.pack_tested_section(sm.by_platform({"packs": items})["retroarch"])
+        text = "\n".join(page)
         self.assertEqual(page[0], "## Tested")
-        self.assertIn("../wiki/measurements.md#packs", page[2])
-        self.assertNotIn("| retroarch |", "\n".join(page))
+        self.assertIn("1 game start with this BIOS folder as you install it · 1 work · last run 2026-10-28.",
+                      text)
+        self.assertIn("wiki/measurements/#packs", text)
+        # The emulator pages' row markup and chip, the install path in the third column.
+        self.assertIn('<span class="rb-tested-result"><span class="rb-badge rb-badge-success">works</span>',
+                      text)
+        self.assertIn('<span class="rb-tested-variants">pack</span>', text)
+        self.assertIn("sega-saturn, Game <small>mednafen_saturn</small>", text)
+        self.assertIn("<strong>Files the core opened:</strong> sega_101.bin (sega_101.bin).", text)
+        self.assertIn("<strong>Findings:</strong> missing_declared x.bin.", text)
+        self.assertNotIn("| retroarch |", text)
         self.assertEqual(sm.pack_tested_section([]), [])
 
 
