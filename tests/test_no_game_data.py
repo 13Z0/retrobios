@@ -289,7 +289,8 @@ class InstallerLeavesGameDataOut(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertTrue((self.bios / "a.bin").exists())
         self.assertFalse((self.bios / "game.wad").exists())
-        self.assertIn("Left out as game data (--no-game-data): 2 files: game.wad, level.dat",
+        self.assertIn("Left out as game data (--no-game-data): 2 files, 1 of them not installable: "
+                      "game.wad, level.dat",
                       proc.stdout)
 
     def test_check_and_dry_run_leave_it_out(self):
@@ -299,7 +300,8 @@ class InstallerLeavesGameDataOut(unittest.TestCase):
             with self.subTest(mode=mode):
                 proc = self.run_installer("--no-game-data", mode)
                 self.assertIn(
-                    "Left out as game data (--no-game-data): 2 files: game.wad, level.dat",
+                    "Left out as game data (--no-game-data): 2 files, 1 of them not installable: "
+                    "game.wad, level.dat",
                     proc.stdout,
                 )
                 self.assertIn(listed, proc.stdout)
