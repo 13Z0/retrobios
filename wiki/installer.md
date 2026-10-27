@@ -864,20 +864,42 @@ A card that holds a system's own files is read the same way, without
 `--platform` or with the one that names its list, by the rules the table above
 gives for the device, below the card's root instead of its mount point:
 
+<!-- generated: card-markers -->
+
 | On the card | System | Files go to |
 |-------------|--------|-------------|
+| `system/configs/emulationstation/about.info` holding the line `KNULLI` | KNULLI | `bios`, KNULLI's list |
+| `system/batocera.conf` holding the line `system.hostname=KNULLI` | KNULLI | `bios`, KNULLI's list |
+| `.config/system/configs/system.cfg` holding the line `root.password=rocknix` | ROCKNIX | `roms/bios`, ROCKNIX's list |
 | `MUOS/` | muOS | `MUOS/bios`, RetroArch's list |
-| `.tmp_update/onionVersion/version.txt` | Onion | `BIOS`, RetroArch's list |
 | `spruce/` | spruceOS | `BIOS`, RetroArch's list |
 | `System/usr/trimui/crossmix-version.txt` | CrossMix-OS | `BIOS`, RetroArch's list |
+| `.tmp_update/onionVersion/version.txt` | Onion | `BIOS`, RetroArch's list |
 | `.allium/` | Allium | `BIOS`, RetroArch's list |
 | `Koriki/version.txt` | Koriki | `BIOS`, RetroArch's list |
-| `system/batocera.conf` with `system.hostname=KNULLI`, as KNULLI's first boot writes its share | KNULLI | `bios`, KNULLI's list |
-| `.config/system/configs/system.cfg` with `root.password=rocknix`, as ROCKNIX's first boot writes its storage | ROCKNIX | `roms/bios`, ROCKNIX's list |
+| `system/batocera.conf` holding `system.hostname=BATOCERA` or no hostname line, and no KNULLI file above | Batocera SHARE drive | `bios`, Batocera's list |
+| `system/recalbox.conf` | Recalbox SHARE drive | `bios`, Recalbox's list |
+| `system/batocera.conf` with any other hostname, and no KNULLI file above, or the files of two SHARE drives | named by neither: the run says which systems it could be | the folder of the system named with `--platform` |
 
-The full screen lists such a card on its first screen ("muOS SD card (E:\)").
+<!-- /generated: card-markers -->
+
+Each file is one the system writes. KNULLI is read by `about.info` first,
+which no menu writes: its HOSTNAME row rewrites `system.hostname`, and a KNULLI
+card renamed there was read as a Batocera SHARE drive. ROCKNIX's line changes
+with its root password, and a card whose password was changed is named by
+nothing, never by another system. A drive whose files fit two systems is named
+by neither: the first screen and `--plain` say which systems it could be and
+the two commands that name it, and a `--dest` named with one of them takes it
+as that system's, with a note.
+
+The full screen lists such a card on its first screen ("muOS SD card (E:\)"),
+and a SHARE drive the same way ("Batocera SHARE drive (SHARE)"): its root, typed
+or given with `--dest`, stands for its `bios` folder. Two cards of one system
+say what their BIOS folder holds ("Onion SD card (OLDONION, 6 BIOS files)"),
+the one holding fewer first.
 Named by its system (`--platform muos`, `--platform knulli`), a `--dest` that
-is another system's card is refused. One that holds none of the system's
+is another system's card is refused, and so is another system's SHARE drive
+for Batocera and Recalbox. One that holds none of the system's
 files is refused where the card always carries them. For KNULLI, ROCKNIX and
 the systems no file on the card names, it gets the system's folder below it
 (`bios`, `roms/bios`), with a note. Named with a file list instead

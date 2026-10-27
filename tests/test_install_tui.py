@@ -6629,6 +6629,81 @@ class LineModeAndScreenDecideAlike(unittest.TestCase):
                 self.assertEqual(screen, expected)
                 self.assertNotIn("using default path", text)
 
+    def unasked(self, mounts: list, found: list, **given) -> tuple:
+        """(platforms or exit code, text, events) of a run without
+        questions: --no-input, or --yes, which implies it."""
+        def stop(_args, platforms):
+            raise _Decided(platforms)
+
+        install.LOCAL.reset()
+        self.addCleanup(install.LOCAL.reset)
+        args = _args(declared_only=False, offline=False, no_input=True, **given)
+        events = []
+        with mock.patch.object(install, "_mounted_cards", return_value=mounts), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()), \
+                mock.patch.object(install, "detect_platforms", return_value=found), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.object(install, "app_refusal", side_effect=stop), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(install.EVENTS, "emit",
+                                  side_effect=lambda kind, **keys: events.append((kind, keys))), \
+                mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            try:
+                install._install(args, io.StringIO())
+            except _Decided as decided:
+                return [tuple(each) for each in decided.args[0]], out.getvalue(), events
+            except SystemExit as exit_:
+                return exit_.code, out.getvalue() + err.getvalue(), events
+        raise AssertionError(out.getvalue())
+
+    def test_a_run_without_questions_sees_the_cards_the_screen_sees(self):
+        """tui_audit_11 P1-1: --yes and --no-input looked at this machine
+        alone, beside the Onion card the screen and line mode open on: the
+        files went to the home folder, or the run said nothing is here."""
+        onion = self.card("ONION", "Onion")
+        default = install._default_dest("linux", "retroarch")
+        for flag in ({"yes": True}, {}):
+            for name, (mounts, given) in {
+                "an Onion card, a list": ([onion], {"manifest": self.list}),
+                "an Onion card, nothing named": ([onion], {}),
+            }.items():
+                with self.subTest(flag=flag, scenario=name):
+                    chosen, text, _events = self.unasked(mounts, [], **flag, **given)
+                    self.assertEqual(chosen, [("retroarch", onion / "BIOS")], text)
+                    self.assertNotIn(str(default), text)
+                    install._DETECTED_OS.clear()
+                    with mock.patch.object(install, "_mounted_cards", return_value=mounts), \
+                            mock.patch.object(install, "_mount_points",
+                                              return_value=frozenset()), \
+                            mock.patch.object(install, "detect_platforms", return_value=[]), \
+                            mock.patch.object(install, "detect_frontends", return_value=[]):
+                        screen = screen_decision(_args(declared_only=False, **given))
+                    self.assertEqual(chosen, [screen])
+
+    def test_a_run_without_questions_stops_on_two_setups(self):
+        """code_audit_18 P2-3, tui_audit_11 P1-1: --yes beside two setups
+        installed for both, where its help says it stops on what to name.
+        It now stops with an error event naming each and its --dest."""
+        onion, muos = self.card("ONION", "Onion"), self.card("MUOS", "muOS")
+        pc = [("retroarch", self.here)]
+        for flag in ({"yes": True}, {}):
+            for name, (mounts, found, given) in {
+                "two cards": ([onion, muos], [], {}),
+                "a card and RetroArch here, a list": ([onion], pc, {"manifest": self.list}),
+                "two setups here": ([], [("retroarch", self.here),
+                                         ("emudeck", self.root / "Emulation" / "bios")], {}),
+            }.items():
+                with self.subTest(flag=flag, scenario=name):
+                    code, text, events = self.unasked(mounts, found, **flag, **given)
+                    self.assertEqual(code, 1, text)
+                    errors = [keys for kind, keys in events if kind == "error"]
+                    self.assertEqual([(e["stage"], e["reason"]) for e in errors],
+                                     [("detect", "conflict")])
+                    self.assertIn("a run without questions installs for one", text)
+                    self.assertRegex(text, r"--platform \w+ --dest ")
+
     def test_line_mode_says_the_card_it_found_and_names_its_folder(self):
         onion = self.card("ONION", "Onion")
         with mock.patch.object(install, "_mounted_cards", return_value=[onion]), \
@@ -6759,7 +6834,8 @@ class LineModeAndScreenDecideAlike(unittest.TestCase):
             share = self.root / "media" / f"SHARE-{plat}"
             (share / "system").mkdir(parents=True)
             (share / "roms").mkdir()
-            (share / marker).write_text("system.hostname=SHARE\n")
+            # Batocera's own hostname: another would fit KNULLI renamed too.
+            (share / marker).write_text("system.hostname=BATOCERA\n")
             shares[plat] = share
         for plat, share in shares.items():
             other = shares["recalbox" if plat == "batocera" else "batocera"]
@@ -8349,6 +8425,175 @@ class EdgesTheMutantsFound(unittest.TestCase):
             self.assertEqual(install._setup_matches("batocera", ["Onion"], "odroid"),
                              ["Odroid"])
 
+
+
+class AuditEighteenAndEleven(unittest.TestCase):
+    """code_audit_18 and tui_audit_11: what the cards, the screens and the
+    docs answer, line mode's parity being in LineModeAndScreenDecideAlike."""
+
+    def setUp(self):
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        self.root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.root, True)
+        install.LOCAL.reset()
+        self.addCleanup(install.LOCAL.reset)
+        for patcher in (mock.patch.dict(install._DETECTED_OS, {}),
+                        mock.patch.object(install, "_mount_points", return_value=frozenset())):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def drive(self, name: str, files: dict) -> Path:
+        root = self.root / "media" / name
+        root.mkdir(parents=True)
+        for path, text in files.items():
+            (root / path).parent.mkdir(parents=True, exist_ok=True)
+            (root / path).write_text(text, encoding="utf-8")
+        return root
+
+    ABOUT = "system/configs/emulationstation/about.info"
+
+    def renamed(self) -> dict:
+        """The drives code_audit_18 P1-1 names: KNULLI and Batocera each
+        renamed in its own menu, with and without the file KNULLI alone
+        writes, and Recalbox's share."""
+        conf = "system/batocera.conf"
+        return {
+            "KNULLI renamed": self.drive("K1", {self.ABOUT: "KNULLI\n",
+                                                conf: "system.hostname=RG40XXH\n"}),
+            "KNULLI as shipped": self.drive("K2", {self.ABOUT: "KNULLI\n",
+                                                   conf: "system.hostname=KNULLI\n"}),
+            "renamed, no about.info": self.drive("K3", {conf: "system.hostname=RG40XXH\n"}),
+            "Batocera as shipped": self.drive("B1", {conf: "system.hostname=BATOCERA\n"}),
+            "Batocera, no hostname": self.drive("B2", {conf: "# system.hostname=X\n"}),
+            "Recalbox": self.drive("R1", {"system/recalbox.conf": "a=1\n"}),
+            "two shares": self.drive("T1", {conf: "system.hostname=BATOCERA\n",
+                                            "system/recalbox.conf": ""}),
+        }
+
+    def test_a_renamed_card_is_named_by_the_file_no_menu_writes(self):
+        """code_audit_18 P1-1: a KNULLI card whose hostname was changed in
+        its menu was a Batocera SHARE drive, Enter filled it with Batocera's
+        list and --platform knulli was refused."""
+        drives = self.renamed()
+        expected = {
+            "KNULLI renamed": ("knulli", "bios", "KNULLI"),
+            "KNULLI as shipped": ("knulli", "bios", "KNULLI"),
+            "renamed, no about.info": None,
+            "Batocera as shipped": ("batocera", "bios", "Batocera"),
+            "Batocera, no hostname": ("batocera", "bios", "Batocera"),
+            "Recalbox": ("recalbox", "bios", "Recalbox"),
+            "two shares": None,
+        }
+        for name, drive in drives.items():
+            with self.subTest(drive=name):
+                found = install.card_system(drive)
+                want = expected[name]
+                self.assertEqual(found, want and (want[0], drive / want[1], want[2]))
+                doubt, _why = install.share_doubt(drive)
+                self.assertEqual(bool(doubt), want is None)
+        self.assertEqual(install.share_doubt(drives["renamed, no about.info"])[0],
+                         ("knulli", "batocera"))
+        self.assertEqual(install.share_doubt(drives["two shares"])[0],
+                         ("batocera", "recalbox"))
+
+    def test_a_drive_two_systems_fit_is_taken_as_named_and_said(self):
+        """code_audit_18 P1-1: --platform knulli is never refused on a
+        drive whose only evidence is a batocera.conf, --platform batocera
+        takes its bios folder, and the doubt is said. Recalbox refuses it
+        with words for a SHARE drive (P3-4)."""
+        drives = self.renamed()
+        for name in ("renamed, no about.info", "Batocera as shipped"):
+            drive = drives[name]
+            with self.subTest(drive=name):
+                choice = install.card_choice("knulli", "knulli", drive)
+                self.assertEqual((choice.plat, choice.folder, choice.refused),
+                                 ("knulli", drive / "bios", ""))
+                self.assertIn("Taken as KNULLI's, as named", choice.note)
+        drive = drives["renamed, no about.info"]
+        choice = install.card_choice("batocera", "batocera", drive)
+        self.assertEqual((choice.plat, choice.folder), ("batocera", drive / "bios"))
+        self.assertIn("names the host RG40XXH", choice.note)
+        refused = install.card_choice("recalbox", "recalbox", drive)
+        self.assertIn("could be a KNULLI card or a Batocera SHARE drive", refused.refused)
+        words = install._dest_refusal_words(refused, None)
+        self.assertIn("Connect the Recalbox SHARE drive", words)
+        self.assertNotIn("Insert", words)
+        other = install.card_choice("recalbox", "recalbox", drives["Batocera as shipped"])
+        words = install._dest_refusal_words(other, None)
+        self.assertIn("Connect the Recalbox SHARE drive, or name that drive's own system: "
+                      "--platform batocera", words)
+
+    def test_the_first_screen_and_line_mode_say_the_doubt(self):
+        """code_audit_18 P1-1: the screen's first row was "Batocera SHARE
+        drive (KNULLI2)". A renamed card with about.info is KNULLI's, one
+        without is listed by neither and said."""
+        drives = self.renamed()
+        knulli, doubt = drives["KNULLI renamed"], drives["renamed, no about.info"]
+        with mock.patch.object(install, "_mounted_cards", return_value=[knulli, doubt]), \
+                mock.patch.object(install, "detect_platforms", return_value=[]), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            setups, _mounted = install.found_setups("linux")
+        self.assertEqual([(plat, path) for plat, path, _label in setups],
+                         [("knulli", knulli / "bios")])
+        self.assertIn("KNULLI SD card", setups[0][2])
+        text = out.getvalue()
+        self.assertIn(f"{doubt} could be a KNULLI card or a Batocera SHARE drive", text)
+        self.assertIn(f"--platform knulli --dest {doubt} or --platform batocera --dest {doubt}",
+                      text)
+        with mock.patch.object(install, "_mounted_cards", return_value=[knulli, doubt]), \
+                mock.patch.object(install, "detect_platforms", return_value=[]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                contextlib.redirect_stdout(io.StringIO()):
+            state, _effects = install.tui_start(_args(), "linux")
+        self.assertTrue(any("could be a KNULLI card" in note for note in state.notes))
+        self.assertEqual([setup[0] for setup in state.setups], ["knulli"])
+
+    def test_a_share_drive_is_never_called_a_card(self):
+        """code_audit_18 P3-4, tui_audit_11 P3-14: "is a Batocera card"
+        and "is a Recalbox card" for their SHARE drives."""
+        drives = self.renamed()
+        for name in ("Batocera as shipped", "Recalbox"):
+            with self.subTest(drive=name):
+                choice = install.card_choice("retroarch", "retroarch", drives[name])
+                self.assertIn("SHARE drive, which reads", choice.note)
+                self.assertNotIn(" card, which reads", choice.note)
+
+    def test_two_cards_of_one_system_say_what_they_hold(self):
+        """tui_audit_11 P3-15: an old Onion card with 6 BIOS files and a new
+        empty one looked the same, and Enter took the first by name."""
+        old = self.root / "media" / "OLDONION"
+        make_card(old, "Onion")
+        for index in range(6):
+            (old / "BIOS" / f"f{index}.bin").write_bytes(b"x")
+        new = self.root / "media" / "ONION"
+        make_card(new, "Onion")
+        shutil.rmtree(new / "BIOS")
+        with mock.patch.object(install, "_mounted_cards", return_value=[old, new]), \
+                mock.patch.object(install, "detect_platforms", return_value=[]), \
+                contextlib.redirect_stdout(io.StringIO()):
+            setups, _mounted = install.found_setups("linux")
+        self.assertEqual([label for _plat, _path, label in setups],
+                         ["Onion SD card (ONION, no BIOS folder)",
+                          "Onion SD card (OLDONION, 6 BIOS files)"])
+
+    def test_the_card_marker_table_is_written_from_the_rules(self):
+        """code_audit_18 P3-6, tui_audit_11 P2-2: the table left out the
+        SHARE drives. It is generated: every card rule and SHARE drive file
+        is a row, about.info among them."""
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        self.addCleanup(sys.path.remove, str(REPO_ROOT / "scripts"))
+        import generate_installer_doc  # noqa: PLC0415
+
+        page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        block = page[page.index("<!-- generated: card-markers -->"):
+                     page.index("<!-- /generated: card-markers -->")]
+        for rule in install._card_rules():
+            self.assertIn(f"`{rule.values[0]}", block)
+        for _plat, marker in install._SHARE_DRIVES:
+            self.assertIn(f"`{marker}`", block)
+        self.assertIn(self.ABOUT, block)
+        self.assertIn("Recalbox SHARE drive", block)
+        self.assertEqual(generate_installer_doc.render(page), page)
 
 if __name__ == "__main__":
     unittest.main()

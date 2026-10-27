@@ -22,7 +22,7 @@ import ast
 import importlib.util
 import re
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "wiki" / "installer.md"
@@ -154,6 +154,40 @@ def route_keys() -> str:
     return _table(heading, rows)
 
 
+def _marker(rule) -> str:
+    """A card rule's evidence in words: the file or folder, and the line it
+    holds for a rule that reads one."""
+    if rule.method == "file_matches":
+        path, pattern = rule.values
+        line = re.sub(r"\\s\*\$$", "", re.sub(r"^(\^|\\A)", "", pattern)).replace("\\", "")
+        return f"`{path}` holding the line `{line}`"
+    return ", ".join(f"`{value}`" if PurePosixPath(value).suffix else f"`{value}/`"
+                     for value in rule.values)
+
+
+def _list_words(plat: str) -> str:
+    name = _install.display_name(plat)
+    return f"{name}'{'' if name.endswith('s') else 's'} list"
+
+
+def card_marker_rows() -> list[list[str]]:
+    """The files that name a card or a SHARE drive, in the order they are
+    read: install.py's card rules, then its SHARE drive files."""
+    rows = [[_marker(rule), rule.name, f"`{rule.bios}`, {_list_words(rule.manifest)}"]
+            for rule in _install._card_rules()]
+    hostname = "system.hostname=BATOCERA"
+    for plat, marker in _install._SHARE_DRIVES:
+        name = _install.display_name(plat)
+        evidence = (f"`{marker}` holding `{hostname}` or no hostname line, and no KNULLI file "
+                    "above" if plat == "batocera" else f"`{marker}`")
+        rows.append([evidence, f"{name} SHARE drive", f"`bios`, {_list_words(plat)}"])
+    rows.append([f"`{_install._SHARE_DRIVES[0][1]}` with any other hostname, and no KNULLI "
+                 "file above, or the files of two SHARE drives",
+                 "named by neither: the run says which systems it could be",
+                 "the folder of the system named with `--platform`"])
+    return rows
+
+
 def render(page: str) -> str:
     """The page with each marked table written from install.py."""
     writers = {
@@ -162,6 +196,8 @@ def render(page: str) -> str:
         "events": lambda body: _table(["Kind", "Keys", "When"], event_rows(body)),
         "pad-routes": lambda body: _table(["Value", "Input", "Set by"], pad_rows(body)),
         "route-keys": lambda _body: route_keys(),
+        "card-markers": lambda _body: _table(["On the card", "System", "Files go to"],
+                                             card_marker_rows()),
     }
     seen = []
 

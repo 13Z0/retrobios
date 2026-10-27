@@ -10262,14 +10262,28 @@ def _card_mount(path: str) -> str:
 
 # Systems whose card a computer sees as their data partition, by the file
 # their own build writes there, paths below that partition. KNULLI's is
-# /userdata: S12populateshare:15,105 copies datainit there, and every board's
-# datainit/system/batocera.conf sets system.hostname=KNULLI (knulli-cfw
-# distribution ab3a6809, board/batocera/*/fsoverlay/usr/share/batocera/).
-# ROCKNIX's is /storage: userconfig-setup:12 copies /usr/config into
-# /storage/.config, and its system.cfg sets root.password=rocknix (ROCKNIX
-# distribution 8b70f693, projects/ROCKNIX/packages/rocknix/config/system/
-# configs/system.cfg:152).
+# /userdata, which S12populateshare fills from datainit (knulli-cfw
+# distribution ab3a6809, board/batocera/fsoverlay/etc/init.d/
+# S12populateshare:93). The first rule is system/configs/emulationstation/
+# about.info, which every board's datainit holds with the one line KNULLI
+# (board/batocera/*/fsoverlay/usr/share/batocera/datainit/system/configs/
+# emulationstation/about.info), and which S12populateshare copies back at
+# each start when it is missing or older. EmulationStation reads it as the
+# system's name (knulli-cfw/batocera-emulationstation f7c5ae10,
+# es-app/src/ApiSystem.cpp:190-208) and no menu writes it. The second is
+# system.hostname=KNULLI in system/batocera.conf, which datainit sets
+# (datainit/system/batocera.conf:485) and the HOSTNAME row of the menu
+# rewrites (es-app/src/guis/GuiMenu.cpp:4092): a card renamed there was
+# read as a Batocera SHARE drive. ROCKNIX's is /storage: userconfig-setup:12
+# copies /usr/config into /storage/.config, and its system.cfg sets
+# root.password=rocknix (ROCKNIX distribution 8b70f693, projects/ROCKNIX/
+# packages/rocknix/config/system/configs/system.cfg:153). Nothing else there
+# names ROCKNIX: a password changed with setrootpass
+# (packages/rocknix/sources/scripts/setrootpass:25) leaves the card named
+# by nothing, never by another system.
 _SHARE_RULES: tuple[_OsRule, ...] = (
+    _OsRule(_STANDIN_MANIFESTS["KNULLI"], "KNULLI", "file_matches",
+            ("system/configs/emulationstation/about.info", r"\AKNULLI\s*$"), "bios"),
     _OsRule(_STANDIN_MANIFESTS["KNULLI"], "KNULLI", "file_matches",
             ("system/batocera.conf", r"^system\.hostname=KNULLI\s*$"), "bios"),
     _OsRule("rocknix", "ROCKNIX", "file_matches",
@@ -10342,22 +10356,92 @@ def card_system(root: Path) -> tuple[str, Path, str] | None:
 
 
 # The SHARE drive of a system a computer reaches over the network, by the
-# file the system keeps on it: Batocera's data part (/userdata) holds
-# system/batocera.conf, Recalbox's (/recalbox/share) system/recalbox.conf,
-# and both read bios/ beside it. KNULLI, built on Batocera, writes the same
-# batocera.conf with its own hostname: its rule (_SHARE_RULES) comes first.
-# Typed at the folder question, the drive was taken as the BIOS folder and
-# filled beside roms/ and system/, where neither reads.
+# file the system keeps on it, and both read bios/ beside it. Batocera's data
+# part (/userdata) holds system/batocera.conf, which S12populateshare copies
+# there (batocera.linux d1966272, board/batocera/fsoverlay/etc/init.d/
+# S12populateshare:104) and which sets system.hostname=BATOCERA
+# (package/batocera/core/batocera-system/batocera.conf:103). Recalbox's
+# (/recalbox/share) holds system/recalbox.conf (recalbox 64b0fd40,
+# board/recalbox/fsoverlay/etc/init.d/S12populateshare:93), a name no menu
+# changes. KNULLI, built on Batocera, writes the same batocera.conf: its
+# rules (_SHARE_RULES) are read first, and a batocera.conf whose hostname
+# is neither system's own, on a drive no about.info names, is one of the
+# two renamed in its menu. That drive is said to be either (share_doubt),
+# never taken for one: a renamed KNULLI card was filled with Batocera's
+# list. Typed at the folder question, a drive was taken as the BIOS folder
+# and filled beside roms/ and system/, where neither reads.
 _SHARE_DRIVES: tuple[tuple[str, str], ...] = (
     ("batocera", "system/batocera.conf"),
     ("recalbox", "system/recalbox.conf"),
 )
+_HOSTNAME_LINE = re.compile(r"^system\.hostname=(.*?)\s*$", re.MULTILINE)
+
+
+def _share_markers(root: Path) -> list[str]:
+    """The platforms whose SHARE drive file is on root's own drive."""
+    return [plat for plat, marker in _SHARE_DRIVES
+            if _is_file(root / marker) and _on_the_drive(root, marker)]
+
+
+def _share_hostname(root: Path) -> str | None:
+    """The hostname system/batocera.conf on root sets, "" when it sets none,
+    None when the file cannot be read."""
+    try:
+        text = (root / "system" / "batocera.conf").read_text(encoding="utf-8",
+                                                             errors="replace")
+    except OSError:
+        return None
+    found = _HOSTNAME_LINE.findall(text)
+    return found[-1] if found else ""
 
 
 def share_drive(root: Path) -> str | None:
-    """The platform whose SHARE drive root is, by its own files, or None."""
-    return next((plat for plat, marker in _SHARE_DRIVES
-                 if _is_file(root / marker) and _on_the_drive(root, marker)), None)
+    """The platform whose SHARE drive root is, by its own files, or None:
+    for none, and for files that name two systems (share_doubt)."""
+    markers = _share_markers(root)
+    if len(markers) != 1:
+        return None
+    if markers == ["batocera"] and _share_hostname(root) not in ("", "BATOCERA"):
+        return None
+    return markers[0]
+
+
+def share_doubt(root: Path) -> tuple[tuple[str, ...], str]:
+    """(platforms, why) for a drive whose files fit more than one system,
+    ((), "") for any other: a batocera.conf renamed in its menu, with no
+    file KNULLI alone writes, or the files of Batocera and Recalbox both."""
+    if card_platform(root) or _card_matches(root):
+        return (), ""
+    markers = _share_markers(root)
+    if len(markers) > 1:
+        return tuple(markers), "it holds system/batocera.conf and system/recalbox.conf"
+    if markers == ["batocera"]:
+        hostname = _share_hostname(root)
+        if hostname not in ("", "BATOCERA"):
+            return ((_STANDIN_MANIFESTS["KNULLI"], "batocera"),
+                    f"its system/batocera.conf names the host {screen_text(hostname or '?')}, "
+                    "which the menus of KNULLI and Batocera both set")
+    return (), ""
+
+
+def _doubt_kinds(plats: tuple[str, ...]) -> str:
+    """The systems a drive could be, in words: a KNULLI card or a Batocera
+    SHARE drive."""
+    return " or ".join(f"{_a(display_name(plat))} "
+                       f"{'SHARE drive' if plat in _SHARE_FOLDERS else 'card'}"
+                       for plat in plats)
+
+
+def doubt_words(root: Path) -> str:
+    """What is said of a mounted drive share_doubt cannot name, and how to
+    name it: the same words on the first screen and in line mode."""
+    plats, why = share_doubt(root)
+    if not plats:
+        return ""
+    shown = shown_path(root)
+    kinds = _doubt_kinds(plats)
+    names = " or ".join(f"--platform {plat} --dest {shown}" for plat in plats)
+    return f"{shown} could be {kinds}: {why}. Name it: {names}."
 
 
 def drive_kind(system: tuple[str, Path, str]) -> str:
@@ -10447,8 +10531,11 @@ def card_setups() -> list[CardSetup]:
     rules = _card_rules()
     setups = [CardSetup(display_name(plat), plat, "") for plat in AVAILABLE_PLATFORMS
               if plat in CARD_PLATFORMS]
-    setups += [CardSetup(rule.name, rule.manifest, rule.bios, (rule,), True)
-               for rule in _SHARE_RULES]
+    # KNULLI is named by two files: one setup holding both rules.
+    shares = {rule.name: tuple(each for each in _SHARE_RULES if each.name == rule.name)
+              for rule in _SHARE_RULES}
+    setups += [CardSetup(name, rules[0].manifest, rules[0].bios, rules, True)
+               for name, rules in shares.items()]
     # AmberELEC and EmuELEC mount their card's games part as /storage/roms,
     # the folder their list is written below: AmberELEC 5a3882cb fs-resize
     # formats it exFAT as GAMES (packages/sysutils/busybox/scripts/
@@ -10529,9 +10616,12 @@ def _card_is(setup: CardSetup, card: Path, above: bool = False) -> tuple[str, st
     names = sorted({rule.name for rule in _card_matches(card, above)})
     if setup.name in names:
         return "own", setup.name
-    if not names and share_drive(card):
-        # A Batocera share is no KNULLI card not started yet.
-        return "other", display_name(share_drive(card))
+    share = share_drive(card)
+    if not names and share and not (share == "batocera" and setup.name == "KNULLI"):
+        # A Recalbox share is no KNULLI card not started yet. A Batocera
+        # one may be: KNULLI writes the same batocera.conf, and a card
+        # older than its about.info has nothing else (_unknown_card_note).
+        return "other", display_name(share)
     return ("other", " and ".join(names)) if names else ("unknown", "")
 
 
@@ -10576,11 +10666,17 @@ def _dest_refusal_words(choice: CardChoice, setup: CardSetup | None) -> str:
     KNULLI, and for a blank stick named for Onion, both refused the same."""
     detail = f" {choice.detail}." if choice.detail else ""
     name = setup.name if setup else display_name(choice.plat)
+    if choice.other and choice.plat in _SHARE_FOLDERS and setup is None:
+        return (f"{choice.refused}.{detail} Connect the {name} SHARE drive, or name that "
+                f"drive's own system: --platform {_name_key(choice.other)}")
     if choice.other:
         return (f"{choice.refused}.{detail} Insert the {name} card, or name that "
                 f"card's own system: --platform {_name_key(choice.other)}")
     if choice.root is not None:
         return f"{choice.refused}.{detail} Name the card's root: --dest {shown_path(choice.root)}"
+    if choice.plat in _SHARE_FOLDERS and setup is None:
+        return (f"{choice.refused}.{detail} Connect the {name} SHARE drive and name its "
+                "root with --dest")
     return f"{choice.refused}.{detail} Name the top folder of the {name} card with --dest"
 
 
@@ -10589,6 +10685,13 @@ def _unknown_card_note(setup: CardSetup, card: Path, folder: Path) -> str:
     if setup.name in _GAMES_PART_CARDS:
         # Its list writes bios/ below the games part: the plan names that.
         folder = folder / "bios"
+    plats, why = share_doubt(card)
+    if setup.name == "KNULLI" and share_drive(card) == "batocera":
+        plats, why = ((setup.plat,), "it holds the system/batocera.conf Batocera and KNULLI "
+                      "both write, and no about.info naming KNULLI")
+    if setup.plat in plats:
+        return (f"{shown_path(card)} could be another system's: {why}. Taken as "
+                f"{setup.name}'s, as named: the files go to {shown_path(folder)}")
     if setup.fresh:
         return (f"Nothing on {shown_path(card)} says it is {_a(setup.name)} card yet (not started "
                 f"once?): the files go to {shown_path(folder)}")
@@ -10682,10 +10785,24 @@ def _list_card_choice(plat: str, dest: Path) -> CardChoice:
                           short=f"That is {_a(found[2])} {kind}.", other=found[2])
     if found and plat and found[0] != plat:
         shown = shown_path(dest)
-        return CardChoice(plat, dest, f"Note: {shown} is {_a(found[2])} card, which reads "
+        return CardChoice(plat, dest, f"Note: {shown} is {_a(found[2])} {drive_kind(found)}, "
+                          "which reads "
                           f"the {display_name(found[0])} file list in {shown_path(found[1])}: "
                           f"--platform {_name_key(found[2])} --dest {shown}. The "
                           f"{display_name(plat)} list goes into it as named.")
+    doubt, why = ((), "") if found else share_doubt(dest)
+    if plat in doubt:
+        # Named by the user, a drive its files cannot name is taken for the
+        # system named, and the doubt is said.
+        folder = dest / "bios"
+        return CardChoice(plat, folder, f"Note: {shown_path(dest)} could be another system's: "
+                          f"{why}. Taken as {display_name(plat)}'s, as named: the files go "
+                          f"to {shown_path(folder)}")
+    if doubt and plat in _SHARE_FOLDERS:
+        name = display_name(plat)
+        return CardChoice(plat, dest, refused=f"{shown_path(dest)} could be "
+                          f"{_doubt_kinds(doubt)}, not {_a(name)} SHARE drive", detail=why,
+                          short=f"That could be {_doubt_kinds(doubt)}.")
     matched = [] if found else _card_matches(dest)
     if len({(match.manifest, match.bios) for match in matched}) > 1:
         names = " and ".join(sorted({match.name for match in matched}))
@@ -10963,7 +11080,8 @@ def _platform_for_dest(os_type: str, dest: Path, interactive: bool) -> tuple[str
         print(f"  File list: {display_name(plat)}. Same choice without questions: "
               f"--platform {_name_key(named) if named != plat else plat}")
         return plat, choice.folder
-    found = list(dict.fromkeys(name for name, _path in detect_platforms(os_type)))
+    # The setups the screen and line mode find, cards mounted here included.
+    found = list(dict.fromkeys(name for name, _path, _label in found_setups(os_type)[0]))
     default = found[0] if len(found) == 1 else "" if found else "retroarch"
     if not default:
         print(f"Error: {' and '.join(display_name(n) for n in found)} found here. "
@@ -10973,6 +11091,24 @@ def _platform_for_dest(os_type: str, dest: Path, interactive: bool) -> tuple[str
     print(f"  File list: {display_name(default)} ({why}). For another platform's "
           "list, add --platform (--list-platforms names them).")
     return default, dest
+
+
+def _several_found(platforms: list[tuple[str, Path]], setups: list) -> None:
+    """Stop a run without questions that found more than one setup, each
+    named with the options that choose it."""
+    labels = {(name, path): label for name, path, label in setups}
+    shown = [(labels.get((name, path)) or _setup_label(name, path), name, path)
+             for name, path in platforms]
+    conflict = os_conflict(platforms)
+    lead = (f"{' and '.join(conflict)} are both detected here, and a machine runs one"
+            if conflict else f"{len(shown)} setups were found here")
+    message = (f"{lead}, and a run without questions installs for one: "
+               + ", ".join(label for label, _n, _p in shown))
+    EVENTS.emit("error", stage="detect", reason="conflict", platform="", message=message)
+    print(f"Error: {message}. Name the one to install for:", file=sys.stderr)
+    for label, name, path in shown:
+        print(f"  {label}: --platform {name} --dest {shown_path(path)}", file=sys.stderr)
+    sys.exit(1)
 
 
 def _unknown_target(target: str, plat: str, targets: dict) -> None:
@@ -11068,10 +11204,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         platforms = [(args.platform, args.dest)]
     elif args.platform:
         print("Looking for setups here...")
-        if interactive and not listing:
-            # The cards mounted here too, as the screen finds them: a pack's
-            # RetroArch list went to this computer's folder past the Onion
-            # card it was downloaded for.
+        if not listing:
+            # The cards mounted here too, as the screen finds them, with or
+            # without questions: a pack's RetroArch list went to this
+            # computer's folder past the Onion card it was downloaded for,
+            # and --yes did so after the screen had found the card.
             setups, mounted = found_setups(os_type)
             detected = [(name, path) for name, path, _label in setups]
         else:
@@ -11161,12 +11298,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             print("  Found ES-DE (BIOS files go to each emulator, not to ES-DE itself)")
         if "launchbox" in frontends:
             print("  Found LaunchBox")
-        if interactive and not listing:
-            # A card mounted here is found as the screen finds it: line mode
-            # said "No supported platform detected" beside an Onion card.
+        if not listing:
+            # A card mounted here is found as the screen finds it, in every
+            # mode: line mode said "No supported platform detected" beside
+            # an Onion card, and --yes filled this computer's folder.
             setups, mounted = found_setups(os_type)
             platforms = [(name, path) for name, path, _label in setups]
-            offer = True
+            offer = interactive
         else:
             platforms = detect_platforms(os_type)
         if not platforms:
@@ -11201,18 +11339,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             for name, path in platforms:
                 print(f"  Found {found_label(name, path)}")
 
-    conflict = os_conflict(platforms)
-    if conflict and not interactive and not listing:
-        # A machine runs one system: installing to each folder would write
-        # where nothing reads, and picking one would be a guess.
-        message = (f"{' and '.join(conflict)} are both detected here, and a "
-                   "machine runs one")
-        EVENTS.emit("error", stage="detect", reason="conflict", platform="",
-                    message=message)
-        print(f"Error: {message}. Name the folder with --dest (and --platform for "
-              "its file list).",
-              file=sys.stderr)
-        sys.exit(1)
+    if len(platforms) > 1 and not interactive and not listing:
+        # A run without questions installs for one setup, the one a person
+        # would have chosen: --yes beside two setups filled both, 14 GB in
+        # two folders, where its help says it stops on what to name.
+        _several_found(platforms, setups)
     if platforms:
         EVENTS.emit("detect", os=os_type, os_name=_os_name(), platforms=[
             {"platform": name, "name": display_name(name), "bios_dir": str(path)}
@@ -16291,13 +16422,44 @@ def found_setups(os_type: str) -> tuple[list[tuple[str, Path, str]], set]:
     # On the device itself its own card is the system found, by its own
     # path (muOS reads /run/muos/storage/bios, a bind of MUOS/bios).
     here = {detected_os(name, path) for name, path in found}
+    taken = []
     for card, mount in cards:
-        if card and (card[0], card[1]) not in found and card[2] not in here:
+        if card is None:
+            # A drive whose files fit two systems is said, never guessed.
+            words = doubt_words(mount)
+            if words:
+                print(f"  {words}")
+            continue
+        if (card[0], card[1]) not in found and card[2] not in here:
             _DETECTED_OS.setdefault((card[0], card[1]), card[2])
             mounted.add((card[0], card[1]))
-            kind = "SHARE drive" if drive_kind(card) != "card" else "SD card"
-            setups.append((card[0], card[1], f"{card[2]} {kind} ({_mount_name(mount)})"))
+            taken.append((card, mount))
+    systems = [card[2] for card, _mount in taken]
+    counts = {mount: _bios_count(card[1]) for card, mount in taken
+              if systems.count(card[2]) > 1}
+    # Two cards of one system read alike: each says what its BIOS folder
+    # holds, and the one with fewer files, the card being set up rather
+    # than the old one, comes first (tui_audit_11 P3-15).
+    taken.sort(key=lambda item: (systems.index(item[0][2]), counts.get(item[1], -1)))
+    for card, mount in taken:
+        kind = "SHARE drive" if drive_kind(card) != "card" else "SD card"
+        held = counts.get(mount)
+        what = ("" if held is None else ", no BIOS folder" if held < 0
+                else f", {_plural(held, 'BIOS file')}")
+        setups.append((card[0], card[1], f"{card[2]} {kind} ({_mount_name(mount)}{what})"))
     return tell_apart(setups), mounted
+
+
+def _bios_count(folder: Path, cap: int = 99999) -> int:
+    """How many files a card's BIOS folder holds, -1 when it has none."""
+    if not _is_dir(folder):
+        return -1
+    count = 0
+    for _top, _dirs, files in os.walk(folder):
+        count += len(files)
+        if count >= cap:
+            break
+    return count
 
 
 def tui_start(

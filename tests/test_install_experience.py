@@ -1174,11 +1174,17 @@ class ADetectedClosedFolderSaysWhereItCameFrom(unittest.TestCase):
         said = " ".join(proc.stderr.split())
         self.assertIn(f"than the one {self.cfg} names (name another with --dest)", said)
 
-    def test_nothing_installed_comes_after_the_error(self):
+    def test_two_setups_stop_before_either_folder_is_read(self):
+        """code_audit_18 P2-3: a run without questions installs for one
+        setup, so two found stop on what to name before either folder is
+        read, the closed one included."""
         proc = self.run_detected(True)
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        error = proc.stderr.index("Error: ")
-        self.assertGreater(proc.stderr.index("Nothing was installed."), error, proc.stderr)
+        said = " ".join(proc.stderr.split())
+        self.assertIn("2 setups were found here, and a run without questions installs for "
+                      "one", said)
+        self.assertIn("--platform emudeck --dest", said)
+        self.assertNotIn("Downloading", proc.stdout)
 
     def test_an_assumed_default_reads_plainly(self):
         self.assertIn("used by default, since {display_name(name)} was not found",
