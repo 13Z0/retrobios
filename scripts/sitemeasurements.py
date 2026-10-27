@@ -166,6 +166,80 @@ def campaign_summary(root: Path, stored: list[mr.Stored], source: dict | None) -
             "open": open_items}
 
 
+def pack_summary(root: Path, source: dict | None) -> list[dict]:
+    """The latest pack probe of each platform, install path, system, core
+    and game, with a link to its line."""
+    latest: dict[tuple, tuple[int, dict]] = {}
+    for number, line in enumerate(mr.read_campaign(root, mr.PACK_PROBES), 1):
+        key = (line["platform"], line["install"], line["system"], line["core"]["file"],
+               line["content"]["label"])
+        latest[key] = (number, line)
+    items = []
+    for key in sorted(latest):
+        number, line = latest[key]
+        url = (permalink(source["repo"], source["commit"], mr.records_path(mr.PACK_PROBES), number)
+               if source and source.get("commit") else None)
+        items.append({
+            "platform": line["platform"], "platform_version": line["platform_version"],
+            "install": line["install"], "system": line["system"], "emulator": line["emulator"],
+            "core": line["core"]["file"].removesuffix("_libretro.so"),
+            "content": line["content"]["label"], "verdict": line["verdict"],
+            "date": line["probed_at"], "opened": len(line["files_opened"]),
+            "findings": len(line["findings"]), "id": line["id"], "record_url": url,
+        })
+    return items
+
+
+def by_platform(index: dict) -> dict[str, list[dict]]:
+    out: dict[str, list[dict]] = {}
+    for item in index.get("packs") or ():
+        out.setdefault(item["platform"], []).append(item)
+    return out
+
+
+INSTALL_WORDS = {"pack": "pack", "installer": "installer"}
+
+
+def _pack_row(item: dict, platform_column: bool) -> str:
+    link = f"[line]({item['record_url']})" if item["record_url"] else _code(item["id"])
+    cells = ([_plain(item["platform"])] if platform_column else []) + [
+        _plain(item["system"]), INSTALL_WORDS[item["install"]], _code(item["core"]),
+        _plain(item["content"]), f"`{item['verdict']}`", str(item["findings"]), link]
+    return "| " + " | ".join(cells) + " |"
+
+
+PACKS_INTRO = ("A game started with the platform's BIOS folder as a user gets it, from the "
+               "pack or from the installer ([how]({prefix}{page}#packs)). A finding is a file "
+               "the core looked for that the folder lacks or holds under another path.")
+PLATFORM_INTRO = "Games started with this BIOS folder as you install it ([how]({prefix}{page}#packs))."
+
+
+def packs_section(items: list[dict], heading: str = "## Packs", platform_column: bool = True,
+                  prefix: str = "", intro: str = PACKS_INTRO) -> list[str]:
+    """Packs tested the way a user installs them: one row per platform,
+    system, install path and core."""
+    if not items:
+        return []
+    columns = (["Platform"] if platform_column else []) + [
+        "System", "Installed by", "Core", "Game", "Verdict", "Findings", "Record"]
+    return [
+        heading,
+        "",
+        intro.format(prefix=prefix, page=METHOD_PAGE),
+        "",
+        "| " + " | ".join(columns) + " |",
+        "|" + "|".join("---" for _ in columns) + "|",
+        *(_pack_row(item, platform_column) for item in
+          sorted(items, key=lambda i: (i["platform"], i["system"], i["install"], i["core"], i["content"]))),
+        "",
+    ]
+
+
+def pack_tested_section(items: list[dict]) -> list[str]:
+    """The Tested block of a platform page."""
+    return packs_section(items, "## Tested", platform_column=False, prefix="../", intro=PLATFORM_INTRO)
+
+
 # Characters a campaign value could use to leave its place on the page: HTML
 # and MDX syntax ({ } opens an expression), code spans, emphasis and links.
 _UNSAFE = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "{": "&#123;", "}": "&#125;", "`": "&#96;",
@@ -460,6 +534,7 @@ def build(public: Path, root: Path = ROOT, emulators_dir: Path = ROOT / "emulato
     profiles = load_profiles(emulators_dir)
     index = build_index(stored, source, profiles, system_names)
     index["campaign"] = campaign_summary(root, stored, source)
+    index["packs"] = pack_summary(root, source)
     paths = [public / INDEX_PATH]
     (public / INDEX_PATH).parent.mkdir(parents=True, exist_ok=True)
     write_if_changed(str(public / INDEX_PATH),
@@ -585,6 +660,7 @@ def generate_explorer_page(index: dict) -> str:
         "",
         "<MeasurementsExplorer />",
         "",
+        *packs_section(index.get("packs") or []),
         *campaign_section(index.get("campaign")),
     ])
 

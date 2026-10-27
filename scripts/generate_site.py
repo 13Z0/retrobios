@@ -4247,6 +4247,7 @@ def generate_platform_page(
         lines.extend(["", *_platform_install_block(name, display, on_card)])
         lines.extend(["", _pack_buttons(name, f"Download {display} Pack", display=display)])
     lines.append("")
+    lines.extend(sitemeasurements.pack_tested_section(_PACK_ITEMS.get(name, [])))
 
     # The declaration behind each detail, by system and name in declaration
     # order: keyed by name alone, the last of MiSTer's 23 boot.rom gave its
@@ -8439,6 +8440,8 @@ _DATA_MEMBERS: dict[str, dict[str, dict]] = {}
 _DATA_REVISIONS: dict[str, dict] = {}
 # The measurement index items of each emulator, for its Tested block.
 _MEASUREMENT_ITEMS: dict[str, list[dict]] = {}
+# Pack probes by platform key, for the Tested block of a platform page.
+_PACK_ITEMS: dict[str, list[dict]] = {}
 # The emulator pages that list each data directory, by ref.
 _DATA_READERS: dict[str, list[tuple[str, str]]] = {}
 
@@ -11171,6 +11174,8 @@ def _generate(args: argparse.Namespace) -> None:
         _record(path)
     _MEASUREMENT_ITEMS.clear()
     _MEASUREMENT_ITEMS.update(sitemeasurements.by_emulator(measured.index))
+    _PACK_ITEMS.clear()
+    _PACK_ITEMS.update(sitemeasurements.by_platform(measured.index))
     print(f"  {measured.index['records']} records, {measured.index['count']} tests")
     write_if_changed(str(docs / sitemeasurements.EXPLORER_PAGE),
                      sitemeasurements.generate_explorer_page(measured.index) + reference_next())
