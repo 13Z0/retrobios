@@ -160,13 +160,13 @@ handheld_guide:
   - name: Onion
     folder: '`BIOS` at the root of the card'
     folder_source: https://onionui.github.io/docs/emulators
-    devices: [Miyoo Mini, Miyoo Mini+]
+    devices: [Miyoo Mini, Miyoo Mini Plus]
     devices_source: https://github.com/OnionUI/Onion
   - name: spruceOS
     folder: '`BIOS` at the root of the card'
     folder_source: https://github.com/spruceUI/spruceOS/wiki/10.-Adding-BIOS
     devices: [Miyoo A30, Miyoo Flip, Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip,
-              TrimUI Smart Pro, TrimUI Brick, Anbernic RG35XX Plus, RG40XX H, Powkiddy RGB30]
+              TrimUI Smart Pro, TrimUI Brick, RG35XX Plus, RG40XX H, Powkiddy RGB30]
     devices_source: https://github.com/spruceUI/spruceOS/wiki/Supported-Devices
   - name: Allium
     folder: '`BIOS` at the root of the card'

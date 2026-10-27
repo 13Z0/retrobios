@@ -4249,7 +4249,7 @@ class DestAloneFollowsWhatIsFoundHere(unittest.TestCase):
             plat, folder = install._platform_for_dest("linux", root, True)
         self.assertEqual((plat, folder), ("retroarch", root))
         self.assertIn(f"{root} is not an Onion SD card", out.getvalue())
-        self.assertIn("Onion, SD card (RetroArch files)", out.getvalue())
+        self.assertIn("Onion, SD card (Miyoo Mini, Miyoo Mini Plus)", out.getvalue())
 
     def test_nothing_found_is_retroarch_said_aloud(self):
         plat, out = self._pick([])

@@ -663,7 +663,7 @@ class OfflineMakesNoRequest(Scratch):
         self.assertEqual((self.dest / "scph5501.bin").read_bytes(), US)
         self.assertFalse((self.dest / "gba_bios.bin").exists())
         self.assertIn("no network request", proc.stdout + proc.stderr)
-        self.assertIn("run without --offline", proc.stdout + proc.stderr)
+        self.assertIn("without --offline", proc.stdout + proc.stderr)
         self.assertNotIn("trying again", proc.stderr)
 
     def test_modes_that_need_the_network_refuse_it(self):
@@ -841,6 +841,99 @@ class OfflineLeavesFilesMissing(Scratch):
         proc = self.run_installer("--offline", "--manifest", str(self.list), "--no-input")
         self.assertIn("bluemsx: could not read", proc.stderr)
         self.assertNotIn("no longer in the source", proc.stdout)
+
+
+class OneOfflineVocabulary(Scratch):
+    """code_audit_14 P3-1 to P3-4, tui_audit_7 P3-4: --offline said one
+    thing at a terminal and another without questions, on the screen and
+    under --check."""
+
+    def old(self) -> Path:
+        old = self.root / "old"
+        old.mkdir()
+        (old / "scph5501.bin").write_bytes(US)
+        return old
+
+    def test_a_run_without_questions_says_missing_not_failed(self):
+        """P3-2: "Finished with errors ... 3 files failed" and "Run the
+        same command again to retry only those"."""
+        proc = self.run_installer("--offline", "--manifest", str(self.list),
+                                  "--from", str(self.old()), "--no-input")
+        out = proc.stdout + proc.stderr
+        self.assertEqual(proc.returncode, 1, out)
+        self.assertIn("Finished with files missing. 1 file installed, 3 not fetched "
+                      "(--offline).", out)
+        self.assertIn(f"They are not in {self.root / 'old'}", out)
+        for said in ("Finished with errors", "files failed", "retry",
+                     "copy them from your old card"):
+            self.assertNotIn(said, out)
+
+    def test_nothing_installed_is_said_so(self):
+        """P3-3: "Finished with files missing. 0 files installed"."""
+        failures = [("a.bin", install.NOT_WRITABLE), ("b.bin", install.NOT_WRITABLE)]
+        with contextlib.redirect_stdout(io.StringIO()) as out, \
+                self.assertRaises(SystemExit) as stop:
+            install._report_outcome([self.dest], 0, 0, 2, 0, False, failures=failures,
+                                    offline=20)
+        self.assertEqual(stop.exception.code, 2)
+        self.assertIn("Nothing installed: 20 files not fetched (--offline), 2 failed.",
+                      out.getvalue())
+        self.assertNotIn("0 files installed", out.getvalue())
+
+    def test_the_command_suggested_keeps_the_offline_setting(self):
+        """P3-3: sudo does not pass RETROBIOS_INSTALL_OFFLINE on."""
+        import test_install_tui as tui
+
+        args = tui._args(platform="retroarch", declared_only=False, offline=False)
+        hint = install.Invocation()
+        with unittest.mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            hint.record(args)
+        self.assertIn("--offline", hint.command("retroarch", self.dest, elevated=True))
+
+    def test_check_offline_says_what_cannot_come(self):
+        """P3-4: "Run the same command without --check to fetch them"."""
+        proc = self.run_installer("--check", "--offline", "--manifest", str(self.list))
+        out = proc.stdout + proc.stderr
+        self.assertEqual(proc.returncode, 1, out)
+        self.assertNotIn("to fetch them", out)
+        self.assertIn("4 files need the internet, which --offline does not use.", out)
+        self.assertIn("Copy them from your old card or a folder (--from)", out)
+
+    def test_the_screen_says_missing_not_failed(self):
+        """P3-2 on the full screen: "Finished with errors, 20 failed"."""
+        import test_install_tui as tui
+
+        reason = f"not fetched: {install.OFFLINE_WORDS}"
+        state = tui._installed_state(self.dest, 1, [{"dest": f"f{n}.bin", "reason": reason}
+                                                    for n in range(20)])
+        state.summary["installed"] = 2
+        state.from_folders = [self.root / "from1"]
+        title, lines = install.tui_outcome(state)
+        self.assertEqual(title, "Finished with files missing")
+        text = " ".join(lines)
+        self.assertIn("2 installed, 20 not fetched (--offline).", text)
+        self.assertIn("They are not in", text)
+        self.assertNotIn("failed", text)
+        state.summary["installed"] = 0
+        self.assertEqual(install.tui_outcome(state)[0], "Nothing installed")
+
+    def test_the_line_menu_copies_from_a_folder(self):
+        """tui_audit_7 P3-4: no way to a folder, and an install of nothing
+        offered."""
+        old = self.old()
+        install.LOCAL.reset()
+        self.addCleanup(install.LOCAL.reset)
+        answers = iter(["f", str(old), ""])
+        with unittest.mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}), \
+                unittest.mock.patch.object(install, "_ask", lambda _prompt: next(answers)), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            self.assertIsNone(install._prompt_custom_selection("retroarch", [], []))
+        text = out.getvalue()
+        self.assertIn("Enter) check the BIOS folder, nothing can be downloaded", text)
+        self.assertIn("f) copy from a folder or an old card", text)
+        self.assertIn(f"Enter) install what is found in {old}", text)
+        self.assertEqual([index.label for index in install.LOCAL.folders], [str(old)])
+        self.assertNotIn("install everything", text)
 
 
 if __name__ == "__main__":

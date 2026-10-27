@@ -11,7 +11,9 @@ profiles, placed below that folder.
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
+import io
 import json
 import os
 import shutil
@@ -406,9 +408,11 @@ class InstallerReadsTheCard(unittest.TestCase):
 
         (self.root / ".system" / "version.txt").write_text("MinUI-20251127-0\n")
         (self.root / "Bios").mkdir()
-        with self.assertRaises(SystemExit):
-            install._check_card_root("minui", self.root / "Bios")
-        install._check_card_root("minui", self.root)
+        with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+            install.card_dest("minui", "minui", self.root / "Bios")
+        self.assertEqual(install.card_dest("minui", "minui", self.root),
+                         ("minui", self.root))
+
 
 class TheSitePageOfACardPlatform(unittest.TestCase):
     """A platform that names no file showed "0/0 Coverage (0%)" and an empty

@@ -1,6 +1,6 @@
  RetroBIOS: Which setup?
 
-   Filter (/ to type)
+   Filter: setup or device (/)
  > RetroArch
    Batocera
    Recalbox
