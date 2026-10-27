@@ -15,6 +15,7 @@
         "detect",
         "error",
         "scanned",
+        "version",
         "choices",
         "file",
         "system",
@@ -50,6 +51,9 @@
     },
     {
       "$ref": "#/$defs/scanned"
+    },
+    {
+      "$ref": "#/$defs/version"
     },
     {
       "$ref": "#/$defs/choices"
@@ -241,6 +245,34 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "list_version",
+        "installed_version",
+        "message"
+      ],
+      "properties": {
+        "event": {
+          "const": "version"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "list_version": {
+          "type": "string"
+        },
+        "installed_version": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
         }
       }
     },

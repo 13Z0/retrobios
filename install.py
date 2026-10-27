@@ -546,6 +546,12 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # up to MAX_SCANNED_FILES, truncated past them), and the folders below
     # it on another drive, not entered.
     "scanned": ("folder", "files", "truncated", "other_drives"),
+    # Before choices, once a list is read: the system here runs another
+    # version than the one the list was built for (list_version, from the
+    # manifest, installed_version, from the system's own version file).
+    # message says it and what it means. Not written when either version
+    # is unknown, and never a refusal.
+    "version": ("platform", "list_version", "installed_version", "message"),
     # Before the file events of a check: the systems the run's list lets
     # one choose among, --system aside, in id order (other for the files
     # no system names). What Choose systems lists, and what the plan counts
@@ -1528,6 +1534,127 @@ _CARD_SYSTEMS = {"MinUI": "/.system/res"}
 
 # (platform, BIOS folder) -> the name the system found there gives itself.
 _DETECTED_OS: dict[tuple[str, Path], str] = {}
+
+
+# A version as a list or a system writes it: v1.22.2, 43.1, 8.3.1.1.
+_VERSION_TEXT = re.compile(r"[0-9A-Za-z][0-9A-Za-z._+-]{0,39}")
+# What generate_pack.py wrote as every list's version until it recorded the
+# platform's own: not a version, so a list holding it names none.
+_NO_LIST_VERSION = "1.0"
+_MD5_CHECK = "{name}'s own BIOS check may report some files as wrong though they work."
+
+
+def _version_line(path: Path) -> str:
+    """The first line of a small version file, "" when it cannot be read."""
+    if not _is_file(path):
+        return ""
+    try:
+        with path.open("rb") as fh:
+            head = fh.read(4096)
+    except OSError:
+        return ""
+    lines = head.decode("utf-8", errors="replace").strip().splitlines()
+    return lines[0].strip() if lines else ""
+
+
+def _batocera_version(_bios_path: Path) -> str:
+    # batocera-system.mk:9,100-102 (batocera-43.1): the version, then the
+    # date and time of the build.
+    words = _version_line(_on_device("/usr/share/batocera/batocera.version")).split()
+    return words[0] if words else ""
+
+
+def _recalbox_version(_bios_path: Path) -> str:
+    # Dockerfile:31 (recalbox 10.1.1) writes RECALBOX_VERSION, which
+    # .gitlab-ci.yml:723 sets to the release tag, or for a build of a branch
+    # to its date and name. A build from a working tree says "development"
+    # (projects/configgen/configgen/challenge/RuleScript.py:64). Only a
+    # release is a version a list is built for.
+    text = _version_line(_on_device("/recalbox/recalbox.version"))
+    return text if re.fullmatch(r"\d+(?:\.\d+)+", text) else ""
+
+
+def _retrobat_version(bios_path: Path) -> str:
+    # <RetroBat>/system/version.info, which es-update writes and es-checkversion
+    # reads (emulatorlauncher 48cdc616, es-update/RetrobatVersion.cs:66-92).
+    # The 8.3.1 installer holds "8.3.1.1-stable-win64".
+    text = _version_line(bios_path.parent / "system" / "version.info")
+    head = text.split("-", 1)[0]
+    return head if re.fullmatch(r"\d+(?:\.\d+)+", head) else ""
+
+
+def _os_release_version(key: str, value: str) -> Callable[[Path], str]:
+    """VERSION_ID from os-release, on the system that names itself so."""
+    def read(_bios_path: Path) -> str:
+        release = _parse_os_release()
+        if release.get(key, "").lower() != value:
+            return ""
+        return release.get("VERSION_ID", "")
+    return read
+
+
+def _same_release(installed: str, listed: str) -> bool:
+    return installed == listed
+
+
+def _retrobat_release(installed: str, listed: str) -> bool:
+    # The release tagged 8.3.1 ships 8.3.1.1: a fourth number is a build of
+    # the tagged version.
+    return installed == listed or installed.startswith(listed + ".")
+
+
+class _VersionSource(NamedTuple):
+    """Where a system states the version it runs, and what a different one means."""
+
+    read: Callable[[Path], str]
+    meaning: str
+    same: Callable[[str, str], bool] = _same_release
+    # Written by the list (v6.1) and not by the system (6.1).
+    prefix: str = ""
+
+
+# The systems whose version a file states, read without running anything.
+# RetroArch writes its version in no file: its lists come from core info
+# files the online updater replaces, so its version is not compared. KNULLI
+# writes its codename (knulli-system.mk:9,100-102, "scarab") and ROCKNIX the
+# date of the build (scripts/image:82), not the release their lists name.
+# AmberELEC's list names a prerelease tag, and how that tag maps to the
+# VERSION its image writes is not established.
+_VERSION_SOURCES: dict[str, _VersionSource] = {
+    "batocera": _VersionSource(_batocera_version, _MD5_CHECK),
+    "recalbox": _VersionSource(_recalbox_version, _MD5_CHECK),
+    "retrobat": _VersionSource(_retrobat_version, _MD5_CHECK, _retrobat_release),
+    # scripts/image:159-164 (Lakka-LibreELEC v6.1) writes VERSION_ID from
+    # OS_VERSION, "6.1" in distributions/Lakka/version, and ID=lakka.
+    "lakka": _VersionSource(
+        _os_release_version("ID", "lakka"),
+        "Lakka checks only that a file is there, so this matters only where a core "
+        "of the version it runs reads a file this list does not name.", prefix="v"),
+    # scripts/image:172-177 (EmuELEC v4.8): VERSION_ID from OS_VERSION, 4.8 in
+    # distributions/EmuELEC/version, and NAME=EmuELEC.
+    "emuelec": _VersionSource(_os_release_version("NAME", "emuelec"), _MD5_CHECK),
+}
+
+
+def version_note(plat: str, bios_path: Path, manifest: dict) -> tuple[str, str, str] | None:
+    """(list version, installed version, sentence) when the system here runs
+    another version than the one the list was built for, else None: an
+    unknown version on either side says nothing."""
+    source = _VERSION_SOURCES.get(plat)
+    listed = manifest.get("version")
+    if (source is None or not isinstance(listed, str) or listed == _NO_LIST_VERSION
+            or not _VERSION_TEXT.fullmatch(listed)):
+        return None
+    installed = source.read(bios_path)
+    if not _VERSION_TEXT.fullmatch(installed):
+        return None
+    compared = listed[len(source.prefix):] if listed.startswith(source.prefix) else listed
+    if source.same(installed, compared):
+        return None
+    name = display_name(plat, manifest)
+    return listed, installed, (
+        f"This list was built for {name} {listed}, this machine runs {installed}. "
+        + source.meaning.format(name=name))
 
 
 def _rule_matches(rule: _OsRule, release: dict[str, str]) -> bool:
@@ -5635,9 +5762,11 @@ def _report_outcome(
     offline: int = 0,
     kinds: list[int] | None = None,
     same_choice: str = "",
+    notes: list[str] | None = None,
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
-    kinds is [BIOS files, game data files] installed, said apart.
+    kinds is [BIOS files, game data files] installed, said apart. notes are
+    lines every ending repeats (a list built for another version).
 
     A run that installed nothing used to end on the word Done and a zero exit,
     which reads as success to a person and to a script alike. offline counts
@@ -5674,6 +5803,8 @@ def _report_outcome(
     if declined and not downloaded and not errors and not interrupted and not offline:
         print(f"\nNothing installed: {_plural(declined, 'file')} not downloaded, as answered.")
         print(f"{_plural(up_to_date, 'file')} already up to date at {_locations(paths)}.")
+        for note in notes or []:
+            print(note)
         return
     # Left out for an unknown save directory, said with that reason in
     # every ending: "the collection does not hold it" blamed the collection.
@@ -5683,6 +5814,7 @@ def _report_outcome(
         f"{_plural(len(unplaced), 'file')} read from "
         f"{unplaced[0].get('frontend') or 'the frontend'}'s save directory left out: "
         "its place is not known. Name it with --save-dir next time."] if unplaced else [])
+    kept += list(notes or [])
     if interrupted:
         print(f"\nStopped. {_plural(downloaded, 'file')} installed.")
         for line in kept:
@@ -8015,6 +8147,9 @@ class PackSource:
         # regions), None for a pack that does not say: the remedy for an
         # option the pack cannot apply names that list only when it can.
         self.list_records: frozenset | None = None
+        # The version of the platform's list the pack was built from, "" for
+        # a pack that does not record it.
+        self.list_version = ""
         try:
             for path in self.files:
                 archive = zipfile.ZipFile(path)
@@ -8105,6 +8240,9 @@ class PackSource:
         records = data.get("list_records")
         if isinstance(records, list) and all(isinstance(axis, str) for axis in records):
             self.list_records = frozenset(records) & {"systems", "cores", "regions"}
+        version = data.get("list_version")
+        if isinstance(version, str) and _VERSION_TEXT.fullmatch(version):
+            self.list_version = version
         for key in ("system_titles", "system_names"):
             held = data.get(key)
             if isinstance(held, dict):
@@ -8147,6 +8285,7 @@ class PackSource:
         return {
             "manifest_version": 2,
             "platform": plat,
+            **({"version": self.list_version} if self.list_version else {}),
             **{key: value for key, value in self.names.items() if value},
             "files": [
                 {"dest": f["path"], "sha1": f["sha1"], "size": f["size"],
@@ -11762,6 +11901,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     total_omitted = 0
     omitted_seen: list[dict] = []
     left_out_seen: list[dict] = []
+    version_notes: list[str] = []
     total_interrupted = False
     total_bytes = 0
     total_seconds = 0.0
@@ -11964,6 +12104,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             files, omitted_files = _narrow_to_emulators(
                 args.emulator, manifest, plat_name, files, omitted_files
             )
+
+        # Said before the install and again with the result.
+        note = None if listing else version_note(plat_name, bios_path, manifest)
+        if note is not None:
+            print(f"  {note[2]}")
+            version_notes.append(note[2])
+            EVENTS.emit("version", platform=plat_name, list_version=note[0],
+                        installed_version=note[1], message=note[2])
 
         # Before the menu: it offered 23 files, then 22 were checked, the
         # one read from an unknown save directory left out. Said once the
@@ -12440,6 +12588,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             sources=_run_sources(bios_indexes, total_downloaded,
                                  total_errors + total_offline),
             offline=total_offline,
+            notes=version_notes,
         )
         finish_app(args, platforms, app_cards, interactive and not total_declined)
 

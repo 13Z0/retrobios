@@ -270,6 +270,20 @@ file list is downloaded once and handed to each run.
    [Files you already had](#files-you-already-had).
 8. Copies into standalone emulator directories, only with `--standalone-copies`.
 
+The file list names the version of the platform it was built for (Batocera
+43.1, RetroBat 8.3.1). Where the system writes its own version in a file, the
+installer reads it, and when the two differ it says so before the install and
+again with the result: "This list was built for Batocera 43.1, this machine
+runs 41. Batocera's own BIOS check may report some files as wrong though they
+work." The install goes on. The files read are
+`/usr/share/batocera/batocera.version` on Batocera, `/recalbox/recalbox.version`
+on Recalbox (a release, not a branch build), `system\version.info` beside the
+`bios` folder of RetroBat, and `VERSION_ID` in `/etc/os-release` on Lakka and
+EmuELEC. Nothing is run to find it, and an unknown version says nothing:
+RetroArch writes its version in no file, KNULLI writes a codename, ROCKNIX the
+date of the build, and AmberELEC's prerelease tags are not matched to the version
+its image writes.
+
 Some cores read their system data below the frontend's save directory, not
 below the BIOS folder: Azahar's keys, shared font and NAND files, Citra's
 `sysdata`, Dolphin's `User` tree. The file list marks them `root: save`, and
@@ -1534,6 +1548,7 @@ other schemas under `api/v1/schemas/`.
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
 | `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. The BIOS folder cannot be created (`stage` is `dest`, `reason` `not_writable`): a `summary` follows with what the run installed before it. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). The platform named with `--platform` is found nowhere and no folder can be assumed for it: a card system with no card named, a portable emulator, Batocera or Recalbox named on a computer (their folder is the `bios` folder of their SHARE drive), or no usual folder on this system or one set aside behind a folder this user cannot open (`stage` is `detect`, `reason` `not_found`). A `--dest` refused as the card of the system named carries the same `stage` and `reason`: another system's card, a folder inside a card, a drive with none of the files its card always has, or a folder that does not exist. `message` says it in words, and is the only thing that tells these cases apart |
 | `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
+| `version` | `platform`, `list_version`, `installed_version`, `message` | Before `choices`, when the system here runs another version than the one the list was built for: `list_version` is the list's, `installed_version` the one the system's version file states, and `message` says it and what it means. Not written when either version is unknown. The run goes on |
 | `choices` | `platform`, `systems` | Before `checking`: the systems the run's list lets one choose among, sorted by id, `other` last for the files no system names. The run's other options apply (`--core`, `--region`, `--no-game-data`, the files left out for an unknown save directory), `--system` does not: these are the systems a screen lists to choose from, and the count a `--system` is out of |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
 | `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id, and with `--system` only the systems named. Files with no system count under `other`. `name` is the platform's own name for it |
@@ -1554,7 +1569,7 @@ other schemas under `api/v1/schemas/`.
 
 <!-- /generated: events -->
 
-Schema 1 can gain a kind (`found` came with `--from`, `declared` with `--declared-only`, `unsearched` with the search that goes on past a closed folder, `app` with `--add-app`, `data` with the size of the data trees), never a key of an
+Schema 1 can gain a kind (`found` came with `--from`, `declared` with `--declared-only`, `unsearched` with the search that goes on past a closed folder, `app` with `--add-app`, `data` with the size of the data trees, `version` with the list's version), never a key of an
 existing kind: a reader skips a kind it does not know. An option refused
 before the run starts (`install.py: error:`, code 2) writes
 no event at all. A program reads a missing `end` as that case, or as a
