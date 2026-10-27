@@ -793,6 +793,7 @@ python scripts/sync_measurements.py --fetch           # clone or update, check t
 python scripts/sync_measurements.py --fetch --bump    # then move the pin to its head
 python scripts/sync_measurements.py --check-only      # check every line and sidecar at the pin
 python scripts/sync_measurements.py                   # write the site's measurement files
+python scripts/sync_measurements.py --clone DIR --pin FILE  # another clone or pin file
 ```
 
 `--fetch` is the only step on the network. It refuses a remote whose history
