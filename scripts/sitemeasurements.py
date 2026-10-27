@@ -631,7 +631,8 @@ def setup_of(record: dict) -> dict:
         "build": (f"{named[1]} patch" if named else "patched build") if patched else "published build",
         "options": options,
         "clock": "fixed clock" if "FAKETIME" in record["inputs"].get("env", {}) else "running clock",
-        "files": f"{len(record['variants'])} files" if record["kind"] == "check" else "",
+        "files": (f"{len(record['variants'])} file{'s' if len(record['variants']) != 1 else ''}"
+                  if record["kind"] == "check" else ""),
         "observable": (observable.split(":", 1)[1] if observable.startswith("state:")
                        else OBSERVABLE_WORDS.get(observable, observable)),
     }
@@ -784,7 +785,7 @@ def _link(url: object, text: str) -> str:
 
 def _dots(item: dict) -> str:
     groups = item.get("groups") or []
-    names = "; ".join(f"{g['variant']}: {g['result']}" for g in groups)
+    names = ". ".join(f"{g['variant']}: {g['result']}" for g in groups)
     dots = "".join(
         f'<span class="rb-dot rb-dot-{g["group"] % 5}{" rb-dot-empty" if g["absent"] else ""}" '
         f'title="{_attr(g["variant"] + ": " + g["result"])}"></span>' for g in groups)

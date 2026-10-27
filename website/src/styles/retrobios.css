@@ -1091,7 +1091,8 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 .sl-markdown-content .rb-tested-more {
 	margin: 0 0 0.75rem 1.75rem;
 	padding: 0.5rem 0.75rem;
-	border-left: 2px solid var(--rb-border-strong);
+	border: 1px solid var(--rb-border);
+	border-radius: 4px;
 	font-size: 0.875rem;
 }
 .sl-markdown-content .rb-tested-more p { margin: 0.35rem 0 0; }
@@ -1102,7 +1103,7 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 .sl-markdown-content .rb-dot {
 	width: 10px;
 	height: 10px;
-	border-radius: 50%;
+	border-radius: 3px;
 	border: 2px solid var(--rb-dot);
 	background: var(--rb-dot);
 }
