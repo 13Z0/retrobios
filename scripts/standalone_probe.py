@@ -105,6 +105,8 @@ EMULATORS: dict[str, Emulator] = {
                      "StartFullscreen": "true"},
             "AutoUpdater": {"CheckAtStartup": "false"},
             "GPU": {"Renderer": "Software"},
+            # No sound device in the sandbox: the null backend, not an error dialog.
+            "Audio": {"Backend": "Null"},
             "Logging": {"LogLevel": "Info", "LogToConsole": "true", "LogToFile": "false"},
             "Console": {"Region": "Auto"},
         },
@@ -134,6 +136,9 @@ EMULATORS: dict[str, Emulator] = {
             "AutoUpdater": {"CheckAtStartup": "false"},
             # GSRendererType::SW
             "EmuCore/GS": {"Renderer": "13"},
+            # No sound device in the sandbox: the null backend, not an error dialog
+            # over the screen.
+            "SPU2/Output": {"Backend": "Null"},
             "Logging": {"EnableSystemConsole": "true", "EnableVerbose": "false"},
         },
         args=("-batch", "-nogui", "-fullscreen", "-earlyconsolelog", "--"),
@@ -359,7 +364,9 @@ def run_once(args: argparse.Namespace, emu: Emulator, tree: Path, system_dir: Pa
            "XDG_DATA_HOME": str(data.resolve()), "XDG_CACHE_HOME": str((home / ".cache").resolve()),
            "DISPLAY": f":{DISPLAY_NUMBER}", "QT_QPA_PLATFORM": "xcb", "LIBGL_ALWAYS_SOFTWARE": "1",
            "PATH": "/usr/bin:/bin", "LANG": "C.UTF-8"}
-    prefix, isolation = cp.sandbox_argv([scratch], [tree, system_dir, content.parent])
+    # The BIOS folder is writable, as the platform's is: PCSX2 creates its
+    # NVRAM and MEC files there.
+    prefix, isolation = cp.sandbox_argv([scratch, system_dir], [tree, content.parent])
     if args.require_sandbox and isolation != cp.SANDBOX:
         raise cp.ProbeError(f"refused to run the emulator outside a sandbox: {isolation}")
     proc = subprocess.Popen(prefix + with_display(argv, fbdir.resolve()), stdout=subprocess.PIPE,
@@ -436,11 +443,14 @@ def run_once(args: argparse.Namespace, emu: Emulator, tree: Path, system_dir: Pa
 
 def run_variant(args: argparse.Namespace, emu: Emulator, tree: Path, oracle: dict,
                 base: dict[str, Path], variant: cp.Variant, work: Path, repetitions: int) -> dict:
-    system_dir = work / "bios"
-    staged = cp.stage_system_dir(base, variant, system_dir)
     reps: list[dict] = []
     flags: list[str] = []
     for index in range(repetitions):
+        # A fresh BIOS folder each time: PCSX2 writes its NVRAM and MEC files
+        # beside the BIOS, as on a user's folder, and a repetition must not
+        # start from what the last one wrote.
+        system_dir = work / f"bios{index}"
+        staged = cp.stage_system_dir(base, variant, system_dir)
         png_dir = None
         if args.png_dir and index == 0:
             png_dir = Path(args.png_dir) / variant.label
