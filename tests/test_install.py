@@ -1829,10 +1829,25 @@ class TestManualPlatformPrompt(unittest.TestCase):
         self.assertEqual(chosen, [("batocera", Path("~/my bios").expanduser())])
 
     def test_default_directory_comes_from_the_table(self):
-        answers = iter(["batocera", ""])
-        with unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)):
+        answers = iter(["lakka", ""])
+        with unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                unittest.mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                contextlib.redirect_stdout(io.StringIO()):
             chosen = install._prompt_manual_platform("linux")
-        self.assertEqual(chosen, [("batocera", install.DEFAULT_DESTS["batocera"])])
+        self.assertEqual(chosen, [("lakka", install.DEFAULT_DESTS["lakka"])])
+
+    def test_batocera_on_a_computer_gets_no_default(self):
+        """tui_audit_8 P2-4: /userdata/bios, a folder only the Batocera
+        machine has, was offered on a computer, and Enter took it."""
+        answers = iter(["batocera", "", "~/share/bios"])
+        out = io.StringIO()
+        with unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                unittest.mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                contextlib.redirect_stdout(out):
+            chosen = install._prompt_manual_platform("linux")
+        self.assertEqual(chosen, [("batocera", Path("~/share/bios").expanduser())])
+        self.assertIn("SHARE drive", out.getvalue())
+        self.assertNotIn("/userdata/bios", out.getvalue())
 
     def test_quit_stops_like_ctrl_c(self):
         """`install.sh && retroarch` went on to start RetroArch with no BIOS

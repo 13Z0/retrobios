@@ -193,8 +193,10 @@ jobs:
           fi
           python scripts/profile_sync.py --added --base "$base" --strict
 
+  # ubuntu-latest moved to 26.04, where setup-python has no 3.8 build: the
+  # job is held on the last image that still carries the floor interpreter.
   run-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
 

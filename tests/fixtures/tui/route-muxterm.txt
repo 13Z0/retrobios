@@ -97,8 +97,8 @@
    MiSTer FPGA
    RetroPie
    Allium, SD card                 Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip
-   AmberELEC, SD card                                     Anbernic RG351, RG552
-   Anbernic stock firmware, SD card                             RetroArch files
+   AmberELEC, SD card                                              RG351, RG552
+   Anbernic stock firmware, SD card    RG35XX Plus, RG35XX H, RG35XX SP, RG28XX
    ArchR, SD card              R36S, R33S, R36S Soysauce, Odroid Go Advance, +8
    ArkOS, SD card     RG353M, RG353V, RG503, RGB30, RK2023, RG351MP, RG351V, +2
    CrossMix-OS, SD card                                        TrimUI Smart Pro
@@ -980,8 +980,8 @@
  The files it replaced are kept in
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
- To put them back: python3 install.py
- 1-8 of 17
+ Details: /tmp/retrobios-x/install.log
+
  Start Exit  Up/Down Scroll
 === result 40x15
  RetroBIOS: Finished with errors
@@ -993,11 +993,11 @@
  The files it replaced are kept in
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
- To put them back: python3 install.py
-   --restore
-   /home/user/.config/retroarch/
-   retrobios-backup/2026-10-23_1200
- 1-11 of 17
+ Details: /tmp/retrobios-x/install.log
+
+
+
+
  Start Exit  Up/Down Scroll
 === result 80x24
  RetroBIOS: Finished with errors
@@ -1007,12 +1007,12 @@
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
    /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
- To put them back: python3 install.py --restore
-   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
- Same choice without questions:
-   python3 install.py --platform retroarch --dest
-     /home/user/.config/retroarch/system
  Details: /tmp/retrobios-x/install.log
+
+
+
+
+
 
 
 

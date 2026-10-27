@@ -154,8 +154,8 @@ handheld_guide:
   - name: muOS
     folder: '`MUOS/bios` on the card'
     folder_source: https://github.com/MustardOS/internal/blob/main/share/web/tools/bios-checker.html
-    devices: [RG35XX H, RG35XX Plus, RG35XX SP, RG35XX 2024, RG34XX H, RG40XX H, RG40XX V,
-              RG28XX H, RGCUBEXX, TrimUI Brick, TrimUI Smart Pro]
+    devices: [RG35XX H, RG35XX Plus, RG35XX SP, RG35XX 2024, RG34XX, RG40XX H, RG40XX V,
+              RG28XX, RG CubeXX, TrimUI Brick, TrimUI Smart Pro]
     devices_source: https://muos.dev/devices
   - name: Onion
     folder: '`BIOS` at the root of the card'
@@ -166,7 +166,7 @@ handheld_guide:
     folder: '`BIOS` at the root of the card'
     folder_source: https://github.com/spruceUI/spruceOS/wiki/10.-Adding-BIOS
     devices: [Miyoo A30, Miyoo Flip, Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip,
-              TrimUI Smart Pro, TrimUI Brick, RG35XX Plus, RG40XX H, Powkiddy RGB30]
+              TrimUI Smart Pro, TrimUI Brick, RG35XX Plus, RG40XX H, RGB30]
     devices_source: https://github.com/spruceUI/spruceOS/wiki/Supported-Devices
   - name: Allium
     folder: '`BIOS` at the root of the card'
@@ -174,12 +174,14 @@ handheld_guide:
     devices: [Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip]
     devices_source: https://github.com/goweiwen/Allium
   - name: Anbernic stock firmware
+    devices: [RG35XX Plus, RG35XX H, RG35XX SP, RG28XX]
+    devices_source: https://github.com/GarlicOS/bootloader_anbernic_rg35xxplus/blob/45b489b41dc3dd1738b14486cda0f2dce66e714f/README.md
   - name: ArchR
     folder: '`/storage/roms/bios`, on a part only Linux can open'
     folder_source: https://arch-r.io/docs/roms/
     linux_only: true
     devices: [R36S, R33S, R36S Soysauce, Odroid Go Advance, Odroid Go Super, RG351V,
-              RG351M, GameForce Chi, MagicX XU10, Powkiddy RGB10, Powkiddy RGB10X, K36]
+              RG351M, GameForce Chi, MagicX XU10, RGB10, RGB10X, K36]
     devices_source: https://github.com/archr-linux/Arch-R
   - name: CrossMix-OS
     folder: '`BIOS` at the root of the card'
@@ -194,10 +196,16 @@ handheld_guide:
   - name: JELOS
     folder: '`roms/bios` on the games card'
     folder_source: https://github.com/JustEnoughLinuxOS/distribution/blob/7b2e116ce6996d56e642a0e2a07288c926db926b/packages/emulators/standalone/retroarch/sources/RK3566/retroarch.cfg#L716
+    devices: [RG351M, RG351V, RG353M, RG353P, RG353V, RG353VS, RG503, RG552, R33S, R36S,
+              GameForce Ace, GameForce Chi, Odroid Go Advance, Odroid Go Super, Odroid Go Ultra,
+              MagicX XU10, RGB10, RGB10 Max 3, RGB10 Max 3 Pro, RGB20S, RGB30, RK2023, X55,
+              AYANEO Air, AYANEO Air Plus, AYANEO Air Pro, AYANEO 2, AYANEO 2S, AYANEO 2021,
+              AYANEO Geek, AYANEO Next, AYN Loki Max, AYN Loki Mini Pro, AYN Loki Zero]
+    devices_source: https://github.com/JustEnoughLinuxOS/distribution/tree/7b2e116ce6996d56e642a0e2a07288c926db926b/packages/hardware/quirks/devices
   - name: KOLOS
     folder: '`roms/bios` on the games card'
     folder_source: https://github.com/AnonLinuxOS/KOLOS/blob/7daf5950ae79bb8775f129468164f730dbc32298/packages/emulators/standalone/retroarch/sources/RK3566/retroarch.cfg#L716
-    devices: [RG353P, RG353M, RG353V, RG353VS, RG503, Powkiddy RK2023, RGB30, RGB10 Max 3]
+    devices: [RG353P, RG353M, RG353V, RG353VS, RG503, RK2023, RGB30, RGB10 Max 3]
     devices_source: https://github.com/AnonLinuxOS/KOLOS
   - name: Koriki
     folder: '`BIOS` at the root of the card'
@@ -222,7 +230,7 @@ handheld_guide:
   - name: RetroOZ
     folder: '`/roms/bios`, as the device names it'
     folder_source: https://github.com/southoz/RetroOZ/wiki/Home/4ce4fafb78d647d422e9e468d5bd9cbc63dbe3ea
-    devices: [OGS, OGA, RGB10Max, RGB10Max2]
+    devices: [Odroid Go Super, Odroid Go Advance, RGB10 Max, RGB10 Max 2]
     devices_source: https://github.com/southoz/RetroOZ/wiki
   - name: UnofficialOS
     folder: '`roms/bios` on the games card'
