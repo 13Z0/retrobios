@@ -8184,13 +8184,22 @@ class AuditSixteenAndNineScreens(unittest.TestCase):
         self.assertIn("X, Space, Right/Left", " ".join(text.split()))
 
     def test_the_copy_hint_fits_at_40_columns(self):
-        """tui_audit_9 P3-16: cut after "copied,"."""
+        """tui_audit_9 P3-16: cut after "copied,". On the CI runner /home
+        held three folders, and the list cut the hint: it is kept whole,
+        the list scrolling, from a folder of this test's own."""
+        home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, home, True)
+        for name in ("linuxbrew", "packer", "runner"):
+            (home / name).mkdir()
         state = checked_state()
+        state.home = home
         with mock.patch.object(install, "_mounted_cards", return_value=[]), \
                 mock.patch.object(install, "_listed", return_value=[]):
             install._open_from_browser(state)
+        self.assertEqual(state.browse_dir, home)
         text = " ".join(_screen_text(state, 40, 12).split())
         self.assertIn("Choose the old card, a backup folder or a ZIP.", text)
+        self.assertIn("> Use this folder", text)
 
     def test_the_miyoo_bar_says_what_a_does(self):
         """tui_audit_9 P3-17: A Tick on All and None, where A unticks."""

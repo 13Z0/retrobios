@@ -15405,19 +15405,22 @@ def _status_after(state: TuiState) -> list[str]:
 
 def _view_browse(state: TuiState, width: int, height: int) -> tuple:
     where = "Drives" if state.browse_dir is None else middle(str(state.browse_dir), width)
-    after = _status_after(state)
+    hint: list = []
     if state.browse_for == "from":
         # Two lines at 40 columns: the long form was cut after "copied,".
         whole = ("Choose the old card, a backup folder or a ZIP: its BIOS files are "
                  "copied, each one checked, nothing on it is changed.")
-        after.insert(0, whole if len(_wrap(whole, width)) <= 2
-                     else "Choose the old card, a backup folder or a ZIP.")
+        hint = [whole if len(_wrap(whole, width)) <= 2
+                else "Choose the old card, a backup folder or a ZIP."]
     elif state.browse_for == "save":
-        after.insert(0, f"Choose {display_name(state.platform)}'s save directory: some "
-                     "cores read files there.")
+        hint = [f"Choose {display_name(state.platform)}'s save directory: some "
+                "cores read files there."]
+    # The hint is kept whole under the list, which scrolls: three folders at
+    # 40x12 cut it to "Choose the old card, a backup folder".
     return ("Copy from" if state.browse_for == "from"
             else "Save folder" if state.browse_for == "save" else "Browse for a folder",
-            _compose(state, width, height, [where], tui_rows(state), after),
+            _compose(state, width, height, [where], tui_rows(state), _status_after(state),
+                     hint),
             ("A/Enter Open", "B/Esc Back", "? Help"))
 
 
