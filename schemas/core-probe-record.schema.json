@@ -148,7 +148,11 @@
       ],
       "properties": {
         "script": {
-          "const": "scripts/core_probe.py"
+          "enum": [
+            "scripts/core_probe.py",
+            "scripts/pack_probe.py",
+            "scripts/standalone_probe.py"
+          ]
         },
         "commit": {
           "type": [
