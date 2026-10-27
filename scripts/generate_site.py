@@ -7799,6 +7799,7 @@ _UNVERIFIED = {
     "host_unsupported": "its host cannot be read",
     "host_gone": "its source is gone",
     "host_unreachable": "its host did not answer",
+    "pin_off_branch": "its recorded revision is not the build described",
     "no_artifact": "no build recorded as read",
     "no_source": "no source declared",
 }

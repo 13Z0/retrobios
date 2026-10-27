@@ -93,7 +93,11 @@ def _by_mode(profile: dict, field: str, mode: str) -> str | None:
 
 
 def is_placeholder(value: object) -> bool:
-    return isinstance(value, str) and value.strip().casefold() in PLACEHOLDERS
+    """A VCS or branch word standing for a version, alone or annotated
+    ("SVN (2015 snapshot)"). The schema refuses the same strings."""
+    if not isinstance(value, str):
+        return False
+    return re.split(r"[\s(]", value.strip(), maxsplit=1)[0].casefold() in PLACEHOLDERS
 
 
 def format_version(match: re.Match, template: str | None) -> str:

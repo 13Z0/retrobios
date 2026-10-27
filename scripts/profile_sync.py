@@ -2736,7 +2736,8 @@ def set_version_fields(text: str, version: object, basis: dict | None) -> str:
     if span is None:
         anchor = _top_block(lines, "upstream_commit") or _top_block(lines, "source_commit") \
             or _top_block(lines, "profiled_date") or _top_block(lines, "upstream") \
-            or _top_block(lines, "source")
+            or _top_block(lines, "source") or _top_block(lines, "alias_of") \
+            or _top_block(lines, "type")
         if anchor is None:
             raise YamlWriteError("core_version: no line to write it after")
         lines[anchor[1]:anchor[1]] = rendered
