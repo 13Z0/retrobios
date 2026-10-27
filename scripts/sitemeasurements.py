@@ -204,7 +204,8 @@ def campaign_section(summary: dict | None) -> list[str]:
     lines = [
         "## Campaign",
         "",
-        f"Tests run by themselves every night on an idle computer ([how]({METHOD_PAGE})). "
+        f"A maintainer starts a pass, on an idle computer, and nothing runs by itself "
+        f"([how]({METHOD_PAGE})). "
         f"Last pass: {_plain(last['ended_at'][:10])}, {_plain(last['result'])}"
         + (f" ({_plain(last['detail'])})" if last.get("detail") else "") + ". "
         f"{int(counts['done'])} tests done, {int(counts['failed'])} failed, {int(counts['pending'])} waiting. "
@@ -236,6 +237,125 @@ def campaign_section(summary: dict | None) -> list[str]:
             f"shows {_value(item['run_shows'])}. {_sentence(item['statement'])}. Records: {records}.",
             "",
         ]
+    return lines
+
+
+# --------------------------------------------------------------------------
+# Coverage and region results
+# --------------------------------------------------------------------------
+
+CONTENT_FILE = Path("tests") / "campaign" / "content.yml"
+
+
+def coverage(root: Path, stored: list[mr.Stored]) -> dict:
+    """Per system of the content list: its games, and whether a record ran
+    each one. A system no catalog covers comes with the reason and the
+    error romfetch returned."""
+    import yaml  # noqa: PLC0415
+
+    path = root / CONTENT_FILE
+    if not path.is_file():
+        return {"systems": [], "uncovered": []}
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    ran: dict[str, set[str]] = {}
+    for entry in stored:
+        label = ((entry.record.get("inputs") or {}).get("content") or {}).get("label")
+        if label:
+            ran.setdefault(label, set()).add(entry.emulator)
+    systems = []
+    for system, spec in (data.get("systems") or {}).items():
+        games = [{"name": item["name"], "region": item.get("region"),
+                  "emulators": sorted(ran.get(item["name"], ()))} for item in spec.get("content") or ()]
+        systems.append({"system": system, "games": games,
+                        "tested": any(game["emulators"] for game in games)})
+    uncovered = [{"system": system, "want": item.get("want"), "reason": " ".join(str(item["reason"]).split()),
+                  "romfetch": item.get("romfetch") or {}}
+                 for system, item in (data.get("uncovered") or {}).items()]
+    return {"systems": systems, "uncovered": uncovered}
+
+
+def coverage_section(cov: dict | None, system_names: dict[str, str] | None = None) -> list[str]:
+    """The Coverage block of the explorer page: tested or not, and why not."""
+    if not cov or not (cov.get("systems") or cov.get("uncovered")):
+        return []
+    names = system_names or {}
+    tested = [s for s in cov["systems"] if s["tested"]]
+    lines = [
+        "## Coverage",
+        "",
+        f"Test games come from [`{CONTENT_FILE.as_posix()}`]({REPO}/blob/main/{CONTENT_FILE.as_posix()}), "
+        f"one per region where a BIOS depends on it. {len(tested)} of {len(cov['systems'])} listed "
+        f"systems have a recorded run, and {len(cov['uncovered'])} "
+        f"{'system has' if len(cov['uncovered']) == 1 else 'systems have'} no test game.",
+        "",
+        "| System | Games | Tested by |",
+        "|--------|-------|-----------|",
+    ]
+    for item in cov["systems"]:
+        games = ", ".join(_plain(game["name"]) for game in item["games"])
+        by = sorted({emulator for game in item["games"] for emulator in game["emulators"]})
+        status = ", ".join(_plain(e) for e in by) if by else "not yet: no run recorded"
+        lines.append(f"| {_plain(names.get(item['system'], item['system']))} | {games} | {status} |")
+    lines.append("")
+    if cov["uncovered"]:
+        lines += ["Systems without a test game:", "",
+                  "| System | Wanted | Why not | romfetch |",
+                  "|--------|--------|---------|----------|"]
+        for item in cov["uncovered"]:
+            code = item["romfetch"].get("code") or "no source"
+            lines.append(f"| {_plain(names.get(item['system'], item['system']))} | {_plain(item['want'])} | "
+                         f"{_plain(item['reason'])} | exit {_plain(item['romfetch'].get('exit'))}, "
+                         f"{_code(code)} |")
+        lines.append("")
+    return lines
+
+
+def region_results(root: Path, stored: list[mr.Stored], source: dict | None) -> list[dict]:
+    """The region outcomes the records hold (region_check.py), each record
+    linked at the commit the explorer links."""
+    import region_check  # noqa: PLC0415
+
+    lines = {s.record["id"]: s for s in stored}
+    results = region_check.collect(root, stored)
+    for result in results:
+        for item in result["variants"].values():
+            found = lines.get(item["record"])
+            item["url"] = (permalink(source["repo"], source["commit"], mr.records_path(found.emulator),
+                                     found.line)
+                           if found and source and source.get("commit") else None)
+    return results
+
+
+def site_region_results(root: Path = ROOT, repo: str = REPO) -> list[dict]:
+    """region_results with the records and commit the explorer uses."""
+    stored = mr.read_records(root)
+    source = {"repo": repo, "commit": records_commit(root) if stored else None}
+    return region_results(root, stored, source)
+
+
+VARIANT_WORDS = {"full": "every regional BIOS", "own": "its own region's BIOS only",
+                 "others": "the other regions' BIOS only", "pack": "the region's pack"}
+
+
+def region_section(results: list[dict]) -> list[str]:
+    """What the region runs showed for one system, with the records."""
+    if not results:
+        return []
+    lines = ["### Region check", "",
+             f"Each game ran with {VARIANT_WORDS['own']}, then with {VARIANT_WORDS['others']} "
+             f"([method](../{METHOD_PAGE})).", ""]
+    for result in results:
+        links = ", ".join(
+            f"[{VARIANT_WORDS[label]}]({item['url']})" if item.get("url") else _plain(VARIANT_WORDS[label])
+            for label, item in result["variants"].items())
+        read = (f" It reads {', '.join(_code(name) for name in result['selected'])} "
+                f"when every regional BIOS is there ({_plain(result['claim'])} against the profile)."
+                if result["selected"] else "")
+        basis = ("" if result["judged_by"] == "verdict"
+                 else " Judged against the run with every regional BIOS until reference frames are recorded.")
+        lines.append(f"- **{_plain(result['core'])}**, {_plain(result['game'])}: "
+                     f"{_plain(result['sentence'])}{read}{basis} Records: {links}.")
+    lines.append("")
     return lines
 
 
@@ -460,6 +580,7 @@ def build(public: Path, root: Path = ROOT, emulators_dir: Path = ROOT / "emulato
     profiles = load_profiles(emulators_dir)
     index = build_index(stored, source, profiles, system_names)
     index["campaign"] = campaign_summary(root, stored, source)
+    index["coverage"] = coverage(root, stored)
     paths = [public / INDEX_PATH]
     (public / INDEX_PATH).parent.mkdir(parents=True, exist_ok=True)
     write_if_changed(str(public / INDEX_PATH),
@@ -563,7 +684,7 @@ def with_hosts(page: str, index: dict) -> str:
     return page.replace(HOSTS_MARKER, "\n".join(hosts_table(index)).rstrip("\n"))
 
 
-def generate_explorer_page(index: dict) -> str:
+def generate_explorer_page(index: dict, system_names: dict[str, str] | None = None) -> str:
     commit = index.get("commit")
     repo = index.get("repo") or ""
     source = (f"[`measurements/`]({repo}/tree/{commit}/{mr.RECORDS_DIR}) at {_short(commit)}"
@@ -586,6 +707,7 @@ def generate_explorer_page(index: dict) -> str:
         "<MeasurementsExplorer />",
         "",
         *campaign_section(index.get("campaign")),
+        *coverage_section(index.get("coverage"), system_names),
     ])
 
 
