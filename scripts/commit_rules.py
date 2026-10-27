@@ -1,0 +1,54 @@
+"""Commit message rules of this repository, in one place.
+
+The local commit-msg hook calls this file, and autorun checks every job's
+subject with it when the job list loads. Kept in the tree, the rules hold in
+any clone and in CI: a copy in the hook alone left the runner checking only
+the shape there.
+
+Usage as a hook: python scripts/commit_rules.py MESSAGE_FILE
+"""
+
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+MAX_SUBJECT = 50
+SUBJECT_TYPES = re.compile(r"^(feat|refactor|chore|docs|fix): [a-z0-9]")
+REFUSED_WORDS = re.compile(
+    r"\b(bug|regression|revert|dead code|broken|wrong|hack|workaround|"
+    r"comprehensive|implement)",
+    re.IGNORECASE,
+)
+CO_AUTHOR = re.compile(r"^co-authored-by", re.IGNORECASE | re.MULTILINE)
+
+
+def problems(message: str) -> list[str]:
+    """What this repository refuses in a commit message, first line first."""
+    found = []
+    subject = message.split("\n", 1)[0]
+    if len(subject) > MAX_SUBJECT:
+        found.append(f"subject is {len(subject)} characters, {MAX_SUBJECT} at most: {subject}")
+    if not SUBJECT_TYPES.match(subject):
+        found.append("subject must read 'type: description' (feat, refactor, chore, docs, fix)")
+    text = "\n".join(line for line in message.splitlines() if not line.startswith("#"))
+    if REFUSED_WORDS.search(text):
+        found.append("the message uses a word this repository's history does not carry")
+    if CO_AUTHOR.search(message):
+        found.append("no Co-Authored-By trailer here")
+    return found
+
+
+def main(argv: list[str]) -> int:
+    if len(argv) != 2:
+        print("usage: commit_rules.py MESSAGE_FILE", file=sys.stderr)
+        return 2
+    found = problems(Path(argv[1]).read_text(encoding="utf-8", errors="replace"))
+    for problem in found:
+        print(f"commit-msg: {problem}", file=sys.stderr)
+    return 1 if found else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

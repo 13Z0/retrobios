@@ -43,7 +43,6 @@ import shlex
 import shutil
 import subprocess
 import sys
-import tempfile
 import time
 from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass, field
@@ -73,7 +72,6 @@ SEGFAULT_CODES = (139, -11)
 HOST_MISREAD_MARKERS = ("SystemError", "unknown opcode")
 VOLATILE_KEYS = frozenset({"generated_at", "generated", "imported_at"})
 
-SUBJECT_TYPES = re.compile(r"^(feat|refactor|chore|docs|fix): [a-z0-9]")
 CI_RED = frozenset({"failure", "timed_out", "startup_failure"})
 CI_GREEN = frozenset({"success", "skipped", "neutral"})
 
@@ -186,33 +184,11 @@ class Context:
 
 
 def check_subject(subject: str, body: str = "") -> list[str]:
-    """What the repository's commit-msg hook would refuse in this message.
+    """What the repository's commit rules refuse in this message, checked
+    when the job list loads instead of two hours into the job."""
+    from commit_rules import problems  # noqa: PLC0415
 
-    The hook holds the vocabulary rules, so they live in one place: a job
-    list is checked against it when it loads, not two hours into the job.
-    Without a hook (another clone) only the shape is checked.
-    """
-    problems = []
-    if len(subject) > 50:
-        problems.append(f"subject is {len(subject)} characters, 50 at most")
-    if not SUBJECT_TYPES.match(subject):
-        problems.append("subject must read 'type: description'")
-    if re.search(r"^co-authored-by", body, re.IGNORECASE | re.MULTILINE):
-        problems.append("no Co-Authored-By trailer")
-    hook = subprocess.run(["git", "rev-parse", "--git-path", "hooks/commit-msg"],
-                          capture_output=True, text=True, cwd=REPO_ROOT, check=False).stdout.strip()
-    hook_path = (REPO_ROOT / hook) if hook else None
-    if hook_path and hook_path.is_file() and os.access(hook_path, os.X_OK):
-        with tempfile.NamedTemporaryFile("w", suffix=".msg", delete=False) as message:
-            message.write(f"{subject}\n\n{body}\n" if body else f"{subject}\n")
-        try:
-            refused = subprocess.run([str(hook_path), message.name], capture_output=True,
-                                     text=True, check=False)
-        finally:
-            os.unlink(message.name)
-        if refused.returncode:
-            problems.append((refused.stderr or refused.stdout).strip() or "refused by commit-msg")
-    return problems
+    return problems(f"{subject}\n\n{body}" if body else subject)
 
 
 def _step(raw: object, where: str) -> Step:

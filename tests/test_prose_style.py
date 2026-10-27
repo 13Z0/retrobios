@@ -168,7 +168,8 @@ class NoMarketingVocabulary(unittest.TestCase):
     def test_no_tracked_text_uses_them(self):
         offenders = []
         for path in _tracked():
-            if path.name == "test_prose_style.py":
+            # This file and the commit rules have to name the words they refuse.
+            if path.name in {"test_prose_style.py", "commit_rules.py"}:
                 continue
             text = path.read_text(encoding="utf-8", errors="replace")
             for number, line in enumerate(text.splitlines(), 1):
