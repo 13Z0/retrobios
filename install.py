@@ -6922,7 +6922,7 @@ def _pick(
     shown = {name: (labels or {}).get(name, name) for name, _files in rows}
     name_width = min(max(len(label) for label in shown.values()), 40)
     for index, (name, files) in enumerate(rows, 1):
-        print(f"  {index:>{width}}) {shown[name]:<{name_width}}  {sizer(files)}")
+        print(f"  {index:>{width}}) {screen_text(shown[name]):<{name_width}}  {sizer(files)}")
     hint = "order of preference, e.g. 2,1" if ordered else "e.g. 1,3-5"
     while True:
         text = _ask(f"Numbers ({hint}), Enter for all, q to quit: ")
@@ -7106,7 +7106,7 @@ def _prompt_custom_selection(
         _print_menu_head(plat, files, omitted, installed, name, trees, bios_path, current,
                          given, manifest, narrowed)
         if current is not given and command is not None:
-            print(f"  Same choice without questions: {command(current)}")
+            print(f"  Same choice without questions: {screen_text(command(current))}")
         offline = _offline_only()
         if offline:
             # Said before the menu: "install everything" was offered, then
@@ -7655,6 +7655,10 @@ def split_pack_lines(root: Path) -> list[str]:
     return lines
 
 
+# A system id as the file lists write them (sony-playstation, other).
+_SYSTEM_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._+-]{0,63}")
+
+
 class PackSource:
     """A pack already downloaded, whole or in parts, read in place of the network.
 
@@ -7754,13 +7758,19 @@ class PackSource:
         # What a pack built since records of its systems (generate_pack.py
         # pack_systems): --system and Choose systems then work with the pack
         # alone. An older pack records none, and is read as before.
+        # A pack is a file anyone can hand over: an id or a name holding a
+        # control character would reach the terminal as an escape, and is
+        # dropped.
         for key in ("system_titles", "system_names"):
             held = data.get(key)
             if isinstance(held, dict):
                 self.names[key] = {
-                    str(system): value for system, value in held.items()
-                    if isinstance(value, str) or (isinstance(value, list) and all(
-                        isinstance(name, str) for name in value))}
+                    system: value for system, value in held.items()
+                    if _SYSTEM_ID.fullmatch(str(system)) and (
+                        isinstance(value, str) and not _CONTROLS.search(value)
+                        or isinstance(value, list) and all(
+                            isinstance(name, str) and not _CONTROLS.search(name)
+                            for name in value))}
         listed = []
         for item in files:
             if (
@@ -7773,8 +7783,9 @@ class PackSource:
                 entry = {"path": item["path"], "sha1": item["sha1"].lower(),
                          "size": item["size"]}
                 systems = item.get("systems")
-                if isinstance(systems, list) and all(isinstance(name, str)
-                                                     for name in systems):
+                if isinstance(systems, list) and all(
+                        isinstance(name, str) and _SYSTEM_ID.fullmatch(name)
+                        for name in systems):
                     entry["systems"] = list(systems)
                 listed.append(entry)
         return listed

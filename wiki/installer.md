@@ -749,7 +749,7 @@ what the options name, everything by default.
 | <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal. A run whose output goes to a file or a pipe asks nothing either, and says so on stderr |
 | <span id="option-check"></span>`--check` | Report and exit without writing |
 | <span id="option-dry-run"></span>`--dry-run` | Show what would be downloaded, the totals first, then by system and with sizes, without writing anything. A plan taller than the screen names the ten largest systems, and `--verbose` lists every system and file |
-| <span id="option-yes"></span>`--yes`, `-y` | Do not ask before a download of 1 GB or more |
+| <span id="option-yes"></span>`--yes`, `-y` | Do not ask before a download of 1 GB or more, nor anything else. Implies `--no-input`, so a run that needs an answer (nothing found here, two setups found) stops on what to name instead |
 | <span id="option-quiet"></span>`--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
 | <span id="option-events"></span>`--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
 | <span id="option-from"></span>`--from FOLDER` | Copy the BIOS files a folder holds (an old SD card, a backup, a ZIP) instead of downloading them, each one recognised by its hash and copied, never moved. Repeat for several folders. See [Copy from an old card](#copy-from-an-old-card) |

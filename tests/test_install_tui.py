@@ -7273,6 +7273,44 @@ class AuditSeventeenAndTen(unittest.TestCase):
         self.assertIn("add --manifest FILE, a copy of install/retroarch.json", err.getvalue())
         self.assertNotIn("older release", err.getvalue())
 
+    def test_a_pack_cannot_write_escapes_through_its_system_names(self):
+        """Security review of tui_audit_10 P2-4: the titles and ids a pack
+        records reached print() raw in the systems list."""
+        from test_install_offline import GBA, US  # noqa: PLC0415
+
+        members = {"scph5501.bin": US, "gba_bios.bin": GBA}
+        listed = [{"path": path, "sha1": hashlib.sha1(data).hexdigest(), "size": len(data),
+                   "systems": ["bad\nid" if "scph" in path else "nintendo-gba"]}
+                  for path, data in members.items()]
+        path = self.root / "RetroArch_v1_BIOS_Pack.zip"
+        with zipfile.ZipFile(path, "w") as archive:
+            for member, data in members.items():
+                archive.writestr(member, data)
+            archive.writestr("manifest.json", json.dumps({
+                "files": listed,
+                "system_titles": {"nintendo-gba": "\x1b]0;x\x07GBA", "bad\nid": "Bad"},
+                "system_names": {"nintendo-gba": ["\x1b[2J"]}}))
+        pack = install.PackSource([path])
+        self.addCleanup(pack.close)
+        manifest = pack.manifest("retroarch")
+        self.assertEqual(manifest.get("system_titles", {}), {})
+        self.assertEqual(manifest.get("system_names", {}), {})
+        self.assertNotIn("systems", next(f for f in manifest["files"]
+                                         if f["dest"] == "scph5501.bin"))
+        # What _pick prints and the command line go through screen_text.
+        with contextlib.redirect_stdout(io.StringIO()) as out, \
+                mock.patch.object(install, "_ask", side_effect=["1"]):
+            install._pick("Systems:", [("x", [])], labels={"x": "\x1b]0;x\x07GBA"})
+        self.assertNotIn("\x1b", out.getvalue())
+        self.assertIn("?]0;x?GBA", out.getvalue())
+        with contextlib.redirect_stdout(io.StringIO()) as out, \
+                mock.patch.object(install, "_ask", side_effect=["c", "1", "q"]), \
+                contextlib.suppress(SystemExit):
+            install._prompt_custom_selection(
+                "retroarch", [{"dest": "a", "size": 1, "systems": ["x"], "cores": None}], [],
+                command=lambda _choice: "python3 install.py --dest '\x1b[2J'")
+        self.assertNotIn("\x1b", out.getvalue())
+
     def test_the_home_folder_is_said_on_the_plan(self):
         """tui_audit_10 P2-5: the plan named ~ and said nothing more."""
         state = checked_state()
