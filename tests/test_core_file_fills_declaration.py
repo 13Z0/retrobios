@@ -174,7 +174,8 @@ class AMissingDataDirectoryFailsTheRun(unittest.TestCase):
                 offline=True,
             )
         self.assertEqual(gp._MISSING_DATA_DIRS, {"assets"})
-        with mock.patch.object(gp, "_main", lambda held: None), \
+        # main() starts each run with no notices, so the run itself records it.
+        with mock.patch.object(gp, "_main", lambda held: gp._MISSING_DATA_DIRS.add("assets")), \
                 contextlib.redirect_stderr(io.StringIO()), \
                 self.assertRaises(SystemExit) as stop:
             gp.main()
