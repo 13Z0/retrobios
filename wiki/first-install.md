@@ -92,6 +92,9 @@ The next screen counts missing files and free space.
 Press Enter on **Install**. **Choose systems** keeps the consoles you
 play.
 
+**Game data** is what a game reads, of no use to other cores. The count
+shows it apart, and its row leaves it out.
+
 **Old card?** In a card reader, choose **Copy the BIOS files from your old
 card or a folder**, then the card.
 
@@ -166,7 +169,8 @@ You cannot write there. Do what the message says.
 
 ### The card is full
 
-Nothing was written. Free some space, or choose another folder.
+Nothing was written. Free some space on the card. On a computer, you can
+also choose another folder.
 
 ### The game still does not start
 

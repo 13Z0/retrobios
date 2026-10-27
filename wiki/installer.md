@@ -607,14 +607,23 @@ the full screen cannot open (a terminal smaller than 40x12, `TERM=dumb`), the
 same choice comes as questions after detection:
 
 ```
-RetroArch: 8069 files, 6.5 GB.
+RetroArch: 8348 files, 7.1 GB.
+  3259 BIOS files (4.4 GB) and 5089 game data files (2.7 GB).
   BIOS folder: /home/me/.config/retroarch/system
   Enter) install everything
   i) only what the installed cores read: 100 files, 44.2 MB
   c) choose systems, cores and regions
   f) copy from a folder or an old card
+  g) leave out the 5089 game data files (2.7 GB), game data: files a game or a game engine reads, of no use to the other cores
   q) quit
 ```
+
+A list that marks its game data counts it apart from the BIOS files, on the
+plan, in this menu and on the result (`Installed: 3259 BIOS files and 5089 game
+data files.`). `g` leaves it out, as `--no-game-data` does, and counts again
+(`g` then keeps it). The plan screen has the same choice as a row of its own,
+**Game data (5089 files, 2.7 GB): kept, leave out**, one press toggling it,
+and Options keeps its **Game data** row too.
 
 `i` appears for RetroArch, Lakka and RetroPie when cores are found installed,
 and the line above is a RetroArch with Beetle PSX HW, Snes9x, mGBA, Genesis Plus GX

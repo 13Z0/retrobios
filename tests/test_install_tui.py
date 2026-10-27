@@ -6852,6 +6852,73 @@ class LineModeAndScreenDecideAlike(unittest.TestCase):
         self.assertEqual(ark.screen, "folder")
         self.assertEqual(install._tui_card_bound(ark)[0], "ArkOS")
 
+    # The owner's request of 2026-10-27: BIOS files and game data counted
+    # apart, the game data choice on the plan itself and in the menu.
+
+    def game_list(self) -> tuple[Path, list]:
+        files = [self.entry("gba_bios.bin", b"gba", ["nintendo-gba"]),
+                 self.entry("doom/doom1.wad", b"wad" * 10, ["doom"], category="game_data")]
+        return self.listing("retroarch", files, categorized=True), files
+
+    def test_line_mode_counts_game_data_apart_and_g_leaves_it_out(self):
+        listing, _files = self.game_list()
+        args = dict(manifest=listing, dest=self.here, declared_only=False, dry_run=True)
+        text, asked = self.line_run(_args(**args), ["g", ""])
+        self.assertIn("1 BIOS file (3 B) and 1 game data file (30 B).", text)
+        self.assertIn("g) leave out the 1 game data file (30 B), game data: files a game or "
+                      "a game engine reads, of no use to the other cores", text)
+        after = text[text.index("Counted again"):]
+        self.assertIn("RetroArch: 1 file, 3 B.", after)
+        self.assertIn("g) keep the 1 game data file", after)
+        self.assertIn("--no-game-data", after)
+        self.assertIn("Left out as game data", after)
+        self.assertNotIn("doom1.wad would", after)
+
+    def test_the_plan_counts_game_data_apart_and_one_press_leaves_it_out(self):
+        state = checked_state()
+        manifest = json.loads(json.dumps(state.manifest))
+        for entry in manifest["files"]:
+            if entry["dest"] == "pcsx/extra.bin":
+                entry["category"] = "game_data"
+        state.manifest = manifest
+        text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+        self.assertIn("3 BIOS files (1.0 MB) and 1 game data file (4 B). Game data: files a "
+                      "game or a game engine reads, of no use to the other cores.", text)
+        rows = install.tui_rows(state)
+        row = next(row for row in rows if row.action == "gamedata")
+        self.assertIn("kept, leave out", row.label)
+        state.focus["plan"] = rows.index(row)
+        effects = install.tui_update(state, Key("enter"))
+        self.assertTrue(state.no_game_data)
+        self.assertEqual(effects, [("run", "check")])
+        self.assertIn(("--no-game-data", None), install.tui_flags(state))
+
+    def test_the_result_counts_game_data_apart_in_both_modes(self):
+        state = _installed_state(Path("/x/system"))
+        state.manifest = {**state.manifest, "files": [
+            *state.manifest["files"],
+            {"dest": "doom/doom1.wad", "size": 30, "category": "game_data", "cores": None}]}
+        state.finished = [("scph5500.bin", True, ""), ("doom/doom1.wad", True, "")]
+        _title, lines = install.tui_outcome(state)
+        self.assertIn("Installed: 1 BIOS file and 1 game data file.", lines)
+        listing, _files = self.game_list()
+        backup = self.root / "old"
+        (backup / "doom").mkdir(parents=True)
+        (backup / "gba_bios.bin").write_bytes(b"gba")
+        (backup / "doom" / "doom1.wad").write_bytes(b"wad" * 10)
+        args = _args(manifest=listing, dest=self.here, offline=True, declared_only=False,
+                     no_input=True)
+        setattr(args, "from", [backup])
+        real = io.StringIO()
+        install.LOCAL.reset()
+        self.addCleanup(install.LOCAL.reset)
+        with mock.patch.object(install, "detect_os", return_value="linux"), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()):
+            install._install(args, real)
+        self.assertIn("Done. 2 files installed", real.getvalue())
+        self.assertIn("Installed: 1 BIOS file and 1 game data file.", real.getvalue())
+
     def test_line_mode_says_the_card_it_found_and_names_its_folder(self):
         onion = self.card("ONION", "Onion")
         with mock.patch.object(install, "_mounted_cards", return_value=[onion]), \
@@ -7739,10 +7806,13 @@ class AuditSeventeenAndTen(unittest.TestCase):
     def test_the_docs_say_what_the_installer_does(self):
         """code_audit_17 P3-7."""
         page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
-        menu = page[page.index("RetroArch: 8069 files, 6.5 GB."):]
+        menu = page[page.index("RetroArch: 8348 files, 7.1 GB."):]
         menu = menu[:menu.index("```")]
         self.assertIn("BIOS folder:", menu)
         self.assertIn("f) copy from a folder or an old card", menu)
+        # The owner's request of 2026-10-27: game data counted apart, g.
+        self.assertIn("3259 BIOS files (4.4 GB) and 5089 game data files (2.7 GB).", menu)
+        self.assertIn("g) leave out the 5089 game data files", menu)
         env = page[page.index("## Environment overrides"):]
         self.assertIn("`TERMINFO`", env)
         self.assertIn("`TERMINFO_DIRS`", env)
