@@ -4881,9 +4881,14 @@ def _refresh_source_paths(args: argparse.Namespace) -> None:
     """
     if not _WRITTEN or args.dry_run or args.offline or os.environ.get("RETROBIOS_OFFLINE"):
         return
+    import common  # noqa: PLC0415
     import sitesources  # noqa: PLC0415
     from common import write_if_changed  # noqa: PLC0415
 
+    # The run loaded the profiles before writing them, and the loader caches
+    # by directory: read again, the record described the pins just replaced
+    # (linapple, then ten profiles in one advance).
+    common._emulator_profiles_cache.clear()
     profiles = load_emulator_profiles(args.emulators_dir, skip_aliases=False)
     held, unread = sitesources.build_source_paths(
         profiles, [sitesources.TREE_CACHE], fetch=True

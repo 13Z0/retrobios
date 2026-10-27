@@ -4780,6 +4780,31 @@ class AWriteRefreshesTheSourcePaths(unittest.TestCase):
             profile_sync._WRITTEN.clear()
 
 
+    def test_the_record_reads_the_pins_just_written(self):
+        # The loader caches by directory and the run had loaded the profiles
+        # before writing them: the record kept the pins it had replaced.
+        from unittest import mock  # noqa: PLC0415
+
+        import common  # noqa: PLC0415
+        import sitesources  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            profile = Path(tmp) / "p.yml"
+            profile.write_text('emulator: P\nsource_commit: "old"\n', encoding="utf-8")
+            common._emulator_profiles_cache.clear()
+            self.addCleanup(common._emulator_profiles_cache.clear)
+            common.load_emulator_profiles(tmp, skip_aliases=False)
+            profile.write_text('emulator: P\nsource_commit: "new"\n', encoding="utf-8")
+            with mock.patch.object(sitesources, "build_source_paths", return_value=({}, [])) as built, \
+                    mock.patch.dict(os.environ, {"RETROBIOS_OFFLINE": ""}), \
+                    mock.patch("common.write_if_changed"), \
+                    contextlib.redirect_stderr(io.StringIO()), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                profile_sync._WRITTEN.add("p")
+                self.addCleanup(profile_sync._WRITTEN.clear)
+                profile_sync._refresh_source_paths(self._args(emulators_dir=tmp))
+            self.assertEqual(built.call_args[0][0]["p"]["source_commit"], "new")
+
 class AnUnreadTreeKeepsItsRecord(unittest.TestCase):
     """sitesources --fetch, rate-limited by GitLab, dropped about twenty
     trees it never read from source-paths.json."""

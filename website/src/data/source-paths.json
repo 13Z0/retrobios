@@ -85,7 +85,7 @@
   "Makefile",
   "libretro-radio.c"
  ],
- "git.libretro.com/libretro/rust-dos@b53562f080b667c0fcbb2f54bab7be549cce46b9": [
+ "git.libretro.com/libretro/rust-dos@152d9bca7820f0d9a5d1ca820a2d20855698a211": [
   "crates/gus/build.rs",
   "crates/gus/src/builtin.rs",
   "crates/mt32/src/lib.rs",
@@ -180,7 +180,7 @@
   "psx/dev/exp1.h",
   "psx/psx.c"
  ],
- "github.com/ARMSX2/ARMSX2@c7517b9b3de811a92985c76a134b83c7368d0d4b": [
+ "github.com/ARMSX2/ARMSX2@7f9144189c74edcf5a7ab3ba2aa2247635d24047": [
   ".github/workflows/build-all.yml",
   ".github/workflows/linux_build_qt.yml",
   "README.md",
@@ -1160,7 +1160,7 @@
   "Source/Core/DiscIO/NANDImporter.cpp",
   "Source/Core/DolphinQt/MenuBar.cpp"
  ],
- "github.com/RPCS3/rpcs3@f4d4c1b4712ae6c6fe8c80ff8eaa4036f80f26fc": [
+ "github.com/RPCS3/rpcs3@c365ea76a552961ff078ea1a46da9d4b07729674": [
   "rpcs3/Crypto/key_vault.h",
   "rpcs3/Emu/Cell/Modules/cellFont.cpp",
   "rpcs3/Emu/Cell/Modules/cellSsl.cpp",
@@ -1611,7 +1611,7 @@
   "src/dbvz.c",
   "src/emulator.c"
  ],
- "github.com/SquirrelJME/SquirrelJME@4fd08e91275994e1181bcbe8744bee9322c5daec": [
+ "github.com/SquirrelJME/SquirrelJME@24d0e97d4297d0bce26a9651f5bce5d326ea690a": [
   "nanocoat/src/boot.c"
  ],
  "github.com/StillJC/ArcadeDuck@80cdb6da6b51d687192a6346efe4499b10fe4faf": [
@@ -1755,7 +1755,7 @@
   "src/general.c",
   "src/palette.c"
  ],
- "github.com/TomHarte/CLK@ab20398aa990ecf2fb24034b7e11b55f0a6b60c7": [
+ "github.com/TomHarte/CLK@9020107b563b68595ffdb6ef18aacdec85c78d69": [
   "Analyser/Static/Commodore/StaticAnalyser.cpp",
   "Analyser/Static/Commodore/Target.hpp",
   "Analyser/Static/MSX/StaticAnalyser.cpp",
@@ -2840,7 +2840,7 @@
  "github.com/digarok/gsplus@41e71031debbde98e66ea5c5c67498e9b4726a6d": [
   "gsplus/src/config.c"
  ],
- "github.com/dividebysandwich/rust-dos@e1a01b94f6f229082a7555380b5193c78104bb6f": [
+ "github.com/dividebysandwich/rust-dos@152d9bca7820f0d9a5d1ca820a2d20855698a211": [
   "crates/gus/build.rs",
   "crates/gus/src/builtin.rs",
   "crates/mt32/src/lib.rs",
@@ -3717,7 +3717,7 @@
   "ForWindows/MainForm.cpp",
   "Portable/LynxEmulatorGuest.cpp"
  ],
- "github.com/joncampbell123/dosbox-x@5a0a023a0d9f741a48faac897b8633b3c1c8e749": [
+ "github.com/joncampbell123/dosbox-x@997f616e0886a835fc3660f2b935688f17f20d42": [
   "configure.ac",
   "contrib/windows/installer/DOSBox-X-installer.iss",
   "src/Makefile.am",
@@ -6065,7 +6065,7 @@
   "core/nullDC.cpp",
   "core/reios/reios.cpp"
  ],
- "github.com/libretro/parallel-n64@bc7ba1d175890638e995e3e8ca6dcf385b3041b6": [
+ "github.com/libretro/parallel-n64@f87550d9ad70cb320870e2b5fd960235287abb89": [
   "libretro/libretro.c",
   "mupen64plus-core/src/device/pif/bootrom_hle.c"
  ],
@@ -6099,7 +6099,7 @@
   "core/Database.c",
   "core/libretro.c"
  ],
- "github.com/libretro/px68k-libretro@a935187697c7aa29064959e67b5fe0dbb0ba5021": [
+ "github.com/libretro/px68k-libretro@5510637a4c0a08ac0302087ea498093dcc3e9d17": [
   "libretro.c"
  ],
  "github.com/libretro/quasi88-libretro@7884be5277776a5d8c4fdc4e574e9b5b589945c9": [
@@ -8877,7 +8877,7 @@
   "win/src/main/emulator/EmulatorPlatform.java",
   "x64/src/main/emulator/EmulatorPlatform.java"
  ],
- "github.com/shinyquagsire23/OpenJKDF2@e4f7c0a2b10ab8ed8b89a6c90c61153604ae2e39": [
+ "github.com/shinyquagsire23/OpenJKDF2@798f930402525a23b94671d85b97b00390342fa0": [
   "src/Dw/dwInits.cpp",
   "src/Main/InstallHelper.c",
   "src/Main/Main.c",
