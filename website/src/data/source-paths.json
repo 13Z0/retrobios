@@ -9531,7 +9531,7 @@
   "src/common/filesystem.c",
   "src/common/header/common.h"
  ],
- "github.com/zelurker/raine@d44fbd7c9e9275d58e60c7361187c940ec1c320f": [
+ "github.com/zelurker/raine@8e25d5d8907ae459181610912b0030c955683015": [
   "source/emudx.c",
   "source/emumain.c",
   "source/files.c",

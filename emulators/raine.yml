@@ -4,7 +4,8 @@ core_classification: other
 source: "https://github.com/zelurker/raine"
 upstream: "https://github.com/zelurker/raine"
 profiled_date: "2026-10-20"
-source_commit: "d44fbd7c9e9275d58e60c7361187c940ec1c320f"
+source_commit: "8e25d5d8907ae459181610912b0030c955683015"
+pin_frozen: "RetroBat, the only platform that ships it, installs this release: the raine.exe of its raine.7z package (8 August 2026) reports 0.97.5 and was built on 16 March 2025, the bump its changelog records (RetroBat CHANGELOG.md:176). Later commits are not part of that package."
 core_version: "0.97.5"
 display_name: "Arcade (RAINE)"
 mode: standalone
@@ -33,7 +34,7 @@ notes: |
   <set>/ folder (source/loadroms.c:258-275). Inside an archive a ROM is found
   by CRC32 first and by name second (source/files.c:370-403). A ROM missing
   from the set and its parents ends the load with a fatal error
-  (source/loadroms.c:1302-1317). The Windows build has curl and, before
+  (source/loadroms.c:1301-1316). The Windows build has curl and, before
   giving up, offers to download a missing archive from archive.org, neogeo.zip
   included (source/loadroms.c:1200-1240).
 
@@ -158,7 +159,7 @@ files:
     size: 524288
     description: "Neo-Geo CD BIOS"
     note: >-
-      Path from [neocd] neocd_bios (source/raine.c:564). Left empty, neocd.bin
+      Path from [neocd] neocd_bios (source/raine.c:571). Left empty, neocd.bin
       then neocd.zip are looked up through get_shared. A path ending in zip is
       opened and its neocd.bin member read by name, anything else is read raw,
       0x80000 bytes. Nothing found opens a file dialog once, then the program
@@ -175,7 +176,7 @@ files:
     sha1: "4c1d58f7c1830694933e472ec1289060f7083fa9"
     md5: "c996961db77b48b54a2daa3cda12da0d"
     description: "High score save definitions"
-    source_ref: "source/hiscore.c:24, source/hiscore.c:303"
+    source_ref: "source/hiscore.c:23, source/hiscore.c:302"
 
   - name: "history.dat"
     category: game_data
@@ -185,7 +186,7 @@ files:
     sha1: "ce810602b74214726059bbd12e8010dc077aef3d"
     md5: "4941042df918f0f1370e2b70d0f7d0de"
     description: "Game history text"
-    source_ref: "source/history.c:56, source/emumain.c:642-647"
+    source_ref: "source/history.c:56, source/emumain.c:640-645"
 
   - name: "command.dat"
     category: game_data
@@ -195,7 +196,7 @@ files:
     sha1: "0b358f637e01b10f7a4d45b774ebf7950fcec466"
     md5: "0ed03c88b93b036f2f0035f32b200f27"
     description: "Move lists"
-    source_ref: "source/history.c:56, source/emumain.c:642-647"
+    source_ref: "source/history.c:56, source/emumain.c:640-645"
 
   - name: "gamecontrollerdb.txt"
     category: game_data
@@ -208,7 +209,7 @@ files:
     note: >-
       Added to SDL when present, followed by config/userdb.txt. The RetroBat
       package carries a different revision of this file.
-    source_ref: "source/sdl/control.c:2405-2414"
+    source_ref: "source/sdl/control.c:2373-2382"
 
   - name: "dkongm.dx2"
     path: "emudx/dkongm.dx2"
