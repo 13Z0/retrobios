@@ -1,0 +1,1511 @@
+#!/usr/bin/env python3
+"""Run the real-condition campaign unattended: cores, content, checks, rules.
+
+For each emulator profile in scope, the campaign takes the core (the libretro
+x86_64 Linux nightly, else a build of the profile's pinned commit), the test
+content of each of its systems (tests/campaign/content.yml, fetched through
+romfetch when it is not on disk), and runs core_probe.py:
+
+  files      every declared file the collection holds, staged; which ones
+             the core opens
+  boot       the content with no file against the content with the declared
+             file, compared on the frames the core shows
+  path       a declared file staged where the core looked for it
+  alias      a declared file staged under a name the core looked for
+  variants   each .variants/ copy of a file the core opened
+  bench      the content timed, warm-up excluded, 5 repetitions
+
+Every run is a record in measurements/<emulator>.jsonl. The fixed rule table
+(campaign_rules.py) turns records into verdicts. A verdict the table settles
+is written into the profile with the record ids as `evidence:`. Any other
+goes to measurements/findings.jsonl, where the site lists it as open. Each
+pass adds one line to measurements/campaign-runs.jsonl.
+
+State is .cache/campaign/state.json of the main checkout: per check done,
+failed or pending with the reason, and the core sha256 and profile digest it
+ran against. A pass skips what is done unless the core build or the profile
+changed. The campaign holds the host-wide automation lock, waits for an idle
+host, stops cleanly on a busy host or a full disk, and resumes on the next
+pass. Under autorun (`campaign` job) the lock is the job's.
+
+Usage:
+    python scripts/campaign.py run [--only CORE,...] [--system ID] [--budget 6h]
+    python scripts/campaign.py run --dry-run
+    python scripts/campaign.py run --commit [--commit-every N]
+    python scripts/campaign.py status [--json]
+    python scripts/campaign.py findings [--all] [--json]
+    python scripts/campaign.py gate
+    python scripts/campaign.py install-timer [--enable]
+"""
+
+from __future__ import annotations
+
+import argparse
+import contextlib
+import datetime as dt
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
+import zipfile
+from collections.abc import Callable, Iterator, Sequence
+from dataclasses import dataclass, field
+from pathlib import Path
+
+import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import autorun
+import campaign_profiles
+import campaign_rules as rules
+import measurement_records as mr
+
+ROOT = Path(__file__).resolve().parent.parent
+CONTENT_FILE = ROOT / "tests" / "campaign" / "content.yml"
+BUILDBOT = "https://buildbot.libretro.com/nightly/linux/x86_64/latest/"
+LOCK_HELD_ENV = autorun.LOCK_HELD_ENV
+ROMFETCH_ENV = "RETROBIOS_ROMFETCH"
+STATE_VERSION = 1
+
+DONE = "done"
+FAILED = "failed"
+PENDING = "pending"
+
+CRASH_ATTEMPTS = 3
+NETWORK_DELAYS = (10, 60, 300)
+MAX_ALIAS_CANDIDATES = 6
+BENCH_WARMUP = 600
+BENCH_FRAMES = 1800
+BENCH_REPEAT = 5
+CHECK_REPEAT = 2
+PROBE_TIMEOUT = 900
+BUILD_TIMEOUT = 3600
+LOG_DAYS = 30
+ROMFETCH_TRANSIENT = 3
+
+
+class Pause(RuntimeError):
+    """The host cannot run measurements now: the pass stops and resumes later."""
+
+
+class Unavailable(RuntimeError):
+    """A core or a piece of content the campaign cannot get."""
+
+
+# --------------------------------------------------------------------------
+# Small helpers
+# --------------------------------------------------------------------------
+
+def now_iso() -> str:
+    return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
+
+
+def slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-") or "x"
+
+
+def parse_budget(text: str) -> float:
+    match = re.fullmatch(r"\s*(\d+(?:\.\d+)?)\s*([smh]?)\s*", text or "")
+    if not match:
+        raise argparse.ArgumentTypeError(f"--budget {text!r}: a number with s, m or h")
+    return float(match[1]) * {"": 1, "s": 1, "m": 60, "h": 3600}[match[2]]
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def file_sha1(path: Path) -> str:
+    digest = hashlib.sha1()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def profile_digest(profile: dict) -> str:
+    """What a check depends on in a profile: its entries, evidence left out,
+    so the campaign's own evidence never makes it run again."""
+    entries = [{k: v for k, v in entry.items() if k != "evidence"}
+               for entry in profile.get("files") or []]
+    body = {"files": entries, "cores": profile.get("cores"), "type": profile.get("type"),
+            "systems": profile.get("systems")}
+    return hashlib.sha1(mr.canonical(body)).hexdigest()
+
+
+def entry_systems(entry: dict, profile: dict) -> list[str]:
+    if entry.get("systems"):
+        return list(entry["systems"])
+    if entry.get("system"):
+        return [entry["system"]]
+    return list(profile.get("systems") or [])
+
+
+def entry_dest(entry: dict) -> str:
+    """Where the core reads the entry, relative to its system directory."""
+    path = entry.get("path")
+    if isinstance(path, str) and path and not path.endswith("/"):
+        return path
+    return entry["name"]
+
+
+def region_matches(entry: dict, region: str | None) -> bool:
+    regions = entry.get("region")
+    if not regions or not region:
+        return True
+    if isinstance(regions, str):
+        regions = [regions]
+    return region in regions or "world" in regions
+
+
+def is_bios(entry: dict) -> bool:
+    return entry.get("category", "bios") == "bios" and entry.get("type") != "directory"
+
+
+# --------------------------------------------------------------------------
+# Host
+# --------------------------------------------------------------------------
+
+@dataclass
+class Host:
+    """What the campaign reads from the machine and the network, replaced in tests."""
+
+    loadavg: Callable[[], tuple[float, float, float]] = os.getloadavg
+    sleep: Callable[[float], None] = time.sleep
+    clock: Callable[[], float] = time.monotonic
+    cpu_count: int = os.cpu_count() or 1
+    free_gb: Callable[[Path], float] = autorun.free_gb
+    poll: float = 60.0
+    run: Callable[..., subprocess.CompletedProcess] = subprocess.run
+    urlopen: Callable[..., object] = urllib.request.urlopen
+
+    @property
+    def max_load(self) -> float:
+        return self.cpu_count / 4
+
+
+@dataclass
+class Settings:
+    budget: float = 6 * 3600
+    max_load_wait: float = 3600
+    min_free_gb: float = 30
+    cache_cap_gb: float = 20
+    probe_timeout: int = PROBE_TIMEOUT
+    check_repeat: int = CHECK_REPEAT
+    bench_repeat: int = BENCH_REPEAT
+    bench_warmup: int = BENCH_WARMUP
+    bench_frames: int = BENCH_FRAMES
+    romfetch: str = ""
+    network: bool = True
+    delays: tuple[float, ...] = NETWORK_DELAYS
+    echo: bool = True
+
+
+@dataclass
+class Paths:
+    """Where the campaign writes: records and profiles in the checkout it
+    runs from, state, cores, logs and content in the main checkout's .cache."""
+
+    root: Path
+    home: Path
+    content: Path
+    db: Path
+    content_file: Path = CONTENT_FILE
+
+    @property
+    def state(self) -> Path:
+        return self.home / "state.json"
+
+    @property
+    def logs(self) -> Path:
+        return self.home / "logs"
+
+    @property
+    def emulators(self) -> Path:
+        return self.root / "emulators"
+
+    @classmethod
+    def default(cls) -> Paths:
+        main = autorun.main_checkout()
+        return cls(root=ROOT, home=main / ".cache" / "campaign",
+                   content=main / ".cache" / "test-content", db=ROOT / "database.json")
+
+
+@contextlib.contextmanager
+def host_lock(lock_path: Path) -> Iterator[None]:
+    """The automation lock, unless the autorun job running us holds it."""
+    if os.environ.get(LOCK_HELD_ENV):
+        yield
+        return
+    with autorun.global_lock(lock_path):
+        yield
+
+
+# --------------------------------------------------------------------------
+# State
+# --------------------------------------------------------------------------
+
+def load_state(path: Path) -> dict:
+    try:
+        state = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        state = {}
+    state.setdefault("version", STATE_VERSION)
+    for key in ("checks", "cores", "content", "builds", "emulators"):
+        state.setdefault(key, {})
+    return state
+
+
+def save_state(path: Path, state: dict) -> None:
+    autorun.save_state(path, state)
+
+
+def should_run(previous: dict | None, core_sha: str, digest: str) -> bool:
+    """A check runs again when it never ran, is pending, or ran against
+    another core build or another version of the profile."""
+    if not previous:
+        return True
+    if previous.get("status") == PENDING:
+        return True
+    return previous.get("core_sha256") != core_sha or previous.get("profile_digest") != digest
+
+
+# --------------------------------------------------------------------------
+# Content: what each system is tested with, and where it comes from
+# --------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class Content:
+    system: str
+    romfetch_system: str
+    name: str
+    catalog: str
+    reason: str
+    region: str | None
+    load: str
+    frames: int
+    frame_hash_every: int
+    pinned: bool
+    boot_file: str | None
+
+    @property
+    def key(self) -> str:
+        return f"{self.romfetch_system}/{self.name}"
+
+
+def load_content(path: Path) -> dict[str, list[Content]]:
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    out: dict[str, list[Content]] = {}
+    for system, spec in (data.get("systems") or {}).items():
+        for item in spec.get("content") or ():
+            out.setdefault(system, []).append(Content(
+                system=system, romfetch_system=str(spec["romfetch"]), name=str(item["name"]),
+                catalog=str(item["catalog"]), reason=str(item["reason"]).strip(),
+                region=item.get("region"), load=str(item.get("load") or ""),
+                frames=int(item.get("frames", 3600)),
+                frame_hash_every=int(item.get("frame_hash_every", 10)),
+                pinned=bool(item.get("pinned", False)), boot_file=spec.get("boot_file"),
+            ))
+    return out
+
+
+def load_file(folder: Path, load: str) -> Path:
+    """The file handed to the core."""
+    if load == "cue":
+        cues = sorted(folder.glob("*.cue"))
+        if len(cues) != 1:
+            raise Unavailable(f"{folder.name}: {len(cues)} .cue files, one expected")
+        return cues[0]
+    if load:
+        return folder / load
+    files = [p for p in sorted(folder.iterdir()) if p.is_file() and p.name != "identity.json"]
+    if len(files) != 1:
+        raise Unavailable(f"{folder.name}: {len(files)} files, name one with load:")
+    return files[0]
+
+
+def verify_identity(folder: Path) -> dict:
+    """The identity.json romfetch wrote, each listed file hashed again."""
+    try:
+        identity = json.loads((folder / "identity.json").read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise Unavailable(f"{folder}: no identity.json") from exc
+    if identity.get("status") != "verified":
+        raise Unavailable(f"{folder.name}: identity status {identity.get('status')!r}")
+    for item in identity.get("files") or ():
+        path = folder / item["name"]
+        if not path.is_file() or path.stat().st_size != item["size"] or file_sha1(path) != item["sha1"]:
+            raise Unavailable(f"{folder.name}: {item['name']} does not match its identity")
+    return identity
+
+
+def folder_size(folder: Path) -> int:
+    return sum(p.stat().st_size for p in folder.rglob("*") if p.is_file())
+
+
+class ContentStore:
+    """Content on disk, its users counted, the least recently used evicted
+    past the cap. Only what the campaign fetched is ever deleted, and never
+    a pinned entry."""
+
+    def __init__(self, campaign: Campaign) -> None:
+        self.c = campaign
+        self.state: dict = campaign.state["content"]
+        self.refs: dict[str, set[str]] = {}
+        self.verified: set[str] = set()
+
+    def folder(self, content: Content) -> Path:
+        return self.c.paths.content / content.romfetch_system / content.name
+
+    def hold(self, content: Content, user: str) -> None:
+        self.refs.setdefault(content.key, set()).add(user)
+
+    def get(self, content: Content) -> Path:
+        """The folder of the content, fetched when absent. Unavailable when not."""
+        folder = self.folder(content)
+        entry = self.state.setdefault(content.key, {"fetched_by_campaign": False})
+        entry["pinned"] = content.pinned
+        if not (folder / "identity.json").is_file():
+            self.evict(keep={content.key})
+            self.fetch(content)
+            entry["fetched_by_campaign"] = True
+        if content.key not in self.verified:
+            identity = verify_identity(folder)
+            entry["identity"] = {"catalog": identity.get("catalog"), "dat": identity.get("dat"),
+                                 "entry": identity.get("entry")}
+            self.verified.add(content.key)
+        entry["size"] = folder_size(folder)
+        entry["last_used"] = now_iso()
+        return folder
+
+    def romfetch(self) -> str | None:
+        configured = self.c.settings.romfetch or os.environ.get(ROMFETCH_ENV, "")
+        if configured:
+            return configured if Path(configured).is_file() or shutil.which(configured) else None
+        return shutil.which("romfetch")
+
+    def fetch(self, content: Content) -> None:
+        command = self.romfetch()
+        if not command:
+            raise Unavailable(f"content: romfetch not found, {content.catalog} entry {content.name!r}")
+        if not self.c.settings.network:
+            raise Unavailable(f"content: offline, {content.catalog} entry {content.name!r}")
+        argv = [command, "get", content.romfetch_system, content.name, "--json", "-q",
+                "--content-dir", str(self.c.paths.content)]
+        for attempt, delay in enumerate((*self.c.settings.delays, None)):
+            proc = self.c.host.run(argv, capture_output=True, text=True, check=False,
+                                   timeout=6 * 3600)
+            if proc.returncode == 0:
+                self.c.log(f"romfetch {content.name}: {proc.stdout.strip()[:300]}")
+                return
+            code = "unknown"
+            with contextlib.suppress(ValueError, AttributeError):
+                code = json.loads(proc.stdout)["error"]["code"]
+            if proc.returncode != ROMFETCH_TRANSIENT or delay is None:
+                raise Unavailable(f"content: romfetch exit {proc.returncode} ({code}) "
+                                  f"for {content.name!r}")
+            self.c.log(f"romfetch {content.name}: exit {proc.returncode} ({code}), "
+                       f"retry {attempt + 1} in {delay}s")
+            self.c.host.sleep(delay)
+
+    def release(self, content: Content, user: str) -> None:
+        users = self.refs.get(content.key, set())
+        users.discard(user)
+        if not users:
+            self.drop(content.key)
+
+    def deletable(self, key: str) -> bool:
+        entry = self.state.get(key) or {}
+        return bool(entry.get("fetched_by_campaign")) and not entry.get("pinned")
+
+    def drop(self, key: str) -> bool:
+        if not self.deletable(key) or self.refs.get(key):
+            return False
+        folder = self.c.paths.content / key
+        if folder.is_dir():
+            shutil.rmtree(folder)
+            self.c.log(f"content {key}: deleted, no check left needs it")
+        self.state.pop(key, None)
+        self.verified.discard(key)
+        return True
+
+    def evict(self, keep: set[str]) -> list[str]:
+        """Least recently used first, until the campaign's content fits the cap."""
+        cap = self.c.settings.cache_cap_gb * 1024 ** 3
+        held = sorted((entry.get("last_used", ""), key) for key, entry in self.state.items()
+                      if self.deletable(key) and key not in keep)
+        total = sum(entry.get("size", 0) for key, entry in self.state.items() if self.deletable(key))
+        evicted = []
+        for _, key in held:
+            if total <= cap:
+                break
+            size = self.state[key].get("size", 0)
+            folder = self.c.paths.content / key
+            if folder.is_dir():
+                shutil.rmtree(folder)
+            self.state.pop(key, None)
+            self.verified.discard(key)
+            total -= size
+            evicted.append(key)
+            self.c.log(f"content {key}: evicted, the cache is over {self.c.settings.cache_cap_gb} GB")
+        return evicted
+
+
+# --------------------------------------------------------------------------
+# Cores
+# --------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class Core:
+    name: str
+    path: Path
+    sha256: str
+    artifact: str | None = None
+    repo: str | None = None
+    commit: str | None = None
+    build_command: str | None = None
+
+
+def safe_extract_so(archive: Path, member: str, target: Path) -> None:
+    with zipfile.ZipFile(archive) as handle:
+        names = handle.namelist()
+        if member not in names:
+            raise Unavailable(f"{archive.name}: no {member} inside ({', '.join(names[:5])})")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        scratch = target.with_suffix(".part")
+        with handle.open(member) as src, scratch.open("wb") as dst:
+            shutil.copyfileobj(src, dst)
+        os.replace(scratch, target)
+
+
+class Cores:
+    """Buildbot nightlies, downloaded once per build, else local builds of
+    the profile's pinned commit."""
+
+    def __init__(self, campaign: Campaign) -> None:
+        self.c = campaign
+        self.listing: set[str] | None = None
+
+    def retrying(self, what: str, call: Callable[[], object]) -> object:
+        for attempt, delay in enumerate((*self.c.settings.delays, None)):
+            try:
+                return call()
+            except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as exc:
+                if isinstance(exc, urllib.error.HTTPError) and exc.code < 500 and exc.code != 429:
+                    raise Unavailable(f"{what}: HTTP {exc.code}") from exc
+                if delay is None:
+                    raise Unavailable(f"{what}: {exc}") from exc
+                self.c.log(f"{what}: {exc}, retry {attempt + 1} in {delay}s")
+                self.c.host.sleep(delay)
+        raise AssertionError("unreachable")
+
+    def buildbot(self) -> set[str]:
+        if self.listing is None:
+            if not self.c.settings.network:
+                self.listing = set()
+            else:
+                def read() -> bytes:
+                    with self.c.host.urlopen(BUILDBOT, timeout=120) as response:
+                        return response.read()
+                page = self.retrying("buildbot listing", read).decode("utf-8", "replace")
+                self.listing = set(re.findall(r"([A-Za-z0-9_]+)_libretro\.so\.zip", page))
+        return self.listing
+
+    def names(self, profile: dict) -> list[str]:
+        listing = self.buildbot()
+        return sorted({str(c) for c in profile.get("cores") or () if str(c) in listing})
+
+    def nightly(self, name: str, profile: dict) -> Core:
+        url = f"{BUILDBOT}{name}_libretro.so.zip"
+        cached = self.c.state["cores"].get(name) or {}
+
+        def head() -> dict:
+            request = urllib.request.Request(url, method="HEAD")
+            with self.c.host.urlopen(request, timeout=120) as response:
+                return {"etag": response.headers.get("ETag"),
+                        "last_modified": response.headers.get("Last-Modified")}
+        stamp = self.retrying(f"{name} nightly", head)
+        target = self.c.paths.home / "cores" / name / f"{name}_libretro.so"
+        if (cached.get("etag"), cached.get("last_modified")) != (stamp["etag"], stamp["last_modified"]) \
+                or not target.is_file() or file_sha256(target) != cached.get("sha256"):
+            archive = target.parent / f"{name}_libretro.so.zip"
+            archive.parent.mkdir(parents=True, exist_ok=True)
+
+            def download() -> None:
+                with self.c.host.urlopen(url, timeout=600) as response, archive.open("wb") as out:
+                    shutil.copyfileobj(response, out)
+            self.retrying(f"{name} nightly", download)
+            safe_extract_so(archive, f"{name}_libretro.so", target)
+            archive.unlink()
+            cached = {**stamp, "url": url, "sha256": file_sha256(target), "fetched_at": now_iso()}
+            self.c.state["cores"][name] = cached
+            self.c.log(f"core {name}: new nightly {cached['sha256'][:12]} ({stamp['last_modified']})")
+        repo = profile.get("source") if isinstance(profile.get("source"), str) else None
+        return Core(name, target, cached["sha256"], artifact=url,
+                    repo=repo if repo and repo.startswith("http") else None)
+
+    def build(self, emulator: str, profile: dict) -> Core:
+        """The profile's pinned commit, built once and kept."""
+        source, commit = profile.get("source"), profile.get("source_commit")
+        if not (isinstance(source, str) and source.startswith("http") and isinstance(commit, str)):
+            raise Unavailable("core: not on the buildbot, and no source and source_commit to build")
+        record = self.c.state["builds"].setdefault(emulator, {})
+        if record.get("commit") == commit and record.get("error"):
+            raise Unavailable(f"core: build of {commit[:12]} failed before: {record['error']}")
+        out = self.c.paths.home / "builds" / emulator / commit
+        built = sorted(out.glob("*_libretro.so"))
+        if not built:
+            if not self.c.settings.network:
+                raise Unavailable("core: not on the buildbot, offline, nothing built yet")
+            try:
+                built = [self.compile(source, commit, out)]
+            except Unavailable as exc:
+                self.c.state["builds"][emulator] = {"commit": commit, "error": str(exc), "at": now_iso()}
+                raise
+        command = record.get("command") or "make"
+        self.c.state["builds"][emulator] = {"commit": commit, "command": command,
+                                            "so": built[0].name, "at": now_iso()}
+        return Core(built[0].name.removesuffix("_libretro.so"), built[0], file_sha256(built[0]),
+                    repo=source, commit=commit, build_command=command)
+
+    def compile(self, source: str, commit: str, out: Path) -> Path:
+        src = self.c.paths.home / "src" / slug(source)
+        log = self.c.paths.logs / "builds" / f"{slug(source)}-{commit[:12]}.log"
+        log.parent.mkdir(parents=True, exist_ok=True)
+
+        def step(argv: list[str], cwd: Path | None = None, timeout: int = 1800) -> None:
+            with log.open("a", encoding="utf-8") as handle:
+                handle.write(f"$ {' '.join(argv)}\n")
+                handle.flush()
+                proc = self.c.host.run(argv, cwd=cwd, stdout=handle, stderr=subprocess.STDOUT,
+                                       check=False, timeout=timeout)
+            if proc.returncode != 0:
+                tail = log.read_text(encoding="utf-8", errors="replace").strip().splitlines()[-3:]
+                raise Unavailable(f"core: {argv[0]} {argv[1] if len(argv) > 1 else ''} exited "
+                                  f"{proc.returncode}: {' | '.join(tail)} (log {log})")
+        if not (src / ".git").is_dir():
+            src.parent.mkdir(parents=True, exist_ok=True)
+            step(["git", "clone", "--quiet", source, str(src)])
+        step(["git", "-C", str(src), "fetch", "--quiet", "origin", commit])
+        step(["git", "-C", str(src), "checkout", "--quiet", "--force", commit])
+        step(["git", "-C", str(src), "submodule", "update", "--init", "--recursive", "--quiet"])
+        makefile = "Makefile.libretro" if (src / "Makefile.libretro").is_file() else "Makefile"
+        jobs = str(max(1, (os.cpu_count() or 2) // 2))
+        command = ["make", "-f", makefile, f"-j{jobs}", "platform=unix"]
+        step(command, cwd=src, timeout=BUILD_TIMEOUT)
+        built = sorted(src.rglob("*_libretro.so"), key=lambda p: p.stat().st_mtime)
+        if not built:
+            raise Unavailable(f"core: {' '.join(command)} produced no *_libretro.so (log {log})")
+        out.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(built[-1], out / built[-1].name)
+        return out / built[-1].name
+
+
+# --------------------------------------------------------------------------
+# Probe runs
+# --------------------------------------------------------------------------
+
+@dataclass
+class ProbeResult:
+    status: str
+    record: dict | None = None
+    reason: str = ""
+    log: str = ""
+
+
+@dataclass
+class Unit:
+    """One core of one emulator profile, with its systems' content."""
+
+    emulator: str
+    profile: dict
+    core_name: str | None = None
+    pending: str = ""
+    # A game engine or utility profile: run when the buildbot has its core,
+    # otherwise it is a standalone program.
+    buildbot_only: bool = False
+
+
+@dataclass
+class Pass:
+    started: str
+    records: list[str] = field(default_factory=list)
+    findings: dict[str, int] = field(default_factory=dict)
+    touched: set[str] = field(default_factory=set)
+    result: str = "complete"
+    detail: str = ""
+
+
+class Campaign:
+    def __init__(self, paths: Paths, settings: Settings | None = None, host: Host | None = None,
+                 probe_script: Path | None = None, lock_path: Path | None = None) -> None:
+        self.paths = paths
+        self.settings = settings or Settings()
+        self.host = host or Host()
+        self.probe_script = probe_script or ROOT / "scripts" / "core_probe.py"
+        self.lock_path = lock_path or Path(os.environ.get(autorun.LOCK_ENV) or autorun.DEFAULT_LOCK)
+        self.state = load_state(paths.state)
+        self.cores = Cores(self)
+        self.store = ContentStore(self)
+        self.content = load_content(paths.content_file)
+        self.deadline = 0.0
+        self.current: Pass | None = None
+        self.dirty_at_start: set[str] = set()
+        self._db: dict | None = None
+
+    # -- logging ------------------------------------------------------------
+
+    def log(self, text: str) -> None:
+        line = f"{now_iso()} {text}"
+        path = self.paths.logs / f"{dt.date.today().isoformat()}.log"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(line + "\n")
+        if self.settings.echo:
+            print(line, file=sys.stderr)
+
+    # -- profiles and files -------------------------------------------------
+
+    def profiles(self) -> dict[str, dict]:
+        out = {}
+        for path in sorted(self.paths.emulators.glob("*.yml")):
+            if path.name.startswith("_") or path.stem == "00_example":
+                continue
+            data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            if "emulator" in data:
+                out[path.stem] = data
+        return out
+
+    @property
+    def db(self) -> dict:
+        if self._db is None:
+            self._db = json.loads(self.paths.db.read_text(encoding="utf-8"))
+        return self._db
+
+    def local_file(self, entry: dict) -> Path | None:
+        """The collection's copy of an entry, by its declared hashes or its name."""
+        from common import resolve_local_file
+
+        hint = entry.get("path") if isinstance(entry.get("path"), str) else ""
+        # The database names files relative to the checkout it describes.
+        with contextlib.chdir(self.paths.root):
+            path, status = resolve_local_file(entry, self.db, dest_hint=hint or "")
+        if not path or status in ("not_found", "hash_mismatch"):
+            return None
+        local = Path(path)
+        local = local if local.is_absolute() else self.paths.root / local
+        return local if local.is_file() else None
+
+    def variant_files(self, entry: dict, primary: Path) -> list[Path]:
+        """The .variants/ copies of an entry's file the collection holds."""
+        names = [entry["name"], *(entry.get("aliases") or ())]
+        out = []
+        index = self.db.get("indexes", {}).get("by_name", {})
+        for name in names:
+            for sha1 in index.get(name, ()):
+                path = (self.db["files"].get(sha1) or {}).get("path", "")
+                if "/.variants/" in path:
+                    local = self.paths.root / path
+                    if local.is_file() and local.resolve() != primary.resolve() and local not in out:
+                        out.append(local)
+        return out
+
+    # -- guards ---------------------------------------------------------------
+
+    def guard(self) -> None:
+        """Raise Pause when the pass must stop: budget spent, disk full, host busy."""
+        if self.host.clock() >= self.deadline:
+            raise Pause("budget")
+        free = self.host.free_gb(self.paths.home if self.paths.home.exists() else self.paths.root)
+        if free < self.settings.min_free_gb:
+            raise Pause(f"disk: {free:.0f} GB free, the campaign stops under "
+                        f"{self.settings.min_free_gb:.0f} GB")
+        waited = 0.0
+        while self.host.loadavg()[0] > self.host.max_load:
+            if waited >= self.settings.max_load_wait:
+                raise Pause(f"busy host: load stayed above {self.host.max_load:.1f} for "
+                            f"{int(waited)} s")
+            self.host.sleep(self.host.poll)
+            waited += self.host.poll
+
+    # -- one core_probe invocation -------------------------------------------
+
+    def probe(self, argv: list[str], log_name: str) -> ProbeResult:
+        """core_probe with retries for a crashing core. Never raises for the core's sake."""
+        command = [sys.executable, str(self.probe_script), *argv]
+        log = self.paths.logs / dt.date.today().isoformat() / f"{log_name}.log"
+        log.parent.mkdir(parents=True, exist_ok=True)
+        repeats = argv.count("--vary") or 1
+        reps = int(argv[argv.index("--repeat") + 1]) if "--repeat" in argv else 1
+        budget = self.settings.probe_timeout * repeats * reps + 120
+        attempt = busy = 0
+        while attempt < CRASH_ATTEMPTS:
+            self.guard()
+            try:
+                proc = self.host.run(command, capture_output=True, text=True, check=False,
+                                     timeout=budget, cwd=self.paths.root)
+            except subprocess.TimeoutExpired:
+                with log.open("a", encoding="utf-8") as handle:
+                    handle.write(f"$ {' '.join(command)}\nkilled after {budget} s\n")
+                return ProbeResult(FAILED, reason="timeout", log=str(log))
+            with log.open("a", encoding="utf-8") as handle:
+                handle.write(f"$ {' '.join(command)}\n# exit {proc.returncode}\n"
+                             f"{proc.stderr[-20000:]}\n")
+            if proc.returncode == 0:
+                try:
+                    return ProbeResult(DONE, record=json.loads(proc.stdout), log=str(log))
+                except ValueError:
+                    return ProbeResult(FAILED, reason="core_probe printed no record", log=str(log))
+            if proc.returncode == 3:
+                # Refused on a busy host: wait for it to settle and run it again.
+                busy += 1
+                if busy >= CRASH_ATTEMPTS:
+                    raise Pause("busy host: core_probe refused to record three times")
+                continue
+            attempt += 1
+            if proc.returncode == 2:
+                return ProbeResult(FAILED, reason=f"core_probe refused the run: "
+                                                  f"{proc.stderr.strip()[-300:]}", log=str(log))
+            if "TimeoutExpired" in proc.stderr or "timed out after" in proc.stderr:
+                return ProbeResult(FAILED, reason="timeout", log=str(log))
+            self.log(f"{log_name}: attempt {attempt} exited {proc.returncode}")
+        return ProbeResult(FAILED, reason=f"crashed {CRASH_ATTEMPTS} times", log=str(log))
+
+    def probe_args(self, mode: str, core: Core, emulator: str, subject: str, content: Content | None,
+                   load: Path | None) -> list[str]:
+        argv = [mode, "--core", str(core.path), "--record", str(self.paths.root),
+                "--emulator", emulator, "--subject", subject,
+                "--max-load", str(self.host.max_load), "--timeout", str(self.settings.probe_timeout),
+                "--work-dir", str(self.paths.root / "tmp" / "core_probe")]
+        if core.artifact:
+            argv += ["--core-artifact", core.artifact]
+        if core.repo:
+            argv += ["--core-repo", core.repo]
+        if core.commit:
+            argv += ["--core-commit", core.commit]
+        if core.build_command:
+            argv += ["--build-command", core.build_command]
+        if content and load:
+            argv += ["--content", str(load), "--content-label", content.name]
+        return argv
+
+    # -- the checks -------------------------------------------------------------
+
+    def check_key(self, core: Core, content: Content, check: str) -> str:
+        return f"{core.name}/{content.system}/{slug(content.name)}/{check}"
+
+    def remember(self, emulator: str, key: str, result: ProbeResult, core: Core | None,
+                 digest: str) -> None:
+        entry = {"status": result.status, "at": now_iso(), "profile_digest": digest,
+                 "core_sha256": core.sha256 if core else None}
+        if result.reason:
+            entry["reason"] = result.reason
+        if result.log:
+            entry["log"] = result.log
+        if result.record:
+            entry["record"] = result.record["id"]
+            if self.current:
+                self.current.records.append(result.record["id"])
+                self.current.touched.add(mr.records_path(emulator))
+        self.state["checks"].setdefault(emulator, {})[key] = entry
+
+    def pending(self, emulator: str, key: str, reason: str, digest: str = "") -> None:
+        self.state["checks"].setdefault(emulator, {})[key] = {
+            "status": PENDING, "reason": reason, "at": now_iso(), "profile_digest": digest}
+
+    def system_entries(self, profile: dict, system: str) -> list[tuple[int, dict]]:
+        from validation import filter_files_by_mode
+
+        libretro = filter_files_by_mode(profile.get("files") or [], standalone=False)
+        keep = {id(e) for e in libretro}
+        return [(i, e) for i, e in enumerate(profile.get("files") or [])
+                if id(e) in keep and system in entry_systems(e, profile) and is_bios(e)]
+
+    def boot_entry(self, entries: list[tuple[int, dict]], content: Content) -> tuple[int, dict] | None:
+        held = [(i, e) for i, e in entries if region_matches(e, content.region) and self.local_file(e)]
+        if content.boot_file:
+            named = [(i, e) for i, e in held
+                     if content.boot_file in (e["name"], *(e.get("aliases") or ()))]
+            if named:
+                return named[0]
+        held.sort(key=lambda item: (item[1].get("priority", 1 << 30), item[0]))
+        return held[0] if held else None
+
+    def run_unit_content(self, unit: Unit, core: Core, content: Content, digest: str) -> None:
+        emulator, profile = unit.emulator, unit.profile
+        checks = self.state["checks"].setdefault(emulator, {})
+        entries = self.system_entries(profile, content.system)
+        boot = self.boot_entry(entries, content)
+        keys = {name: self.check_key(core, content, name) for name in ("files", "bench")}
+        if boot:
+            keys["boot"] = self.check_key(core, content, f"boot:{boot[1]['name']}")
+        todo = [k for k in keys.values() if should_run(checks.get(k), core.sha256, digest)]
+        if not todo:
+            return
+        try:
+            folder = self.store.get(content)
+            load = load_file(folder, content.load)
+        except Unavailable as exc:
+            for key in todo:
+                self.pending(emulator, key, str(exc), digest)
+            return
+        frames = ["--frames", str(content.frames), "--frame-hash-every", str(content.frame_hash_every)]
+        stem = f"{core.name}-{slug(content.name)}"
+
+        # files: every declared file the collection holds, at its place.
+        staged: dict[str, tuple[int, dict, Path]] = {}
+        for index, entry in entries:
+            local = self.local_file(entry)
+            if local and entry_dest(entry) not in staged:
+                staged[entry_dest(entry)] = (index, entry, local)
+        files_record = None
+        if keys["files"] in todo:
+            argv = self.probe_args("run", core, emulator, slug(f"files-{stem}"), content, load) + frames
+            for dest, (_, _, local) in sorted(staged.items()):
+                argv += ["--system-file", f"{dest}={local}"]
+            result = self.probe(argv, f"{emulator}-{stem}-files")
+            self.remember(emulator, keys["files"], result, core, digest)
+            files_record = result.record
+        elif checks.get(keys["files"], {}).get("status") == DONE:
+            files_record = self.read_record(emulator, checks[keys["files"]].get("record"))
+
+        boot_record = None
+        if boot and keys["boot"] in todo:
+            index, entry = boot
+            local = self.local_file(entry)
+            dest = entry_dest(entry)
+            argv = self.probe_args("check", core, emulator, slug(f"boot-{entry['name']}-{stem}"),
+                                   content, load) + frames
+            argv += ["--vary", f"{dest}=", "--vary", f"{dest}={local}", "--observable", "frame_hashes",
+                     "--repeat", str(self.settings.check_repeat),
+                     "--claim", f"{core.name} reaches the game on {content.name} without {entry['name']}",
+                     "--method", (f"Two variants, {entry['name']} absent and {entry['name']} as the "
+                                  f"collection holds it, each run {self.settings.check_repeat} times "
+                                  f"from a fresh process for {content.frames} frames with no button "
+                                  f"pressed. Every {content.frame_hash_every}th frame is hashed. The "
+                                  f"runs without the file are compared with the runs with it on the "
+                                  f"frames that are not one colour.")]
+            result = self.probe(argv, f"{emulator}-{stem}-boot")
+            self.remember(emulator, keys["boot"], result, core, digest)
+            boot_record = result.record
+            if boot_record:
+                absent, present = (v["label"] for v in boot_record["variants"])
+                verdicts = rules.rule_bios_need(rules.boot_outcome(boot_record, absent, present),
+                                                entry, boot_record["id"])
+                self.settle(emulator, content, core, index, entry, verdicts)
+                self.follow_aliases(unit, core, content, load, frames, digest, index, entry,
+                                    local, boot_record, absent)
+
+        if files_record and keys["files"] in todo:
+            self.read_files(unit, core, content, load, frames, digest, staged, files_record)
+
+        if keys["bench"] in todo:
+            argv = self.probe_args("bench", core, emulator, slug(f"bench-{stem}"), content, load)
+            argv += ["--warmup", str(self.settings.bench_warmup), "--frames",
+                     str(self.settings.bench_frames), "--repeat", str(self.settings.bench_repeat),
+                     "--no-trace"]
+            if boot:
+                local = self.local_file(boot[1])
+                argv += ["--system-file", f"{entry_dest(boot[1])}={local}"]
+            result = self.probe(argv, f"{emulator}-{stem}-bench")
+            self.remember(emulator, keys["bench"], result, core, digest)
+
+    def read_record(self, emulator: str, rid: str | None) -> dict | None:
+        if not rid:
+            return None
+        path = self.paths.root / mr.records_path(emulator)
+        if not path.is_file():
+            return None
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if f'"id":"{rid}"' in line:
+                return json.loads(line)
+        return None
+
+    def read_files(self, unit: Unit, core: Core, content: Content, load: Path, frames: list[str],
+                   digest: str, staged: dict[str, tuple[int, dict, Path]], record: dict) -> None:
+        """Which staged files the core opened: path follow-ups, variants, flags."""
+        emulator = unit.emulator
+        rep = record["variants"][0]["repetitions"][0]
+        if rep.get("files_opened") is None:
+            return
+        opened = {item["path"] for item in rep.get("files_opened") or ()}
+        probed = list(rep.get("files_probed_absent") or ())
+        for dest, (index, entry, local) in sorted(staged.items()):
+            if dest in opened:
+                variants = self.variant_files(entry, local)
+                if variants:
+                    self.run_variants(unit, core, content, load, frames, digest, index, entry, dest,
+                                      local, variants)
+                continue
+            if not region_matches(entry, content.region):
+                continue
+            # A fallback is read only when the files before it are absent:
+            # staged alone, it shows whether the core reads it at all.
+            alone = self.follow_up(unit, core, content, load, frames, digest, entry, local, dest,
+                                   f"alone:{entry['name']}")
+            if alone is None:
+                continue
+            if dest in self.opened(alone, 1):
+                continue
+            probed_alone = [p for r in alone["variants"][0]["repetitions"]
+                            for p in r.get("files_probed_absent") or ()]
+            others = [p for p in dict.fromkeys(probed + probed_alone) if p != dest
+                      and p.rsplit("/", 1)[-1].casefold() == dest.rsplit("/", 1)[-1].casefold()]
+            moved = False
+            for candidate in others[:MAX_ALIAS_CANDIDATES]:
+                record_c = self.follow_up(unit, core, content, load, frames, digest, entry, local,
+                                          candidate, f"path:{entry['name']}:{candidate}")
+                if record_c and candidate in self.opened(record_c, 1):
+                    verdict = rules.rule_path(entry, dest, rules.Opened(candidate, record_c["id"]))
+                    if verdict:
+                        self.settle(emulator, content, core, index, entry, [verdict])
+                        moved = True
+                        break
+            if not moved:
+                verdict = rules.rule_never_opened(entry, [record["id"], alone["id"]], content.name)
+                self.settle(emulator, content, core, index, entry, [verdict])
+
+    @staticmethod
+    def opened(record: dict, position: int) -> set[str]:
+        out: set[str] = set()
+        for rep in record["variants"][position]["repetitions"]:
+            out |= {item["path"] for item in rep.get("files_opened") or ()}
+        return out
+
+    def follow_up(self, unit: Unit, core: Core, content: Content, load: Path, frames: list[str],
+                  digest: str, entry: dict, local: Path, dest: str, check: str) -> dict | None:
+        """The file staged at dest alone, against nothing there."""
+        key = self.check_key(core, content, check)
+        previous = self.state["checks"].get(unit.emulator, {}).get(key)
+        if not should_run(previous, core.sha256, digest):
+            return self.read_record(unit.emulator, (previous or {}).get("record"))
+        stem = f"{core.name}-{slug(content.name)}"
+        argv = self.probe_args("check", core, unit.emulator, slug(f"{check}-{stem}"), content, load)
+        argv += frames + ["--vary", f"{dest}=", "--vary", f"{dest}={local}",
+                          "--observable", "frame_hashes", "--repeat", "1",
+                          "--claim", f"{core.name} opens {entry['name']} as {dest}",
+                          "--method", (f"{entry['name']} staged as {dest}, against nothing there, "
+                                       f"{content.frames} frames of {content.name}. The files the "
+                                       f"core opened are read from strace.")]
+        result = self.probe(argv, f"{unit.emulator}-{stem}-{slug(check)}")
+        self.remember(unit.emulator, key, result, core, digest)
+        return result.record
+
+    def follow_aliases(self, unit: Unit, core: Core, content: Content, load: Path, frames: list[str],
+                       digest: str, index: int, entry: dict, local: Path, record: dict,
+                       absent_label: str) -> None:
+        """Names the core looked for, with the file absent, that no entry declares."""
+        declared = {e["name"] for e in unit.profile.get("files") or ()}
+        declared |= {a for e in unit.profile.get("files") or () for a in e.get("aliases") or ()}
+        suffix = Path(entry["name"]).suffix.casefold()
+        dest = entry_dest(entry)
+        folder = dest.rsplit("/", 1)[0] if "/" in dest else ""
+        probed: list[str] = []
+        for rep in rules.variant(record, absent_label)["repetitions"]:
+            for path in rep.get("files_probed_absent") or ():
+                name = path.rsplit("/", 1)[-1]
+                where = path.rsplit("/", 1)[0] if "/" in path else ""
+                if (where == folder and name not in declared and Path(name).suffix.casefold() == suffix
+                        and path not in probed):
+                    probed.append(path)
+        for candidate in probed[:MAX_ALIAS_CANDIDATES]:
+            found = self.follow_up(unit, core, content, load, frames, digest, entry, local, candidate,
+                                   f"alias:{entry['name']}:{candidate.rsplit('/', 1)[-1]}")
+            if found and candidate in self.opened(found, 1):
+                verdict = rules.rule_alias(self.reload_entry(unit, index), rules.Opened(candidate, found["id"]))
+                if verdict:
+                    self.settle(unit.emulator, content, core, index, self.reload_entry(unit, index), [verdict])
+
+    def run_variants(self, unit: Unit, core: Core, content: Content, load: Path, frames: list[str],
+                     digest: str, index: int, entry: dict, dest: str, primary: Path,
+                     variants: list[Path]) -> None:
+        key = self.check_key(core, content, f"variants:{entry['name']}")
+        if not should_run(self.state["checks"].get(unit.emulator, {}).get(key), core.sha256, digest):
+            return
+        stem = f"{core.name}-{slug(content.name)}"
+        argv = self.probe_args("check", core, unit.emulator, slug(f"variants-{entry['name']}-{stem}"),
+                               content, load) + frames
+        for path in [primary, *variants]:
+            argv += ["--vary", f"{dest}={path}"]
+        argv += ["--observable", "frame_hashes", "--repeat", str(self.settings.check_repeat),
+                 "--claim", f"the copies of {entry['name']} change what {core.name} shows on {content.name}",
+                 "--method", (f"Each copy the collection holds staged as {dest}, each run "
+                              f"{self.settings.check_repeat} times for {content.frames} frames, "
+                              f"compared on the sampled frame hashes.")]
+        result = self.probe(argv, f"{unit.emulator}-{stem}-variants")
+        self.remember(unit.emulator, key, result, core, digest)
+        if result.record:
+            status = result.record["check"]["result"]["status"]
+            verdict = rules.rule_variants(status, [v["label"] for v in result.record["variants"]],
+                                          entry, result.record["id"])
+            if verdict:
+                self.settle(unit.emulator, content, core, index, entry, [verdict])
+
+    # -- verdicts -----------------------------------------------------------------
+
+    def reload_entry(self, unit: Unit, index: int) -> dict:
+        path = self.paths.emulators / f"{unit.emulator}.yml"
+        unit.profile = yaml.safe_load(path.read_text(encoding="utf-8"))
+        return unit.profile["files"][index]
+
+    def settle(self, emulator: str, content: Content, core: Core, index: int, entry: dict,
+               verdicts: Sequence[rules.Verdict]) -> None:
+        """Apply what the table settles, queue the rest, resolve what now agrees."""
+        path = self.paths.emulators / f"{emulator}.yml"
+        for verdict in verdicts:
+            fresh = (yaml.safe_load(path.read_text(encoding="utf-8")).get("files") or [])[index]
+            if fresh.get("name") != entry.get("name"):
+                self.log(f"{emulator}: files[{index}] is no longer {entry.get('name')}, nothing applied")
+                return
+            says = rules.current(fresh, verdict.field) if verdict.field in rules.SETTLED_FIELDS \
+                else None
+            agrees = verdict.field in rules.SETTLED_FIELDS and rules.agrees(fresh, verdict)
+            if verdict.apply:
+                updates: dict[str, object] = {}
+                if not agrees or verdict.field not in fresh:
+                    updates[verdict.field] = verdict.value
+                evidence = rules.merge_evidence(fresh.get("evidence"), verdict)
+                if evidence != fresh.get("evidence"):
+                    updates["evidence"] = evidence
+                if updates:
+                    try:
+                        changed = campaign_profiles.write_fields(path, index, updates)
+                    except campaign_profiles.ProfileEditError as exc:
+                        self.finding(emulator, content, core, fresh, verdict, "open", says,
+                                     extra=f". Not written: {exc}")
+                        continue
+                    if changed and self.current:
+                        self.current.touched.add(path.relative_to(self.paths.root).as_posix())
+                if agrees:
+                    self.resolve(emulator, content, core, fresh, verdict, says)
+                else:
+                    self.finding(emulator, content, core, fresh, verdict, "applied", says)
+                continue
+            if verdict.rule == "never_opened":
+                self.finding(emulator, content, core, fresh, verdict, "flagged", None)
+            elif agrees:
+                self.resolve(emulator, content, core, fresh, verdict, says)
+            else:
+                self.finding(emulator, content, core, fresh, verdict, "open", says)
+
+    def finding_key(self, emulator: str, content: Content, entry: dict, verdict: rules.Verdict) -> str:
+        return f"{emulator}/{content.system}/{entry['name']}/{verdict.field}"
+
+    def latest_findings(self) -> dict[str, dict]:
+        latest: dict[str, dict] = {}
+        for line in mr.read_campaign(self.paths.root, mr.FINDINGS):
+            latest[line["key"]] = line
+        return latest
+
+    def finding(self, emulator: str, content: Content, core: Core, entry: dict,
+                verdict: rules.Verdict, status: str, says: object, extra: str = "") -> None:
+        key = self.finding_key(emulator, content, entry, verdict)
+        previous = self.latest_findings().get(key)
+        if previous and previous["status"] == status and previous["rule"] == verdict.rule \
+                and previous["run_shows"] == verdict.value and previous["profile_says"] == says:
+            return
+        line = mr.seal_line({
+            "schema_version": 1, "found_at": now_iso(), "key": key, "emulator": emulator,
+            "system": content.system, "file": entry["name"], "field": verdict.field,
+            "status": status, "rule": verdict.rule, "profile_says": says, "run_shows": verdict.value,
+            "statement": verdict.statement + extra, "evidence": list(verdict.evidence),
+            "core": {"file": core.path.name, "sha256": core.sha256,
+                     "library_version": self.library_version(emulator, verdict.evidence)},
+            "content": content.name,
+        }, "found_at")
+        path = self.paths.root / mr.records_path(mr.FINDINGS)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(mr.line_text(line) + "\n")
+        if self.current:
+            self.current.findings[status] = self.current.findings.get(status, 0) + 1
+            self.current.touched.add(mr.records_path(mr.FINDINGS))
+        self.log(f"finding {status}: {key}: {verdict.statement}")
+
+    def resolve(self, emulator: str, content: Content, core: Core, entry: dict,
+                verdict: rules.Verdict, says: object) -> None:
+        previous = self.latest_findings().get(self.finding_key(emulator, content, entry, verdict))
+        if previous and previous["status"] in ("open", "flagged"):
+            self.finding(emulator, content, core, entry, verdict, "resolved", says)
+
+    def library_version(self, emulator: str, ids: Sequence[str]) -> str | None:
+        for rid in ids:
+            record = self.read_record(emulator, rid)
+            if record:
+                return record["core"].get("library_version")
+        return None
+
+    # -- the pass -----------------------------------------------------------------
+
+    def units(self, only: set[str], system: str | None) -> list[Unit]:
+        out = []
+        for emulator, profile in sorted(self.profiles().items()):
+            cores = {str(c) for c in profile.get("cores") or ()}
+            if only and emulator not in only and not (cores & only):
+                continue
+            systems = set(profile.get("systems") or ())
+            if system and system not in systems:
+                continue
+            kind = str(profile.get("type") or "")
+            if kind in ("alias", "launcher", "test"):
+                continue
+            if "libretro" in kind or kind in ("game", "utility"):
+                out.append(Unit(emulator, profile, buildbot_only="libretro" not in kind))
+                continue
+            out.append(Unit(emulator, profile, pending="standalone"))
+        return out
+
+    def unit_contents(self, unit: Unit, system: str | None) -> list[Content]:
+        systems = [s for s in unit.profile.get("systems") or () if not system or s == system]
+        return [c for s in systems for c in self.content.get(s, ())]
+
+    def run(self, only: set[str], system: str | None, dry_run: bool = False,
+            commit_every: int = 0, commit: bool = False) -> Pass:
+        self.deadline = self.host.clock() + self.settings.budget
+        current = self.current = Pass(started=now_iso())
+        units = self.units(only, system)
+        if dry_run:
+            self.describe(units, system)
+            return current
+        for unit in units:
+            for content in self.unit_contents(unit, system):
+                self.store.hold(content, unit.emulator)
+        done_units = 0
+        try:
+            for unit in units:
+                self.run_unit(unit, system)
+                done_units += 1
+                save_state(self.paths.state, self.state)
+                if commit and commit_every and done_units % commit_every == 0:
+                    self.commit_batch()
+        except Pause as exc:
+            current.result = "budget" if str(exc) == "budget" else "paused"
+            current.detail = str(exc)
+            self.log(f"pass paused: {exc}")
+        except KeyboardInterrupt:
+            current.result, current.detail = "stopped", "interrupted"
+        finally:
+            for unit in units:
+                for content in self.unit_contents(unit, system):
+                    self.store.release(content, unit.emulator)
+            self.prune_logs()
+            self.write_run_line(current)
+            save_state(self.paths.state, self.state)
+        if commit:
+            self.commit_batch()
+        return current
+
+    def run_unit(self, unit: Unit, system: str | None) -> None:
+        emulator, profile = unit.emulator, unit.profile
+        digest = profile_digest(profile)
+        contents = self.unit_contents(unit, system)
+        systems = [s for s in profile.get("systems") or () if not system or s == system]
+        if unit.pending:
+            for s in systems:
+                self.pending(emulator, f"*/{s}/*", unit.pending, digest)
+            return
+        if not contents:
+            for s in systems:
+                self.pending(emulator, f"*/{s}/*", f"content: no test content listed for {s}", digest)
+            return
+        try:
+            cores = self.unit_cores(emulator, profile, unit.buildbot_only)
+        except Unavailable as exc:
+            for s in systems:
+                self.pending(emulator, f"*/{s}/*", str(exc), digest)
+            self.log(f"{emulator}: {exc}")
+            return
+        for s in systems:
+            self.state["checks"].setdefault(emulator, {}).pop(f"*/{s}/*", None)
+        for core in cores:
+            self.log(f"{emulator}: core {core.name} {core.sha256[:12]}")
+            for content in contents:
+                self.guard()
+                self.run_unit_content(Unit(emulator, profile, core.name), core, content, digest)
+        for content in contents:
+            self.store.release(content, emulator)
+        self.state["emulators"][emulator] = {"profile_digest": profile_digest(
+            yaml.safe_load((self.paths.emulators / f"{emulator}.yml").read_text(encoding="utf-8"))),
+            "at": now_iso()}
+        # The campaign's own edits do not make its checks run again.
+        new_digest = self.state["emulators"][emulator]["profile_digest"]
+        for entry in self.state["checks"].get(emulator, {}).values():
+            if entry.get("profile_digest") == digest:
+                entry["profile_digest"] = new_digest
+
+    def unit_cores(self, emulator: str, profile: dict, buildbot_only: bool = False) -> list[Core]:
+        names = self.cores.names(profile)
+        if names:
+            return [self.cores.nightly(name, profile) for name in names]
+        if buildbot_only:
+            raise Unavailable("standalone: no libretro core on the buildbot")
+        return [self.cores.build(emulator, profile)]
+
+    def describe(self, units: list[Unit], system: str | None) -> None:
+        for unit in units:
+            contents = self.unit_contents(unit, system)
+            if unit.pending:
+                print(f"{unit.emulator}: pending, {unit.pending}")
+            elif not contents:
+                print(f"{unit.emulator}: pending, no test content for "
+                      f"{', '.join(unit.profile.get('systems') or ())}")
+            else:
+                cores = sorted({str(c) for c in unit.profile.get("cores") or ()})
+                print(f"{unit.emulator}: cores {', '.join(cores)} on "
+                      f"{', '.join(c.name for c in contents)}")
+
+    def counts(self) -> tuple[dict[str, int], dict[str, int], list[dict]]:
+        counts = {DONE: 0, FAILED: 0, PENDING: 0}
+        reasons: dict[str, int] = {}
+        failed = []
+        for emulator, checks in sorted(self.state["checks"].items()):
+            for key, entry in sorted(checks.items()):
+                status = entry.get("status", PENDING)
+                counts[status] = counts.get(status, 0) + 1
+                if status == PENDING:
+                    reason = reason_class(entry.get("reason", ""))
+                    reasons[reason] = reasons.get(reason, 0) + 1
+                elif status == FAILED:
+                    failed.append({"emulator": emulator, "check": key, "reason": entry.get("reason", "")})
+        return counts, reasons, failed
+
+    def write_run_line(self, current: Pass) -> None:
+        counts, reasons, failed = self.counts()
+        line = mr.seal_line({
+            "schema_version": 1, "started_at": current.started, "ended_at": now_iso(),
+            "result": current.result, "detail": current.detail, "counts": counts,
+            "pending_reasons": reasons, "failed": failed, "records": current.records,
+            "findings": dict(sorted(current.findings.items())),
+        }, "started_at")
+        path = self.paths.root / mr.records_path(mr.CAMPAIGN_RUNS)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(mr.line_text(line) + "\n")
+        current.touched.add(mr.records_path(mr.CAMPAIGN_RUNS))
+        self.state["last_run"] = {k: line[k] for k in ("id", "started_at", "ended_at", "result", "detail")}
+
+    def prune_logs(self) -> None:
+        limit = time.time() - LOG_DAYS * 86400
+        for path in self.paths.logs.rglob("*.log") if self.paths.logs.is_dir() else ():
+            if path.stat().st_mtime < limit:
+                path.unlink()
+
+    # -- commits (direct runs, autorun commits by its own rules) -------------------
+
+    def plan_commits(self, dirty_at_start: set[str]) -> list[tuple[str, list[str]]]:
+        """(subject, paths) of each commit: the records, then one per profile."""
+        touched = sorted(self.current.touched if self.current else ())
+        records = [p for p in touched if p.startswith(f"{mr.RECORDS_DIR}/") and p not in dirty_at_start]
+        plan = []
+        if records:
+            plan.append(("chore: add campaign measurements", records))
+        for path in touched:
+            if path.startswith("emulators/") and path not in dirty_at_start:
+                subject = f"chore: apply tested fields to {Path(path).stem}"
+                if len(subject) > 50:
+                    subject = "chore: apply tested profile fields"
+                plan.append((subject, [path]))
+        return plan
+
+    def commit_batch(self, dry_run: bool = False) -> list[str]:
+        plan = self.plan_commits(self.dirty_at_start)
+        if dry_run or not plan:
+            for subject, paths in plan:
+                print(f"would commit {subject!r}: {', '.join(paths)}")
+            return []
+        if gate(self.paths.root, [Path(p).stem for _, ps in plan for p in ps if p.startswith("emulators/")],
+                self.host) != 0:
+            self.log("gate failed, nothing committed")
+            return []
+        made = []
+        for subject, paths in plan:
+            problems = autorun.check_subject(subject)
+            if problems:
+                raise ValueError(f"{subject!r}: {', '.join(problems)}")
+            made.append(autorun.commit_paths(self.paths.root, paths, autorun.CommitRule(subject, tuple(paths))))
+        if self.current:
+            self.current.touched.clear()
+        return made
+
+
+def reason_class(reason: str) -> str:
+    """A pending reason without its detail, to count them."""
+    head = reason.split(":", 1)[0].strip() if ":" in reason else reason
+    return head or "unknown"
+
+
+# --------------------------------------------------------------------------
+# Gate
+# --------------------------------------------------------------------------
+
+def gate(root: Path, emulators: Sequence[str], host: Host | None = None) -> int:
+    """The measurement tests, the schemas, and verify plus an emulator pack
+    for each profile the campaign changed."""
+    host = host or Host()
+    python = sys.executable
+    steps = [
+        [python, "-m", "unittest", "tests.test_measurements", "tests.test_campaign"],
+        [python, "scripts/validate_schemas.py", "--source-only"],
+    ]
+    for emulator in sorted(set(emulators)):
+        steps.append([python, "scripts/verify.py", "--emulator", emulator])
+        steps.append([python, "scripts/generate_pack.py", "--emulator", emulator, "--offline",
+                      "--output-dir", "tmp/campaign/packs"])
+    for argv in steps:
+        proc = host.run(argv, cwd=root, check=False)
+        if proc.returncode != 0:
+            print(f"gate: {' '.join(argv)} exited {proc.returncode}", file=sys.stderr)
+            return 1
+    shutil.rmtree(root / "tmp" / "campaign" / "packs", ignore_errors=True)
+    return 0
+
+
+def changed_profiles(root: Path) -> list[str]:
+    return [Path(p).stem for p in autorun.changed_files(root)
+            if p.startswith("emulators/") and p.endswith(".yml")]
+
+
+# --------------------------------------------------------------------------
+# Reports
+# --------------------------------------------------------------------------
+
+def status_report(campaign: Campaign) -> dict:
+    counts, reasons, failed = campaign.counts()
+    runs = mr.read_campaign(campaign.paths.root, mr.CAMPAIGN_RUNS)
+    per = {}
+    for emulator, checks in sorted(campaign.state["checks"].items()):
+        per[emulator] = {key: {k: v for k, v in entry.items() if k in ("status", "reason", "record", "at")}
+                         for key, entry in sorted(checks.items())}
+    return {"last_run": runs[-1] if runs else None, "counts": counts, "pending_reasons": reasons,
+            "failed": failed, "emulators": per}
+
+
+def render_status(report: dict) -> str:
+    lines = []
+    last = report["last_run"]
+    if last:
+        lines.append(f"last run {last['started_at']} to {last['ended_at']}: {last['result']}"
+                     + (f" ({last['detail']})" if last["detail"] else ""))
+    else:
+        lines.append("no run yet")
+    counts = report["counts"]
+    lines.append(f"{counts.get(DONE, 0)} done, {counts.get(FAILED, 0)} failed, "
+                 f"{counts.get(PENDING, 0)} pending")
+    for reason, number in sorted(report["pending_reasons"].items(), key=lambda kv: -kv[1]):
+        lines.append(f"  pending {number:5}  {reason}")
+    for item in report["failed"]:
+        lines.append(f"  FAILED {item['emulator']} {item['check']}: {item['reason']}")
+    for emulator, checks in report["emulators"].items():
+        ran = [k for k, v in checks.items() if v["status"] != PENDING]
+        if ran:
+            lines.append(f"{emulator}")
+            for key in ran:
+                entry = checks[key]
+                lines.append(f"  {entry['status']:7} {key}" + (f"  {entry['record']}" if entry.get("record") else "")
+                             + (f"  ({entry['reason']})" if entry.get("reason") else ""))
+    return "\n".join(lines)
+
+
+def open_findings(root: Path, everything: bool = False) -> list[dict]:
+    latest: dict[str, dict] = {}
+    for line in mr.read_campaign(root, mr.FINDINGS):
+        latest[line["key"]] = line
+    return [line for key, line in sorted(latest.items())
+            if everything or line["status"] in ("open", "flagged")]
+
+
+# --------------------------------------------------------------------------
+# Command line
+# --------------------------------------------------------------------------
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.split("\n\n")[0],
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = parser.add_subparsers(dest="command", required=True)
+    run_p = sub.add_parser("run", help="one pass: cores, content, checks, rules")
+    run_p.add_argument("--only", default="", help="emulator profiles or core names, comma-separated")
+    run_p.add_argument("--system", help="one system id")
+    run_p.add_argument("--budget", type=parse_budget, default=6 * 3600.0,
+                       help="stop starting checks after this long (6h, 90m, 3600s)")
+    run_p.add_argument("--max-load-wait", type=float, default=3600,
+                       help="seconds to wait for an idle host before pausing the pass")
+    run_p.add_argument("--min-free-gb", type=float, default=30, help="pause below this free space")
+    run_p.add_argument("--cache-cap-gb", type=float, default=20,
+                       help="content the campaign fetched is evicted past this size, oldest use first")
+    run_p.add_argument("--romfetch", default="",
+                       help=f"romfetch command (default: ${ROMFETCH_ENV}, else romfetch on PATH)")
+    run_p.add_argument("--offline", action="store_true", help="no buildbot, no romfetch, no build")
+    run_p.add_argument("--dry-run", action="store_true", help="print the plan, run nothing")
+    run_p.add_argument("--commit", action="store_true",
+                       help="commit records, findings and each changed profile behind the gate")
+    run_p.add_argument("--commit-every", type=int, default=0, metavar="N",
+                       help="with --commit, also commit after every N emulators")
+    status_p = sub.add_parser("status", help="done, failed and pending checks, and why")
+    status_p.add_argument("--json", action="store_true")
+    findings_p = sub.add_parser("findings", help="profile claims the runs contradict, open for review")
+    findings_p.add_argument("--all", action="store_true", help="applied and resolved too")
+    findings_p.add_argument("--json", action="store_true")
+    sub.add_parser("gate", help="tests, schemas, verify and pack of the changed profiles")
+    timer_p = sub.add_parser("install-timer",
+                             help="write the autorun units, the campaign job's timer among them")
+    timer_p.add_argument("--enable", action="store_true")
+    args = parser.parse_args(argv)
+
+    paths = Paths.default()
+    if args.command == "gate":
+        return gate(paths.root, changed_profiles(paths.root))
+    if args.command == "install-timer":
+        command = [sys.executable, str(ROOT / "scripts" / "autorun.py"), "install-timers"]
+        return subprocess.run(command + (["--enable"] if args.enable else []), check=False).returncode
+    if args.command == "findings":
+        lines = open_findings(paths.root, args.all)
+        if args.json:
+            print(json.dumps(lines, indent=2))
+        for line in [] if args.json else lines:
+            print(f"{line['status']:8} {line['key']}: profile says {json.dumps(line['profile_says'])}, "
+                  f"run shows {json.dumps(line['run_shows'])}. {line['statement']} "
+                  f"[{', '.join(line['evidence'])}]")
+        return 0
+    settings = Settings()
+    if args.command == "run":
+        settings = Settings(budget=args.budget, max_load_wait=args.max_load_wait,
+                            min_free_gb=args.min_free_gb, cache_cap_gb=args.cache_cap_gb,
+                            romfetch=args.romfetch, network=not args.offline)
+    campaign = Campaign(paths, settings)
+    if args.command == "status":
+        report = status_report(campaign)
+        print(json.dumps(report, indent=2) if args.json else render_status(report))
+        return 0
+    only = {item.strip() for item in args.only.split(",") if item.strip()}
+    if args.dry_run:
+        campaign.run(only, args.system, dry_run=True)
+        return 0
+    campaign.dirty_at_start = set(autorun.changed_files(paths.root)) if args.commit else set()
+    try:
+        with host_lock(campaign.lock_path):
+            current = campaign.run(only, args.system, commit_every=args.commit_every,
+                                   commit=args.commit)
+    except autorun.LockBusy as exc:
+        print(f"campaign: deferred, {exc}", file=sys.stderr)
+        return 75
+    counts, _, _ = campaign.counts()
+    print(json.dumps({"result": current.result, "detail": current.detail, "counts": counts,
+                      "records": len(current.records), "findings": current.findings}))
+    return 75 if current.result == "paused" else 0
+
+
+if __name__ == "__main__":
+    from common import run_cli
+
+    run_cli(main)

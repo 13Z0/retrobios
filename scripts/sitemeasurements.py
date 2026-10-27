@@ -140,6 +140,80 @@ def build_index(stored: list[mr.Stored], source: dict | None, profiles: dict,
     }
 
 
+def campaign_summary(root: Path, stored: list[mr.Stored], source: dict | None) -> dict:
+    """The last campaign pass and the findings still waiting for review.
+
+    A finding's history is its lines under one key: the latest line is its
+    state, and only an open or flagged one is listed.
+    """
+    runs = mr.read_campaign(root, mr.CAMPAIGN_RUNS)
+    latest: dict[str, dict] = {}
+    applied = 0
+    for line in mr.read_campaign(root, mr.FINDINGS):
+        latest[line["key"]] = line
+        applied += line["status"] == "applied"
+    where = {s.record["id"]: s for s in stored}
+    links = {}
+    for line in latest.values():
+        for rid in line["evidence"]:
+            found = where.get(rid)
+            if found and source and source.get("commit"):
+                links[rid] = permalink(source["repo"], source["commit"],
+                                       mr.records_path(found.emulator), found.line)
+    open_items = [{**line, "links": [links.get(rid) for rid in line["evidence"]]}
+                  for _, line in sorted(latest.items()) if line["status"] in ("open", "flagged")]
+    return {"last_run": runs[-1] if runs else None, "passes": len(runs), "applied": applied,
+            "open": open_items}
+
+
+def _value(value: object) -> str:
+    return f"`{json.dumps(value)}`" if value is not None else "nothing"
+
+
+def campaign_section(summary: dict | None) -> list[str]:
+    """The campaign's last pass and its open findings, for the explorer page."""
+    if not summary or not summary.get("last_run"):
+        return []
+    last = summary["last_run"]
+    counts = last["counts"]
+    lines = [
+        "## Campaign",
+        "",
+        f"Tests run by themselves every night on an idle computer ([how]({METHOD_PAGE})). "
+        f"Last pass: {last['ended_at'][:10]}, {_text(last['result'])}"
+        + (f" ({_text(last['detail'])})" if last.get("detail") else "") + ". "
+        f"{counts['done']} tests done, {counts['failed']} failed, {counts['pending']} waiting. "
+        f"{summary['applied']} profile fields were set from a run.",
+        "",
+    ]
+    if last["pending_reasons"]:
+        lines += ["| Waiting for | Tests |", "|-------------|------:|"]
+        lines += [f"| {_text(reason)} | {number} |"
+                  for reason, number in sorted(last["pending_reasons"].items(), key=lambda kv: (-kv[1], kv[0]))]
+        lines.append("")
+    if last["failed"]:
+        lines += ["Failed tests:", ""]
+        lines += [f"- {_text(item['emulator'])}, `{_text(item['check'])}`: {_text(item['reason'])}"
+                  for item in last["failed"]]
+        lines.append("")
+    lines += ["### Open findings", ""]
+    if not summary["open"]:
+        lines += ["None: every finding was settled by a rule or resolved by a later run.", ""]
+        return lines
+    lines += ["A finding is what a run showed that no rule settles. It waits for someone to "
+              "read the emulator's code.", ""]
+    for item in summary["open"]:
+        records = ", ".join(f"[{rid}]({link})" if link else f"`{rid}`"
+                            for rid, link in zip(item["evidence"], item["links"]))
+        lines += [
+            f"- **{_text(item['emulator'])}**, `{_text(item['file'])}`, `{_text(item['field'])}` "
+            f"({item['status']}): the profile says {_value(item['profile_says'])}, the run shows "
+            f"{_value(item['run_shows'])}. {_text(item['statement'])}. Records: {records}.",
+            "",
+        ]
+    return lines
+
+
 # --------------------------------------------------------------------------
 # SQLite
 # --------------------------------------------------------------------------
@@ -360,6 +434,7 @@ def build(public: Path, root: Path = ROOT, emulators_dir: Path = ROOT / "emulato
     source = {"repo": repo, "commit": commit or (records_commit(root) if stored else None)}
     profiles = load_profiles(emulators_dir)
     index = build_index(stored, source, profiles, system_names)
+    index["campaign"] = campaign_summary(root, stored, source)
     paths = [public / INDEX_PATH]
     (public / INDEX_PATH).parent.mkdir(parents=True, exist_ok=True)
     write_if_changed(str(public / INDEX_PATH),
@@ -485,6 +560,7 @@ def generate_explorer_page(index: dict) -> str:
         "",
         "<MeasurementsExplorer />",
         "",
+        *campaign_section(index.get("campaign")),
     ])
 
 

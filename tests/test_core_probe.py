@@ -154,6 +154,12 @@ class ParsingTests(unittest.TestCase):
         self.assertEqual(described, f"{library.name} sha256:{core_probe.file_digest(library, 'sha256')}")
         self.assertEqual(core_probe.describe_env_value("2000-01-01 00:00:00"), "2000-01-01 00:00:00")
 
+    def test_uniform_frame(self) -> None:
+        self.assertTrue(core_probe.uniform_frame(b"", 2))
+        self.assertTrue(core_probe.uniform_frame(b"\x01\x02" * 8, 2))
+        self.assertFalse(core_probe.uniform_frame(b"\x01\x02" * 7 + b"\x01\x03", 2))
+        self.assertFalse(core_probe.uniform_frame(b"\x00\x00\x00\x00\x00\x00\x00\x01", 4))
+
     def test_cue_tracks(self) -> None:
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp" / "tests") as tmp:
             cue = Path(tmp, "d.cue")
@@ -265,8 +271,8 @@ class FakeCoreTests(unittest.TestCase):
                           for p in record_dir.rglob("*") if p.is_file()], ["measurements/fake.jsonl"])
         line = json.loads((record_dir / "measurements" / "fake.jsonl").read_text())
         self.assertEqual(measurement_records.check_line(line), [])
-        # The line is the record the run printed, with its id.
-        self.assertEqual({k: v for k, v in line.items() if k != "id"}, record)
+        # The line is the record the run printed, id included.
+        self.assertEqual(line, record)
         try:
             from jsonschema import Draft202012Validator
         except ImportError:

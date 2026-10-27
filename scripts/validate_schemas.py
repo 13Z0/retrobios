@@ -601,6 +601,8 @@ def _measurement_errors(root: Path | None = None) -> list[str]:
     root = root or ROOT
     validator = _validator("core-probe-record.schema.json")
     out: list[str] = []
+    campaign = {mr.records_path(name): _validator(schema)
+                for name, (_, schema) in mr.CAMPAIGN_FILES.items()}
     for path, file in sorted(mr.tree_files(root).items()):
         if not path.endswith(".jsonl"):
             continue
@@ -610,10 +612,12 @@ def _measurement_errors(root: Path | None = None) -> list[str]:
             except json.JSONDecodeError as exc:
                 out.append(f"{path}:{number}: {exc}")
                 continue
-            out.extend(_errors(validator, record, f"{path}:{number}"))
+            out.extend(_errors(campaign.get(path, validator), record, f"{path}:{number}"))
     if not out:
         try:
             mr.read_records(root)
+            for name in mr.CAMPAIGN_FILES:
+                mr.read_campaign(root, name)
         except mr.MeasurementsError as exc:
             out.append(str(exc))
     return out

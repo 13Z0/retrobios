@@ -54,6 +54,7 @@ JOBS_FILE = REPO_ROOT / "automation" / "jobs.yml"
 AUTORUN_DIR = Path(".cache") / "autorun"
 DEFAULT_LOCK = Path.home() / ".local" / "state" / "retrobios" / "auto.lock"
 LOCK_ENV = "RETROBIOS_AUTO_LOCK"
+LOCK_HELD_ENV = "RETROBIOS_AUTO_LOCK_HELD"
 
 BRANCH = "autorun"
 REMOTE = "origin"
@@ -726,6 +727,9 @@ def set_alert(state: dict, name: str, active: bool, detail: str, now: str) -> No
 def job_env(job: Job) -> dict[str, str]:
     env = os.environ.copy()
     env["RETROBIOS_AUTO"] = "1"
+    if job.lock:
+        # A step that takes the host lock itself (campaign.py) runs under ours.
+        env[LOCK_HELD_ENV] = "1"
     if job.network:
         sys.path.insert(0, str(REPO_ROOT / "scripts"))
         from common import github_token

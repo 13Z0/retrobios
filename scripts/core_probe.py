@@ -269,6 +269,14 @@ def render_printf(fmt: bytes, args: Sequence[int]) -> str:
     return "".join(out).rstrip("\n")
 
 
+def uniform_frame(frame: bytes, pixel_bytes: int) -> bool:
+    """True for a frame of one colour, an empty one included: a screen that
+    shows nothing of the game."""
+    if len(frame) <= pixel_bytes:
+        return True
+    return frame == frame[:pixel_bytes] * (len(frame) // pixel_bytes)
+
+
 def png_bytes(width: int, height: int, rgb: bytes) -> bytes:
     def chunk(tag: bytes, body: bytes) -> bytes:
         return struct.pack(">I", len(body)) + tag + body + struct.pack(">I", zlib.crc32(tag + body))
@@ -359,6 +367,7 @@ class Frontend:
         self.video = hashlib.sha1()
         self.audio = hashlib.sha1()
         self.frame_hashes: list[list] = []
+        self.uniform: set[str] = set()
         self.logs: list[dict] = []
         self.presses: list[tuple[int, int, int]] = [tuple(p) for p in spec["presses"]]
         self.unanswered: dict[int, int] = {}
@@ -433,7 +442,10 @@ class Frontend:
         self.video.update(struct.pack("<II", *self.last_size) + hashlib.sha1(self.last_frame).digest())
         every = self.spec["frame_hash_every"]
         if every and self.frame % every == 0:
-            self.frame_hashes.append([self.frame, hashlib.sha1(self.last_frame).hexdigest()])
+            digest = hashlib.sha1(self.last_frame).hexdigest()
+            self.frame_hashes.append([self.frame, digest])
+            if digest not in self.uniform and uniform_frame(self.last_frame, PIXEL_BYTES[self.pixel_format]):
+                self.uniform.add(digest)
             png_dir = self.spec.get("png_dir")
             if png_dir and self.last_frame:
                 rgb = to_rgb(self.pixel_format, *self.last_size, self.last_frame)
@@ -514,6 +526,7 @@ def run_worker(spec: dict) -> dict:
         observables[f"state:{name}"] = state_vars.get(name)
     if spec["frame_hash_every"]:
         observables["frame_hashes"] = front.frame_hashes
+        observables["uniform_frames"] = sorted(front.uniform)
     core.retro_unload_game()
     core.retro_deinit()
     return {
@@ -584,7 +597,7 @@ def frontend_identity() -> dict:
 
 def core_identity(args: argparse.Namespace) -> dict:
     core = Path(args.core)
-    return {
+    identity = {
         "file": core.name,
         "sha256": file_digest(core, "sha256"),
         "repo": args.core_repo,
@@ -592,6 +605,9 @@ def core_identity(args: argparse.Namespace) -> dict:
         "build_command": args.build_command,
         "compiler": elf_comment(core) or None,
     }
+    if args.core_artifact:
+        identity["artifact"] = args.core_artifact
+    return identity
 
 
 # --------------------------------------------------------------------------
@@ -769,6 +785,8 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument("--core-repo", help="source repository URL of the core build")
     common.add_argument("--core-commit", help="commit the core was built from")
     common.add_argument("--build-command", help="command and flags that built the core")
+    common.add_argument("--core-artifact", metavar="URL",
+                        help="where the .so was downloaded from, such as a buildbot nightly")
     common.add_argument("--record", metavar="DIR", nargs="?", const=str(ROOT),
                         help="append the record as one line of measurements/<emulator>.jsonl "
                              "in the checkout DIR (default: this one)")
@@ -841,7 +859,7 @@ def validate_args(args: argparse.Namespace) -> list[str]:
                 problems.append(f"--vary {dest}={src}: not a file")
         names = set(BASE_OBSERVABLES) | {f"state:{v}" for v in args.state_var}
         if args.frame_hash_every:
-            names.add("frame_hashes")
+            names.update(("frame_hashes", "uniform_frames"))
         if args.observable not in names:
             problems.append(f"--observable {args.observable}: not one of {', '.join(sorted(names))}")
     return problems
@@ -936,8 +954,9 @@ def default_subject(record: dict) -> str:
     return f"{record['kind']}-{slugify(content, 30)}-{digest}"
 
 
-def write_record(directory: Path, full: dict) -> Path:
-    """Append the record, with its id, to its emulator's .jsonl."""
+def write_record(directory: Path, full: dict) -> tuple[Path, dict]:
+    """Append the record, with its id, to its emulator's .jsonl. Returns the
+    file and the record as written."""
     from measurement_records import line_text, parse_lines, records_path, seal  # noqa: PLC0415
 
     sealed = seal(full)
@@ -948,7 +967,7 @@ def write_record(directory: Path, full: dict) -> Path:
     lines.parent.mkdir(parents=True, exist_ok=True)
     with lines.open("a", encoding="utf-8") as handle:
         handle.write(line_text(sealed) + "\n")
-    return lines
+    return lines, sealed
 
 
 def probe(args: argparse.Namespace) -> int:
@@ -999,7 +1018,7 @@ def probe(args: argparse.Namespace) -> int:
             "repetitions": repetitions,
             "presses": [{"frame": f, "button": b, "length": n} for f, b, n in args.press],
             "observables": list(BASE_OBSERVABLES) + [f"state:{v}" for v in args.state_var]
-                           + (["frame_hashes"] if args.frame_hash_every else []),
+                           + (["frame_hashes", "uniform_frames"] if args.frame_hash_every else []),
             "frame_hash_every": args.frame_hash_every,
             "joypad_ports": args.joypad_ports,
         },
@@ -1025,7 +1044,7 @@ def probe(args: argparse.Namespace) -> int:
     record["subject"] = args.subject or default_subject(record)
     if args.record:
         try:
-            lines = write_record(Path(args.record), record)
+            lines, record = write_record(Path(args.record), record)
         except ProbeError as exc:
             print(f"ERROR: {exc}", file=sys.stderr)
             return 2

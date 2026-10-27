@@ -125,6 +125,11 @@
             "string",
             "null"
           ]
+        },
+        "artifact": {
+          "type": "string",
+          "format": "uri",
+          "description": "Where the .so was downloaded from, such as a libretro buildbot nightly. Absent for a core built locally."
         }
       }
     },

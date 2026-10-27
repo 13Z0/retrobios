@@ -1,0 +1,42 @@
+# Test content of the real-condition campaign (scripts/campaign.py), per system.
+#
+# Each entry names a catalog entry, never a file: `name` is the exact Redump or
+# No-Intro name romfetch fetches and verifies (`romfetch get <romfetch> <name>`),
+# and `reason` says why this game serves the test. Content is read from
+# .cache/test-content/<romfetch>/<name>/ with its identity.json, and never
+# enters git. A record keeps only its identity (catalog name, sha1, tracks).
+#
+#   region            the territory of the disc or cartridge: the BIOS entry the
+#                     boot test varies is the one whose `region:` holds it, or one
+#                     without `region:`
+#   load              the file handed to the core: `cue` (the .cue sheet) or a
+#                     file name inside the folder; by default the single file
+#   frames            frames run per repetition, the same with and without the file
+#   frame_hash_every  frames between two sampled frame hashes
+#   pinned            never deleted by the campaign, whoever fetched it
+#   boot_file         (per system) the declared file the boot test varies, when a
+#                     profile declares it under this name or an alias
+#
+# The checks a game is used for are the boot test (no file against the
+# declared file), the files test (every declared file staged, which ones the
+# core opens) and the benchmark.
+
+systems:
+  sony-playstation:
+    romfetch: psx
+    # The file the boot test varies, when the profile declares it: the US
+    # BIOS of a US disc, the same file for every core so the runs compare.
+    boot_file: scph5501.bin
+    content:
+      - name: "Bust-A-Move 2 - Arcade Edition (USA)"
+        catalog: redump
+        reason: >-
+          A US disc that goes through the BIOS shell and its licence screen, then
+          reaches the publisher logos and the attract mode within a minute, with
+          no button pressed. Several static screens, so a run with and a run
+          without the BIOS can be compared frame by frame.
+        region: north-america
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+        pinned: true
