@@ -796,6 +796,9 @@ python scripts/sync_measurements.py                   # write the site's measure
 python scripts/sync_measurements.py --clone DIR --pin FILE  # another clone or pin file
 ```
 
+`--clone` and `--pin` name another clone and pin file than
+`.cache/measurements/` and `measurements-pin.json`.
+
 `--fetch` is the only step on the network. It refuses a remote whose history
 changed or removed a line the pin holds, or rewrote a data file: a correction
 is a new line naming the record it `supersedes`. Every line must hash to its

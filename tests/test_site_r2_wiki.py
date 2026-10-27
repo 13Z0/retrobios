@@ -376,6 +376,8 @@ class InstallerOptionsAtAGlance(unittest.TestCase):
             with self.subTest(option=flag):
                 self.assertIn(f"[`{flag}`](#option-{flag.lstrip('-')})", listed)
         self.assertNotIn("<!-- installer-options", text)
+        # The markers of scripts/generate_installer_doc.py stay in the source.
+        self.assertNotIn("generated:", text)
 
 
 if __name__ == "__main__":
