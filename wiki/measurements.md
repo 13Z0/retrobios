@@ -27,6 +27,14 @@ result updates the emulator's page and names the test as proof.
 Anything else waits on the [Measurements](../measurements.md) page for someone
 to read the code.
 
+## Packs
+
+Packs are tested the way you install them, one platform at a time. A
+maintainer starts the run. The script puts a pack in an empty BIOS folder,
+from the archive and with the installer, then starts a game with that
+folder. Each platform's page shows the result under **Tested**, with any file
+the emulator looked for and did not find.
+
 ## What a result says
 
 - **same**: the file changed nothing that was compared.
