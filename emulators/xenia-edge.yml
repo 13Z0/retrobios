@@ -6,11 +6,11 @@ source:
   libretro: "https://git.libretro.com/libretro/xenia-libretro"
 upstream: "https://github.com/has207/xenia-edge"
 source_commit:
-  standalone: "d881a29125978b4eea6bf44f6ed8c33f8aea8c33"
+  standalone: "71804222514022ce80b757ca79c4ddb2dcf4a06c"
   libretro: "f23c14c717ef274516f29c9b5e97d6a9db28643d"
-profiled_date: "2026-10-23"
+profiled_date: "2026-10-27"
 core_version:
-  standalone: "edge"
+  standalone: "7180422"
   libretro: "8dc77b0"
 display_name: "Xenia Edge (Xbox 360)"
 cores:
@@ -89,7 +89,7 @@ notes: |
   under the storage root, or the folder the xefu_path cvar names
   (src/xenia/emulator.cc:151-165, 861-863). When xbox.xex is missing the
   launch fails, the folder is created and the window names the missing file
-  (src/xenia/emulator.cc:882-895, src/xenia/app/emulator_window.cc:2013-2023).
+  (src/xenia/emulator.cc:886-899, src/xenia/app/emulator_window.cc:2013-2023).
 
   The fork's data ships inside the executable. assets/font, the Inter UI font
   and the M PLUS 1p Japanese font, and assets/icon are linked in by xe_embed_binary_assets and the 33
@@ -121,7 +121,7 @@ notes: |
   plugins/<title id>/plugins.toml behind allow_plugins,
   which defaults false (src/xenia/patcher/plugin_loader.cc:16-38, 58-73), content
   (src/xenia/app/xenia_main.cc:572-575), scratch, cache0, cache1, cache and mu
-  (src/xenia/emulator.cc:1651-1719). portable.txt next to the executable
+  (src/xenia/emulator.cc:1655-1723). portable.txt next to the executable
   keeps the storage root there instead of the user folder
   (src/xenia/app/xenia_main.cc:533-547).
 
@@ -239,7 +239,7 @@ files:
     system: microsoft-xbox
     required: true
     description: "XeFu launcher from the Compatibility folder of an Xbox 360 hard drive"
-    source_ref: "src/xenia/emulator.cc:160-165, src/xenia/emulator.cc:882-895"
+    source_ref: "src/xenia/emulator.cc:160-165, src/xenia/emulator.cc:886-899"
     note: >-
       Every original Xbox game starts through it, and it picks the XeFu build
       for the game as the console does. Tested with is_regular_file only. The
@@ -253,7 +253,7 @@ files:
     system: microsoft-xbox
     required: true
     description: "Compatibility folder of an Xbox 360 hard drive: xbox.xex, the xefu*.xex builds and xefutitle*.xex"
-    source_ref: "src/xenia/emulator.cc:2297-2306, src/xenia/emulator.cc:2332-2346, src/xenia/cpu/xex_module.cc:995-1019, src/xenia/cpu/xex_module.cc:1118-1143"
+    source_ref: "src/xenia/emulator.cc:2301-2310, src/xenia/emulator.cc:2336-2350, src/xenia/cpu/xex_module.cc:995-1019, src/xenia/cpu/xex_module.cc:1118-1143"
     note: >-
       Mounted as \Device\Harddisk0\SystemPartition\Compatibility, where XeFu
       also writes its config.bin. xefu2019.xex and the xefu2021 builds import
