@@ -882,6 +882,19 @@ class Findings(Workspace):
         self.assertIn("would commit 'chore: add campaign measurements'", out.getvalue())
 
 
+class ContentFile(Workspace):
+    def test_a_content_list_can_be_named(self) -> None:
+        other = self.tmp / "other.yml"
+        other.write_text(yaml.safe_dump({"systems": {"fake-system": {
+            "romfetch": "fakesys", "content": [{"name": "Other Game (Japan)", "catalog": "redump",
+                                                "reason": "r"}]}}}), encoding="utf-8")
+        out = io.StringIO()
+        with unittest.mock.patch.object(campaign.Paths, "default", return_value=self.paths), \
+                contextlib.redirect_stdout(out):
+            self.assertEqual(campaign.main(["run", "--dry-run", "--content-file", str(other)]), 0)
+        self.assertIn("Other Game (Japan)", out.getvalue())
+
+
 class InstallTimer(unittest.TestCase):
     def test_writes_the_units_and_enables_only_when_asked(self) -> None:
         calls = []

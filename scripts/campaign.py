@@ -1805,6 +1805,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     scope.add_argument("--romfetch", default="",
                        help=f"romfetch command (default: ${ROMFETCH_ENV}, else romfetch on PATH)")
     scope.add_argument("--offline", action="store_true", help="no buildbot, no romfetch, no build")
+    scope.add_argument("--content-file", default=str(CONTENT_FILE),
+                       help="the test content list (default: tests/campaign/content.yml)")
     scope.add_argument("--allow-unsandboxed", action="store_true",
                        help="run cores and builds without bubblewrap when it is missing (refused by default)")
     run_p = sub.add_parser("run", parents=[scope], help="one pass: cores, content, checks, rules")
@@ -1862,6 +1864,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     elif args.command == "references":
         settings = Settings(romfetch=args.romfetch, network=not args.offline,
                             allow_unsandboxed=args.allow_unsandboxed)
+    if args.command in ("run", "references"):
+        paths.content_file = Path(args.content_file)
     campaign = Campaign(paths, settings)
     if args.command == "status":
         report = status_report(campaign)

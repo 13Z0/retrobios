@@ -983,6 +983,7 @@ python scripts/campaign.py run --only beetle_psx,swanstation --dry-run
 python scripts/campaign.py run --commit --commit-every 10
 python scripts/campaign.py run --only pcsx_rearmed --bench   # with benchmarks
 python scripts/campaign.py references --only beetle_psx --system sony-playstation
+python scripts/campaign.py references --only beetle_saturn --content-file other.yml   # another content list
 python scripts/campaign.py status            # done, failed, pending, and why
 python scripts/campaign.py findings          # what waits for review
 python scripts/campaign.py gate              # the checks behind a commit
