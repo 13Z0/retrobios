@@ -280,7 +280,7 @@
 
 
 
- Enter Create  Esc Back
+ Enter Create  Esc Quit
 === create 40x15
  RetroBIOS: Create the folder?
 
@@ -296,7 +296,7 @@
 
 
 
- Enter Create  Esc Back
+ Enter Create  Esc Quit
 === create 80x24
  RetroBIOS: Create the folder?
 
@@ -321,7 +321,7 @@
 
 
 
- Enter Create  Esc Back
+ Enter Create  Esc Quit
 === checking 40x12
  RetroBIOS: Checking
 
@@ -334,7 +334,7 @@
 
 
 
- Ctrl-C Quit  Esc Back
+ Ctrl-C Quit  Esc Quit
 === checking 40x15
  RetroBIOS: Checking
 
@@ -350,7 +350,7 @@
 
 
 
- Ctrl-C Quit  Esc Back
+ Ctrl-C Quit  Esc Quit
 === checking 80x24
  RetroBIOS: Checking
 
@@ -375,7 +375,7 @@
 
 
 
- Ctrl-C Quit  Esc Back
+ Ctrl-C Quit  Esc Quit
 === plan 40x12
  RetroBIOS: RetroArch
 

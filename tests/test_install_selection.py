@@ -390,7 +390,8 @@ class DecliningTheSizePointsAtTheChoice(unittest.TestCase):
         self.assertNotIn("see --help", out)
 
     def test_options_given_keep_the_option_advice(self):
-        out = self._run(["n"], "--system", "sony-playstation")
+        # The menu is shown with --system too (tui_audit_9 P3-8): Enter keeps it.
+        out = self._run(["", "n"], "--system", "sony-playstation")
         self.assertIn("--system, --core and --region install less", out)
 
 
@@ -593,7 +594,7 @@ class TheOneLinerNarrows(unittest.TestCase):
         with FakeRepository() as repo:
             proc = repo.run("--system", "sony-playstation", "--region", "us")
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-            self.assertIn("Narrowed 5 -> 2 files", proc.stdout)
+            self.assertIn("Narrowed 5 to 2 files", proc.stdout)
             self.assertEqual(repo.installed(), ["pcsx/extra.bin", "scph5501.bin"])
 
     def test_a_core_choice_keeps_the_platform_list(self):
@@ -1448,13 +1449,13 @@ class ThePlatformsOwnListAlone(unittest.TestCase):
         with FakeRepository() as repo:
             proc = repo.run("--declared-only")
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-            self.assertIn("5 -> 3 files", proc.stdout)
+            self.assertIn("5 to 3 files", proc.stdout)
             self.assertEqual(repo.installed(),
                              ["gba_bios.bin", "scph5500.bin", "scph5501.bin"])
         for mode in ("--check", "--dry-run"):
             with self.subTest(mode=mode), FakeRepository() as repo:
                 proc = repo.run("--declared-only", mode)
-                self.assertIn("5 -> 3 files", proc.stdout, proc.stderr)
+                self.assertIn("5 to 3 files", proc.stdout, proc.stderr)
                 self.assertIn("0/3 present", proc.stdout)
                 self.assertEqual(repo.installed(), [])
 
@@ -1476,7 +1477,7 @@ class ThePlatformsOwnListAlone(unittest.TestCase):
             proc = repo.run("--declared-only", "--dry-run", "--manifest",
                             str(repo.root / "install" / "retroarch.json"))
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-            self.assertIn("5 -> 3 files", proc.stdout)
+            self.assertIn("5 to 3 files", proc.stdout)
 
     def test_every_mode_that_cannot_apply_it_refuses_it(self):
         """Applied or refused, never ignored: each of these would have run

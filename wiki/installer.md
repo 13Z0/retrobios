@@ -199,6 +199,10 @@ It opens only for an install, at a terminal of at least 40 columns and 12 rows
 that is not `TERM=dumb`. A listing, `--check`, `--dry-run`, `--events`,
 `--quiet`, `--no-input`, `--yes` and `--restore` keep the plain output. Options
 given on the command line fill the screens in advance and are kept as they are.
+`--system` is said on the plan (`For 1 of 12 systems (--system)`), and
+**Choose systems** reads every system again with those ticked. The `--plain`
+menu shows it the same way, Enter keeping what `--system` named and `c`
+choosing anew.
 
 - `--tui` asks for the full screen, and names the reason when it cannot open
   (code 2).
@@ -940,7 +944,7 @@ own in the setup list (**Onion, SD card**), without the filter, and in the
 `--plain` menu, beside the devices that run it (Miyoo Mini, Miyoo Mini Plus).
 The filter takes a device name, and so does the `--plain` menu, which lists
 the setups it matches by number. With nothing found here, the SD card rows
-come right after RetroArch: Onion is four presses away with L1 and R1 at
+come right after RetroArch: Onion comes into view after five presses of L1 and R1 at
 40x12, where it was row 30 of 34. That row, `--platform onion` and the menu
 all ask for the card: one card of that system mounted when the run starts is
 taken, otherwise
@@ -975,14 +979,22 @@ home folder or above the default, no default is taken: the frontend's own
 configuration there may name another folder, so the run asks for `--dest`.
 
 With nothing detected, the setup screen lists the platforms to choose from,
-and `--plain` gives the same list numbered, in the same order. Both find the
-SD cards mounted here, the screen under **Found on this machine**. With
-several found, the setup screen lists each one, and `--plain` asks which. A
-platform named, or read from a list or a pack, and found nowhere gets its
-folder asked, its usual one under Enter, the mounted drives numbered. On a
-computer Batocera and Recalbox have none: the `bios` folder of their SHARE
-drive or network share is theirs. A device several systems run lists them
-all. Both need a terminal: piped into a script
+and `--plain` gives the same list numbered, in the same order, with `--dest`
+too. Both find the SD cards mounted here, the screen under **Found on this
+machine**. With a setup found, the setup screen lists it with **Another setup
+or folder**, and `--plain` asks the same: Enter takes the first, `o` opens the
+numbered list and then the folder, `q` quits. A platform named, or read from
+a list or a pack, and found nowhere gets its folder asked, its usual one under
+Enter, the mounted drives numbered. A folder typed is read from the current
+one when it is not a full path, and named in full after. `q` quits there too
+(a folder named `q` is typed `./q`), and Enter with no default says what to
+type. On a computer Batocera and Recalbox have no default: the drives are
+numbered by their `bios` folder (`SHARE: bios`), as the screen lists them,
+and a drive whose files name another system is left out. Without questions
+the run stops there with an `error` event and a `--dest` example. A device
+several systems run lists them all, and a model finds the systems that list
+its family (`RG353V` finds ROCKNIX, which lists `RG353`). Both need a
+terminal: piped into a script
 with no platform to install for, it prints the manual invocation, in the form
 the run was started with (the one-line command for a one-liner user), and
 exits 1.
@@ -1386,7 +1398,7 @@ other schemas under `api/v1/schemas/`.
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `unsearched` | `folder`, `reason`, `message` | Before `detect`, once for each folder the search for setups could not look in, this user being refused it. What it would hold counts as absent, and the other places are still searched: `detect` then lists what they hold, and an empty `platforms` after an `unsearched` line means nothing was found where the installer could look. `reason` says why in words (`Permission denied`), `message` says it in a sentence |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). The platform named with `--platform` is found nowhere and no folder can be assumed for it: a card system with no card named, a portable emulator, or no usual folder on this system or one set aside behind a folder this user cannot open (`stage` is `detect`, `reason` `not_found`). A `--dest` refused as the card of the system named carries the same `stage` and `reason`: another system's card, a folder inside a card, a drive with none of the files its card always has, or a folder that does not exist. `message` says it in words, and is the only thing that tells these cases apart |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. The BIOS folder cannot be created (`stage` is `dest`, `reason` `not_writable`): a `summary` follows with what the run installed before it. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). The platform named with `--platform` is found nowhere and no folder can be assumed for it: a card system with no card named, a portable emulator, Batocera or Recalbox named on a computer (their folder is the `bios` folder of their SHARE drive), or no usual folder on this system or one set aside behind a folder this user cannot open (`stage` is `detect`, `reason` `not_found`). A `--dest` refused as the card of the system named carries the same `stage` and `reason`: another system's card, a folder inside a card, a drive with none of the files its card always has, or a folder that does not exist. `message` says it in words, and is the only thing that tells these cases apart |
 | `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
 | `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |

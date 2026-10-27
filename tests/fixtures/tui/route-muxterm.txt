@@ -334,7 +334,7 @@
 
 
 
- Start Create  B Back
+ Start Create  B Quit
 === create 40x15
  RetroBIOS: Create the folder?
 
@@ -350,7 +350,7 @@
 
 
 
- Start Create  B Back
+ Start Create  B Quit
 === create 80x24
  RetroBIOS: Create the folder?
 
@@ -375,7 +375,7 @@
 
 
 
- Start Create  B Back
+ Start Create  B Quit
 === checking 40x12
  RetroBIOS: Checking
 
@@ -388,7 +388,7 @@
 
 
 
- Menu Quit  B Back
+ Menu Quit  B Quit
 === checking 40x15
  RetroBIOS: Checking
 
@@ -404,7 +404,7 @@
 
 
 
- Menu Quit  B Back
+ Menu Quit  B Quit
 === checking 80x24
  RetroBIOS: Checking
 
@@ -429,7 +429,7 @@
 
 
 
- Menu Quit  B Back
+ Menu Quit  B Quit
 === plan 40x12
  RetroBIOS: RetroArch
 
