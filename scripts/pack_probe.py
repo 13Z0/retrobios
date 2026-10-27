@@ -350,11 +350,17 @@ def map_run(layout: Layout, staged: set[str], rep: dict, profile: dict) -> tuple
     by_name: dict[str, list[str]] = {}
     for rel in layout.files:
         by_name.setdefault(rel.rsplit("/", 1)[-1].casefold(), []).append(rel)
+    # An entry the core found under one of its names asks for nothing more:
+    # BlastEm tries tmss.md, then reads bios_MD.bin, both names of one entry.
+    read = {item["path"] for item in opened if not item["created"]}
+    satisfied = {entry["name"] for entry in libretro_entries(profile) if read & set(entry_paths(entry))}
     findings = []
     for path in rep.get("files_probed_absent") or ():
         names = declaring(profile, path)
         if path in layout.files:
             findings.append({"kind": "not_staged", "path": path, "declared_by": names, "paths": [path]})
+            continue
+        if names and set(names) <= satisfied:
             continue
         elsewhere = sorted(p for p in by_name.get(path.rsplit("/", 1)[-1].casefold(), ()) if p != path)
         if elsewhere:

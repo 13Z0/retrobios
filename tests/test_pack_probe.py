@@ -144,6 +144,15 @@ class Mapping(unittest.TestCase):
             {"kind": "missing_undeclared", "path": "cfg.ini", "declared_by": [], "paths": []},
             {"kind": "unlisted", "path": "extra.bin", "declared_by": [], "paths": []}])
 
+    def test_a_name_tried_before_an_alias_that_is_read_is_no_finding(self) -> None:
+        profile = {"files": [{"name": "tmss.md", "aliases": ["bios_MD.bin"]}, {"name": "bios_CD_U.bin"}]}
+        lay = layout({"bios_MD.bin": 1})
+        rep = {"files_opened": [{"path": "bios_MD.bin", "sha1_after": "a" * 40}],
+               "files_probed_absent": ["tmss.md", "bios_CD_U.bin"]}
+        _, findings = pp.map_run(lay, {"bios_MD.bin"}, rep, profile)
+        self.assertEqual(findings, [{"kind": "missing_declared", "path": "bios_CD_U.bin",
+                                     "declared_by": ["bios_CD_U.bin"], "paths": []}])
+
     def test_manifest_entries(self) -> None:
         manifest = {"files": [{"dest": "a.bin"}],
                     "case_variants": [{"dest": "A.BIN"}, {"dest": "a.bin"}],

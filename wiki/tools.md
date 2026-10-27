@@ -1047,6 +1047,9 @@ with the pack entry that put it there, and the findings:
 | `not_staged` | the folder holds it, but the staging did not close within 6 runs |
 | `unlisted` | the core opened a file of the folder that no pack member or manifest entry names |
 
+A name the core tried before it read another name of the same profile entry
+is no finding: BlastEm tries `tmss.md`, then reads `bios_MD.bin`.
+
 The run cannot see two things the platform does: core options a frontend
 sets (Batocera's configgen writes some), and the files the installer puts in
 the save directory, counted in `source.save_dir_files`. The Measurements page
