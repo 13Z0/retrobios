@@ -298,7 +298,11 @@ class OracleTests(unittest.TestCase):
                 record = records.get(block["recorded_from"])
                 self.assertIsNotNone(record, f"{item['name']} on {library}: {block['recorded_from']}")
                 self.assertEqual(record["inputs"]["content"]["sha1"], item["sha1"], item["name"])
-                for rep in record["variants"][0]["repetitions"]:
+                # A check names the variant that ran the full set, a run has one.
+                label = block.get("variant")
+                chosen = next(v for v in record["variants"] if v["label"] == label) if label \
+                    else record["variants"][0]
+                for rep in chosen["repetitions"]:
                     oracle = core_probe.oracle_for(data, item["sha1"], rep["library_name"])
                     verdict, evidence = core_probe.judge(rep, oracle)
                     self.assertEqual(verdict, "boots", f"{item['name']} on {library}: {evidence}")
