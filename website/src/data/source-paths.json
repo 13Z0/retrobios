@@ -3103,11 +3103,6 @@
   "sound/rhythmc.c",
   "sound/soundrom.c"
  ],
- "github.com/ekeeke/Genesis-Plus-GX@c16a3ac716aead3e892b240ddeab8211f9c3a281": [
-  "README.md",
-  "core/loadrom.c",
-  "libretro/libretro.c"
- ],
  "github.com/ekeeke/Genesis-Plus-GX@c7ecd07f0a08db1cdd6871d788476bfac55be638": [
   "core/cart_hw/areplay.c",
   "core/cart_hw/ggenie.c",
@@ -3126,6 +3121,7 @@
   "libretro/libretro.c"
  ],
  "github.com/ekeeke/Genesis-Plus-GX@f3cb0a5115a2b29426495ae35c2d45c404e650df": [
+  "README.md",
   "core/cart_hw/areplay.c",
   "core/cart_hw/ggenie.c",
   "core/cart_hw/md_cart.c",
