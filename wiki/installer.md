@@ -197,7 +197,12 @@ progress, and a second one stops at once. Select+Start on a handheld ends the
 installer with a signal (SIGTERM), which stops it the same way. Either way the
 result says how many files were installed, and it stays printed in the terminal
 once the screen closes, with the command that repeats the run. A run that failed
-keeps its log and names it, and every other run leaves nothing behind.
+keeps its log and names it, and every other run leaves nothing behind. A path
+or a command on the result is never split inside a word: one longer than the
+window takes a line of its own, which the terminal folds, and a command breaks
+only between its arguments. Every path a run names is spelled the way its BIOS
+folder was named, the backup folder and the save directory included
+(`/sdcard/RetroArch` on Android, not the `/storage/emulated/0` it links to).
 
 It opens only for an install, at a terminal of at least 40 columns and 12 rows
 (a smaller window says so, with its size) whose `TERM` is set, is not `dumb`
@@ -1527,7 +1532,7 @@ other schemas under `api/v1/schemas/`.
 | `data` | `platform`, `files`, `bytes` | Right after `declared`: the data-tree files to fetch (the `data_missing` of `check`) and the bytes they write once in place |
 | `found` | `platform`, `dest`, `folder`, `path`, `member`, `reason` | Each file to install that this machine already holds, after `check` and before anything is written, in `--check` and `--dry-run` too. `folder` is the `--from` folder as given, or the `bios_dir` of the check when the BIOS folder holds the file at another place, and then `reason` says where in words (`nested folder: ...` for a misplaced file, `the same file is at ...` for one the list installs there too). `path` is the file, and `member` the ZIP member holding the bytes when `path` is an archive, an empty string otherwise. Its copy is reported by a `downloaded` event |
 | `unreadable` | `platform`, `folder`, `path`, `member`, `reason` | Each file in a `--from` folder that could not be read and may be one the run still needs, right after the `found` events: its size is that of a file no copy was found for, or unknown (a folder that could not be listed, a ZIP that would not open). `member` names the ZIP member, or is empty. `reason` says why in words (`Permission denied`, `it is encrypted, a password is needed`) |
-| `saves` | `platform`, `files`, `folder` | After `choices` and before `checking`, when the files the run installs (once `--system` and the other choices narrowed the list) hold some read from the frontend's save directory and that directory is known: how many, and the `folder` they go to, where `<system>` and `<core>` stand for one folder per system or per core. When it is not known, the files are counted in the summary's `skipped` instead (`no_save_directory`) |
+| `saves` | `platform`, `files`, `folder` | After `choices` and before `checking`, when the files the run installs (once `--system` and the other choices narrowed the list) hold some read from the frontend's save directory and that directory is known: how many, and the `folder` they go to, where `<system>` and `<core>` stand for one folder per system or per core (the screen and `--plain` say it in words: "a folder per core under /sdcard/RetroArch/saves"). When it is not known, the files are counted in the summary's `skipped` instead (`no_save_directory`) |
 | `download` | `platform`, `files`, `bytes` | Before the downloads start. Counts the files copied from this machine too |
 | `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
 | `transfer` | `bytes_local`, `bytes_network` | Right after each `progress` event, and once when the files of a `download` event are done. It splits `bytes_done`: `bytes_local` came from this machine (a copy found by `--from` or in the BIOS folder, the pack, a partial copy resumed), `bytes_network` from the network. A download speed is `bytes_network` over the time elapsed |

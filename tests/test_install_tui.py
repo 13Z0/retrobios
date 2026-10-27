@@ -970,7 +970,9 @@ class Views(unittest.TestCase):
                     lines = install.tui_view(state, cols, rows)
                     self.assertEqual(len(lines), rows)
                     for line in lines:
-                        self.assertLessEqual(install.cell_width(line), cols, line)
+                        # A path or a command kept whole folds in the terminal.
+                        if line.style != "long":
+                            self.assertLessEqual(install.cell_width(line), cols, line)
                         self.assertTrue(all(ord(c) < 128 or c in "ファミコン" for c in line),
                                         line)
                     self.assertLess(install.cell_width(lines[-1]), cols)
@@ -993,7 +995,8 @@ class Views(unittest.TestCase):
                         state.cols, state.rows = cols, rows
                         lines = install.tui_view(state, cols, rows)
                         for line in lines:
-                            self.assertLessEqual(install.cell_width(line), cols, line)
+                            if line.style != "long":
+                                self.assertLessEqual(install.cell_width(line), cols, line)
                         self.assertLess(install.cell_width(lines[-1]), cols)
                     text = "\n".join(line.rstrip() for line in lines) + "\n"
                     both = (GOLDEN / f"{name}-{cols}x{rows}.txt").read_text(encoding="utf-8")
@@ -1763,9 +1766,9 @@ class AuditRoundTwo(unittest.TestCase):
         real = install._text_lines
         calls = []
 
-        def counted(items, width):
+        def counted(items, width, whole=False):
             calls.append(len(items))
-            return real(items, width)
+            return real(items, width, whole)
 
         with mock.patch.object(install, "_text_lines", counted):
             press(state, "end")
@@ -3438,11 +3441,14 @@ class ThePagerCountsLines(unittest.TestCase):
             with self.subTest(size=f"{cols}x{rows}"):
                 state = self.result_state(cols, rows)
                 width = min(cols, install.TUI_MAX_WIDTH) - 2
-                wrapped = install._text_lines(install._pager_items(state), width)
+                # The result keeps a path whole (whole=True): its rows after
+                # it are left to the terminal's folding ("cont").
+                wrapped = install._text_lines(install._pager_items(state), width, True)
+                last = [line for line in wrapped if line.style != "cont"][-1]
                 press(state, "end")
                 screen = install.tui_view(state, cols, rows)
                 body = [line.rstrip() for line in screen[2:-1]]
-                self.assertIn(" " + str(wrapped[-1]).rstrip(), body)
+                self.assertIn(" " + str(last).rstrip(), body)
                 if len(wrapped) > rows - 3:
                     self.assertTrue(any(re.fullmatch(rf" \d+-{len(wrapped)} of {len(wrapped)}",
                                                      line) for line in body), body)
@@ -3581,8 +3587,9 @@ class AuditFive(unittest.TestCase):
         state = checked_state()
         saves = {"files": 1, "folder": str(HOME / ".config" / "retroarch" / "saves" / "<core>")}
         lines = install._saves_lines(state, saves)
-        self.assertEqual(lines, ["1 file read from RetroArch's save directory goes to:",
-                                 "~/.config/retroarch/saves/<core>"])
+        # In words: "saves/<core>" read as a folder named <core>.
+        self.assertEqual(lines, ["1 file read from RetroArch's save directory goes to a "
+                                 "folder per core under:", "~/.config/retroarch/saves"])
 
     def test_the_shared_note_is_one_line(self):
         state = self.long_list()
@@ -3798,7 +3805,8 @@ class TheSaveFolderLineFollowsTheChoice(unittest.TestCase):
 
     SAVES = {"event": "saves", "platform": "retroarch", "files": 1,
              "folder": "/home/user/MySaves/<core>"}
-    LINE = "1 file read from RetroArch's save directory goes to: ~/MySaves/<core>"
+    LINE = ("1 file read from RetroArch's save directory goes to a folder per core under: "
+            "~/MySaves")
 
     def said(self, lines) -> str:
         return " ".join(" ".join(lines).split())
@@ -5403,7 +5411,11 @@ class GameDataIsNoFirmwareAlarm(unittest.TestCase):
         self.assertEqual(len(lines), 2, lines)
         self.assertIn("needed to start its emulator: missing.bin", lines[0])
         self.assertNotIn("Anims.j2a", lines[0])
-        self.assertIn("Game data not available here", lines[1])
+        # The folder it goes in, and what game data is (the Android run of
+        # 2026-10-27 said neither).
+        self.assertIn("Not available here, game data: files a game or a game engine reads",
+                      lines[1])
+        self.assertIn(f"into {SYSTEM_DIR / 'jazz2' / 'Source'}{os.sep}", lines[1])
         self.assertIn("Anims.j2a (Jazz Jackrabbit 2)", lines[1])
 
 
@@ -8867,6 +8879,96 @@ class AuditEighteenAndEleven(unittest.TestCase):
         self.assertIn(self.ABOUT, block)
         self.assertIn("Recalbox SHARE drive", block)
         self.assertEqual(generate_installer_doc.render(page), page)
+
+class TheAndroidResultReadsWhole(unittest.TestCase):
+    """A run on Android 17 under Termux: the result named /sdcard and
+    /storage/emulated/0 for one storage, saves/<core> read as a folder named
+    <core>, a backup path and the restore command were split inside a word,
+    and the game data line named no folder."""
+
+    def setUp(self):
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        self.root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, self.root, True)
+        for patcher in (mock.patch.dict(install._SPELLED, {}, clear=True),):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def test_one_storage_is_named_one_way(self):
+        real = self.root / "storage" / "emulated" / "0"
+        (real / "RetroArch" / "system").mkdir(parents=True)
+        link = self.root / "sdcard"
+        link.symlink_to(real)
+        bios = link / "RetroArch" / "system"
+        self.assertEqual(install._destination_path(bios, "a.bin"),
+                         real.resolve() / "RetroArch" / "system" / "a.bin")
+        kept = install.KeptFiles()
+        run = kept.plan(install._kept_slot(bios, "a.bin")[0], 3)
+        folder = kept.summary()[0]["folder"]
+        self.assertTrue(folder.startswith(str(link / "RetroArch" / "retrobios-backup")),
+                        folder)
+        self.assertEqual(install.shown_path(run), folder)
+        self.assertNotIn(str(real), install.shown_path(real.resolve() / "RetroArch" / "saves"))
+
+    def test_a_folder_per_core_is_said_in_words(self):
+        where = "/sdcard/RetroArch/saves/<core>"
+        line = install.saves_line("RetroArch", 106, where)
+        self.assertEqual(line, "106 files read from RetroArch's save directory go to a "
+                               "folder per core under /sdcard/RetroArch/saves")
+        self.assertEqual(install.save_where_words("/s/saves/<system>"),
+                         ("a folder per system under", "/s/saves"))
+        state = checked_state()
+        screen = install._saves_lines(state, {"files": 106, "folder": where})
+        self.assertNotIn("<core>", " ".join(screen))
+        self.assertIn("a folder per core under:", screen[0])
+
+    def result(self, cols: int) -> list:
+        state = _installed_state(Path("/sdcard/RetroArch/system"))
+        state.summary["kept"] = [{"folder": "/sdcard/RetroArch/retrobios-backup/"
+                                            "20261027-223524", "files": 3, "bytes": 10}]
+        state.cols, state.rows = cols, 40
+        return install.tui_view(state, cols, 40)
+
+    def test_a_path_or_a_command_is_never_split_inside_a_word(self):
+        for cols in (40, 50, 80):
+            with self.subTest(cols=cols):
+                lines = [str(line).strip() for line in self.result(cols)]
+                self.assertIn("/sdcard/RetroArch/retrobios-backup/20261027-223524", lines)
+                words = [word for line in lines for word in line.split()]
+                self.assertIn("--restore", words)
+                self.assertTrue(all(not word.endswith("/") for word in words), words)
+        state = _installed_state(Path("/sdcard/RetroArch/system"))
+        command = install._styled("curl -fsSL https://raw.githubusercontent.com/Abdess/"
+                                  "retrobios/main/install.sh | sh -s -- --restore "
+                                  "'/storage/emulated/0/a b/20261027-223524'", "command")
+        state.stack.append("result")
+        pieces = install._text_lines([command], 38, whole=True)
+        joined = [str(piece).strip() for piece in pieces if piece.style != "cont"]
+        self.assertIn("https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh",
+                      joined)
+        self.assertIn("'/storage/emulated/0/a b/20261027-223524'", joined)
+
+    def test_a_long_line_folds_in_the_terminal(self):
+        terminal = install._TuiTerminal.__new__(install._TuiTerminal)
+        terminal.frame, written = [], []
+        terminal.write = written.append
+        long = install._styled("x" * 50, "long")
+        terminal.draw([long, install._styled("", "cont"), install._styled("next")], 40)
+        out = "".join(written)
+        self.assertIn("x" * 50, out)
+        self.assertNotIn("\x1b[2;1H", out)
+        self.assertIn("\x1b[3;1H", out)
+
+    def test_game_data_names_the_folder_it_goes_in(self):
+        entry = {"dest": "jazz2/Source/Anims.j2a", "required": True, "category": "game_data",
+                 "system": "jazz-jackrabbit-2"}
+        bios = Path("/sdcard/RetroArch/system")
+        lines = install._omission_lines(1, [entry], bios)
+        said = " ".join(lines)
+        self.assertIn(f"into {bios / 'jazz2' / 'Source'}{os.sep}", said)
+        self.assertIn("files a game or a game engine reads", said)
+        self.assertNotIn("Needed to start an emulator", said)
+
 
 class NothingFromOutsideReachesTheTerminalRaw(unittest.TestCase):
     """code_audit_18 P2-1: a pack's member path, a --manifest dest, the

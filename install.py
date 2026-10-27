@@ -940,7 +940,7 @@ def _host_path(text: str) -> Path:
 def shown_path(path: Path | str) -> str:
     """A path as the person names it: under WSL, /mnt/d/BIOS is D:\\BIOS, the
     drive the card row calls D:."""
-    text = str(path)
+    text = str(spelled(path)) if os.path.isabs(str(path)) else str(path)
     root = _WSL["root"].rstrip("/") + "/"
     match = (re.match(rf"^{re.escape(root)}([a-z])(?:/(.*))?$", text)
              if _WSL["active"] else None)
@@ -2820,6 +2820,38 @@ def _record_moved_folders(root: Path, retrodeck_json: Path) -> None:
         _MOVED_FOLDERS[root] = moved
 
 
+# Resolved folder -> the same folder as the run names it: /sdcard is a link
+# to /storage/emulated/0 on Android, and one result named the BIOS folder
+# /sdcard/RetroArch/system and its backup in /storage/emulated/0/RetroArch.
+_SPELLED: dict[Path, Path] = {}
+
+
+def _note_spelling(root: Path) -> Path:
+    """root resolved, its own spelling recorded for every path shown below
+    the link it goes through (spelled)."""
+    given, resolved = Path(os.path.abspath(root)), root.resolve()
+    named, real = given, resolved
+    while named.name == real.name and named != named.parent and real != real.parent:
+        named, real = named.parent, real.parent
+    if named != real:
+        try:
+            if Path(os.path.realpath(named)) == real:
+                _SPELLED[real] = named
+        except (OSError, ValueError):
+            pass
+    return resolved
+
+
+def spelled(path: Path | str) -> Path:
+    """path in the form the run names its folders: below a link the BIOS
+    folder was named through, the link's name (_note_spelling)."""
+    path = Path(path)
+    for real in sorted(_SPELLED, key=lambda each: len(each.parts), reverse=True):
+        if path == real or real in path.parents:
+            return _SPELLED[real] / path.relative_to(real)
+    return path
+
+
 def _destination_path(root: Path, value: object) -> Path:
     """Place a manifest destination below *root*.
 
@@ -2833,7 +2865,7 @@ def _destination_path(root: Path, value: object) -> Path:
     moved = _MOVED_FOLDERS.get(root, {})
     if len(relative.parts) > 1 and relative.parts[0] in moved:
         return moved[relative.parts[0]].resolve() / Path(*relative.parts[1:])
-    return root.resolve() / Path(*relative.parts)
+    return _note_spelling(root) / Path(*relative.parts)
 
 
 class SavePlace(NamedTuple):
@@ -4329,7 +4361,9 @@ def place_save_entries(
     place = save_directory_for(bios_path, manifest, override)
     if isinstance(place, SavePlace):
         _SAVE_DIRS[bios_path] = place
-        where = str(place.directory)
+        # Named through the link the BIOS folder was named through.
+        _note_spelling(bios_path)
+        where = str(spelled(place.directory))
         if (manifest.get("save_directory") or {}).get("by_system"):
             where += f"{os.sep}<system>"
         if place.by_core:
@@ -4736,7 +4770,9 @@ class KeptFiles:
     def summary(self) -> list[dict]:
         """[{folder, files, bytes}], one per run folder, for the report and events."""
         with self._lock:
-            return [{"folder": str(run), "files": files, "bytes": size}
+            # Named as the run names its BIOS folder: /sdcard, not the
+            # /storage/emulated/0 the link resolves to.
+            return [{"folder": str(spelled(run)), "files": files, "bytes": size}
                     for run, (files, size) in sorted(self.counts.items())]
 
 
@@ -4781,7 +4817,7 @@ def _kept_slot(root: Path, value: object) -> tuple[Path, PurePosixPath]:
     moved = _MOVED_FOLDERS.get(root, {})
     if len(relative.parts) > 1 and relative.parts[0] in moved:
         return moved[relative.parts[0]].resolve(), PurePosixPath(*relative.parts[1:])
-    return root.resolve(), relative
+    return _note_spelling(root), relative
 
 
 def plan_kept(entries: list[dict], root: Path) -> dict[Path, list[int]]:
@@ -5721,7 +5757,8 @@ def _report_outcome(
     if omitted > len(unplaced):
         for line in _omission_lines(omitted - len(unplaced),
                                     [entry for entry in omitted_entries or []
-                                     if entry.get("reason") != "no_save_directory"]):
+                                     if entry.get("reason") != "no_save_directory"],
+                                    Path(paths[0]) if len(paths) == 1 else None):
             print(line)
     for line in hints or []:
         print(line)
@@ -5760,18 +5797,47 @@ def _offline_failure(reason: str) -> bool:
     return OFFLINE_WORDS in reason or "makes no network request" in reason
 
 
-def _omission_lines(count: int, entries: list[dict]) -> list[str]:
+# What game data is, said wherever it is counted or chosen.
+GAME_DATA_WORDS = "game data: files a game or a game engine reads, of no use to the other cores"
+
+
+def game_data_missing(names: str, count: int, folders: list[Path]) -> str:
+    """The game data a run could not supply, and the folder each goes in:
+    "Copy it from your own copy of the game" named no folder."""
+    one = count == 1
+    places = list(dict.fromkeys(f"{shown_path(folder)}{os.sep}" for folder in folders))
+    where = (f" into {', '.join(places[:3])}" + (f" and {len(places) - 3} more folders"
+                                                  if len(places) > 3 else "")) if places else ""
+    return (f"Not available here, {GAME_DATA_WORDS}, read by "
+            f"{'its game' if one else 'their games'}: {names}. Copy "
+            f"{'it' if one else 'them'} from your own copy of the game{where}.")
+
+
+def _omission_lines(count: int, entries: list[dict], bios_path: Path | None = None) -> list[str]:
     """What was skipped, the files an emulator cannot start without first.
 
     "395 file are not in the collection yet" named nothing and gave one
-    reason for all, while the manifest says which file and why.
+    reason for all, while the manifest says which file and why. Game data
+    is said apart, with the folder it goes in, as the screen says it.
     """
     one = count == 1
     lines = [f"{_plural(count, 'file')} {'was' if one else 'were'} not installed: "
              f"the collection does not hold {'it' if one else 'them'}, or its copy "
              f"fails {'its' if one else 'their'} check."]
-    lines += _needed_lines([e for e in entries if e.get("required")],
+    needed = [e for e in entries if e.get("required")]
+    games = [e for e in needed if e.get("category") == GAME_DATA]
+    lines += _needed_lines([e for e in needed if e.get("category") != GAME_DATA],
                            "Needed to start an emulator")
+    if games:
+        names = ", ".join(str(e.get("dest") or e.get("name")) for e in games[:3]) + (
+            f" and {len(games) - 3} more" if len(games) > 3 else "")
+        folders = []
+        for entry in games:
+            try:
+                folders.append(_entry_path(bios_path, entry).parent if bios_path else None)
+            except ValueError:
+                continue
+        lines.append("  " + game_data_missing(names, len(games), [f for f in folders if f]))
     return lines
 
 
@@ -7165,10 +7231,32 @@ def space_words(needed: int, free: int, card: bool) -> str:
             "choose another folder.")
 
 
+_SAVE_SPLITS = {(True, True): "a folder per system, then one per core, under",
+                (True, False): "a folder per system under",
+                (False, True): "a folder per core under"}
+
+
+def save_where_words(where: str) -> tuple[str, str]:
+    """(words, folder) for where the saves event says files go: the folder
+    without the <system> and <core> it ends with, and those said in words.
+    "go to: /sdcard/RetroArch/saves/<core>" read as a folder named <core>."""
+    parts = re.split(r"[\\/]", where)
+    by_core = bool(parts) and parts[-1] == "<core>"
+    if by_core:
+        parts = parts[:-1]
+    by_system = bool(parts) and parts[-1] == "<system>"
+    if by_system:
+        parts = parts[:-1]
+    folder = where[:len(os.sep.join(parts))] if (by_core or by_system) else where
+    return _SAVE_SPLITS.get((by_system, by_core), ""), folder
+
+
 def saves_line(display: str, count: int, where: str) -> str:
     """Where the files read from the frontend's save directory go."""
+    words, folder = save_where_words(where)
     return (f"{_plural(count, 'file')} read from {display}'s save directory "
-            f"{'goes' if count == 1 else 'go'} to {where}")
+            f"{'goes' if count == 1 else 'go'} to {words + ' ' if words else ''}"
+            f"{shown_path(folder)}")
 
 
 def unplaced_line(display: str, count: int, remedy: str) -> str:
@@ -12477,15 +12565,27 @@ def _glued_words(text: str) -> list[str]:
     return words
 
 
-def _wrap(text: str, width: int, indent: str = "  ") -> list[str]:
-    """Lines of at most width cells, the ones after the first indented."""
+# A shell word: quoted parts kept with what they quote.
+_SHELL_WORD = re.compile(r"""(?:'[^']*'|"[^"]*"|[^\s'"]+|['"])+""")
+
+
+def _wrap(text: str, width: int, indent: str = "  ", whole: str = "") -> list[str]:
+    """Lines of at most width cells, the ones after the first indented.
+
+    whole keeps every word whole, a longer one alone on a line wider than
+    width, which the terminal folds and a copy keeps in one piece: "text"
+    for prose and paths, "command" for a command, whose words are shell
+    words. A restore command was drawn split inside its URL and its folder,
+    and a backup folder's dated name fell on a line of its own."""
     if cell_width(text) <= width:
         return [text]
     lead = text[:len(text) - len(text.lstrip(" "))]
     lines: list[str] = []
     line = ""
-    for word in _glued_words(text):
-        for index, piece in enumerate(_split_word(word, width - len(lead + indent))):
+    words = (_SHELL_WORD.findall(text) if whole == "command" else _glued_words(text))
+    for word in words:
+        pieces = [word] if whole else _split_word(word, width - len(lead + indent))
+        for index, piece in enumerate(pieces):
             prefix = lead + indent if lines else lead
             # The rest of a word broken at a slash joins it without a space:
             # a path was drawn "retroarch/ system", and copied wrong.
@@ -13435,7 +13535,7 @@ def _save_folder_words(state: TuiState) -> str:
     if given is not None:
         return _short_path(given, state.home)
     if state.saves and state.saves.get("folder"):
-        return _short_path(Path(state.saves["folder"]), state.home)
+        return _short_path(Path(save_where_words(state.saves["folder"])[1]), state.home)
     return "not known"
 
 
@@ -15277,17 +15377,32 @@ def _row_line(row: TuiRow, focused: bool, width: int) -> TuiLine:
     return _styled(text, "focus" if focused else row.style)
 
 
-def _text_lines(items: list, width: int) -> list[TuiLine]:
+def _text_lines(items: list, width: int, whole: bool = False) -> list[TuiLine]:
+    """Items as screen lines. whole keeps every word, path and command
+    whole (_wrap): a line wider than width is drawn as it is, the terminal
+    folding it, with the rows it takes after it left to it ("cont")."""
     lines: list[TuiLine] = []
     for item in items:
         style = getattr(item, "style", "")
-        if style == "path":
+        if style == "path" and not whole:
             # One line, cut in its middle: the end of a path tells it apart.
             lines.append(_styled(middle(str(item), width)))
             continue
-        for piece in _wrap(str(item), width):
-            lines.append(_styled(fit(piece, width), style))
+        kind = ("command" if style == "command" else "text") if whole else ""
+        for piece in _wrap(str(item), width, whole=kind):
+            if cell_width(piece) <= width:
+                lines.append(_styled(fit(piece, width), "" if style in ("path", "command")
+                                     else style))
+                continue
+            lines.append(_styled(piece, "long"))
+            lines += [_styled("", "cont")] * (-(-cell_width(piece) // width) - 1)
     return lines
+
+
+def _whole_words(state: TuiState) -> bool:
+    """Whether a pager keeps paths and commands whole: the result and the
+    command line, the screens a person copies from."""
+    return state.screen in ("result", "command")
 
 
 def _scrolled(lines: list[TuiLine], first: int, height: int, lead: int = 0) -> list[TuiLine]:
@@ -15367,15 +15482,16 @@ def _pager(
     """
     starts = _pager_starts(state, items, width)
     total = starts[-1]
+    whole = _whole_words(state)
     if total <= height:
-        return _text_lines(items, width)
+        return _text_lines(items, width, whole)
     room = max(1, height - 1)
     first = max(0, min(state.focus.get(state.screen, 0), total - room))
     index = bisect.bisect_right(starts, first) - 1
     offset = first - starts[index]
     lines: list[TuiLine] = []
     while index < len(items) and starts[index] < first + room:
-        lines += _text_lines([items[index]], width)
+        lines += _text_lines([items[index]], width, whole)
         index += 1
     skip = starts[lead] if lead else 0
     start = max(1, first + 1 - skip)
@@ -15387,13 +15503,15 @@ def _pager_starts(state: TuiState, items: list, width: int) -> list[int]:
     """The line each item starts on once wrapped at width, and the total
     last, kept while the items stay the same. An item that fits is one line
     without being wrapped."""
-    key = (width, [(str(item), getattr(item, "style", "")) for item in items])
+    whole = _whole_words(state)
+    key = (width, whole, [(str(item), getattr(item, "style", "")) for item in items])
     if state.pager_cache is not None and state.pager_cache[0] == key:
         return state.pager_cache[1]
     starts = [0]
     for item in items:
-        fits = getattr(item, "style", "") == "path" or cell_width(str(item)) <= width
-        starts.append(starts[-1] + (1 if fits else len(_text_lines([item], width))))
+        fits = ((getattr(item, "style", "") == "path" and not whole)
+                or cell_width(str(item)) <= width)
+        starts.append(starts[-1] + (1 if fits else len(_text_lines([item], width, whole))))
     state.pager_cache = (key, starts)
     return starts
 
@@ -15596,11 +15714,12 @@ def _saves_lines(state: TuiState, saves: dict | None) -> list[str]:
         return []
     name = display_name(state.platform) if state.platform else "the frontend"
     count = saves["files"]
+    words, folder = save_where_words(saves["folder"])
     # The folder alone is cut in the middle: cut with the sentence, it
     # lost "directory goes to" even at 80 columns.
     return [f"{_plural(count, 'file')} read from {name}'s save directory "
-            f"{'goes' if count == 1 else 'go'} to:",
-            _short_path(Path(saves['folder']), state.home)]
+            f"{'goes' if count == 1 else 'go'} to{' ' + words if words else ''}:",
+            _short_path(Path(folder), state.home)]
 
 
 def _unplaced_lines(summary: dict | None, state: TuiState,
@@ -15984,7 +16103,7 @@ def _pager_items(state: TuiState) -> list:
     if state.screen == "result":
         return tui_outcome(state)[1]
     if state.screen == "command":
-        return ["The same choice without questions:", "", tui_command(state)]
+        return ["The same choice without questions:", "", _styled(tui_command(state), "command")]
     if state.running:
         items = ["Counting the files for these choices..."]
     elif state.dry is None:
@@ -16198,10 +16317,8 @@ def _unavailable_lines(state: TuiState) -> list[str]:
                      f"{'its emulator' if len(firmware) == 1 else 'their emulators'}: "
                      f"{named(firmware)}. Your own copy goes in the BIOS folder.")
     if games:
-        lines.append(f"Game data not available here, read by "
-                     f"{'its game' if len(games) == 1 else 'their games'}: "
-                     f"{named(games)}. Copy {'it' if len(games) == 1 else 'them'} from "
-                     f"your own copy of the game.")
+        lines.append(game_data_missing(named(games), len(games), [
+            (state.dest / entry["dest"]).parent for entry in games] if state.dest else []))
     return lines
 
 
@@ -16309,8 +16426,9 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     for kept in summary.get("kept") or []:
         lines.append(f"The files it replaced are kept in {kept['folder']}")
         if typed:
-            lines.append(f"To put them back: {run.launcher()} --restore "
-                         f"{run.word(str(kept['folder']))}")
+            # Broken between its words only, never inside one (_wrap).
+            lines.append(_styled(f"To put them back: {run.launcher()} --restore "
+                                 f"{run.word(str(kept['folder']))}", "command"))
     if summary and not summary.get("interrupted") and installed + up_to_date:
         lines += _unavailable_lines(state)
     for group in summary.get("left_out") or []:
@@ -16318,7 +16436,7 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     lines += _unplaced_lines(summary, state)
     lines += _tui_app_lines(state)
     if typed:
-        lines += ["Same choice without questions:", f"  {tui_command(state)}"]
+        lines += ["Same choice without questions:", _styled(f"  {tui_command(state)}", "command")]
     if tui_keeps_log(state):
         lines.append(f"Details: {state.log}")
     return title, lines
@@ -16527,7 +16645,10 @@ def tui_view(state: TuiState, cols: int, rows: int) -> list[str]:
         hint = ("Enter Done", "Esc Clear")
     hint = _route_hint(state, _back_hint(state, hint))
     lines = [_styled(fit(f" RetroBIOS: {title}", cols), "title"), _styled("")]
-    lines += [_styled(fit(" " + line, cols), line.style) for line in body[:height]]
+    # A long line is drawn whole, the terminal folding it into the rows
+    # after it (_text_lines): cut to the width, a copied path lost its end.
+    lines += [_styled(" " + line if line.style == "long" else fit(" " + line, cols), line.style)
+              for line in body[:height]]
     lines += [_styled("")] * (rows - 1 - len(lines))
     # Never the last cell of the screen: a terminal may scroll when it is written.
     lines.append(_styled(fit(" " + _hint(width, *hint), cols - 1), "dim"))
@@ -16970,7 +17091,14 @@ class _TuiTerminal:
         """Rewrite the lines that changed since the last frame, and only those."""
         out = [] if self.frame else ["\x1b[H\x1b[2J"]
         frame = [(str(line), getattr(line, "style", "")) for line in lines]
+        covered = 0
         for index, (text, style) in enumerate(frame):
+            if style == "cont" and covered:
+                # A row the long line above folds into.
+                covered -= 1
+                continue
+            covered = (max(0, -(-cell_width(text) // max(1, cols)) - 1)
+                       if style == "long" else 0)
             if index < len(self.frame) and self.frame[index] == (text, style):
                 continue
             text = screen_text(text)
