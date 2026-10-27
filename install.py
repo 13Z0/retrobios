@@ -17138,6 +17138,24 @@ def _closing_lines(state: TuiState) -> list[str]:
     return ["RetroBIOS: stopped. Nothing was installed."]
 
 
+CTRL_Z_NO_SHELL = ("Ctrl-Z is ignored: no shell started this installer, and none could "
+                   "bring it back.")
+
+
+def tui_ctrl_z(state: TuiState) -> bool:
+    """Whether a Ctrl-Z typed on the screen stops it: only where a shell
+    with job control can resume it, the installer's process group being one
+    of its jobs, not its session's own. Started from a terminal app's -e,
+    a desktop entry or a launcher's sh -c, nothing ever sent SIGCONT, and
+    the screen and its launcher stayed stopped for good (code_audit_18
+    P3-1). Otherwise the key is ignored and the bar says why."""
+    if (hasattr(signal, "SIGSTOP") and hasattr(os, "getsid")
+            and os.getpgrp() != os.getsid(0)):
+        return True
+    state.status, state.status_more = CTRL_Z_NO_SHELL, ""
+    return False
+
+
 def tui_suspend(runs: list[_EngineRun], whole: bool) -> None:
     """Stop the screen and the runs it started until fg continues them.
 
@@ -17309,8 +17327,8 @@ def run_tui(args: argparse.Namespace) -> int:
             for key in terminal.keys(TUI_FRAME):
                 if key.name == "ctrl-z":
                     # ISIG is off, so Ctrl-Z comes as a key: it stops what
-                    # the terminal's would, where the system has job control.
-                    if hasattr(signal, "SIGSTOP"):
+                    # the terminal's would, where a shell can resume it.
+                    if tui_ctrl_z(state):
                         flags["suspend"] = "key"
                         break
                     continue

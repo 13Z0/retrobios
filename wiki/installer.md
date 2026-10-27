@@ -217,7 +217,10 @@ However the screen ends (Enter on the result, `q`, Ctrl+C, Ctrl+D, SIGTERM, a
 hangup), the terminal is given back as the screen found it: the cursor shown,
 the main screen back, echo and line editing on. Ctrl+Z, or SIGTSTP from
 outside, gives it back the same way and stops the run, and `fg` redraws the
-screen where it was.
+screen where it was. Ctrl+Z stops it only when a shell with job control
+started it, the one thing that can resume it: started from a terminal app's
+`-e`, a desktop entry or a launcher's `sh -c`, the key is ignored and the bar
+says why.
 
 - `--tui` asks for the full screen, and names the reason when it cannot open
   (code 2).

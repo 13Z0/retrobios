@@ -5159,25 +5159,38 @@ class TheTerminalComesBack(unittest.TestCase):
         self.assertGivenBack(term)
         self.assertModesBack(term.modes)
 
+    def shell(self) -> Pty:
+        """An interactive bash on a pseudo-terminal, a shell with job control
+        as a person's terminal runs one."""
+        self.repo()
+        env = {**self.env, "PS1": "PROMPT$ ",
+               "PATH": f"{Path(sys.executable).parent}{os.pathsep}{self.env.get('PATH', '')}"}
+        term = Pty(["--norc", "--noprofile", "-i"], env, program=["/bin/bash"])
+        self.addCleanup(lambda: term.status is None and os.killpg(term.pid, 9))
+        term.wait("PROMPT$")
+        return term
+
+    def typed(self, term: Pty, line: str) -> None:
+        os.write(term.fd, line.encode() + b"\r")
+
+    @unittest.skipUnless(Path("/bin/bash").exists(), "a shell with job control")
     def test_ctrl_z_then_fg(self):
         """ISIG is off on the screen, so Ctrl-Z reached it as a byte and did
-        nothing: the shell never got its terminal back."""
-        import signal
-
-        term = self.ended(lambda term: None)
+        nothing: the shell never got its terminal back. From a shell with
+        job control it stops, and fg brings the screen back."""
+        term = self.shell()
+        self.typed(term, f"{shlex.quote(sys.executable)} {REPO_ROOT / 'install.py'} --tui")
+        term.wait("Where do you play?")
         mark = len(term.raw)
         term.send("\x1a")
-        end, stopped = time.monotonic() + 10, False
-        while time.monotonic() < end and not stopped:
+        end = time.monotonic() + 10
+        while b"PROMPT$" not in term.raw[mark:] and time.monotonic() < end:
             term._pump(0.05)
-            pid, status = os.waitpid(term.pid, os.WNOHANG | os.WUNTRACED)
-            stopped = bool(pid) and os.WIFSTOPPED(status)
-        self.assertTrue(stopped, term.text())
+        self.assertIn(b"Stopped", term.raw[mark:], term.raw[mark:][-300:])
         self.assertGivenBack(term, mark)
-        self.assertModesBack(termios.tcgetattr(term.fd))
         # fg: the shell's SIGCONT, and the screen is back, raw again.
         mark = len(term.raw)
-        os.kill(term.pid, signal.SIGCONT)
+        self.typed(term, "fg")
         end = time.monotonic() + 5
         while b"\x1b[?1049h" not in term.raw[mark:] and time.monotonic() < end:
             term._pump(0.05)
@@ -5185,9 +5198,43 @@ class TheTerminalComesBack(unittest.TestCase):
         term.wait("Where do you play?")
         self.assertFalse(termios.tcgetattr(term.fd)[3] & termios.ECHO)
         term.send("q")
+        term.wait("PROMPT$")
+        self.typed(term, "exit")
         self.assertEqual(term.close(), 130)
         self.assertGivenBack(term)
-        self.assertModesBack(term.modes)
+
+    def test_ctrl_z_with_no_shell_to_resume_it_is_ignored(self):
+        """code_audit_18 P3-1: started straight on a terminal (a terminal
+        app's -e, a desktop entry) or under a launcher's sh -c, nothing ever
+        resumed the screen a Ctrl-Z stopped. It now goes on, and says why."""
+        self.repo()
+        for program in (None, ["/bin/sh", "-c", f"{shlex.quote(sys.executable)} "
+                                                f"{REPO_ROOT / 'install.py'} \"$@\"", "sh"]):
+            with self.subTest(program=program):
+                term = Pty(["--tui"], self.env, program=program)
+                self.addCleanup(lambda term=term: term.status is None
+                                and os.killpg(term.pid, 9))
+                term.wait("Where do you play?")
+                term.send("\x1a")
+                screen = term.wait("Ctrl-Z is ignored")
+                self.assertIn("no shell started this installer", " ".join(screen.split()))
+                pid, status = os.waitpid(term.pid, os.WNOHANG | os.WUNTRACED)
+                self.assertEqual(pid, 0, "stopped")
+                term.send("q")
+                self.assertEqual(term.close(), 130)
+                self.assertGivenBack(term)
+
+    def test_ctrl_z_needs_a_shell_that_can_resume(self):
+        state = install.TuiState(os_type="linux", home=HOME)
+        with mock.patch.object(install.os, "getpgrp", return_value=10), \
+                mock.patch.object(install.os, "getsid", return_value=10):
+            self.assertFalse(install.tui_ctrl_z(state))
+        self.assertEqual(state.status, install.CTRL_Z_NO_SHELL)
+        state.status = ""
+        with mock.patch.object(install.os, "getpgrp", return_value=12), \
+                mock.patch.object(install.os, "getsid", return_value=10):
+            self.assertTrue(install.tui_ctrl_z(state))
+        self.assertEqual(state.status, "")
 
     @staticmethod
     def proc_state(pid: int) -> str:
@@ -5217,27 +5264,34 @@ class TheTerminalComesBack(unittest.TestCase):
         import signal
 
         repo = self.repo(GameDataRepository, slow=True)
-        self.env["PATH"] = f"{Path(sys.executable).parent}{os.pathsep}{self.env['PATH']}"
-        term = Pty(["--jobs", "1"], self.env, program=["/bin/sh", str(REPO_ROOT / "install.sh")])
+        env = {**self.env, "PS1": "PROMPT$ ",
+               "PATH": f"{Path(sys.executable).parent}{os.pathsep}{self.env['PATH']}"}
+        # Typed at an interactive bash, as a person runs it: install.sh is a
+        # job of a shell that can resume it (code_audit_18 P3-1).
+        term = Pty(["--norc", "--noprofile", "-i"], env, program=["/bin/bash"])
         self.addCleanup(lambda: term.status is None and os.killpg(term.pid, 9))
+        term.wait("PROMPT$")
+        self.typed(term, f"sh {REPO_ROOT / 'install.sh'} --jobs 1")
         term.wait("Where do you play?")
         term.send("\r")
         term.wait("to download")
         term.send("\r")
         term.wait("Installing")
         time.sleep(0.8)
-        installer = self.children(term.pid)
+        wrapper = self.children(term.pid)
+        self.assertEqual(len(wrapper), 1, wrapper)
+        installer = self.children(wrapper[0])
         self.assertEqual(len(installer), 1, installer)
         runs = self.children(installer[0])
         self.assertTrue(runs, "no install run")
+        mark = len(term.raw)
         term.send("\x1a")
-        end, stopped = time.monotonic() + 10, False
-        while time.monotonic() < end and not stopped:
+        end = time.monotonic() + 10
+        while b"PROMPT$" not in term.raw[mark:] and time.monotonic() < end:
             term._pump(0.05)
-            pid, status = os.waitpid(term.pid, os.WNOHANG | os.WUNTRACED)
-            stopped = bool(pid) and os.WIFSTOPPED(status)
-        # The wrapper is stopped: a shell's job of it is reported stopped.
-        self.assertTrue(stopped, term.text())
+        # The wrapper is stopped: the shell reports its job stopped.
+        self.assertIn(b"Stopped", term.raw[mark:], term.raw[mark:][-300:])
+        self.assertEqual(self.proc_state(wrapper[0]), "T")
         self.assertEqual(self.proc_state(installer[0]), "T")
         self.assertEqual([self.proc_state(run) for run in runs], ["T"] * len(runs))
         written = sorted(repo.dest.rglob("*"))
@@ -5246,13 +5300,15 @@ class TheTerminalComesBack(unittest.TestCase):
         # fg continues the job's group: the screen comes back and the install
         # carries on to its end.
         mark = len(term.raw)
-        os.killpg(term.pid, signal.SIGCONT)
+        self.typed(term, "fg")
         end = time.monotonic() + 5
         while b"\x1b[?1049h" not in term.raw[mark:] and time.monotonic() < end:
             term._pump(0.05)
         self.assertIn(b"\x1b[?1049h", term.raw[mark:])
         term.wait("files installed", timeout=30)
         term.send("\r")
+        term.wait("PROMPT$")
+        self.typed(term, "exit")
         self.assertEqual(term.close(), 0)
 
 
