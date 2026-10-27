@@ -179,6 +179,17 @@ class SitePages(unittest.TestCase):
         self.assertIn("| sega-32x | B (World) | not yet: no run recorded |", text)
         self.assertIn("exit 1, <code>unknown&#95;system</code>", text)
 
+    def test_one_catalog_name_on_two_systems_counts_only_where_it_ran(self) -> None:
+        import measurement_records as mr
+        import sitemeasurements as sm
+
+        label = "Bust-A-Move 2 - Arcade Edition (USA)"
+        stored = [mr.Stored("beetle_psx", 1, {"inputs": {"content": {"label": label}}})]
+        cov = sm.coverage(ROOT, stored, {"beetle_psx": {"systems": ["sony-playstation"]}})
+        by_system = {item["system"]: item for item in cov["systems"]}
+        self.assertTrue(by_system["sony-playstation"]["tested"])
+        self.assertFalse(by_system["sega-saturn"]["tested"])
+
     def test_coverage_reads_the_real_content_list(self) -> None:
         import sitemeasurements as sm
 

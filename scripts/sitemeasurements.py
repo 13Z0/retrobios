@@ -247,9 +247,11 @@ def campaign_section(summary: dict | None) -> list[str]:
 CONTENT_FILE = Path("tests") / "campaign" / "content.yml"
 
 
-def coverage(root: Path, stored: list[mr.Stored]) -> dict:
-    """Per system of the content list: its games, and whether a record ran
-    each one. A system no catalog covers comes with the reason and the
+def coverage(root: Path, stored: list[mr.Stored], profiles: dict | None = None) -> dict:
+    """Per system of the content list: its games, and which emulators ran
+    each one. A record counts for a system only when its emulator's profile
+    names that system: one catalog name can be a PlayStation disc and a
+    Saturn disc. A system no catalog covers comes with the reason and the
     error romfetch returned."""
     import yaml  # noqa: PLC0415
 
@@ -265,8 +267,16 @@ def coverage(root: Path, stored: list[mr.Stored]) -> dict:
     systems = []
     for system, spec in (data.get("systems") or {}).items():
         games = [{"name": item["name"], "region": item.get("region"),
-                  "emulators": sorted(ran.get(item["name"], ()))} for item in spec.get("content") or ()]
-        systems.append({"system": system, "games": games,
+                  "emulators": sorted(e for e in ran.get(item["name"], ())
+                                      if profiles is None
+                                      or system in ((profiles.get(e) or {}).get("systems") or ()))}
+                 for item in spec.get("content") or ()]
+        listed = {item["name"] for item in spec.get("content") or ()}
+        # Runs of this system's emulators on games the list does not name.
+        other = sorted({e for label, emulators in ran.items() if label not in listed for e in emulators
+                        if profiles is not None
+                        and system in ((profiles.get(e) or {}).get("systems") or ())})
+        systems.append({"system": system, "games": games, "other_games_by": other,
                         "tested": any(game["emulators"] for game in games)})
     uncovered = [{"system": system, "want": item.get("want"), "reason": " ".join(str(item["reason"]).split()),
                   "romfetch": item.get("romfetch") or {}}
@@ -291,11 +301,23 @@ def coverage_section(cov: dict | None, system_names: dict[str, str] | None = Non
         "| System | Games | Tested by |",
         "|--------|-------|-----------|",
     ]
+    # Two ids of one console (sega-megacd, mega-cd) share their list: one row.
+    rows: dict[tuple[str, str], set[str]] = {}
+    others: dict[tuple[str, str], set[str]] = {}
     for item in cov["systems"]:
-        games = ", ".join(_plain(game["name"]) for game in item["games"])
-        by = sorted({emulator for game in item["games"] for emulator in game["emulators"]})
-        status = ", ".join(_plain(e) for e in by) if by else "not yet: no run recorded"
-        lines.append(f"| {_plain(names.get(item['system'], item['system']))} | {games} | {status} |")
+        row = (_plain(names.get(item["system"], item["system"])),
+               ", ".join(_plain(game["name"]) for game in item["games"]))
+        rows.setdefault(row, set()).update(e for game in item["games"] for e in game["emulators"])
+        others.setdefault(row, set()).update(item.get("other_games_by") or ())
+    for (name, games), by in rows.items():
+        if by:
+            status = ", ".join(_plain(e) for e in sorted(by))
+        elif others[(name, games)]:
+            status = ("not yet with these games, other games by "
+                      + ", ".join(_plain(e) for e in sorted(others[(name, games)])))
+        else:
+            status = "not yet: no run recorded"
+        lines.append(f"| {name} | {games} | {status} |")
     lines.append("")
     if cov["uncovered"]:
         lines += ["Systems without a test game:", "",
@@ -580,7 +602,7 @@ def build(public: Path, root: Path = ROOT, emulators_dir: Path = ROOT / "emulato
     profiles = load_profiles(emulators_dir)
     index = build_index(stored, source, profiles, system_names)
     index["campaign"] = campaign_summary(root, stored, source)
-    index["coverage"] = coverage(root, stored)
+    index["coverage"] = coverage(root, stored, profiles)
     paths = [public / INDEX_PATH]
     (public / INDEX_PATH).parent.mkdir(parents=True, exist_ok=True)
     write_if_changed(str(public / INDEX_PATH),
