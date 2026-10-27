@@ -157,6 +157,30 @@ class Oracle(unittest.TestCase):
         self.assertEqual(result["verdicts"], {"absent": "bios_error", "scph5501.bin": "boots"})
 
 
+class HostLock(unittest.TestCase):
+    def test_a_run_holds_the_probe_lock_for_itself(self) -> None:
+        import contextlib
+        from unittest import mock
+
+        events = []
+
+        @contextlib.contextmanager
+        def lock():
+            events.append("take")
+            yield
+            events.append("free")
+
+        def body(_args, _emu):
+            events.append("run")
+            return 0
+
+        with tempfile.NamedTemporaryFile(suffix=".cue") as content, \
+                mock.patch.object(sp.cp, "host_probe_lock", lock), mock.patch.object(sp, "_probe", body):
+            args = sp.build_parser().parse_args(["run", "duckstation", "--content", content.name])
+            self.assertEqual(sp.probe(args), 0)
+        self.assertEqual(events, ["take", "run", "free"])
+
+
 class CommandLine(unittest.TestCase):
     def test_check_refuses_two_destinations(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".cue") as content:

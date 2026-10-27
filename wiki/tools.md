@@ -1098,7 +1098,7 @@ times, each a record whose subject is `region-<core>-<game>-<variant>`.
 | `pack` | the files of `generate_pack.py --emulator E --region R`, where the pack puts them |
 
 ```bash
-flock ~/.local/state/retrobios/probe.lock python scripts/region_check.py run \
+python scripts/region_check.py run \
   --emulator beetle_psx --system sony-playstation --core-name mednafen_psx
 python scripts/region_check.py report        # the outcome of every region record, as JSON
 ```
@@ -1120,7 +1120,7 @@ frame for a game, a variant counts as booting when it samples the same frames
 as the `full` run, and the outcome says it was judged that way. The system
 pages show each outcome as a sentence ("the Japanese BIOS boots the Japanese
 game, the other regions' BIOS do not") with links to the four records. A
-maintainer starts each run under the probe lock. Nothing runs by itself.
+maintainer starts each run. Each core_probe run takes the host probe lock for itself and frees it before the next, so do not wrap the command in `flock`. Nothing runs by itself.
 
 ### standalone_probe.py
 
@@ -1134,11 +1134,11 @@ sandbox, oracle and record functions, imported and not copied.
 ```bash
 python scripts/standalone_probe.py resolve duckstation   # the asset EmuDeck's installer picks
 python scripts/standalone_probe.py fetch duckstation     # download and unpack it, by sha256
-flock ~/.local/state/retrobios/probe.lock python scripts/standalone_probe.py run duckstation \
+python scripts/standalone_probe.py run duckstation \
   --content game.cue --content-label "Bust-A-Move 2 - Arcade Edition (USA)" \
   --bios-file scph5501.bin=bios/Sony/PlayStation/scph5501.bin \
   --samples 60 --interval 1.5 --require-sandbox --record
-flock ~/.local/state/retrobios/probe.lock python scripts/standalone_probe.py check pcsx2 \
+python scripts/standalone_probe.py check pcsx2 \
   --content game.bin --vary ps2-0230a-20080220.bin= \
   --vary "ps2-0230a-20080220.bin=bios/Sony/PlayStation 2/ps2-0230a-20080220.bin" \
   --claim "..." --method "..." --require-sandbox --record
@@ -1168,7 +1168,7 @@ Supported: DuckStation and PCSX2. Dolphin, Flycast, PPSSPP, melonDS, xemu and
 MAME are installed by EmuDeck from Flathub, Ryujinx from a Codeberg tarball and
 RPCS3 from its own update server: each needs its installer's rule before it
 can be added. Cemu is an AppImage like the two supported ones, and waits for
-Wii U content, which no catalog romfetch reads holds. A maintainer starts each run under the probe lock. Nothing runs
+Wii U content, which no catalog romfetch reads holds. Each run takes the host probe lock (`RETROBIOS_PROBE_LOCK`) for itself, its load check included, and frees it when it ends, as `core_probe.py` does. A maintainer starts each run. Nothing runs
 by itself.
 
 ### Other tools

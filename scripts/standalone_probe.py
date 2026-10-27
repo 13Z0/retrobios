@@ -510,6 +510,13 @@ def probe(args: argparse.Namespace) -> int:
         for problem in problems:
             print(f"ERROR: {problem}", file=sys.stderr)
         return 2
+    # One run on the host at a time, as core_probe: the lock is held for
+    # this run, its load check included, and freed when it ends.
+    with cp.host_probe_lock():
+        return _probe(args, emu)
+
+
+def _probe(args: argparse.Namespace, emu: Emulator) -> int:
     meta, tree = installed(emu, args.sha256)
     max_load = args.max_load if args.max_load is not None else (os.cpu_count() or 1) / 4
     load_before = cp.load_average()
