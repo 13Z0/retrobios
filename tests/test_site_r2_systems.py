@@ -293,7 +293,12 @@ class TheBuiltSonyPage(unittest.TestCase):
 
     def test_playstation_opens_on_a_bios_it_needs(self):
         section = self.text.split('id="playstation"', 1)[1].split("<h2", 1)[0]
-        self.assertIn("Start with", section.split('class="rb-sys-file"', 1)[0])
+        # The opening line follows the profiles: "Start with" when most
+        # emulators require the BIOS, "No file needed with ... Only ...
+        # require" when most run without it. Either way it names a BIOS and
+        # links it, before the first card.
+        opening = section.split('class="rb-sys-file"', 1)[0]
+        self.assertRegex(opening, r'<a href="[^"]+"><code[^>]*>scph\d+\.bin</code></a>')
         # PlayStation has a page of its own, and its files open there.
         own = (DIST / "systems" / "sony-playstation" / "index.html").read_text(encoding="utf-8")
         self.assertIn('href="/retrobios/systems/sony-playstation/"', section)
