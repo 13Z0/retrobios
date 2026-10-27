@@ -965,7 +965,9 @@ const glossaryTerms = () => {
 // empty when the text shown is the value. The buttons are added where the
 // reader sees the values, and when a fold opens for the ones inside it, so a
 // page of 250 closed folds holds none of them.
-const COPYABLE = '[data-copy], .rb-sys-file dd.rb-hash';
+// A platform row's button carries its own data-copy: it is not a value to
+// give a button.
+const COPYABLE = '[data-copy]:not(button), .rb-sys-file dd.rb-hash';
 
 // What the button copies, in words: the label of its grid row, else the
 // words before the value ("MD5: ", ", SHA1 ", "RetroArch: "), else the
@@ -1012,7 +1014,7 @@ const addCopyButtons = (root: ParentNode) => {
 };
 
 const copyButtons = () => {
-	if (!document.querySelector(COPYABLE)) return;
+	if (!document.querySelector(`${COPYABLE}, button.rb-copy[data-copy]`)) return;
 	addCopyButtons(document);
 	document.addEventListener('toggle', (event) => {
 		const fold = event.target as HTMLDetailsElement;
@@ -1021,6 +1023,28 @@ const copyButtons = () => {
 	document.addEventListener('click', async (event) => {
 		const button = (event.target as Element).closest?.<HTMLButtonElement>('button.rb-copy');
 		if (!button) return;
+		// A platform row's button shows a short hash and copies the whole one
+		// from data-copy: its text stays, a mark shows for two seconds.
+		const own = button.dataset.copy;
+		if (own && own !== 'true') {
+			try {
+				await navigator.clipboard.writeText(own);
+				let status = document.querySelector<HTMLElement>('#rb-copy-status');
+				if (!status) {
+					status = document.createElement('p');
+					status.id = 'rb-copy-status';
+					status.className = 'rb-visually-hidden';
+					status.setAttribute('role', 'status');
+					document.body.append(status);
+				}
+				status.textContent = `Copied ${own}`;
+				button.dataset.copied = '';
+				window.setTimeout(() => delete button.dataset.copied, 2000);
+			} catch {
+				// No clipboard: the full value is in the row's details.
+			}
+			return;
+		}
 		const value = button.parentElement?.matches(COPYABLE)
 			? button.parentElement
 			: (button.previousElementSibling as HTMLElement | null);
@@ -1147,6 +1171,38 @@ const installPickers = () => {
 	pick(savedSetup());
 };
 
+// A platform's file list (div.rb-files) is rows of a details and its copy
+// button. The filter box written above a long one hides both of a row.
+const filterFiles = () => {
+	for (const list of document.querySelectorAll<HTMLElement>('.rb-table-filter + .rb-files')) {
+		const controls = list.previousElementSibling!;
+		const input = controls.querySelector('input');
+		const count = controls.querySelector('.rb-table-filter-count');
+		if (!input || !count) continue;
+		const rows = [...list.querySelectorAll<HTMLElement>(':scope > details.rb-file')];
+		let searchable: { row: HTMLElement; text: string }[] | null = null;
+		input.addEventListener('input', () => {
+			searchable ??= rows.map((row) => ({
+				row,
+				text: `${row.querySelector('summary')?.textContent ?? ''} ${row.nextElementSibling?.matches('button.rb-copy') ? row.nextElementSibling.textContent : ''}`
+					.normalize('NFKD')
+					.toLocaleLowerCase(),
+			}));
+			const query = input.value.trim().normalize('NFKD').toLocaleLowerCase();
+			let visible = 0;
+			for (const { row, text } of searchable) {
+				row.hidden = !!query && !text.includes(query);
+				const button = row.nextElementSibling;
+				if (button?.matches('button.rb-copy')) (button as HTMLElement).hidden = row.hidden;
+				if (!row.hidden) visible += 1;
+			}
+			count.textContent = query
+				? `${visible.toLocaleString('en')} of ${rows.length.toLocaleString('en')} rows`
+				: `${rows.length.toLocaleString('en')} rows`;
+		});
+	}
+};
+
 // The 404 page: a search button, and the list a moved page belongs to.
 const notFound = () => {
 	document.querySelector('[data-rb-open-search]')?.addEventListener('click', () => {
@@ -1170,8 +1226,9 @@ enhanceTables();
 breakPaths();
 hashSearch();
 glossaryTerms();
+copyButtons();
+filterFiles();
 osTabs();
 installPickers();
-copyButtons();
 showCurrentPage();
 notFound();

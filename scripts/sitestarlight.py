@@ -809,19 +809,23 @@ MOVED_PAGES = {"wiki/getting-started.md": "which-pack.md"}
 _CORE_NAME = re.compile(r"[a-z0-9_-]+")
 
 
-def redirects(profiles: dict, present: set[str]) -> dict[str, str]:
+def redirects(profiles: dict, present: set[str],
+              moved: dict[str, str] | None = None) -> dict[str, str]:
     """Old and alternative addresses, for src/generated/redirects.json.
 
     A page that moved, once its source is gone, and each name a profile's
     `cores:` gives the emulator (the buildbot's `mednafen_psx` for
     beetle_psx), to the profile's page. A name two profiles claim, or one
     that is already a page's address, is left out. Addresses are written
-    under the site root, without its base."""
+    under the site root, without its base. ``moved`` adds pages that moved
+    by generation, old page to new page, the new one with an optional
+    #fragment."""
     def address(rel: str) -> str:
-        return "/" + page_url(rel)[len(BASE):]
+        page, _, fragment = rel.partition("#")
+        return "/" + page_url(page)[len(BASE):] + (f"#{fragment}" if fragment else "")
 
-    out = {address(old): address(new) for old, new in MOVED_PAGES.items()
-           if old not in present and new in present}
+    out = {address(old): address(new) for old, new in {**MOVED_PAGES, **(moved or {})}.items()
+           if old not in present and new.partition("#")[0] in present}
     pages = {rel.casefold() for rel in present}
     claims: dict[str, set[str]] = {}
     for key, profile in profiles.items():

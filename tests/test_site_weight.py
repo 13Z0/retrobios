@@ -119,7 +119,7 @@ class APlatformSystemOverItsBudgetMoves(unittest.TestCase):
         config = {("arcade", f["name"]): [{"name": f["name"], "md5": "a" * 32}] for f in files}
         moved: dict[str, str] = {}
         budget = generate_site.PLATFORM_SECTION_BUDGET
-        generate_site.PLATFORM_SECTION_BUDGET = 500
+        generate_site.PLATFORM_SECTION_BUDGET = 5
         try:
             lines = generate_site._render_platform_systems(
                 {"arcade": files}, config, {}, ("deck", "Deck"), moved)
