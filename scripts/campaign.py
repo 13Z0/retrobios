@@ -303,9 +303,9 @@ def child_env(romfetch: bool = False) -> dict[str, str]:
     """What a program the campaign starts inherits: autorun's allowlist,
     never a token or a password. romfetch also gets its own settings
     (ROMFETCH_*), its account staying in its config file."""
-    names: list[str] = []
+    names: list[str] = [core_probe.PROBE_LOCK_ENV, core_probe.PROBE_LOCK_HELD_ENV]
     if romfetch:
-        names = [k for k in os.environ if k.startswith("ROMFETCH_")] + list(ROMFETCH_PASSED)
+        names += [k for k in os.environ if k.startswith("ROMFETCH_")] + list(ROMFETCH_PASSED)
     return autorun.safe_env(names)
 
 

@@ -855,6 +855,15 @@ python scripts/core_probe.py check --core core.so --content disc.cue \
   --observable frame_hashes --claim "..." --method "..." --repeat 2 --record
 ```
 
+One measurement runs at a time on the host. core_probe takes the host lock
+itself, per run: `~/.local/state/retrobios/probe.lock` (`RETROBIOS_PROBE_LOCK`
+names another file), from its load check to its record, released when the run
+ends. A run that finds it held waits and says so. Never wrap a whole pass in
+`flock`: a pass of many runs then holds the host for hours, while called
+directly its runs interleave with everyone else's. A caller that holds the
+lock around one core_probe call sets `RETROBIOS_PROBE_LOCK_HELD=1`. The tests
+use their own lock file.
+
 Each repetition runs in a fresh process under `strace -f -e trace=openat,open`
 when strace is installed. The worker starts with an empty environment and
 clears its own before it loads the core, keeping only the `--env` values.
@@ -1046,6 +1055,7 @@ checks. The campaign's own `evidence:` writes do not count as a profile change.
 | Guard | Rule |
 |-------|------|
 | Lock | The host-wide autorun lock. Under the `campaign` job, autorun holds it and says so with `RETROBIOS_AUTO_LOCK_HELD` |
+| Probe lock | Not held by the pass: each core_probe it starts takes the host probe lock for its own run, so two passes, or a pass and another agent's runs, interleave. Do not wrap `campaign.py run` in `flock` |
 | Environment | `core_probe.py`, git and `make` get autorun's allowlist, romfetch the same plus its `ROMFETCH_*` settings. None sees a token or a password |
 | Sandbox | Fails closed: without a working bubblewrap the pass is `refused` (exit 3) and nothing third-party runs, every probe is started with `--require-sandbox`, and a build is refused. `--allow-unsandboxed` overrides. Under autorun the refusal raises the `job:campaign` alert |
 | Load | Before each run, waits while the 1-minute load is above a quarter of the CPUs, up to `--max-load-wait` seconds, then the pass stops as `paused` |
