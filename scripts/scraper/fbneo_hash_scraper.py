@@ -11,6 +11,7 @@ import argparse
 import json
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -20,7 +21,7 @@ from typing import Any
 
 import yaml
 
-from common import github_token, source_yaml_paths, write_text_atomic, yaml_load
+from common import source_yaml_paths, write_text_atomic, yaml_load
 
 from scripts.scraper._hash_merge import compute_diff, merge_fbneo_profile
 from scripts.scraper.fbneo_parser import parse_fbneo_source_tree
@@ -51,7 +52,7 @@ def _is_cache_fresh() -> bool:
 
 
 def _sparse_clone() -> None:
-    """Sparse clone FBNeo repo, checking out only src/burn/drv."""
+    """Sparse clone FBNeo repo: src/burn/drv, and in cone mode src/burn/version.h."""
     if CLONE_DIR.exists():
         shutil.rmtree(CLONE_DIR)
 
@@ -74,7 +75,7 @@ def _sparse_clone() -> None:
     )
 
     subprocess.run(
-        ["git", "sparse-checkout", "set", "src/burn/drv", "src/burner/resource.h"],
+        ["git", "sparse-checkout", "set", "src/burn/drv"],
         cwd=CLONE_DIR,
         check=True,
         capture_output=True,
@@ -82,31 +83,28 @@ def _sparse_clone() -> None:
     )
 
 
+# src/burn/version.h, as the libretro core prints it: "v%x.%x.%x.%02x" of
+# the BCD BURN_VERSION, so VER_ALPHA 3 reads 1.0.0.03. FBNeo bumps this file
+# without tagging: the last tag (v1.0.0.02) was 9 337 commits behind it.
+_VERSION_H = re.compile(
+    r"#define\s+VER_MAJOR\s+(\d+)\s+#define\s+VER_MINOR\s+(\d+)\s+"
+    r"#define\s+VER_BETA\s+(\d+)\s+#define\s+VER_ALPHA\s+(\d+)"
+)
+
+
+def version_from_header(text: str) -> str:
+    """The version src/burn/version.h states."""
+    found = _VERSION_H.search(text)
+    if not found:
+        raise RuntimeError("src/burn/version.h states no VER_MAJOR..VER_ALPHA")
+    major, minor, beta, alpha = (int(group) for group in found.groups())
+    return f"v{major}.{minor}.{beta}.{alpha:02d}"
+
+
 def _extract_version() -> tuple[str, str]:
-    """Extract version tag and commit SHA from the cloned repo.
-
-    Returns (version, commit_sha). Falls back to resource.h if no tag.
-    """
-    result = subprocess.run(
-        ["git", "describe", "--tags", "--abbrev=0"],
-        cwd=CLONE_DIR,
-        capture_output=True,
-        text=True,
-    )
-
-    # Prefer real version tags over pseudo-tags like "latest"
-    version = "unknown"
-    if result.returncode == 0:
-        tag = result.stdout.strip()
-        if tag and tag != "latest":
-            version = tag
-    # Fallback: resource.h
-    if version == "unknown":
-        version = _version_from_resource_h()
-    # Last resort: use GitHub API for latest real release tag
-    if version == "unknown":
-        version = _version_from_api()
-
+    """The version the cloned source states, and its commit."""
+    header = CLONE_DIR / "src" / "burn" / "version.h"
+    version = version_from_header(header.read_text(encoding="utf-8", errors="replace"))
     sha_result = subprocess.run(
         ["git", "rev-parse", "HEAD"],
         cwd=CLONE_DIR,
@@ -114,49 +112,7 @@ def _extract_version() -> tuple[str, str]:
         text=True,
         check=True,
     )
-    commit = sha_result.stdout.strip()
-
-    return version, commit
-
-
-def _version_from_api() -> str:
-    """The latest real release tag, or an error: "unknown" was written as
-    core_version and cached for a day."""
-    import json as json_mod
-    import urllib.error
-    import urllib.request
-
-    headers = {"User-Agent": "retrobios-scraper/1.0"}
-    token = github_token()
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
-    req = urllib.request.Request(
-        "https://api.github.com/repos/finalburnneo/FBNeo/tags?per_page=10", headers=headers
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            tags = json_mod.loads(resp.read())
-    except (urllib.error.URLError, OSError, ValueError) as exc:
-        raise RuntimeError(f"cannot determine the FBNeo version: {exc}") from exc
-    for tag in tags:
-        if tag["name"] != "latest" and tag["name"].startswith("v"):
-            return tag["name"]
-    raise RuntimeError("cannot determine the FBNeo version: no tag, resource.h or release")
-
-
-def _version_from_resource_h() -> str:
-    """Fallback: parse VER_FULL_VERSION_STR from resource.h."""
-    resource_h = CLONE_DIR / "src" / "burner" / "resource.h"
-    if not resource_h.exists():
-        return "unknown"
-
-    text = resource_h.read_text(encoding="utf-8", errors="replace")
-    for line in text.splitlines():
-        if "VER_FULL_VERSION_STR" in line:
-            parts = line.split('"')
-            if len(parts) >= 2:
-                return parts[1]
-    return "unknown"
+    return version, sha_result.stdout.strip()
 
 
 def _cleanup() -> None:

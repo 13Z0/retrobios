@@ -9,7 +9,11 @@ source_commit: "bda532f311a77c828a4e6bdb4667d9e92dfdf62f"
 prose_written_at: "bda532f311a77c828a4e6bdb4667d9e92dfdf62f"
 upstream_commit: "c10a5c9ad951c517dc48b722b5b84eb9bf7fdb42"
 upstream_frozen: "The PCSX2 tree vendored in the app is this revision. Later PCSX2 commits are not in the port."
-core_version: "0.5.1"
+core_version: "v0.5.1"
+version_basis:
+  kind: tag
+  tag: "v0.5.1"
+  distance: 0
 display_name: "Sony - PlayStation 2 (EmuCoreX)"
 cores:
   - emucorex

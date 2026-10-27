@@ -766,6 +766,30 @@ def _bwrap_base(bwrap: str, network: bool) -> list[str]:
     return argv
 
 
+def interpreter_paths() -> list[Path]:
+    """The trees the worker's Python lives in, when the sandbox's system
+    binds do not hold them: CI's setup-python under /opt/hostedtoolcache, a
+    venv, pyenv or uv. Each link on the way to the interpreter is a path too:
+    a venv's python points at uv's unversioned name, itself a link to the
+    versioned tree. Without them the worker could not start in the sandbox,
+    and every run crashed."""
+    system = ("/usr/", "/bin/", "/lib")
+    found: list[Path] = []
+    candidates = [Path(sys.prefix), Path(sys.base_prefix)]
+    hop = Path(sys.executable)
+    for _ in range(16):
+        candidates.append(hop.parent.parent)
+        if not hop.is_symlink():
+            break
+        target = Path(os.readlink(hop))
+        hop = target if target.is_absolute() else hop.parent / target
+    for path in candidates:
+        path = Path(os.path.abspath(path))
+        if not str(path).startswith(system) and path not in found and path.exists():
+            found.append(path)
+    return found
+
+
 def sandbox_argv(writable: Sequence[Path], readonly: Sequence[Path] = (),
                  network: bool = False) -> tuple[list[str], str]:
     """The bubblewrap prefix a third-party program runs under, and its name.
@@ -788,8 +812,10 @@ def sandbox_argv(writable: Sequence[Path], readonly: Sequence[Path] = (),
         return [], "environment only: bwrap cannot create a sandbox here"
     argv = _bwrap_base(bwrap, network)
     for path in readonly:
-        resolved = Path(path).resolve()
-        argv += ["--ro-bind", str(resolved), str(resolved)]
+        # Mounted at the path as the caller names it: a link's own path stays
+        # usable inside, its target's bytes behind it.
+        resolved, named = Path(path).resolve(), Path(os.path.abspath(path))
+        argv += ["--ro-bind", str(resolved), str(named)]
     for path in writable:
         resolved = Path(path).resolve()
         resolved.mkdir(parents=True, exist_ok=True)
@@ -880,7 +906,7 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
     if strace:
         command = [strace, "-f", "-qq", "-s", "4096", "-e", "trace=openat,open", "-o", str(trace_path)] + command
     writable = [scratch] + [p for p in (png_dir, state_out.parent if state_out else None) if p]
-    readonly = [Path(__file__), Path(args.core), system_dir]
+    readonly = [Path(__file__), Path(args.core), system_dir, *interpreter_paths()]
     if args.content:
         readonly.append(Path(args.content).resolve().parent)
     readonly += [Path(value) for _, value in args.env if Path(value).is_absolute() and Path(value).exists()]

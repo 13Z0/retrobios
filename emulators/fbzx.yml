@@ -5,6 +5,10 @@ source: "https://github.com/rastersoft/fbzx"
 profiled_date: "2026-10-20"
 source_commit: "8d6b4cbe5fec121015e98cf545e9b3b811de2a71"
 core_version: "3.9.1"
+version_basis:
+  kind: file
+  path: "src/menus.cpp"
+  pattern: 'print_string\("FBZX \(([0-9][^)"]*)\)"'
 display_name: "Sinclair - ZX Spectrum (FBZX)"
 mode: standalone
 cores:

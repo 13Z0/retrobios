@@ -5,7 +5,11 @@ source: "https://github.com/johndoe6345789/azahar_libretro"
 profiled_date: "2026-10-22"
 source_commit: "c8d39853c1ebacc5657e51d601713a09404ca8a7"
 pin_frozen: "KNULLI, the only platform that ships it, builds this revision (KNULLI package/emulators/azahar/azahar.mk:7 at tag 20260511). Later commits are not part of that build."
-core_version: "Git"
+core_version: "2122-rc1-178-gc8d3985"
+version_basis:
+  kind: tag
+  tag: "2122-rc1"
+  distance: 178
 display_name: "Nintendo - 3DS (Azahar SDL2)"
 mode: standalone
 cores: ["azahar"]

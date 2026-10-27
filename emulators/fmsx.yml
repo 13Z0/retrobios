@@ -6,6 +6,10 @@ upstream: "https://fms.komkon.org/fMSX/"
 profiled_date: "2026-03-23"
 source_commit: "4de11755ce4f196ac1c8a7bb20bb4eccbc87a7d4"
 core_version: "6.0"
+version_basis:
+  kind: file
+  path: "libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Microsoft - MSX (fMSX)"
 cores:
   - fmsx

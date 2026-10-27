@@ -5,6 +5,10 @@ source: "https://github.com/notaz/pcsx_rearmed"
 profiled_date: "2026-10-20"
 source_commit: "8b6c163575e6ce9a0537553e0d4ed4225315955e"
 core_version: "r26"
+version_basis:
+  kind: file
+  path: "frontend/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Sony - PlayStation (PCSX-ReARMed standalone)"
 mode: standalone
 cores:

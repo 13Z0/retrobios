@@ -7,7 +7,11 @@ upstream: "https://github.com/mamedev/mame/tree/mame0289"
 profiled_date: "2026-08-11"
 source_commit: "32d781923fc0fb7621f3d78903f1b37fd4a5694a"
 upstream_commit: "f34f02505e32c1993c6a782b6814232cbfc74e36"
-core_version: "1.38.1"
+core_version: "v1.38.1"
+version_basis:
+  kind: tag
+  tag: "v1.38.1"
+  distance: 0
 display_name: "Arcade (MAME4droid Current)"
 
 cores:

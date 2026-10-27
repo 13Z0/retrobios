@@ -7,6 +7,10 @@ source_commit: "fd354296d851edc24ad1411b8f9342a66d07d460"
 prose_written_at: "e1fc8db2957c360c8ff584a2c4d147f70861c3aa"
 profiled_date: "2026-10-26"
 core_version: "13.1-SN"
+version_basis:
+  kind: file
+  path: "src/cpu.h"
+  pattern: '^#define\s+EMULATOR_VERSION\s+"([^"]+)"'
 display_name: "Sinclair - ZX Spectrum and clones (ZEsarUX)"
 verification: existence
 cores: [zesarux]

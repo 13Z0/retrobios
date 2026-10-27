@@ -182,8 +182,14 @@ class TheCardLinesSayWhatTheyMean(unittest.TestCase):
     def test_the_facts_are_out_of_the_search(self):
         # The setup list made every card's excerpt a run of names and
         # paths (round 4, V6): the card's title is what the search reads.
-        lists = [line for line in self.lines if line.startswith("<dl")]
+        # The facts shown open are one list, the others one fold, both
+        # out of the search.
+        shown = self.lines[:next(i for i, line in enumerate(self.lines) if line.startswith("<details"))]
+        lists = [line for line in shown if line.startswith("<dl")]
         self.assertEqual(lists, ['<dl class="rb-facts" data-pagefind-ignore>'])
+        folds = [line for line in self.lines if line.startswith("<details")]
+        self.assertEqual(len(folds), 1)
+        self.assertEqual(folds, ["<details data-pagefind-ignore>"])
 
     def test_the_page_defines_both_lines(self):
         page = gs.generate_system_page("Sony", {"PlayStation": [_file("scph5501.bin", "4")]},
@@ -206,15 +212,17 @@ class FileFactsAreAGrid(unittest.TestCase):
                  "provenance": {"redump": {"name": "ps-30a.bin"},
                                 "tosec": {"name": "SCPH-5501 (1996).bin"}}}
         lines = gs._system_file_card(entry, FileConsumers({"files": {}}))
-        facts = [line for line in lines if line.startswith("<dt>")]
-        self.assertTrue(facts)
-        for line in facts:
-            self.assertEqual(line.count("<dt>"), 1, line)
-            self.assertEqual(line.count("<dd>"), 1, line)
         text = "\n".join(lines)
-        self.assertIn('<dt>SHA1</dt><dd><span class="rb-hash">' + "4" * 40 + "</span></dd>", text)
+        # One value cell after each label, in the open list and in the fold.
+        facts = re.findall(r"<dt>[^<]*</dt><dd[^>]*>.*?</dd>", text)
+        self.assertTrue(facts)
+        self.assertEqual(len(facts), text.count("<dt>"))
+        self.assertEqual(text.count("<dt>"), len(re.findall(r"<dd[ >]", text)))
+        # The hash is the cell's text, styled by the cell: no element around it.
+        self.assertIn('<dt>SHA1</dt><dd class="rb-hash">' + "4" * 40 + "</dd>", text)
         self.assertNotIn("<code class=\"rb-hash\">", text)
-        catalogued = next(line for line in facts if line.startswith("<dt>Catalogued"))
+        self.assertNotIn('<span class="rb-hash">', text)
+        catalogued = next(fact for fact in facts if fact.startswith("<dt>Catalogued"))
         self.assertIn("<br>", catalogued)
         self.assertNotRegex(text, r"(?m)^- ")
 

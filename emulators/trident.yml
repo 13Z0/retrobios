@@ -7,7 +7,12 @@ upstream: https://github.com/DanAlexMorton/Panda3DS
 profiled_date: "2026-03-25"
 source_commit: "b97b0befa326105e181838bc6fa11c546de8294d"
 upstream_commit: "69095ee6d68d21eacac8d1517f0b7b4ed27884d3"
-core_version: git
+core_version: "v0.9-202-g69095ee"
+version_basis:
+  kind: tag
+  repo: upstream
+  tag: "v0.9"
+  distance: 202
 library_name: "Trident"
 
 cores:

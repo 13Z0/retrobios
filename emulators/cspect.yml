@@ -8,6 +8,10 @@ version_source:
   pattern: '<u>v(\d+(?:\.\d+)+)</u>'
 profiled_date: "2026-08-11"
 core_version: "3.3.1.0"
+version_basis:
+  kind: package
+  url: "https://mdf200.itch.io/cspect"
+  artifact: "CSpect zip from itch.io, CSpect.exe and ReadMe.txt"
 display_name: "Sinclair - ZX Spectrum Next (#CSpect)"
 verification: existence
 cores: [cspect]

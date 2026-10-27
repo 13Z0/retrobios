@@ -7,6 +7,10 @@ source_ref: "video/software/rendering_direct_to_vram/libretro-test.c"
 profiled_date: "2026-03-25"
 source_commit: "7c2ad112d7a5176de2191e473369668da8946b16"
 core_version: "v1"
+version_basis:
+  kind: file
+  path: "video/software/rendering_direct_to_vram/libretro-test.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "TestSW VRAM"
 cores:
   - testsw_vram

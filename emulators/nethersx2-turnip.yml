@@ -8,7 +8,11 @@ author: "nckstwrt"
 profiled_date: "2026-08-12"
 source_commit: "3b7cf800ccac4ab5af768aee24b04363bedeb711"
 upstream_commit: "1d1f795dfc70e38da67724c7298779260f513889"
-core_version: "2.2n-4248-Turnip-v0.7"
+core_version: "v0.7"
+version_basis:
+  kind: tag
+  tag: "v0.7"
+  distance: 0
 display_name: "Sony - PlayStation 2 (NetherSX2-Turnip)"
 mode: standalone
 cores:

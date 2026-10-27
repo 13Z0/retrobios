@@ -12,7 +12,18 @@ source_commit:
 upstream_commit: "b9fa69ddc6d0a331fb103fdb5eef6904305703c2"
 core_version:
   standalone: "2.2.1"
-  libretro: "2.0.0"
+  libretro: "2.2.1"
+version_basis:
+  standalone:
+    kind: file
+    path: "Core/Shared/EmuSettings.cpp"
+    pattern: 'uint16_t major = (\d+);\s*\n\s*uint8_t minor = (\d+);\s*\n\s*uint8_t revision = (\d+);'
+    format: "{1}.{2}.{3}"
+  libretro:
+    kind: file
+    path: "Core/Shared/EmuSettings.cpp"
+    pattern: 'uint16_t major = (\d+);\s*\n\s*uint8_t minor = (\d+);\s*\n\s*uint8_t revision = (\d+);'
+    format: "{1}.{2}.{3}"
 display_name: "Multi-System (MesenCE)"
 cores: [mesence, mesen2]
 systems:

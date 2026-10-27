@@ -67,7 +67,8 @@
     },
     "version": {
       "type": "string",
-      "description": "Version of the platform's own list this manifest was built from."
+      "minLength": 1,
+      "description": "Version of the platform's own list this manifest was built from, as the platform YAML records it (inherits: resolved): the release tag the scraper read (Batocera 43.1, Recalbox 10.1.1). A list kept on a branch with no release records what the scraper pinned instead: MinUI, MyMinUI and NextUI the date of the pinned commit, MiSTer the timestamp of the BiosDB it read. RetroArch and Lakka name the RetroArch release current when System.dat was read at its pinned commit, RetroPie the __version of RetroPie-Setup at its pinned commit."
     },
     "generated": {
       "type": "string",

@@ -6,6 +6,10 @@ upstream: "https://github.com/HarbourMasters/Ghostship"
 source_commit: "deb091c29caff57dd986398087b058f16b11911e"
 profiled_date: "2026-10-20"
 core_version: "3.0.0"
+version_basis:
+  kind: tag
+  tag: "3.0.0"
+  distance: 0
 display_name: "Super Mario 64 (Ghostship)"
 cores: [ghostship]
 systems: [ghostship]

@@ -7,7 +7,12 @@ logo: "https://raw.githubusercontent.com/finalburnneo/FBNeo/master/projectfiles/
 profiled_date: "2026-10-23"
 source_commit: "32958a89abd645ed20387c8d31d21ede3bc48161"
 upstream_commit: "697e385c8285bfc528343b96d948ee3a4f9e24c5"
-core_version: "v1.0.0.2"
+core_version: "v1.0.0.03"
+version_basis:
+  kind: file
+  path: "src/burn/version.h"
+  pattern: '#define\s+VER_MAJOR\s+(\d+)\s*\n#define\s+VER_MINOR\s+(\d+)\s*\n#define\s+VER_BETA\s+(\d+)\s*\n#define\s+VER_ALPHA\s+(\d+)'
+  format: "v{1}.{2}.{3}.{4:02d}"
 display_name: "Arcade (FinalBurn Neo)"
 cores:
   - fbneo

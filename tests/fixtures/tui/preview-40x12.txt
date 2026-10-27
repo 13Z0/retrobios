@@ -9,4 +9,4 @@
  missing      16.0 KB  gba_bios.bin
 
 
- A/Enter Back
+ A Back

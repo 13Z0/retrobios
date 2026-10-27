@@ -5,8 +5,8 @@
   "categorized": true,
   "platform": "misterfpga",
   "display_name": "MiSTer FPGA",
-  "version": "1.0",
-  "generated": "2026-10-26T22:11:28Z",
+  "version": "2026-09-29",
+  "generated": "2026-10-27T10:27:58Z",
   "base_destination": "games",
   "detect": [
     {

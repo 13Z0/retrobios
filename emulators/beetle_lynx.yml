@@ -6,6 +6,10 @@ upstream: "https://mednafen.github.io/"
 profiled_date: "2026-03-24"
 source_commit: "fcdefcfb3c11d6d2e71be076a5d3df2e88ab73ed"
 core_version: "v1.24.0"
+version_basis:
+  kind: file
+  path: "libretro.cpp"
+  pattern: '#define\s+MEDNAFEN_CORE_VERSION\s+"([^"]+)'
 display_name: "Atari - Lynx (Beetle Lynx)"
 cores: [mednafen_lynx, "beetle-lynx"]
 systems: [atari-lynx]

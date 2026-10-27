@@ -5,7 +5,11 @@ source: "https://gitlab.com/Dringgstein/Commander-Genius"
 upstream: "https://gitlab.com/Dringgstein/Commander-Genius"
 profiled_date: "2026-10-27"
 source_commit: "58a3c4fd0782fa2a087e38a039599b2ecf69ccc9"
-core_version: "v3.6.4"
+core_version: "3.6.4-Release"
+version_basis:
+  kind: file
+  path: "version.h"
+  pattern: '#define\s+CGVERSION\s+"([^"]+)"'
 display_name: "Commander Genius"
 cores: [cgenius, "CGeniusExe"]
 systems: [commander-keen]

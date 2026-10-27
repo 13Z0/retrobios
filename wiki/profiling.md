@@ -278,7 +278,11 @@ core_classification: community_fork
 source: https://github.com/libretro/dolphin
 upstream: https://github.com/dolphin-emu/dolphin
 profiled_date: 2026-03-25
-core_version: 5.0-21264
+core_version: "2609-437-g3aac3f0"
+version_basis:
+  kind: tag
+  tag: "2609"
+  distance: 437
 systems:
   - nintendo-gamecube
   - nintendo-wii
@@ -509,7 +513,8 @@ reports the profile as uncheckable, and the CI job that runs
 | `source` | no | libretro core repository URL. A dict when the core ships under several repos |
 | `upstream` | no | original emulator repository URL |
 | `profiled_date` | see above | date of source analysis. Quote it, or YAML parses it as a date object |
-| `core_version` | no | version analyzed |
+| `core_version` | every profile (`tests/test_version_basis.py`) | the version of the code at the pin, read where `version_basis` says. null when the code states none, never `Git`, `SVN` or a branch name. A dict keyed by build mode when the builds differ |
+| `version_basis` | every profile (`tests/test_version_basis.py`) | where `core_version` is read: `file` (`path`, `pattern`, optional `format`), `tag` (the nearest `tag` in the pin's history and its `distance`, `core_version` in git describe's form), `alias` (`of`), `package` (`artifact`, the APK or binary read) or `none`. `repo` names `upstream` when the version is the upstream tree's. `profile_sync --verify-version` reads it again, and a pin advance rewrites `core_version` from it |
 | `source_commit` | see above | commit SHA of `source` the code was read at. Anchors every `source_ref` line number |
 | `upstream_commit` | no | same, for `upstream` |
 | `source_branch` | no | branch `source` was read from when it is not the default one (a port living on a pull request branch). profile_sync follows it |

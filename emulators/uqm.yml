@@ -6,6 +6,11 @@ upstream: "https://sourceforge.net/projects/sc2/"
 profiled_date: "2026-10-04"
 source_commit: "ff2444088d42e80612fd28f79d368783e244a606"
 core_version: "0.8.0"
+version_basis:
+  kind: file
+  path: "sc2/src/uqmversion.h"
+  pattern: '#define UQM_MAJOR_VERSION_S\s+"(\d+)"[\s\S]*?#define UQM_MINOR_VERSION_S\s+"(\d+)"[\s\S]*?#define UQM_PATCH_VERSION_S\s+"(\d+)"[\s\S]*?#define UQM_EXTRA_VERSION\s+"([^"]*)"'
+  format: "{1}.{2}.{3}{4}"
 display_name: "The Ur-Quan Masters"
 cores: [uqm]
 systems: [ur-quan-masters, star-control-2]

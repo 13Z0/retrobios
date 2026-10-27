@@ -6,6 +6,10 @@ upstream: "https://gitlab.com/recalbox/packages/recalbox-cores/libretro-exel-hen
 profiled_date: "2026-10-17"
 source_commit: "213328332cbfd8121e018493443e223a7a780961"
 core_version: "v0.9"
+version_basis:
+  kind: tag
+  tag: "v0.9"
+  distance: 0
 pin_frozen: "Recalbox, the only platform that ships this core, builds its tag v0.9 (Recalbox package/libretro-exel-hence/libretro-exel-hence.mk:9 at tag 10.1.1)."
 display_name: "Exelvision - EXL 100 (Exel-Hence)"
 cores:

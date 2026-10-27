@@ -7,6 +7,10 @@ profiled_date: "2026-03-25"
 source_commit: "792c40cb590bcc7286cf720b5fb85807082b534e"
 upstream_commit: "77ca2c128784512eca10e24a453ca19c270a8af4"
 core_version: "0.3"
+version_basis:
+  kind: file
+  path: "libretro.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Syobon Action"
 cores: [syobonaction]
 systems: []

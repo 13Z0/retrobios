@@ -181,9 +181,10 @@ class FaqInstallsFromWhatYouHold(unittest.TestCase):
         for name in ("muOS", "Onion", "spruceOS", "MinUI", "KNULLI", "ROCKNIX"):
             with self.subTest(card=name):
                 self.assertIn(name, known)
-        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
-        self.assertIn('f"{card[2]} {kind} ({_mount_name(mount)})"', source)
-        self.assertIn('else "SD card"', source)
+        # The label the first screen gives a card found: "Onion SD card".
+        self.assertEqual(install._card_word(("retroarch", Path("/x/BIOS"), "Onion")), "SD card")
+        self.assertEqual(install._card_word(("batocera", Path("/x/bios"), "Batocera")),
+                         "SHARE drive")
 
     def test_a_wiped_card_links_the_copy(self):
         section = self._section("Lost or wiped card?")

@@ -5,7 +5,11 @@ source: "https://github.com/iyzsong/onscripter-libretro"
 upstream: "https://github.com/ogapee/onscripter"
 profiled_date: "2026-03-24"
 source_commit: "ec4ff1842d498faaa844d570becf561d088deea0"
-core_version: "0.3"
+core_version: "v0.3"
+version_basis:
+  kind: tag
+  tag: "v0.3"
+  distance: 0
 display_name: "ONScripter"
 cores:
   - onscripter

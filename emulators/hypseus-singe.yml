@@ -7,6 +7,10 @@ source_commit: "a16e2521ee3233ef20c44e562008c47f4b4293df"
 upstream_commit: "cd214c6046365047704f8a0563928970b30444e6"
 profiled_date: "2026-10-27"
 core_version: "v3.0.2"
+version_basis:
+  kind: tag
+  tag: "v3.0.2"
+  distance: 0
 display_name: "Arcade (Hypseus Singe)"
 cores:
   - hypseus-singe

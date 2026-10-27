@@ -8,6 +8,10 @@ version_source:
   pattern: 'no\$gba v(\d+(?:\.\d+)+)'
 profiled_date: "2026-10-24"
 core_version: "3.06"
+version_basis:
+  kind: package
+  url: "https://problemkaputt.de/gba.htm"
+  artifact: "no$gba-w.zip, release v3.06 of 14 Apr 2025 on the download page"
 display_name: "Nintendo - GBA/DS/DSi (no$gba)"
 cores:
   - nosgba

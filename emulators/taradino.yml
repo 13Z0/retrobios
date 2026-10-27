@@ -5,7 +5,11 @@ source: "https://github.com/fabiangreffrath/taradino"
 upstream: "https://github.com/fabiangreffrath/taradino"
 profiled_date: "2026-10-04"
 source_commit: "2b4ea3c6c18caf60959efee1f2534c2122607716"
-core_version: "0.1"
+core_version: "2025.12.22"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'project\(taradino[^)]*?\bVERSION\s+([0-9][0-9.]*)'
 display_name: "Taradino"
 cores: [taradino]
 systems: [rott]

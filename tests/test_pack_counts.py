@@ -52,6 +52,7 @@ files:
 
 PLATFORM = {
     "platform": "Demo",
+    "version": "2.1",
     "verification_mode": "existence",
     "base_destination": "",
     "cores": ["demo"],
@@ -494,7 +495,7 @@ class RefusedFilesAreNotPresent(unittest.TestCase):
                 }
             db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
             config = {
-                "platform": "Hashy", "verification_mode": "md5", "base_destination": "bios",
+                "platform": "Hashy", "version": "2.1", "verification_mode": "md5", "base_destination": "bios",
                 "systems": {"sys": {"files": [
                     {"name": "good.bin", "destination": "good.bin",
                      "md5": hashlib.md5(b"good.bin").hexdigest()},

@@ -604,7 +604,7 @@
    Copy from: none
    Preview the file list
    Show the command line
- Start Open  B Back  Left/Right Set
+ Start Open  B Back  <> Set
 === options 40x15
  RetroBIOS: Options
 
@@ -620,7 +620,7 @@
 
  Sets --region
 
- Start Open  B Back  Left/Right Set
+ Start Open  B Back  <> Set
 === options 80x24
  RetroBIOS: Options
 
@@ -658,7 +658,7 @@
    [ ] Japan
 
 
- Start Tick  B Done  Left/Right Order
+ Start Tick  B Done  <> Order
 === regions 40x15
  RetroBIOS: Preferred regions
 
@@ -674,7 +674,7 @@
 
 
 
- Start Tick  B Done  Left/Right Order
+ Start Tick  B Done  <> Order
 === regions 80x24
  RetroBIOS: Preferred regions
 
@@ -978,8 +978,8 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/
-   retrobios-backup/2026-10-23_1200
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+
  Details: /tmp/retrobios-x/install.log
 
  Start Exit
@@ -991,8 +991,8 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/
-   retrobios-backup/2026-10-23_1200
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+
  Details: /tmp/retrobios-x/install.log
 
 
@@ -1032,8 +1032,8 @@
      -2] Name or service not known
    Address:
      https://raw.githubusercontent.com/
-     Abdess/retrobios/main/install/
-     retroarch.json
+ 1-5 of 7
+
  > Choose another setup or folder
    Quit
  Start Choose  B Back

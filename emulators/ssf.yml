@@ -7,6 +7,12 @@ author: "Shima"
 profiled_date: "2026-08-12"
 source_commit: "432e257c312f705d5f85f298710d152240111da8"
 core_version: "PreviewVer R38"
+version_basis:
+  kind: package
+  url: "https://github.com/shimazzz/SEGASaturnEmulator-SSF/releases/download/PreviewVer/SSF_PreviewVer_R38.zip"
+  pattern: 'SSF_(PreviewVer)_(R\d+)\.zip'
+  format: "{1} {2}"
+  artifact: "SSF_PreviewVer_R38.zip"
 display_name: "Sega - Saturn/ST-V (SSF)"
 cores:
   - ssf

@@ -5,7 +5,11 @@ source: "https://github.com/libretro/vitavoyager"
 upstream: "https://github.com/clover-moe/lilium-voyager"
 profiled_date: "2026-03-25"
 source_commit: "58b70dd7ea891c2e8ddc37d03a5d58116b0ea118"
-core_version: "git"
+core_version: "1.36_GIT_ba68b99c-2018-01-23"
+version_basis:
+  kind: file
+  path: "Makefile"
+  pattern: '-DPRODUCT_VERSION=\\"([^\\"]+)\\"'
 display_name: "Star Trek: Voyager - Elite Force (vitaVoyager)"
 cores: [vitavoyager]
 systems: [quake3]

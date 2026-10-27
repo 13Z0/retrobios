@@ -5,7 +5,11 @@ source: "https://github.com/jpd002/Play-"
 upstream: "https://github.com/jpd002/Play-"
 profiled_date: "2026-03-24"
 source_commit: "1f27232772e484bfb79364b751b84f41f4c87481"
-core_version: "Git"
+core_version: "0.77-17-g1f27232"
+version_basis:
+  kind: tag
+  tag: "0.77"
+  distance: 17
 display_name: "Sony - PlayStation 2 (Play!)"
 cores:
   - play

@@ -76,7 +76,7 @@ class _Collection(unittest.TestCase):
         }}
         self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
         self.config = {
-            "platform": "Exist", "verification_mode": "existence",
+            "platform": "Exist", "version": "2.1", "verification_mode": "existence",
             "cores": ["sized", "unsized"],
             "systems": {"mac": {"files": []}, "iigs": {"files": []}},
         }

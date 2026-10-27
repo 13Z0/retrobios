@@ -63,6 +63,33 @@
           }
         }
       }
+    },
+    {
+      "comment": "A profile whose code states no version says so with version_basis kind none and a null core_version, never a placeholder.",
+      "if": {
+        "properties": {
+          "version_basis": {
+            "properties": {
+              "kind": {
+                "const": "none"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          }
+        },
+        "required": [
+          "version_basis"
+        ]
+      },
+      "then": {
+        "properties": {
+          "core_version": {
+            "type": "null"
+          }
+        }
+      }
     }
   ],
   "properties": {
@@ -155,11 +182,50 @@
       ]
     },
     "core_version": {
-      "type": [
-        "string",
-        "number",
-        "object",
-        "null"
+      "description": "The version of the code at the pin, read where version_basis says: the string the program states, git describe's form of the nearest tag, or the package read. Never a branch or VCS name (Git, SVN, master, latest, dev, unknown). null when version_basis is kind none. An object keys it by build mode, like source.",
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^(?!([Gg][Ii][Tt]|[Ss][Vv][Nn]|[Uu][Nn][Kk][Nn][Oo][Ww][Nn]|[Mm][Aa][Ss][Tt][Ee][Rr]|[Mm][Aa][Ii][Nn]|[Ll][Aa][Tt][Ee][Ss][Tt]|[Dd][Ee][Vv]|[Hh][Ee][Aa][Dd])([\\s(]|$)).*\\S"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!([Gg][Ii][Tt]|[Ss][Vv][Nn]|[Uu][Nn][Kk][Nn][Oo][Ww][Nn]|[Mm][Aa][Ss][Tt][Ee][Rr]|[Mm][Aa][Ii][Nn]|[Ll][Aa][Tt][Ee][Ss][Tt]|[Dd][Ee][Vv]|[Hh][Ee][Aa][Dd])([\\s(]|$)).*\\S"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "version_basis": {
+      "description": "Where core_version is read, so a tool reads it again at any pin. An object keyed by build mode when core_version is.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/version_basis"
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "not": {
+            "required": [
+              "kind"
+            ]
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/version_basis"
+          }
+        }
       ]
     },
     "alias_of": {
@@ -963,6 +1029,189 @@
     "source_mirror": {
       "type": "string",
       "description": "Repository carrying the same tree, consulted after source and upstream. The only thing that keeps a profile checkable once its own forge is withdrawn or its host stops resolving."
+    }
+  },
+  "$defs": {
+    "version_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "file",
+            "tag",
+            "alias",
+            "package",
+            "none",
+            "unverified"
+          ],
+          "description": "file: a pattern in one file at the pin. tag: the nearest tag in the pin's history. alias: the version of the profile it aliases. package: an artefact read outside any source tree. none: the code at the pin states no version and no tag reaches it. unverified: no reading could be made, for the reason why gives. core_version stays as written, unconfirmed."
+        },
+        "why": {
+          "enum": [
+            "no_pin",
+            "host_unsupported",
+            "host_gone",
+            "host_unreachable",
+            "pin_off_branch",
+            "no_artifact",
+            "no_source"
+          ],
+          "description": "Why a basis is unverified: no pinned commit, a host the tools cannot read, a forge gone, a forge that did not answer, a pin on another branch than the build the profile describes, no build or package named as read, no source declared."
+        },
+        "repo": {
+          "enum": [
+            "source",
+            "upstream",
+            "source_mirror"
+          ],
+          "description": "The declared repository the version describes, pinned by source_commit (source, source_mirror) or upstream_commit. Default source."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "kind file: a repository outside the profile's own, read at commit (the package file of a build a platform ships). kind package: where the artefact was obtained."
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{7,40}$",
+          "description": "The revision of url the file is read at."
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "File read at the pin."
+        },
+        "pattern": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Regular expression, multiline, whose groups hold the version."
+        },
+        "format": {
+          "type": "string",
+          "pattern": "\\{\\d+",
+          "description": "How the groups are laid out, {1}.{2} or {4:02d}. Default: group 1."
+        },
+        "match": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Glob a tag must fit to count, as git describe --match takes it."
+        },
+        "tag": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The nearest tag in the pin's history."
+        },
+        "distance": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Commits the pin has that the tag lacks."
+        },
+        "of": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The profile this one aliases."
+        },
+        "artifact": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The package, binary or archive the version was read from."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "file"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "path",
+              "pattern"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "tag"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "tag",
+              "distance"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "alias"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "of"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "package"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "artifact"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "file"
+              }
+            },
+            "required": [
+              "url"
+            ]
+          },
+          "then": {
+            "required": [
+              "commit"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "unverified"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "why"
+            ]
+          }
+        }
+      ]
     }
   }
 }

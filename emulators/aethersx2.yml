@@ -8,6 +8,11 @@ profiled_date: "2026-08-11"
 source_commit: "1d1f795dfc70e38da67724c7298779260f513889"
 upstream_commit: "f0523f8acb1d3a765ee73b74cffec63093569199"
 core_version: "1.5-3939"
+version_basis:
+  kind: package
+  url: "https://web.archive.org/web/20230320102332/https://www.aethersx2.com/archive/desktop/mac/AetherSX2-v1.5-3939-mac.zip"
+  pattern: 'AetherSX2-v([0-9.]+-[0-9]+)-mac\.zip'
+  artifact: "AetherSX2-v1.5-3939-mac.zip"
 display_name: "Sony - PlayStation 2 (AetherSX2)"
 cores:
   - aethersx2

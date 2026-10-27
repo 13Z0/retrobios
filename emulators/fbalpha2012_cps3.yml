@@ -5,7 +5,12 @@ source: "https://github.com/libretro/fbalpha2012_cps3"
 upstream: "https://www.fbalpha.com"
 profiled_date: "2026-03-23"
 source_commit: "57f8015c2e0cdebcf42d3add2c314bb7448f9421"
-core_version: "v0.2.97.29"
+core_version: "v0.2.97.30"
+version_basis:
+  kind: file
+  path: "svn-current/trunk/src/burn/version.h"
+  pattern: '#define\s+VER_MAJOR\s+(\d+)\s*\n#define\s+VER_MINOR\s+(\d+)\s*\n#define\s+VER_BETA\s+(\d+)\s*\n#define\s+VER_ALPHA\s+(\d+)'
+  format: "v{1}.{2}.{3}.{4}"
 display_name: "Arcade (FB Alpha 2012 CPS-3)"
 library_name: "FB Alpha 2012 CPS-3"
 cores:

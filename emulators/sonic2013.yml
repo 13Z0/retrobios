@@ -5,6 +5,10 @@ source: "https://github.com/RSDKModding/RSDKv4-Decompilation"
 upstream: "https://github.com/RSDKModding/RSDKv4-Decompilation"
 source_commit: "a7f5195e21fdad7b75e4587e249013feeea9e6f3"
 core_version: "1.3.3"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'set\(DECOMP_VERSION\s+([^\s)]+)\)'
 profiled_date: "2026-10-04"
 display_name: "Sonic 1 & 2 (2013) (RSDKv4 Decomp)"
 cores: [sonicretro]

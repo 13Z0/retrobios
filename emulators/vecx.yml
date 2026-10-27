@@ -5,7 +5,11 @@ source: "https://github.com/libretro/libretro-vecx"
 upstream: "https://github.com/jhawthorn/vecx"
 profiled_date: "2026-03-25"
 source_commit: "dccff5402a16d1ea7c112095a8e42632bf149506"
-core_version: "SVN"
+core_version: "1.2"
+version_basis:
+  kind: file
+  path: "libretro.c"
+  pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "GCE - Vectrex (vecx)"
 cores:
   - vecx

@@ -5,7 +5,11 @@ source: "https://github.com/diekleinekuh/BennuGD_libretro"
 upstream: "https://github.com/SplinterGU/BennuGD"
 profiled_date: "2026-03-23"
 source_commit: "5fba764ac709545d4b0d3b28deff2ec0c7d1a91b"
-core_version: "git"
+core_version: "1.0.0"
+version_basis:
+  kind: file
+  path: "core/common/bgd_version.c"
+  pattern: 'snprintf\(buffer, sizeof\(buffer\), "([0-9][0-9.]*)-BennuGD_libretro'
 display_name: "Bennu Game Development"
 cores:
   - bennugd

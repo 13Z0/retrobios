@@ -6,6 +6,10 @@ upstream: "https://github.com/blastrock/meteor"
 profiled_date: "2026-03-24"
 source_commit: "9ea6c358eae6acd1a346647d96b832ccaffad0aa"
 core_version: "v1.4"
+version_basis:
+  kind: file
+  path: "libretro/libretro.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Nintendo - Game Boy Advance (Meteor)"
 cores:
   - meteor

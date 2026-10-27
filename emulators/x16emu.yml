@@ -5,6 +5,10 @@ upstream: "https://github.com/X16Community/x16-emulator"
 profiled_date: "2026-10-20"
 source_commit: "af1024080ced455ea098b007aed43142c99e93da"
 core_version: "r49"
+version_basis:
+  kind: tag
+  tag: "r49"
+  distance: 0
 display_name: "Commander X16 (x16emu)"
 cores:
   - x16emu

@@ -11,8 +11,18 @@ source_commit:
   standalone: "25e1ee2fd59a451f2ab57e825b4f8a5414220c8b"
   libretro: "d9804db79f87f6a6a5548b14ca4a8d5164390338"
 core_version:
-  standalone: "0.8.139-2-g25e1ee2fd5"
+  standalone: "v0.8.139-2-g25e1ee2"
   libretro: "libretro-experimental"
+version_basis:
+  standalone:
+    kind: tag
+    match: "v*"
+    tag: "v0.8.139"
+    distance: 2
+  libretro:
+    kind: file
+    path: "ui/xemu-libretro.c"
+    pattern: 'info->library_version\s*=\s*"([^"]+)"'
 display_name: "Microsoft - Xbox (xemu)"
 cores:
   - xemu

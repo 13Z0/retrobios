@@ -8,6 +8,10 @@ profiled_date: "2026-09-17"
 source_commit: "5d7d786ad1d8703a52184ff2ee39712c46ed67c9"
 upstream_commit: "5d7d786ad1d8703a52184ff2ee39712c46ed67c9"
 core_version: "1.1"
+version_basis:
+  kind: file
+  path: "libretro-radio.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Internet Radio (Radio)"
 cores:
   - radio

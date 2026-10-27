@@ -9,6 +9,10 @@ version_source:
 author: "Pixel Respawn LLC"
 profiled_date: "2026-10-24"
 core_version: "4.0.0"
+version_basis:
+  kind: package
+  url: "https://play.google.com/store/apps/details?id=com.pixelrespawn.linkboy"
+  artifact: "com.pixelrespawn.linkboy APK versionName (versionCode 95)"
 display_name: "Nintendo - Game Boy / Color / Advance (Linkboy)"
 mode: standalone
 cores:

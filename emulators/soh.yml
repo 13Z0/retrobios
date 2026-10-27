@@ -7,6 +7,10 @@ source_commit: "cb71e22a79bc5d1f688fa881795bbd93094895fc"
 pin_frozen: "RetroBat, the only platform that ships it, installs this release: the soh.exe of its soh.7z package (10 October 2026) reports Ackbar Delta (9.2.3). Later releases are not part of that package."
 profiled_date: "2026-10-20"
 core_version: "9.2.3"
+version_basis:
+  kind: tag
+  tag: "9.2.3"
+  distance: 0
 display_name: "The Legend of Zelda: Ocarina of Time (Ship of Harkinian)"
 cores: [soh]
 systems: [soh]

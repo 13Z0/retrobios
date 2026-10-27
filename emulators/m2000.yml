@@ -5,7 +5,11 @@ source: "https://github.com/p2000t/M2000"
 upstream: "https://github.com/p2000t/M2000"
 profiled_date: "2026-03-24"
 source_commit: "da0b8cbef2007c907f5db2166847c3209643865d"
-core_version: "0.9.4"
+core_version: "0.9.5"
+version_basis:
+  kind: file
+  path: "src/P2000.h"
+  pattern: '#define\s+EMULATOR_VERSION\s+"([^"]+)"'
 display_name: "Philips - P2000T (M2000)"
 cores:
   - m2000

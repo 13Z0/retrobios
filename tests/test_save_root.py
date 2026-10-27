@@ -243,7 +243,7 @@ class _Fixture(unittest.TestCase):
                              "required": False}]}
         for name in ("testra", "testnosave"):
             (self.platforms / f"{name}.yml").write_text(yaml.safe_dump({
-                "platform": name, "verification_mode": "existence",
+                "platform": name, "version": "2.1", "verification_mode": "existence",
                 "base_destination": "system", "cores": ["corex"],
                 "systems": {"test-console": system},
             }))
@@ -399,7 +399,7 @@ class AFolderPerSystem(_Fixture):
                              "required": False}]}
         for name in ("testbato", "testrb"):
             (self.platforms / f"{name}.yml").write_text(yaml.safe_dump({
-                "platform": name, "verification_mode": "existence",
+                "platform": name, "version": "2.1", "verification_mode": "existence",
                 "base_destination": "bios", "cores": ["corex", "corey"],
                 "systems": {"test-console": system},
                 # Two systems run CoreX, none runs CoreY.

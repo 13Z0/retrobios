@@ -5,7 +5,11 @@ source: "https://github.com/ptitSeb/hydracastlelabyrinth"
 upstream: "https://github.com/ptitSeb/hydracastlelabyrinth"
 profiled_date: "2026-10-04"
 source_commit: "e31648688434a789e3056e52cdf1b9a842eeed48"
-core_version: ~
+core_version: "v0.1.0-4-ge316486"
+version_basis:
+  kind: tag
+  tag: "v0.1.0"
+  distance: 4
 display_name: "Hydra Castle Labyrinth (hcl)"
 cores: [hcl]
 systems: []

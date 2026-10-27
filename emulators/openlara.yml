@@ -7,6 +7,10 @@ profiled_date: "2026-03-24"
 source_commit: "e4ce52edec5a9a6ad22b69d08c687bf070e68876"
 upstream_commit: "3b268ca4bf986c380f44a26ffd9218bf6d376249"
 core_version: "v1"
+version_basis:
+  kind: file
+  path: "src/platform/libretro/main.cpp"
+  pattern: 'library_version\s*=\s*"([^"]+)"'
 display_name: "Tomb Raider (OpenLara)"
 cores: [openlara]
 systems: [tomb-raider]

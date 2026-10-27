@@ -4,7 +4,11 @@ core_classification: official_port
 source: "https://github.com/hrydgard/ppsspp"
 profiled_date: "2026-10-21"
 source_commit: "43a69b1c84dfe29e82b46bd3797a1106cbd65c5b"
-core_version: "Git"
+core_version: "v1.20.4-3958-g43a69b1"
+version_basis:
+  kind: tag
+  tag: "v1.20.4"
+  distance: 3958
 display_name: "Sony - PlayStation Portable (PPSSPP)"
 cores:
   - ppsspp

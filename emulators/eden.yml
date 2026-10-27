@@ -8,7 +8,11 @@ upstream: "https://git.eden-emu.dev/eden-emu/eden"
 source_mirror: "https://codeberg.org/eden-emu/eden"
 profiled_date: "2026-03-26"
 source_commit: "26a03d2473787abf3223b2d0e65b291eee00c1e1"
-core_version: "0.1.1"
+core_version: "v0.2.0-401-g26a03d2"
+version_basis:
+  kind: tag
+  tag: "v0.2.0"
+  distance: 401
 display_name: "Eden (Nintendo Switch)"
 cores:
   - eden

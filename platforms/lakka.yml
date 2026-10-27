@@ -1,5 +1,7 @@
 inherits: retroarch
 platform: Lakka
 homepage: "https://www.lakka.tv"
-# Version is inherited from retroarch.yml (fetched dynamically by scraper)
+# Lakka-LibreELEC's release tag, the revision platforms/targets/lakka.yml
+# reads its cores at. A version is never inherited from retroarch.yml.
+version: v6.1
 # Lakka uses the same BIOS requirements as RetroArch

@@ -8,6 +8,10 @@ profiled_date: "2026-10-21"
 source_commit: "50929946d196f431906932420c55e1b3593dacc5"
 upstream_commit: "23bc3060ebf0da348cc842e358c102ba88002b56"
 core_version: "2.6.1-devel"
+version_basis:
+  kind: file
+  path: "src/includes/version.h"
+  pattern: '^#define\s+HATARI_VERSION\s+"([^" ]+)'
 display_name: "Atari - ST/STE/TT/Falcon (Hatari)"
 cores:
   - hatari

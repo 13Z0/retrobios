@@ -2,7 +2,10 @@ emulator: "Mupen64Plus-Next Develop"
 type: alias
 alias_of: "mupen64plus_next"
 profiled_date: "2026-03-24"
-core_version: "2.8"
+core_version: "2.6.0"
+version_basis:
+  kind: alias
+  of: "mupen64plus_next"
 display_name: "Nintendo - Nintendo 64 (Mupen64Plus-Next Develop)"
 cores:
   - mupen64plus_next_develop

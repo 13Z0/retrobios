@@ -5,7 +5,11 @@ source: "https://github.com/libretro/gpsp"
 upstream: "https://github.com/davidgfnet/gpsp"
 profiled_date: "2026-03-23"
 source_commit: "5819380c2ffb0900219d700a382ee68c464ebb99"
-core_version: "Git"
+core_version: "v1.1.0"
+version_basis:
+  kind: file
+  path: "gpsp_config.h"
+  pattern: '#define\s+GPSP_VERSION\s+"([^"]+)"'
 display_name: "Nintendo - Game Boy Advance (gpSP)"
 cores:
   - gpsp

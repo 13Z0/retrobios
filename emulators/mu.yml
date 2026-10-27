@@ -6,6 +6,10 @@ upstream: "https://github.com/meepingsnesroms/Mu"
 profiled_date: "2026-03-24"
 source_commit: "afaeb157b8ba38a4a9bdf426ba663f7efb2cc6f8"
 core_version: "v1.3.3"
+version_basis:
+  kind: file
+  path: "libretroBuildSystem/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Palm OS (Mu)"
 cores: [mu]
 systems: [palm-os]

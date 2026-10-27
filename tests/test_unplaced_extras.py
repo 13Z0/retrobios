@@ -58,6 +58,7 @@ class SlugPlatform(unittest.TestCase):
         self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
         self.config = {
             "platform": "Slugs",
+            "version": "2.1",
             "verification_mode": "md5",
             "base_destination": "bios",
             "cores": ["dosbox"],
@@ -139,7 +140,7 @@ class RegionKeysForEveryClaimant(unittest.TestCase):
                 )
             common._emulator_profiles_cache.clear()
             profiles = common.load_emulator_profiles("emulators")
-            config = {"platform": "P", "verification_mode": "existence", "cores": ["one", "two"],
+            config = {"platform": "P", "version": "2.1", "verification_mode": "existence", "cores": ["one", "two"],
                       "systems": {"sys": {"files": []}}}
             _groups, extra_dests = platform_region_groups(
                 config, config["systems"], "emulators", db, "", profiles
@@ -178,7 +179,7 @@ class FlatFirmwareFolder(unittest.TestCase):
                     }
                 db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
                 config = {
-                    "platform": "Flat", "verification_mode": "md5",
+                    "platform": "Flat", "version": "2.1", "verification_mode": "md5",
                     "base_destination": "bios", "cores": ["psx"],
                     "systems": {
                         "psx": {"files": [{"name": "scph5501.bin",
@@ -300,7 +301,7 @@ class OnePathCountsOnce(unittest.TestCase):
             common._emulator_profiles_cache.clear()
             self.addCleanup(common._emulator_profiles_cache.clear)
             profiles = common.load_emulator_profiles("emulators")
-            config = {"platform": "P", "verification_mode": "existence", "cores": ["one", "two"],
+            config = {"platform": "P", "version": "2.1", "verification_mode": "existence", "cores": ["one", "two"],
                       "systems": {"amiga": {"files": []}}}
             report = verify_platform(config, db, "emulators", profiles)
         claims = [u for u in report["undeclared_files"] if u["name"] == "rom.key"]

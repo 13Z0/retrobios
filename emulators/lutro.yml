@@ -5,7 +5,11 @@ source: "https://github.com/libretro/libretro-lutro"
 upstream: "https://github.com/libretro/libretro-lutro"
 profiled_date: "2026-03-24"
 source_commit: "6224157a615b18507bc0b117a3398c7a324cd3e5"
-core_version: "v1"
+core_version: "0.0.1"
+version_basis:
+  kind: file
+  path: "lutro.h"
+  pattern: '#define\s+VERSION_STRING\s+"([^"]+)"'
 display_name: "Lua Engine (Lutro)"
 cores:
   - lutro

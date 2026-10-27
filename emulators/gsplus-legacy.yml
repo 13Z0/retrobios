@@ -8,6 +8,10 @@ profiled_date: "2026-10-20"
 source_commit: "480572054518112647c8fae5d7ea7046a6d6ecfb"
 pin_frozen: "Recalbox builds this commit (Recalbox package/gsplus/gsplus.mk:8-9 at tag 10.1.1). Batocera builds the applemu fork and RetroBat its release build, as the notes say."
 core_version: "0.14"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'project\(gsplus\s+VERSION\s+([0-9][\w.+-]*)'
 display_name: "Apple - Apple IIGS (GSplus legacy)"
 systems:
   - apple-iigs

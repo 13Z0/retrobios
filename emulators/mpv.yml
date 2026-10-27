@@ -6,6 +6,10 @@ upstream: "https://github.com/mpv-player/mpv"
 profiled_date: "2026-03-24"
 source_commit: "99f7fe4fd43d68da45006301829eaf37c7edbcc2"
 core_version: "0.2.alpha"
+version_basis:
+  kind: file
+  path: "version.h"
+  pattern: '#define\s+LIBRETRO_MPV_VERSION\s+"([^"]+)'
 display_name: "MPV"
 cores:
   - mpv

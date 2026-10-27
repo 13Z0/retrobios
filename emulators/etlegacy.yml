@@ -5,7 +5,12 @@ source: "https://github.com/etlegacy/etlegacy"
 upstream: "https://github.com/etlegacy/etlegacy"
 profiled_date: "2026-10-04"
 source_commit: "add16a92f4b10c2955136e3ab7868bfc9bff8fad"
-core_version: "2.86.2+git"
+core_version: "2.86.2"
+version_basis:
+  kind: file
+  path: "VERSION.txt"
+  pattern: '^VERSION_MAJOR (\d+)\s*\nVERSION_MINOR (\d+)\s*\nVERSION_PATCH (\d+)'
+  format: "{1}.{2}.{3}"
 display_name: "ET: Legacy"
 cores: [etlegacy]
 systems: [enemyterritory]

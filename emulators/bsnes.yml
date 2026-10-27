@@ -8,6 +8,10 @@ profiled_date: "2026-04-05"
 source_commit: "05439f96121d2b9d7ad7a5fc1f29d7eebdcc8c43"
 upstream_commit: "78474e5d39f58872dc21aca18cf9eb583b147fe7"
 core_version: "115"
+version_basis:
+  kind: file
+  path: "bsnes/emulator/emulator.hpp"
+  pattern: 'static const string Version\s*=\s*"([^"]+)"'
 display_name: "Nintendo - SNES / SFC (bsnes)"
 cores: [bsnes]
 systems: [nintendo-snes, nintendo-super-game-boy, nintendo-satellaview]

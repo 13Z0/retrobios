@@ -5,6 +5,11 @@ source: "https://github.com/tonioni/WinUAE"
 source_commit: "15110cf6606d1188800ea7ad86bf1cbd9c688741"
 profiled_date: "2026-10-20"
 core_version: "6.1.0 beta 19"
+version_basis:
+  kind: file
+  path: "include/winuae_version.h"
+  pattern: '#define UAEMAJOR (\d+)\n#define UAEMINOR (\d+)\n#define UAESUBREV (\d+)\n\n#define WINUAEPUBLICBETA 1\n\n#if WINUAEPUBLICBETA\n#define WINUAEBETA _T\("(\d+)"\)'
+  format: "{1}.{2}.{3} beta {4}"
 display_name: "Commodore - Amiga (WinUAE)"
 cores:
   - winuae

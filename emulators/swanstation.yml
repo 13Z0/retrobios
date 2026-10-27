@@ -6,7 +6,11 @@ upstream: "https://github.com/stenzek/duckstation"
 profiled_date: "2026-03-25"
 source_commit: "631f0fb31b809e0f889d7c551fe695788e39c1d3"
 upstream_commit: "526b4a128827ecaef037134095cd95f431b52d06"
-core_version: "v0.1"
+core_version: "1.0.0"
+version_basis:
+  kind: file
+  path: "src/libretro/libretro_host_interface.cpp"
+  pattern: 'library_version\s*=\s*"([0-9][^" ]*)'
 display_name: "Sony - PlayStation (SwanStation)"
 cores: [swanstation]
 found_by: content

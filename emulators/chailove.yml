@@ -6,6 +6,10 @@ upstream: "https://github.com/libretro/libretro-chailove"
 profiled_date: "2026-03-23"
 source_commit: "524ef951abbd07464830ee12a3f6f5e2aba9efd3"
 core_version: "2.0.0"
+version_basis:
+  kind: file
+  path: "src/ChaiLove.h"
+  pattern: '#define\s+CHAILOVE_VERSION_STRING\s+"([^"]+)'
 display_name: "ChaiLove"
 cores: [chailove]
 systems: []

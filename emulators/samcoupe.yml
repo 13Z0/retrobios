@@ -6,6 +6,10 @@ upstream: "https://github.com/simonowen/simcoupe"
 profiled_date: "2026-10-04"
 source_commit: "1f966036543991c05022ce4f95cfbfbb0014b187"
 core_version: "v1.2.17"
+version_basis:
+  kind: tag
+  tag: "v1.2.17"
+  distance: 0
 display_name: "SAM Coupe (SimCoupe)"
 cores:
   - samcoupe

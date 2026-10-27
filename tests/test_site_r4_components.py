@@ -141,7 +141,10 @@ class TheVisitorsTab(unittest.TestCase):
         block = source[source.index("const osTabs = () =>"):source.index("// The sidebar lists")]
         self.assertIn("savedTab(OS_SYNC_KEY)", block)
         self.assertIn("set.switchTab(set.tabs[index], index, false)", block)
-        self.assertNotIn("localStorage.setItem", source)
+        self.assertNotIn("localStorage.setItem", block)
+        # The one choice the script saves is the setup picked in an install
+        # box, under its own key: never the OS guess.
+        self.assertEqual(re.findall(r"localStorage\.setItem\((\w+)", source), ["SETUP_KEY"])
         self.assertNotIn("keepTabInView", source)
 
 

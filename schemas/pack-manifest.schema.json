@@ -43,6 +43,17 @@
     "system_names": {
       "type": "object",
       "additionalProperties": { "type": "array", "items": { "type": "string" } }
+    },
+    "list_version": {
+      "description": "Version of the platform's list the pack was built from, the version of its install manifest. The installer compares it with the version the machine runs when it installs from the pack alone. The version key above numbers this file's format.",
+      "type": "string",
+      "minLength": 1
+    },
+    "list_records": {
+      "description": "What the platform's install list narrows by: the installer names that list as the remedy for --core or --region given with the pack alone only when it records them.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["systems", "cores", "regions"] }
     }
   }
 }

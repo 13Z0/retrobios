@@ -6,6 +6,10 @@ upstream: "https://github.com/ioquake/ioq3"
 profiled_date: "2026-10-20"
 source_commit: "8d89a2a3c1707bf0f75b2ea26645b872e97c0b95"
 core_version: "1.35"
+version_basis:
+  kind: file
+  path: "Makefile"
+  pattern: 'VERSION=([0-9][\w.+-]*)'
 display_name: "Quake III Arena (Raspberry Pi port)"
 cores: [quake3]
 systems: [quake3]

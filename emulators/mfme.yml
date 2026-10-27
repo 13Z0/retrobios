@@ -5,6 +5,10 @@ source: "https://www.desertislandfruits.com/"
 upstream: closed-source
 profiled_date: "2026-08-08"
 core_version: "20.1"
+version_basis:
+  kind: package
+  url: "https://www.desertislandfruits.com/"
+  artifact: "MFME v20 Windows installer, MFME.exe FileVersion 20.1.0.0"
 display_name: "MFME (Fruit Machines)"
 cores:
   - mfme

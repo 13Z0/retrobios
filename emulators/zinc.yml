@@ -6,6 +6,10 @@ upstream: closed-source
 author: "Drunken Muppets"
 profiled_date: "2026-10-20"
 core_version: "1.1"
+version_basis:
+  kind: package
+  url: "https://www.retrobat.ovh/repo/win64/stable/emulators/zinc.7z"
+  artifact: "zinc.7z, ZiNc.exe banner"
 display_name: "Arcade - Sony ZN-1/ZN-2, Namco System 11, Konami GV (ZiNc)"
 cores:
   - zinc

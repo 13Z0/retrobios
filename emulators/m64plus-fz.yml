@@ -7,6 +7,10 @@ source_branch: fz-master
 profiled_date: "2026-08-11"
 source_commit: "f3c381bcc58e4adce897aba323193d3f407e30e3"
 core_version: "3.0.335 (beta)"
+version_basis:
+  kind: file
+  path: "build_common/version_common.gradle"
+  pattern: 'versionName\s*=\s*"([^"]+)"'
 display_name: "Nintendo - Nintendo 64 (M64Plus FZ)"
 cores:
   - m64plus-fz

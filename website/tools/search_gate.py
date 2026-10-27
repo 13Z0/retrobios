@@ -112,6 +112,19 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     "r36s": (("platforms/", "which-pack/"), 3),
     "steam deck": (("platforms/emudeck/", "platforms/retrodeck/", "which-pack/"), 1),
     "knulli": (("platforms/knulli/",), 1),
+    # A card folded in a table row, on the last part of MAME's cards.
+    "bbc_flop_torch.xml": (("emulators/mame-files-",), 3),
+    # FinalBurn Neo has no pgm.zip entry: the archive is named by the badge
+    # of each member it reads there, in the Status column of its table.
+    "pgm.zip": (("emulators/fbneo/",), 3),
+    # A dump name in a wanted list folded under its filter box.
+    "speeddos": (("provenance-tosec/",), 1),
+    # A pasted hash of any kind finds the file's card, its hashes now in a
+    # closed fold: the MD5, CRC32 and SHA256 of scph5501.bin. The search box
+    # offers "Look up this hash", and the lookup opens the card.
+    "490f666e1afb15b7362b406ed1cea246": (("systems/sony-playstation/",), 1),
+    "8d8cb7e4": (("systems/sony-playstation/",), 1),
+    "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef": (("systems/sony-playstation/",), 1),
 }
 
 

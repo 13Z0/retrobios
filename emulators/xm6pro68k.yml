@@ -9,6 +9,10 @@ version_source:
 based_on: "XM6 v2.06 by PI."
 profiled_date: "2026-10-20"
 core_version: "260920"
+version_basis:
+  kind: package
+  url: "https://www.retrobat.ovh/repo/win64/stable/emulators/xm6pro.7z"
+  artifact: "xm6pro.7z, Version.txt"
 display_name: "XM6 Pro-68k (Sharp X68000)"
 mode: standalone
 cores:
