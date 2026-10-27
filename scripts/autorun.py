@@ -102,6 +102,8 @@ class Step:
     argv: tuple[str, ...]
     ok_codes: tuple[int, ...] = (0,)
     stdout: str = ""
+    # Variables passed through beside the allowlist (romfetch's settings).
+    env: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -220,13 +222,18 @@ def _step(raw: object, where: str) -> Step:
     if isinstance(raw, list):
         return Step(argv=tuple(str(a) for a in raw))
     if isinstance(raw, dict) and isinstance(raw.get("run"), list):
-        unknown = set(raw) - {"run", "ok_codes", "stdout"}
+        unknown = set(raw) - {"run", "ok_codes", "stdout", "env"}
         if unknown:
             raise ValueError(f"{where}: unknown step key {sorted(unknown)}")
+        names = tuple(str(n) for n in raw.get("env") or ())
+        secret = [n for n in names if is_secret(n)]
+        if secret:
+            raise ValueError(f"{where}: a step never receives {', '.join(secret)}")
         return Step(
             argv=tuple(str(a) for a in raw["run"]),
             ok_codes=tuple(int(c) for c in raw.get("ok_codes", (0,))),
             stdout=str(raw.get("stdout") or ""),
+            env=names,
         )
     raise ValueError(f"{where}: a step is a command list or a mapping with 'run'")
 
@@ -463,9 +470,10 @@ def twice(
 # Git
 
 
-def git(cwd: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess:
+def git(cwd: Path, *args: str, check: bool = True,
+        env: dict[str, str] | None = None) -> subprocess.CompletedProcess:
     proc = subprocess.run(
-        ["git", "-C", str(cwd), *args], capture_output=True, text=True, check=False,
+        ["git", "-C", str(cwd), *args], capture_output=True, text=True, check=False, env=env,
     )
     if check and proc.returncode != 0:
         raise AutorunError(
@@ -590,7 +598,7 @@ def push_batch(worktree: Path, gate_base: str, regate: Callable[[], bool]) -> st
             raise AutorunError(BLOCKED, f"rebase onto {upstream} conflicts, batch kept")
     if git(worktree, "rev-parse", upstream).stdout.strip() != gate_base and not regate():
         raise AutorunError(FAILED, f"gate failed on the batch rebased onto {upstream}")
-    git(worktree, "push", "--quiet", REMOTE, f"HEAD:{TARGET}")
+    git(worktree, "push", "--quiet", REMOTE, f"HEAD:{TARGET}", env=token_env())
     return git(worktree, "rev-parse", "HEAD").stdout.strip()
 
 
@@ -602,6 +610,7 @@ def gh_json(args: list[str]) -> object:
     try:
         proc = subprocess.run(
             ["gh", *args], capture_output=True, text=True, timeout=120, check=False,
+            env=token_env(),
         )
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -724,20 +733,51 @@ def set_alert(state: dict, name: str, active: bool, detail: str, now: str) -> No
 # Running a job
 
 
-def job_env(job: Job) -> dict[str, str]:
-    env = os.environ.copy()
-    env["RETROBIOS_AUTO"] = "1"
+# What a job step inherits. A step can run third-party code (a buildbot
+# core, a scraped page, a downloaded tool), so it gets the variables a
+# program needs to run and nothing it could leak: no token, no password.
+SAFE_ENV = frozenset({"PATH", "HOME", "LANG", "TZ", "TMPDIR"})
+SECRET_NAMES = frozenset({"GITHUB_TOKEN", "GH_TOKEN", "ROMSTATION_USER", "ROMSTATION_PASS"})
+SECRET_MARKERS = ("TOKEN", "SECRET", "PASS")
+
+
+def is_secret(name: str) -> bool:
+    upper = name.upper()
+    return name in SECRET_NAMES or any(marker in upper for marker in SECRET_MARKERS)
+
+
+def safe_env(names: Sequence[str] = (), add: dict[str, str] | None = None,
+             source: dict[str, str] | None = None) -> dict[str, str]:
+    """The allowlisted environment, plus the variables a step names
+    explicitly. A secret is dropped even when named."""
+    source = dict(os.environ) if source is None else source
+    wanted = set(names)
+    env = {key: value for key, value in source.items()
+           if (key in SAFE_ENV or key.startswith("LC_") or key in wanted) and not is_secret(key)}
+    env.update({key: value for key, value in (add or {}).items() if not is_secret(key)})
+    return env
+
+
+def token_env() -> dict[str, str]:
+    """The environment of the phases that need GitHub: the push and gh."""
+    sys.path.insert(0, str(REPO_ROOT / "scripts"))
+    from common import github_token
+
+    env = dict(os.environ)
+    token = github_token()
+    if token:
+        env["GITHUB_TOKEN"] = token
+    return env
+
+
+def job_env(job: Job, step: Step | None = None) -> dict[str, str]:
+    """A step's environment: the allowlist, the runner's own markers and the
+    variables the step names. Never a token, network job or not."""
+    add = {"RETROBIOS_AUTO": "1"}
     if job.lock:
         # A step that takes the host lock itself (campaign.py) runs under ours.
-        env[LOCK_HELD_ENV] = "1"
-    if job.network:
-        sys.path.insert(0, str(REPO_ROOT / "scripts"))
-        from common import github_token
-
-        token = github_token()
-        if token:
-            env["GITHUB_TOKEN"] = token
-    return env
+        add[LOCK_HELD_ENV] = "1"
+    return safe_env(step.env if step else (), add)
 
 
 def _remove_scratch(root: Path, rel: str) -> None:
@@ -772,7 +812,6 @@ class Runner:
         self.cwd = ctx.worktree if job.worktree else ctx.repo
         self.log = ctx.home / "logs" / job.name / f"{dt.date.today().isoformat()}.log"
         self.deadline = ctx.host.clock() + job.timeout
-        self.env: dict[str, str] = {}
         self.commits: list[str] = []
         self.retried: list[str] = []
         self.report: object = None
@@ -794,7 +833,7 @@ class Runner:
             left = self.deadline - self.ctx.host.clock()
             if left <= 0:
                 return Outcome(124, "job timeout reached")
-            return execute(argv, self.cwd, self.log, self.env, left, stdout)
+            return execute(argv, self.cwd, self.log, job_env(self.job, step), left, stdout)
 
         outcome = run_with_retry(once, step.ok_codes, self.wait_idle)
         if outcome.retried:
@@ -884,7 +923,6 @@ class Runner:
             refresh_breaker(self.state, ctx.gh, now_iso())
         if job.commits and self.state.get("breaker", {}).get("open"):
             return BLOCKED, "circuit breaker open: a pushed automation commit failed CI"
-        self.env = job_env(job)
         base = ""
         if job.worktree:
             ensure_worktree(ctx.repo, ctx.worktree)

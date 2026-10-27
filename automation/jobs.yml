@@ -4,9 +4,12 @@
 # Commands run in the automation worktree (.cache/autorun/worktree) unless
 # `worktree: false`, which runs them in the main checkout and forbids
 # commits. `python` names the interpreter running autorun.py. A step is a
-# command list, or a mapping with `run`, `ok_codes` and `stdout` (a file
-# the command's output is written to). `twice` recomputes an artifact the
-# gate wrote into `{out}` and compares both, timestamps aside. Each commit
+# command list, or a mapping with `run`, `ok_codes`, `stdout` (a file the
+# command's output is written to) and `env` (variables passed through
+# beside PATH, HOME, LANG, LC_*, TZ and TMPDIR). A step never sees a token
+# or a password: only the push and gh receive GITHUB_TOKEN. `twice`
+# recomputes an artifact the gate wrote into `{out}` and compares both,
+# timestamps aside. Each commit
 # takes only the changed files its `paths` globs match, and a job that
 # leaves any other change behind fails. `report` names a JSON file a step
 # writes, kept in the job's status.
@@ -94,6 +97,9 @@ jobs:
       - run: [python, scripts/campaign.py, run, --budget, 150m]
         ok_codes: [0, 75]
         stdout: tmp/autorun/campaign.json
+        env: [RETROBIOS_ROMFETCH, RETROBIOS_AUTO_LOCK, ROMFETCH_CONTENT_DIR, ROMFETCH_CACHE_DIR,
+              ROMFETCH_DATS_DIR, ROMFETCH_RETOOL_DIR, ROMFETCH_MIN_INTERVAL, ROMFETCH_MAX_SIZE,
+              ROMFETCH_DISABLED_SOURCES, XDG_CONFIG_HOME]
     gate:
       - [python, scripts/campaign.py, gate]
     commits:

@@ -19,6 +19,7 @@ import time
 import unittest
 import unittest.mock
 from pathlib import Path
+from types import MappingProxyType
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
@@ -194,6 +195,45 @@ class Guards(Scratch):
         self.assertEqual(record["result"], ar.FAILED)
         self.assertEqual(record["consecutive_failures"], 2)
         self.assertIsNone(record["last_success"])
+
+
+class StepEnvironment(Scratch):
+    """A step can run third-party code: it never inherits a token or a password."""
+
+    HOST = MappingProxyType({
+        "PATH": "/usr/bin", "HOME": "/home/u", "LANG": "C.UTF-8", "LC_ALL": "C", "TZ": "UTC",
+        "TMPDIR": "/t", "GITHUB_TOKEN": "t1", "GH_TOKEN": "t2", "ROMSTATION_USER": "u",
+        "ROMSTATION_PASS": "p", "NPM_TOKEN": "t3", "AWS_SECRET_ACCESS_KEY": "s",
+        "DB_PASSWORD": "p2", "ROMFETCH_CONTENT_DIR": "/c", "EDITOR": "vi"})
+
+    def test_the_allowlist(self):
+        env = ar.safe_env(["ROMFETCH_CONTENT_DIR", "GITHUB_TOKEN"], {"RETROBIOS_AUTO": "1"},
+                          source=dict(self.HOST))
+        self.assertEqual(env, {"PATH": "/usr/bin", "HOME": "/home/u", "LANG": "C.UTF-8",
+                               "LC_ALL": "C", "TZ": "UTC", "TMPDIR": "/t",
+                               "ROMFETCH_CONTENT_DIR": "/c", "RETROBIOS_AUTO": "1"})
+
+    def test_a_step_naming_a_secret_is_refused_at_load(self):
+        for name in ("GITHUB_TOKEN", "ROMSTATION_PASS", "MY_SECRET"):
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                ar.parse_jobs({"jobs": {"x": {"steps": [{"run": [PY, "-V"], "env": [name]}]}}})
+
+    def test_a_network_job_step_sees_no_token(self):
+        dump = "import json, os; print(json.dumps(dict(os.environ)))"
+        ctx = self.context({"x": {"worktree": False, "min_free_gb": 0, "network": True,
+                                  "steps": [{"run": [PY, "-c", dump], "stdout": "env.json",
+                                             "env": ["ROMFETCH_CONTENT_DIR"]}]}})
+        with unittest.mock.patch.dict(os.environ, {"GITHUB_TOKEN": "t1", "GH_TOKEN": "t2",
+                                                   "ROMSTATION_PASS": "p",
+                                                   "ROMFETCH_CONTENT_DIR": "/c", "EDITOR": "vi"}):
+            self.assertEqual(ar.run_job(ctx, "x")[0], ar.OK)
+            given = ar.token_env()
+        seen = json.loads((ctx.repo / "env.json").read_text())
+        self.assertFalse({"GITHUB_TOKEN", "GH_TOKEN", "ROMSTATION_PASS", "EDITOR"} & set(seen))
+        self.assertEqual((seen["ROMFETCH_CONTENT_DIR"], seen["RETROBIOS_AUTO"]), ("/c", "1"))
+        self.assertEqual(seen[ar.LOCK_HELD_ENV], "1")
+        # The push and gh are the phases that get it.
+        self.assertEqual(given["GITHUB_TOKEN"], "t1")
 
 
 class Retry(Scratch):
