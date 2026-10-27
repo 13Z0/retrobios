@@ -154,7 +154,7 @@ def route_keys() -> str:
     return _table(heading, rows)
 
 
-def _marker(rule) -> str:
+def _marker(rule: _install._OsRule) -> str:
     """A card rule's evidence in words: the file or folder, and the line it
     holds for a rule that reads one."""
     if rule.method == "file_matches":

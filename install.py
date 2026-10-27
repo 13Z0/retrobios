@@ -10274,9 +10274,9 @@ def main() -> None:
         ):
             if given:
                 parser.error(reason)
-    if args.offline and not offline_requested():
+    if args.offline:
         # The runs the full-screen interface starts read it from here, and
-        # the words name the option, not a variable nobody set.
+        # the words name the option given.
         os.environ[OFFLINE_VARIABLE] = OFFLINE_FLAG_VALUE
     if offline_requested() and (args.target or args.list_targets):
         parser.error("--target and --list-targets read a core list from the network, "
@@ -13246,7 +13246,10 @@ def tui_flags(state: TuiState) -> list[tuple[str, str | None]]:
     if state.jobs != 8:
         flags.append(("--jobs", str(state.jobs)))
     flags += [("--from", str(folder)) for folder in state.from_folders]
-    if offline_requested() and not any(flag == "--offline" for flag, _v in flags):
+    if (os.environ.get(OFFLINE_VARIABLE) == OFFLINE_FLAG_VALUE
+            and not any(flag == "--offline" for flag, _v in flags)):
+        # Given as --offline: said so in the command. Set as the variable,
+        # the runs inherit it and the words name it.
         flags.append(("--offline", None))
     return flags
 

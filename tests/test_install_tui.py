@@ -4636,11 +4636,11 @@ class EndToEnd(unittest.TestCase):
                     self.assertIn("6 files to download", screen)
                     # The second folder the run writes to, named before
                     # anything is written, and again on the result.
-                    self.assertIn("1 file read from RetroArch's save directory goes to:\n"
-                                  " ~/MySaves", screen)
+                    self.assertIn("1 file read from RetroArch's save directory goes to a "
+                                  "folder per core under:\n ~/MySaves", screen)
                     term.send("\r")
                     screen = term.wait("6 files installed.")
-                    self.assertIn("save directory goes to:\n ~/MySaves", screen)
+                    self.assertIn("folder per core under:\n ~/MySaves", screen)
                     term.send("\r")
                     self.assertEqual(term.close(), 0)
                 results.append(written(repo, saves))
@@ -6674,6 +6674,9 @@ class _CardFixtures:
         listing = self.root / f"{plat}.json"
         install_list = {"manifest_version": 2, "platform": plat, "files": files}
         listing.write_text(json.dumps(install_list))
+        if sys.version_info < (3, 9):
+            # generate_pack.py's context managers need Python 3.9.
+            return listing, None, {}
         sys.path.insert(0, str(REPO_ROOT / "scripts"))
         self.addCleanup(sys.path.remove, str(REPO_ROOT / "scripts"))
         import generate_pack  # noqa: PLC0415
@@ -6794,6 +6797,8 @@ class _LineModeFindings(_CardFixtures):
                                           region=["us"])
         self.assertEqual(code, 0, text)
 
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     "generate_pack.py's context managers need Python 3.9")
     def test_a_pack_names_its_list_only_when_that_list_records_it(self):
         """tui_audit_11 P2-1: a MinUI pack sent --core to install/minui.json,
         refused the same way, and a MiSTer pack to install/misterfpga.json,
@@ -6825,10 +6830,9 @@ class _LineModeFindings(_CardFixtures):
         """tui_audit_11 P3-10: "c) choose systems, cores and regions" with a
         pack that records systems only, and "Cores: 1) azahar" asked with
         one answer."""
-        _listing, _pack, listed = self.minui("misterfpga", systems=True, cores=False,
-                                             regions=False)
-        files = [{"dest": f["path"], "sha1": f["sha1"], "size": f["size"],
-                  "repo_path": "x", "systems": f["systems"]} for f in listed["files"]]
+        mister, _pack, _listed = self.minui("misterfpga", systems=True, cores=False,
+                                            regions=False)
+        files = json.loads(mister.read_text())["files"]
         self.assertEqual(install.narrowing_words(files, []), "systems")
         listing, _pack, _listed = self.minui()
         minui = json.loads(listing.read_text())["files"]
@@ -7942,7 +7946,9 @@ class AuditSeventeenAndTen(unittest.TestCase):
                 "--manifest", str(listing)])
             proc = subprocess.run(
                 ["script", "-qec", command, "/dev/null"],
-                input=f"{repo.dest}\nc\n2\n\n2\n\n", env=env, capture_output=True,
+                # Enter on RetroArch, first of the setups that read its list
+                # (tui_audit_11 P1-2), then its folder.
+                input=f"\n{repo.dest}\nc\n2\n2\n\n", env=env, capture_output=True,
                 text=True, timeout=120, check=False)
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             installed = repo.installed()
