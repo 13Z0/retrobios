@@ -131,6 +131,9 @@ class RepoView:
     head: str
     origin: str
     field: str
+    # The build mode a keyed source names this repository under (ymir,
+    # xenia-edge): `standalone` or `libretro`, empty for a plain URL.
+    mode: str = ""
 
 
 HASH_FIELDS = ("sha1", "md5", "crc32", "sha256", "known_hash_adler32")
@@ -1149,7 +1152,7 @@ def select_views(
             if relation and relation[0] == 0 and relation[1] > 0:
                 head = upstream.resolve_head(repo, cache_dir, offline, branch, fresh=True) or head
         seen.add((repo.host, repo.slug))
-        views.append(RepoView(repo, pin, head, origin, field))
+        views.append(RepoView(repo, pin, head, origin, field, mode))
     if gone and not views:
         raise upstream.GoneError(f"{profile.get('emulator', '?')}: every declared repository is gone")
     views = _follow_fork_base(_follow_submodule(views, cache_dir, offline), cache_dir, offline)
@@ -1528,6 +1531,7 @@ def build_report(
         for _, _, url in declared_repositories(profile)
         if (repo := upstream.parse_repo(url)) is not None
     )
+    modes = {mode for _, mode, _ in declared_repositories(profile) if mode}
     refs = []
     for citation in collect_citations(profile, text):
         if citation.kind == "ref":
@@ -1538,10 +1542,14 @@ def build_report(
             # The repository a part says its lines are in (`upstream
             # src/a.c:5`) stays on that part: the same path can be cited
             # under both roles in one profile.
+            # An entry of one build mode reads that build's repository when
+            # the profile keys its source by mode.
+            mode = str(citation.label or entry.get("mode") or "")
+            mode = mode if mode in modes else ""
             parts = [
                 RefPart(
                     strip_repo_word(p.path, known), p.start, p.end, p.raw,
-                    ref_role(p.path)[0],
+                    ref_role(p.path)[0] or mode,
                 )
                 for p in split_source_ref(citation.ref)
             ]
@@ -1773,8 +1781,14 @@ def build_report(
                 return 2
             return 1 if line.strip() else 0
 
-        # A part that names its repository is looked up there first.
-        ordered = sorted(views, key=lambda v: _view_role(v) != wanted) if wanted else views
+        # A part that names its repository is looked up there first. In a
+        # profile keyed by build mode, a part naming none belongs to the
+        # first build declared, as _realign_part decides a shared path: the
+        # libretro tree of xenia-edge carries emulator.cc offset, and its
+        # better-scored line hid a standalone ref that had moved.
+        if not wanted and primary.mode:
+            wanted = primary.mode
+        ordered = sorted(views, key=lambda v: not _answers(v, wanted)) if wanted else views
         best = None
         for candidate in candidates:
             for sha_of in (lambda v: v.pin, lambda v: v.head):
@@ -1789,6 +1803,11 @@ def build_report(
                             continue
                         candidate = target
                     rank = score(found)
+                    if rank and _answers(view, wanted) and view.mode:
+                        # An entry of one build mode is that build's code:
+                        # xenia-edge's standalone xbox.xex refs scored higher
+                        # in the libretro tree, whose same file is offset.
+                        return view, candidate
                     if rank == 3 and not wanted and _view_role(view) == "source":
                         # The port carries a copy of the emulator: when the
                         # original holds the same value on the cited line,
@@ -1964,8 +1983,12 @@ def build_report(
             view for view in views
             if fetch_from(view.repo, view.pin, part.path) is not None
         ]
-        named = [view for view in carrying if _view_role(view) == part.role]
-        if part.role and named:
+        # Judged in the build it belongs to: the best outcome across the
+        # builds of a keyed profile let the libretro tree vouch for a
+        # standalone ref that had moved (xenia-edge's emulator.cc).
+        meant = part.role or primary.mode
+        named = [view for view in carrying if _answers(view, meant)]
+        if meant and named:
             carrying = named
         live = {
             id(view) for view in carrying
@@ -3007,6 +3030,12 @@ def pin_blockers(report: ProfileReport, accept_changed: bool = False) -> list[st
 def _view_role(view: RepoView) -> str:
     """source or upstream: the profile field a repository comes from."""
     return "upstream" if view.field == "upstream" else "source"
+
+
+def _answers(view: RepoView, role: str) -> bool:
+    """Whether a part written under *role* means this repository: the field
+    it comes from, or the build mode a keyed source declares it under."""
+    return bool(role) and role in (_view_role(view), view.mode)
 
 
 ATTRIBUTED_STATUSES = ("ANCHORED", "SHIFTED", "RENAMED", "MOVED", "CHANGED")

@@ -2845,6 +2845,53 @@ class TestWriteDryRun(unittest.TestCase):
         self.assertEqual(self.path.read_text(), before)
 
 
+class AKeyedProfileJudgesEachBuildInItsOwnTree(TestBuildReport):
+    """xenia-edge's standalone emulator.cc block moved down 4 lines while
+    the libretro tree, at HEAD, carried the same path offset: the best
+    outcome across repositories reported ANCHORED and the move went unseen."""
+
+    def _keyed(self, mode=None):
+        entry = {"name": "f.bin", "source_ref": "a.c:2"}
+        if mode:
+            entry["mode"] = mode
+        return {
+            "emulator": "Test",
+            "source": {"standalone": "https://github.com/o/edge",
+                       "libretro": "https://github.com/o/port"},
+            "upstream": "https://github.com/o/edge",
+            "source_commit": {"standalone": "spin", "libretro": "lpin"},
+            "files": [entry],
+        }
+
+    def _two_builds(self):
+        trees = {
+            ("o/edge", "spin", "a.c"): ["x", "f.bin cited"],
+            ("o/edge", "shead", "a.c"): ["pad", "pad", "x", "f.bin cited"],
+            ("o/port", "lpin", "a.c"): ["y", "f.bin cited"],
+        }
+        heads = {"o/edge": "shead", "o/port": "lpin"}
+        profile_sync.upstream.fetch_file = (
+            lambda repo, sha, path, cache_dir, offline=False:
+            trees.get((repo.slug, sha, path))
+        )
+        profile_sync.upstream.resolve_head = (
+            lambda repo, cache_dir, offline=False, branch=None, fresh=False:
+            heads[repo.slug]
+        )
+
+    def _status(self, profile):
+        self._two_builds()
+        report = build_report("test", profile, self.dir)
+        return report.entries[0].parts[0].status
+
+    def test_a_part_naming_no_build_is_the_first_builds(self):
+        self.assertEqual(self._status(self._keyed()), "SHIFTED")
+
+    def test_an_entry_of_one_mode_is_read_in_that_build(self):
+        self.assertEqual(self._status(self._keyed("standalone")), "SHIFTED")
+        self.assertNotEqual(self._status(self._keyed("libretro")), "SHIFTED")
+
+
 class TestDeliberatelyFrozenPin(TestBuildReport):
     """A pin held on purpose is judged against itself, like a frozen tag.
 
