@@ -6271,7 +6271,7 @@
   "src/parsing/textfile.cpp",
   "src/platforms/engineutils.cpp"
  ],
- "github.com/linappleii/linapple@86bee1c2b59bd4706185ceddddaf383b3416726f": [
+ "github.com/linappleii/linapple@7f4b60898d91bfecd6f4d8683a374f38b0564962": [
   "CMakeLists.txt",
   "README.md",
   "scripts/generate_roms.sh",
