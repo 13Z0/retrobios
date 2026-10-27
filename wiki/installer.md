@@ -109,7 +109,9 @@ SHA-1 and size, and every file is checked against it before it takes its
 place. A data tree (Dolphin's `Sys/`, PPSSPP's assets) comes from the pack
 too, not from its source archive. `--target` reads a core list from the
 network and is refused with `--from-pack`. A board found on the device is not
-applied either: every board's files are installed.
+applied either: every board's files are installed. At a terminal the run
+finds a card mounted here, asks the folder when nothing is found, and names
+the BIOS folder on its menu before anything is copied.
 
 `--manifest FILE` reads the file list from a copy of `install/<platform>.json`
 instead of downloading it. Alone, the files still come from the repository.
@@ -125,7 +127,8 @@ internet instead of offering to fetch them. The run installs the copies found
 on this machine and downloads nothing. The files left out are missing, not
 failed: it ends `Finished with files missing` (code 1), or `Nothing installed`
 (code 2) when nothing was installed, at a terminal, without questions and on
-the full screen alike. The advice that follows names a pack or a run without
+the full screen alike. The `summary` event counts them in `pending`, never in
+`failed`. The advice that follows names a pack or a run without
 `--offline`, and no `--from` folder already read. A command it suggests keeps
 `--offline` when `RETROBIOS_INSTALL_OFFLINE` set it, sudo not passing that on.
 The `--plain` menu then offers `f) copy from a folder or an old card`, and its
@@ -166,16 +169,16 @@ install starts.
 | Action | Keyboard | Controller |
 |--------|----------|------------|
 | Move | Up and Down, `k` and `j` | D-pad Up and Down |
-| Page | PgUp and PgDn | L1 and R1 |
+| Page | PgUp and PgDn | L1 and R1 (muxterm: D-pad Left and Right) |
 | First, last | Home and End, `g` and `G` | |
-| Continue, open, choose | Enter, and Space outside a list of ticks | A, Start |
-| Tick, untick | Space, Right, Left | X, D-pad Right and Left |
-| Back | Esc, Backspace | B, Select |
-| Options | `o`, Tab | Y |
-| Filter a long list | `/` then type, Enter on a lone match chooses it | none: a pad cannot type (the setup list puts the SD cards after RetroArch) |
+| Continue, open, choose | Enter, and Space outside a list of ticks | A, Start (muxterm: Start) |
+| Tick, untick | Space, Right, Left | X, D-pad Right and Left (muxterm: Y, Miyoo: A) |
+| Back | Esc, Backspace | B, Select (Miyoo: R2) |
+| Options | `o`, Tab | Y (Miyoo: L2, muxterm: none) |
+| Filter a long list | `/` then type, Enter on a lone match chooses it | muxterm: Select shows a keyboard. Elsewhere none (the setup list puts the SD cards after RetroArch) |
 | Keys of the screen | `?`, F1 | |
-| Stop an install | Esc, `q`, Ctrl+C | B, Start+Select |
-| Quit | `q`, Ctrl+C | B on the first screen |
+| Stop an install | Esc, `q`, Ctrl+C | B, Start+Select (Miyoo: R2) |
+| Quit | `q`, Ctrl+C | B on the first screen (Miyoo: R2) |
 
 The bottom line of each screen names what A does on the row under the cursor,
 in the names of what is held. On a computer it names the keys (`Enter Install`,
@@ -699,7 +702,7 @@ what the options name, everything by default.
 | Option | Effect |
 |--------|--------|
 | <span id="option-platform"></span>`--platform NAME` | Install for this platform instead of the detected one. A system `--list-platforms` names under its own files (`muos`, `arkos`) stands for the file list it gets, and the run says which. Unknown names are refused with the closest ones |
-| <span id="option-dest"></span>`--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is. A folder that does not exist is named with the nearest one that does, then created. When more than its last level is missing (a mistyped path), a run at a terminal asks first, and the answer defaults to no |
+| <span id="option-dest"></span>`--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is. A folder that does not exist is named with the nearest one that does, then created, except for a system that runs from its SD card, which refuses it. When more than its last level is missing (a mistyped path), a run at a terminal asks first, and the answer defaults to no |
 | <span id="option-target"></span>`--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything. On Batocera, Recalbox, ROCKNIX and Lakka the board is read from the system (`batocera.arch`, `recalbox.arch`, `HW_DEVICE`, `LIBREELEC_DEVICE` or `LIBREELEC_PROJECT`) and applied when no `--target` is given |
 | <span id="option-every-board"></span>`--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
 | <span id="option-installed-cores"></span>`--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
@@ -939,7 +942,8 @@ The filter takes a device name, and so does the `--plain` menu, which lists
 the setups it matches by number. With nothing found here, the SD card rows
 come right after RetroArch: Onion is four presses away with L1 and R1 at
 40x12, where it was row 30 of 34. That row, `--platform onion` and the menu
-all ask for the card: one card of that system mounted is taken, otherwise
+all ask for the card: one card of that system mounted when the run starts is
+taken, otherwise
 the screen opens **Where is the SD card?**, which lists only that system's
 cards and offers **Look again**, and `--plain` asks `Card root`, listing the
 same cards by number and naming the one picked and its folder. The RetroArch
@@ -971,8 +975,14 @@ home folder or above the default, no default is taken: the frontend's own
 configuration there may name another folder, so the run asks for `--dest`.
 
 With nothing detected, the setup screen lists the platforms to choose from,
-and `--plain` gives the same list numbered. With several detected, the setup
-screen lists each one, and `--plain` asks which. Both need a terminal: piped into a script
+and `--plain` gives the same list numbered, in the same order. Both find the
+SD cards mounted here, the screen under **Found on this machine**. With
+several found, the setup screen lists each one, and `--plain` asks which. A
+platform named, or read from a list or a pack, and found nowhere gets its
+folder asked, its usual one under Enter, the mounted drives numbered. On a
+computer Batocera and Recalbox have none: the `bios` folder of their SHARE
+drive or network share is theirs. A device several systems run lists them
+all. Both need a terminal: piped into a script
 with no platform to install for, it prints the manual invocation, in the form
 the run was started with (the one-line command for a one-liner user), and
 exits 1.
@@ -1333,7 +1343,7 @@ fields, the installer refuses to narrow rather than install everything.
 | Code | Meaning |
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
-| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed or were left out by `--offline` while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, a `--dest` that is not the card of the system named (another system's card, a folder inside one, or a drive with none of its files where its card always has them), `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
+| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed or were left out by `--offline` while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, a `--dest` that is not the card of the system named (another system's card, a folder inside one, a drive with none of its files where its card always has them, or a folder that does not exist), `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), or `--offline` left every file out, the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question, or the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`) before an install. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
@@ -1376,7 +1386,7 @@ other schemas under `api/v1/schemas/`.
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `unsearched` | `folder`, `reason`, `message` | Before `detect`, once for each folder the search for setups could not look in, this user being refused it. What it would hold counts as absent, and the other places are still searched: `detect` then lists what they hold, and an empty `platforms` after an `unsearched` line means nothing was found where the installer could look. `reason` says why in words (`Permission denied`), `message` says it in a sentence |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). The platform named with `--platform` is found nowhere and no folder can be assumed for it: a card system with no card named, a portable emulator, or no usual folder on this system or one set aside behind a folder this user cannot open (`stage` is `detect`, `reason` `not_found`). `message` says it in words |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). The platform named with `--platform` is found nowhere and no folder can be assumed for it: a card system with no card named, a portable emulator, or no usual folder on this system or one set aside behind a folder this user cannot open (`stage` is `detect`, `reason` `not_found`). A `--dest` refused as the card of the system named carries the same `stage` and `reason`: another system's card, a folder inside a card, a drive with none of the files its card always has, or a folder that does not exist. `message` says it in words, and is the only thing that tells these cases apart |
 | `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
 | `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |

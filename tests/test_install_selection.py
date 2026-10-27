@@ -704,7 +704,9 @@ class TheOneLinerNarrows(unittest.TestCase):
             env = dict(repo.env(), HOME=str(home), USERPROFILE=str(home),
                        XDG_CONFIG_HOME=str(home), RETROBIOS_OS="linux")
             command = f"{shlex.quote(sys.executable)} {shlex.quote(str(REPO_ROOT / 'install.py'))}"
-            for answer, code in (("n", 2), ("y", 0)):
+            # No to the folders asks the folder again, as the screen's
+            # Choose another folder does: the input then ends, Ctrl+D.
+            for answer, code in (("n", 130), ("y", 0)):
                 with self.subTest(answer=answer):
                     proc = subprocess.run(
                         ["script", "-qec", command, "/dev/null"],

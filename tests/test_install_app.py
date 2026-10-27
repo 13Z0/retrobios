@@ -370,7 +370,8 @@ class TheQuestion(unittest.TestCase):
     def test_a_console_without_python_says_so_once(self):
         asked, put = self.run_finish("y", system="Onion")
         self.assertEqual((asked, put), ([], []))
-        self.assertIn(install.NO_PYTHON_WORDS, self.output)
+        self.assertIn(install.no_python_words("Onion"), self.output)
+        self.assertNotIn("This console", self.output)
 
 
 class TheOption(unittest.TestCase):
