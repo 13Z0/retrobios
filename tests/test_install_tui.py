@@ -7207,6 +7207,8 @@ class AuditSeventeenAndTen(unittest.TestCase):
 
     # tui_audit_10 P2-4: a pack's own list records its systems.
 
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     "generate_pack.py's context managers need Python 3.9")
     def test_a_pack_records_the_systems_of_its_files(self):
         sys.path.insert(0, str(REPO_ROOT / "scripts"))
         self.addCleanup(sys.path.remove, str(REPO_ROOT / "scripts"))

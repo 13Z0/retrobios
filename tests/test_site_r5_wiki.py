@@ -65,7 +65,7 @@ class NoSetupFoundGivesEachSystemItsFolder(unittest.TestCase):
 
     def test_the_label_is_the_installer_message(self):
         self.assertIn("**`No supported platform detected`:**", self.section)
-        self.assertIn('print("  No supported platform detected.")', INSTALL_PY)
+        self.assertIn('else "  No supported platform detected.")', INSTALL_PY)
 
     def test_the_lead_names_the_menu(self):
         self.assertIn("Not sure? Open RetroArch's **Settings > Directory > System/BIOS**",
