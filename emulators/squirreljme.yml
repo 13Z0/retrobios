@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/SquirrelJME/SquirrelJME"
 upstream: "https://github.com/SquirrelJME/SquirrelJME"
 profiled_date: "2026-03-25"
-source_commit: "4fd08e91275994e1181bcbe8744bee9322c5daec"
+source_commit: "24d0e97d4297d0bce26a9651f5bce5d326ea690a"
 core_version: "0.3.0"
 display_name: "Java ME (SquirrelJME)"
 cores: [squirreljme]

@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/shinyquagsire23/OpenJKDF2"
 upstream: "https://github.com/shinyquagsire23/OpenJKDF2"
 profiled_date: "2026-10-04"
-source_commit: "e4f7c0a2b10ab8ed8b89a6c90c61153604ae2e39"
+source_commit: "798f930402525a23b94671d85b97b00390342fa0"
 core_version: "0.9.9.0"
 display_name: "OpenJKDF2"
 cores: []

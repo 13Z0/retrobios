@@ -3,7 +3,7 @@ type: standalone
 core_classification: enhanced_fork
 source: "https://github.com/joncampbell123/dosbox-x"
 upstream: "https://github.com/joncampbell123/dosbox-x"
-source_commit: "5a0a023a0d9f741a48faac897b8633b3c1c8e749"
+source_commit: "997f616e0886a835fc3660f2b935688f17f20d42"
 profiled_date: "2026-09-17"
 core_version: "2026.08.31"
 display_name: "DOS (DOSBox-X)"
@@ -119,7 +119,7 @@ notes: |
   A build configured with --enable-dosbox_agent reads the key=value file named
   by -agent-config to start the RPC debugger agent. The file names the
   transport and endpoint, nothing else is read from disk.
-  ref: configure.ac:1472-1479, src/gui/sdlmain.cpp:8494-8500, src/agent/protocol/agent_protocol.cpp:477-632
+  ref: configure.ac:1479-1486, src/gui/sdlmain.cpp:8494-8500, src/agent/protocol/agent_protocol.cpp:477-632
 
   Glide passthrough loads glide2x.dll, libglide2x.so or libglide2x.dylib.
   ref: src/hardware/glide.cpp:353-359, src/dosbox.cpp:3505-3507

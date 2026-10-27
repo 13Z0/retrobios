@@ -7,7 +7,7 @@ cores:
   - rpcs3
   - "rpcs3-sa"
 profiled_date: "2026-03-30"
-source_commit: "f4d4c1b4712ae6c6fe8c80ff8eaa4036f80f26fc"
+source_commit: "c365ea76a552961ff078ea1a46da9d4b07729674"
 core_version: "v0.0.43"
 display_name: "Sony - PlayStation 3 (RPCS3)"
 systems: [sony-playstation-3]

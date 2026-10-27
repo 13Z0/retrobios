@@ -4,8 +4,8 @@ core_classification: official_port
 source: "https://git.libretro.com/libretro/rust-dos"
 upstream: "https://github.com/dividebysandwich/rust-dos"
 profiled_date: "2026-10-04"
-source_commit: "b53562f080b667c0fcbb2f54bab7be549cce46b9"
-upstream_commit: "e1a01b94f6f229082a7555380b5193c78104bb6f"
+source_commit: "152d9bca7820f0d9a5d1ca820a2d20855698a211"
+upstream_commit: "152d9bca7820f0d9a5d1ca820a2d20855698a211"
 core_version: "1.7.5"
 display_name: "DOS (Rust-DOS)"
 cores:

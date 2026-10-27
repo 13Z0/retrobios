@@ -3,7 +3,7 @@ type: libretro
 core_classification: pure_libretro
 source: "https://github.com/libretro/RetroArch/tree/master/cores/libretro-imageviewer"
 profiled_date: "2026-03-24"
-source_commit: "fce80847e303d308517d3c20382b4cd5a37cb028"
+source_commit: "5078a39b624e31b359e1527ea7fbfddfc7de96cb"
 core_version: "1.0"
 display_name: "Imageviewer"
 cores:
