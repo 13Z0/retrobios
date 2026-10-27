@@ -6,8 +6,10 @@
 # commits. `python` names the interpreter running autorun.py. A step is a
 # command list, or a mapping with `run`, `ok_codes`, `stdout` (a file the
 # command's output is written to) and `env` (variables passed through
-# beside PATH, HOME, LANG, LC_*, TZ and TMPDIR). A step never sees a token
-# or a password: only the push and gh receive GITHUB_TOKEN. `twice`
+# beside PATH, HOME, LANG, LC_*, TZ and TMPDIR). A step never sees a password.
+# GITHUB_TOKEN goes to the push, to gh, and to a step marked `github_token:
+# true`, which autorun accepts only on check_freshness.py, refresh_stale.py and
+# `-m scripts.scraper.*`, tracked here, never in the campaign job. `twice`
 # recomputes an artifact the gate wrote into `{out}` and compares both,
 # timestamps aside. Each commit
 # takes only the changed files its `paths` globs match, and a job that
@@ -47,10 +49,14 @@ jobs:
       - run: [python, scripts/check_freshness.py, --json]
         ok_codes: [0, 1]
         stdout: tmp/autorun/freshness.json
-      - [python, scripts/refresh_stale.py, --findings, tmp/autorun/freshness.json,
-         --only, "data,catalogs"]
-      - [python, -m, scripts.scraper.mame_hash_scraper]
-      - [python, -m, scripts.scraper.fbneo_hash_scraper]
+        github_token: true
+      - run: [python, scripts/refresh_stale.py, --findings, tmp/autorun/freshness.json,
+              --only, "data,catalogs"]
+        github_token: true
+      - run: [python, -m, scripts.scraper.mame_hash_scraper]
+        github_token: true
+      - run: [python, -m, scripts.scraper.fbneo_hash_scraper]
+        github_token: true
     gate:
       - [python, scripts/pipeline.py, --offline]
     twice:

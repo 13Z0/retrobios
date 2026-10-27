@@ -102,6 +102,8 @@ class Step:
     stdout: str = ""
     # Variables passed through beside the allowlist (romfetch's settings).
     env: tuple[str, ...] = ()
+    # GITHUB_TOKEN for a first-party script that calls the GitHub API.
+    github_token: bool = False
 
 
 @dataclass(frozen=True)
@@ -194,22 +196,61 @@ def check_subject(subject: str, body: str = "") -> list[str]:
     return problems(f"{subject}\n\n{body}" if body else subject)
 
 
-def _step(raw: object, where: str) -> Step:
+# The first-party scripts that call the GitHub API and may receive
+# GITHUB_TOKEN: run as `python <script>` or `python -m <module>`, and tracked
+# by git in this repository. Nothing else ever gets it, third-party code least.
+TOKEN_SCRIPTS = ("scripts/check_freshness.py", "scripts/refresh_stale.py")
+TOKEN_MODULE_PREFIX = "scripts.scraper."
+NO_TOKEN_JOBS = frozenset({"campaign"})
+
+
+def tracked(path: str, repo: Path = REPO_ROOT) -> bool:
+    proc = subprocess.run(["git", "-C", str(repo), "ls-files", "--error-unmatch", "--", path],
+                          capture_output=True, check=False)
+    return proc.returncode == 0
+
+
+def token_script(argv: Sequence[str], repo: Path = REPO_ROOT) -> str:
+    """The tracked first-party script a step runs, or '' when it runs anything else."""
+    if len(argv) < 2 or argv[0] != "python":
+        return ""
+    if argv[1] in TOKEN_SCRIPTS:
+        path = argv[1]
+    elif argv[1] == "-m" and len(argv) > 2 and argv[2].startswith(TOKEN_MODULE_PREFIX) \
+            and re.fullmatch(r"[a-z0-9_.]+", argv[2]):
+        path = argv[2].replace(".", "/") + ".py"
+    else:
+        return ""
+    return path if tracked(path, repo) else ""
+
+
+def _step(raw: object, where: str, job: str = "") -> Step:
     if isinstance(raw, list):
         return Step(argv=tuple(str(a) for a in raw))
     if isinstance(raw, dict) and isinstance(raw.get("run"), list):
-        unknown = set(raw) - {"run", "ok_codes", "stdout", "env"}
+        unknown = set(raw) - {"run", "ok_codes", "stdout", "env", "github_token"}
         if unknown:
             raise ValueError(f"{where}: unknown step key {sorted(unknown)}")
         names = tuple(str(n) for n in raw.get("env") or ())
         secret = [n for n in names if is_secret(n)]
         if secret:
             raise ValueError(f"{where}: a step never receives {', '.join(secret)}")
+        argv = tuple(str(a) for a in raw["run"])
+        token = raw.get("github_token", False)
+        if token is not False:
+            if token is not True:
+                raise ValueError(f"{where}: github_token is true or absent")
+            if job in NO_TOKEN_JOBS:
+                raise ValueError(f"{where}: job {job} never receives GITHUB_TOKEN")
+            if not token_script(argv):
+                raise ValueError(f"{where}: github_token only goes to {', '.join(TOKEN_SCRIPTS)} "
+                                 f"or python -m {TOKEN_MODULE_PREFIX}*, tracked in this repository")
         return Step(
-            argv=tuple(str(a) for a in raw["run"]),
+            argv=argv,
             ok_codes=tuple(int(c) for c in raw.get("ok_codes", (0,))),
             stdout=str(raw.get("stdout") or ""),
             env=names,
+            github_token=token is True,
         )
     raise ValueError(f"{where}: a step is a command list or a mapping with 'run'")
 
@@ -244,8 +285,8 @@ def parse_jobs(data: dict) -> dict[str, Job]:
             raise ValueError(f"job {name}: a job that commits runs in the worktree")
         jobs[name] = Job(
             name=name,
-            steps=tuple(_step(s, f"job {name}") for s in raw.get("steps") or ()),
-            gate=tuple(_step(s, f"job {name} gate") for s in raw.get("gate") or ()),
+            steps=tuple(_step(s, f"job {name}", name) for s in raw.get("steps") or ()),
+            gate=tuple(_step(s, f"job {name} gate", name) for s in raw.get("gate") or ()),
             twice=tuple(twice),
             commits=tuple(commits),
             schedule=str(raw.get("schedule") or ""),
@@ -748,12 +789,18 @@ def token_env() -> dict[str, str]:
 
 def job_env(job: Job, step: Step | None = None) -> dict[str, str]:
     """A step's environment: the allowlist, the runner's own markers and the
-    variables the step names. Never a token, network job or not."""
+    variables the step names. GITHUB_TOKEN only for a step that declares
+    github_token, which the registry allows on first-party scripts alone."""
     add = {"RETROBIOS_AUTO": "1"}
     if job.lock:
         # A step that takes the host lock itself (campaign.py) runs under ours.
         add[LOCK_HELD_ENV] = "1"
-    return safe_env(step.env if step else (), add)
+    env = safe_env(step.env if step else (), add)
+    if step is not None and step.github_token and job.name not in NO_TOKEN_JOBS:
+        token = token_env().get("GITHUB_TOKEN")
+        if token:
+            env["GITHUB_TOKEN"] = token
+    return env
 
 
 def _remove_scratch(root: Path, rel: str) -> None:

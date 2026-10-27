@@ -236,6 +236,48 @@ class StepEnvironment(Scratch):
         self.assertEqual(given["GITHUB_TOKEN"], "t1")
 
 
+class GithubTokenPerStep(Scratch):
+    """GITHUB_TOKEN goes to first-party scripts that call the API, declared
+    per step, and never to third-party code or the campaign."""
+
+    def job(self, run: list[str], name: str = "x") -> dict:
+        return ar.parse_jobs({"jobs": {name: {"steps": [{"run": run, "github_token": True}]}}})
+
+    def test_allowed_on_the_scrapers_and_freshness_scripts(self):
+        for run in ([PY, "-m", "scripts.scraper.mame_hash_scraper"],
+                    [PY, "scripts/check_freshness.py", "--json"],
+                    [PY, "scripts/refresh_stale.py", "--only", "data"]):
+            with self.subTest(run=run):
+                step = self.job(run)["x"].steps[0]
+                self.assertTrue(step.github_token)
+                with unittest.mock.patch.object(ar, "token_env", return_value={"GITHUB_TOKEN": "t1"}):
+                    self.assertEqual(ar.job_env(self.job(run)["x"], step)["GITHUB_TOKEN"], "t1")
+
+    def test_refused_on_any_other_step(self):
+        for run in ([PY, "-c", "print(1)"], [PY, "scripts/campaign.py", "run"],
+                    [PY, "scripts/core_probe.py", "run"], ["sh", "-c", "env"],
+                    [PY, "scripts/not_tracked_here.py"], [PY, "-m", "scripts.scraper.not_tracked"],
+                    [PY, "-m", "os"], ["/usr/bin/python3", "scripts/check_freshness.py"]):
+            with self.subTest(run=run), self.assertRaises(ValueError):
+                self.job(run)
+
+    def test_refused_in_the_campaign_job_even_on_a_scraper(self):
+        with self.assertRaisesRegex(ValueError, "campaign never receives"):
+            self.job([PY, "-m", "scripts.scraper.mame_hash_scraper"], name="campaign")
+
+    def test_an_undeclared_step_gets_no_token(self):
+        job = ar.parse_jobs({"jobs": {"x": {"network": True, "steps": [
+            [PY, "-m", "scripts.scraper.mame_hash_scraper"]]}}})["x"]
+        with unittest.mock.patch.object(ar, "token_env", return_value={"GITHUB_TOKEN": "t1"}), \
+                unittest.mock.patch.dict(os.environ, {"GITHUB_TOKEN": "t1"}):
+            self.assertNotIn("GITHUB_TOKEN", ar.job_env(job, job.steps[0]))
+
+    def test_the_committed_registry(self):
+        jobs = ar.load_jobs()
+        self.assertTrue(all(step.github_token for step in jobs["nightly"].steps))
+        self.assertFalse(any(step.github_token for step in jobs["campaign"].steps + jobs["campaign"].gate))
+
+
 class ReportAlert(Scratch):
     def test_a_report_alert_is_raised_then_cleared(self):
         write = "import json, sys; json.dump({'alert': sys.argv[1]} if sys.argv[1] else {}, open('r.json', 'w'))"
