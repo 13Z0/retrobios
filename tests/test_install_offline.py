@@ -662,7 +662,9 @@ class OfflineMakesNoRequest(Scratch):
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
         self.assertEqual((self.dest / "scph5501.bin").read_bytes(), US)
         self.assertFalse((self.dest / "gba_bios.bin").exists())
-        self.assertIn("no network request", proc.stdout + proc.stderr)
+        # Missing, never failed (code_audit_15 P3-1): no FAILED line per file.
+        self.assertIn("3 not fetched (--offline)", proc.stdout + proc.stderr)
+        self.assertNotIn("FAILED", proc.stdout + proc.stderr)
         self.assertIn("without --offline", proc.stdout + proc.stderr)
         self.assertNotIn("trying again", proc.stderr)
 
@@ -839,7 +841,11 @@ class OfflineLeavesFilesMissing(Scratch):
         self.list.write_text(json.dumps(listed))
         self.complete()
         proc = self.run_installer("--offline", "--manifest", str(self.list), "--no-input")
-        self.assertIn("bluemsx: could not read", proc.stderr)
+        # Its files are missing, as the BIOS files --offline leaves out are,
+        # with or without questions.
+        self.assertIn("bluemsx: 0 already up to date, 1 need the internet (--offline)",
+                      proc.stdout)
+        self.assertNotIn("could not read", proc.stderr)
         self.assertNotIn("no longer in the source", proc.stdout)
 
 
@@ -934,6 +940,76 @@ class OneOfflineVocabulary(Scratch):
         self.assertIn(f"Enter) install what is found in {old}", text)
         self.assertEqual([index.label for index in install.LOCAL.folders], [str(old)])
         self.assertNotIn("install everything", text)
+
+
+class AuditFifteenOffline(Scratch):
+    """code_audit_15 P3-1, P3-5 and tui_audit_8 P3-11: what --offline and a
+    pack leave out, and what a folder copied from holds, said as such."""
+
+    def test_yes_offline_counts_the_rest_missing_never_failed(self):
+        """The screen's own install (--yes): each file left out was
+        "downloading", then FAILED, and pending and failed at once."""
+        old = self.root / "old"
+        old.mkdir()
+        (old / "scph5501.bin").write_bytes(US)
+        proc = self.run_installer("--offline", "--manifest", str(self.list), "--from",
+                                  str(old), "--yes", "--events")
+        self.assertEqual(proc.returncode, 1, proc.stderr)
+        events = [json.loads(line) for line in proc.stdout.splitlines()]
+        summary = next(event for event in events if event["event"] == "summary")
+        self.assertEqual((summary["installed"], summary["pending"], summary["failed"]),
+                         (1, 3, []))
+        self.assertNotIn("FAILED", proc.stderr)
+        self.assertNotIn("downloading", proc.stderr)
+        self.assertIn("1 file installed, 3 not fetched (--offline)", proc.stderr)
+        download = next(event for event in events if event["event"] == "download")
+        self.assertEqual(download["files"], 1)
+        # The screen reads that summary as missing files, not failures.
+        state = install.TuiState()
+        state.summary = summary
+        with unittest.mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            title, lines = install.tui_outcome(state)
+        self.assertEqual(title, "Finished with files missing")
+        self.assertIn("1 installed, 3 not fetched (--offline).", lines[0])
+
+    def test_a_pack_is_copied_not_downloaded(self):
+        downloads = self.root / "downloads"
+        downloads.mkdir()
+        pack = _pack(downloads, "RetroArch_v1_BIOS_Pack.zip", PAYLOAD)
+        proc = self.run_installer("--from-pack", str(pack), "--dry-run", "--no-input")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("Would copy 4 files", proc.stdout)
+        self.assertIn("from the pack to", proc.stdout)
+        self.assertNotIn("download", proc.stdout.lower())
+
+    def test_a_folder_holding_none_of_the_files_is_said_and_left(self):
+        empty = self.root / "empty"
+        (empty / "photos").mkdir(parents=True)
+        (empty / "photos" / "a.jpg").write_bytes(b"jpeg")
+        install.LOCAL.reset()
+        self.addCleanup(install.LOCAL.reset)
+        files = manifest()["files"]
+        answers = iter(["f", f"{self.root}/x/../empty", "q"])
+        with unittest.mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}), \
+                unittest.mock.patch.object(install, "_ask", lambda _prompt: next(answers)), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                self.assertRaises(SystemExit):
+            install._prompt_custom_selection("retroarch", files, [], bios_path=self.dest)
+        text = out.getvalue()
+        self.assertIn("empty holds none of these files.", text)
+        self.assertNotIn("install what is found", text)
+        self.assertNotIn("..", text)
+        self.assertEqual(install.LOCAL.folders, [])
+        # One that holds some is counted.
+        (empty / "scph5501.bin").write_bytes(US)
+        answers = iter(["f", str(empty), "q"])
+        with unittest.mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}), \
+                unittest.mock.patch.object(install, "_ask", lambda _prompt: next(answers)), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                self.assertRaises(SystemExit):
+            install._prompt_custom_selection("retroarch", files, [], bios_path=self.dest)
+        self.assertIn("1 of 4 found in empty.", out.getvalue())
+        self.assertIn("Enter) install what is found in", out.getvalue())
 
 
 if __name__ == "__main__":
