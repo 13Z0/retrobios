@@ -87,9 +87,19 @@ const setScrollable = (table: HTMLTableElement, overflows: boolean) => {
 // The filter box above a long table is written when the page is built
 // (src/plugins/rehype-stack-tables.mjs), so the table never moves down once
 // drawn. Here it only filters.
-const filterTable = (table: HTMLTableElement) => {
+// A table folded in a closed block can have its box above the block
+// (the provenance lists): typing opens the block on the rows it keeps.
+const filterControls = (table: HTMLTableElement) => {
 	const controls = table.previousElementSibling;
-	if (!controls?.matches('.rb-table-filter')) return;
+	if (controls?.matches('.rb-table-filter')) return controls;
+	const block = table.closest('details');
+	return block?.previousElementSibling?.matches('.rb-table-filter') ? block.previousElementSibling : null;
+};
+
+const filterTable = (table: HTMLTableElement) => {
+	const controls = filterControls(table);
+	if (!controls) return;
+	const block = controls.nextElementSibling instanceof HTMLDetailsElement ? controls.nextElementSibling : null;
 	const input = controls.querySelector('input');
 	const count = controls.querySelector('.rb-table-filter-count');
 	if (!input || !count || input.dataset.rbWired) return;
@@ -100,6 +110,7 @@ const filterTable = (table: HTMLTableElement) => {
 	input.addEventListener('input', () => {
 		searchable ??= rows.map((row) => ({ row, text: row.textContent!.normalize('NFKD').toLocaleLowerCase() }));
 		const query = input.value.trim().normalize('NFKD').toLocaleLowerCase();
+		if (block && query) block.open = true;
 		let visible = 0;
 		for (const entry of searchable) {
 			entry.row.hidden = !!query && !entry.text.includes(query);
@@ -171,6 +182,9 @@ const enhanceTables = () => {
 		});
 	if (document.readyState === 'complete') start();
 	else addEventListener('load', start, { once: true });
+	// A box above a closed block is typed in before its table is ever near
+	// the screen: it is wired now.
+	for (const table of tables) if (table.closest('details:not([open])') && filterControls(table)) filterTable(table);
 	let timer = 0;
 	addEventListener('resize', () => {
 		clearTimeout(timer);
@@ -743,6 +757,18 @@ const followMovedCard = () => {
 	if (match && !target) location.replace(new URL(`files/?sha1=${match[1]}`, siteRoot()));
 };
 
+// A link to a card folded in a table row (emulators with many entries)
+// opens its row. Chrome does it on its own. Where the browser left the
+// target hidden, the same address is followed again once the row is open,
+// so the browser brings the card into view as for any link.
+const openTargetBlock = () => {
+	const id = decodeURIComponent(location.hash.slice(1));
+	const block = id ? document.getElementById(id)?.closest('details') : null;
+	if (!block || block.open) return;
+	block.open = true;
+	location.replace(location.hash);
+};
+
 // The site search holds no hashes. A hash typed in it gets "Look up this
 // hash" as its first result, and Enter opens the lookup. The pages Pagefind
 // finds for the same characters (a file name that holds them, a word that
@@ -948,6 +974,8 @@ const notFound = () => {
 
 resolveFileAddress();
 followMovedCard();
+openTargetBlock();
+addEventListener('hashchange', openTargetBlock);
 enhanceTables();
 breakPaths();
 hashSearch();

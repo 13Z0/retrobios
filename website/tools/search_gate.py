@@ -112,6 +112,13 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     "r36s": (("platforms/", "which-pack/"), 3),
     "steam deck": (("platforms/emudeck/", "platforms/retrodeck/", "which-pack/"), 1),
     "knulli": (("platforms/knulli/",), 1),
+    # A card folded in a table row, on the last part of MAME's cards.
+    "bbc_flop_torch.xml": (("emulators/mame-files-",), 3),
+    # FinalBurn Neo has no pgm.zip entry: the archive is named by the badge
+    # of each member it reads there, in the Status column of its table.
+    "pgm.zip": (("emulators/fbneo/",), 3),
+    # A dump name in a wanted list folded under its filter box.
+    "speeddos": (("provenance-tosec/",), 1),
 }
 
 
