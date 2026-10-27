@@ -728,6 +728,9 @@ class Device:
             "RB_FB": str(self.root / "fb"),
             "RB_MESSAGE_WAIT": "1",
             "TERM": "dumb",
+            # The ArkOS marker is a plymouth theme the host may carry too
+            # (GitHub's Ubuntu 24.04 runner does): no ArkOS unless a test says so.
+            "RB_ARK_MARKER": str(self.root / "no-ark-marker"),
             **env,
         }
         test.addCleanup(self._reap)
