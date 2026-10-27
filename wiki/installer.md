@@ -220,6 +220,15 @@ given on the command line fill the screens in advance and are kept as they are.
 menu shows it the same way, Enter keeping what `--system` named and `c`
 choosing anew.
 
+Colour is added to words, never put in their place. RetroBIOS in the title, the row in focus
+and the key the bottom line names first are magenta, files installed or in place
+green, files missing or left out yellow, failures and a refused folder red, and
+secondary text dim. Only the 16 basic colours are used, the ones a handheld's
+console has. `NO_COLOR` set to any value but an empty one turns colour off, as do
+`TERM=dumb` or no `TERM`, a terminal whose description names fewer than 8 colours
+and an output that is not a terminal. The text stays the same. The line-by-line
+questions paint the end of a run the same way.
+
 However the screen ends (Enter on the result, `q`, Ctrl+C, Ctrl+D, SIGTERM, a
 hangup), the terminal is given back as the screen found it: the cursor shown,
 the main screen back, echo and line editing on. Ctrl+Z, or SIGTSTP from
@@ -1584,7 +1593,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |
 | `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters. When either of these two is set and the fingerprint does not match, the error names the variable instead of suggesting a retry |
 | `RETROBIOS_BOOTSTRAP` | Set by `install.sh` (`sh`) and `install.ps1` (`ps1`) for the temporary installer they run, so that its hints give back the one-line command rather than `python3 install.py` |
-| `NO_COLOR` | Plain text, no colour, even at a terminal, when set to any value but an empty one. `TERM=dumb`, or no `TERM` outside Windows, also turns the live progress line and the colour off, as does a terminal whose description moves no cursor the ANSI way (`TERM=vt52`). The full screen draws no colour at all: the row in focus is marked with `>` as well as reverse video, and every state is written in words |
+| `NO_COLOR` | Plain text, no colour, even at a terminal, when set to any value but an empty one. `TERM=dumb`, or no `TERM` outside Windows, also turns the live progress line and the colour off, as does a terminal whose description moves no cursor the ANSI way (`TERM=vt52`). A description naming fewer than 8 colours keeps the live line and drops the colour. The full screen then draws the same text without colour: the row in focus is marked with `>` as well as reverse video, and every state is written in words |
 | `TERM`, `TERMINFO`, `TERMINFO_DIRS` | Decide whether the full screen opens. `TERM` unset or `dumb` (outside Windows) gives the questions line by line. Otherwise the terminal's description is read where ncurses reads it: `TERMINFO`, then `~/.terminfo`, then each folder of `TERMINFO_DIRS`, then the system's own. A description whose cursor moves are not the ANSI ones the screen writes (`TERM=vt52`) gives the questions too, and `--tui` there stops with the reason |
 | `FORCE_COLOR`, `CLICOLOR_FORCE` | Colour even when the output is a pipe or a file, set to any value but `0` or an empty one. `NO_COLOR` wins over both, and the progress line stays one line per file |
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |

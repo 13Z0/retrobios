@@ -951,6 +951,29 @@ def golden_states() -> dict:
     return states
 
 
+def result_states() -> dict:
+    """The result of a run that installed everything, of one with a file
+    failed, of one --offline left files out of, and of one stopped."""
+    def ended(code: int, **summary) -> install.TuiState:
+        state = checked_state()
+        state.stack.append("result")
+        state.code = code
+        state.download = {"event": "download", "files": 4, "bytes": 1064964}
+        state.summary = {"event": "summary", "mode": "install", "installed": 4,
+                         "up_to_date": 1, "pending": 0, "failed": [], "skipped": [],
+                         "left_out": [], "kept": [], "interrupted": False, **summary}
+        return state
+
+    return {
+        "done": ended(0),
+        "partial": golden_states()["result"],
+        "offline": ended(1, installed=1, pending=3, failed=[
+            {"dest": name, "reason": install.OFFLINE_WORDS}
+            for name in ("scph5500.bin", "scph5501.bin", "pcsx/extra.bin")]),
+        "stopped": ended(130, installed=2, interrupted=True),
+    }
+
+
 class Views(unittest.TestCase):
     """Every screen as text, at the sizes a handheld and a desktop show."""
 
@@ -1007,6 +1030,78 @@ class Views(unittest.TestCase):
                 path.write_text("".join(sections), encoding="utf-8")
             with self.subTest(route=route):
                 self.assertEqual("".join(sections), path.read_text(encoding="utf-8"))
+
+    def test_colour_goldens(self):
+        """Every screen as the terminal gets it with colour, the escape
+        codes kept (ESC written ^[), one file per size."""
+        update = os.environ.get("RETROBIOS_UPDATE_GOLDENS") == "1"
+        for cols, rows in SIZES:
+            sections = []
+            for name, state in golden_states().items():
+                state.cols, state.rows = cols, rows
+                painted = [install.tui_paint(str(line), line.style, True)
+                           for line in install.tui_view(state, cols, rows)]
+                sections.append(f"=== {name}\n" + "\n".join(painted).replace("\x1b", "^[")
+                                + "\n")
+            path = GOLDEN / f"colour-{cols}x{rows}.txt"
+            if update:
+                path.write_text("".join(sections), encoding="utf-8")
+            with self.subTest(size=f"{cols}x{rows}"):
+                self.assertEqual("".join(sections), path.read_text(encoding="utf-8"))
+
+    def test_colour_adds_codes_and_never_text(self):
+        """With colour off a line is drawn as before, its style alone, and
+        with colour on, stripped of its codes, it is the same text: the
+        golden screen, character for character."""
+        for cols, rows in SIZES:
+            colour = (GOLDEN / f"colour-{cols}x{rows}.txt").read_text(encoding="utf-8")
+            screens = dict(re.findall(r"=== (\S+)\n(.*?)(?=\n=== |\n\Z)", colour, re.S))
+            for name, state in golden_states().items():
+                with self.subTest(screen=name, size=f"{cols}x{rows}"):
+                    state.cols, state.rows = cols, rows
+                    lines = install.tui_view(state, cols, rows)
+                    for line in lines:
+                        self.assertEqual(install.tui_paint(str(line), line.style, False),
+                                         install._STYLES.get(line.style, "") + line)
+                    stripped = [install.unpainted(painted.replace("^[", "\x1b")).rstrip()
+                                for painted in screens[name].split("\n")]
+                    golden = (GOLDEN / f"{name}-{cols}x{rows}.txt").read_text(encoding="utf-8")
+                    self.assertEqual("\n".join(stripped) + "\n", golden)
+
+    def test_each_role_paints_a_status_word_on_the_result_screens(self):
+        """Done, a part done, files left offline, a stop: between them the
+        result screens use every role, each on a word that says it."""
+        drawn = "\n".join(install.tui_paint(str(line), line.style, True)
+                          for state in result_states().values()
+                          for line in install.tui_view(state, 80, 24))
+        for role, word in (("accent", "RetroBIOS"), ("strong+success", "4 files installed"),
+                           ("strong+success", "Done"), ("failure", "1 failed"),
+                           ("failure", "failed:"), ("strong+warning", "3 not fetched"),
+                           ("strong+warning", "Stopped"), ("muted", " "),
+                           ("strong", "/home/user/.config/retroarch/system")):
+            with self.subTest(role=role, word=word):
+                self.assertIn(install._sgr(role) + word, drawn)
+        # "2 of 4 installed" is no count of files installed.
+        self.assertNotIn(install._sgr("strong+success") + "4 installed", drawn)
+
+    def test_the_status_words_take_their_role_and_a_zero_none(self):
+        spans = install.status_spans("1 in place, 0 missing, 3 missing, 1 wrong copy, 2 failed")
+        self.assertEqual([("1 in place", "success"), ("3 missing", "warning"),
+                          ("1 wrong copy", "warning"), ("2 failed", "failure")],
+                         [("1 in place, 0 missing, 3 missing, 1 wrong copy, 2 failed"[a:b], r)
+                          for a, b, r in spans])
+        self.assertEqual(install.status_spans("0 wrong copies, 0 missing"), [])
+        self.assertEqual(install.status_spans("python3 install.py --platform retroarch"), [])
+
+    def test_the_bar_paints_a_key_only(self):
+        """The first entry's key in the accent, never a word: "Writing to the
+        card..." and "Any key closes this help" name no key."""
+        for text in (" Writing to the card...", " Any key closes this help"):
+            self.assertEqual(install.tui_paint(text, "hint", True),
+                             install._sgr("muted") + text + "\x1b[0m")
+        painted = install.tui_paint(" A/Enter Exit  B/Esc Back", "hint", True)
+        self.assertTrue(painted.startswith(install._sgr("muted") + " "
+                                           + install._sgr("accent") + "A/Enter"), painted)
 
     def test_the_hint_bar_names_the_primary_action_first(self):
         for name, state in golden_states().items():
@@ -3668,7 +3763,8 @@ class LineModeOffline(unittest.TestCase):
             term.wait("q) quit")
             term.send("\r")
             code = term.close()
-            out = term.raw.decode("utf-8", "replace")
+            # Read as words: a terminal gets the status words painted.
+            out = install.unpainted(term.raw.decode("utf-8", "replace"))
         self.assertIn("--offline: only the files found on this machine are installed, and no "
                       "--from names a folder to copy them from.", out)
         # tui_audit_7 P3-4: nothing to copy from, nothing to install.
@@ -4988,52 +5084,77 @@ class EndToEnd(unittest.TestCase):
 
     def test_no_color_draws_no_colour(self):
         """The screen marks the row in focus with > as well as reverse video,
-        and draws no colour at all: NO_COLOR has nothing left to remove."""
+        so NO_COLOR, or a terminal of fewer than 8 colours, takes the colour
+        away and leaves the same screen."""
         self.repo()
-        self.env["NO_COLOR"] = "1"
-        term = self.start()
-        screen = term.wait("Where do you play?")
-        self.assertIn("> RetroArch", screen)
-        term.send("q")
-        self.assertEqual(term.close(), 130)
-        for params in re.findall(rb"\x1b\[([0-9;]*)m", term.raw):
-            codes = {int(code) for code in params.split(b";") if code}
-            self.assertFalse(codes & {*range(30, 50), *range(90, 108)}, params)
+        screens = {}
+        for name, env in (("colour", {}), ("no_color", {"NO_COLOR": "1"}),
+                          ("mono", {"TERM": "rbtest-mono",
+                                    "TERMINFO": str(_terminfo_folder(self))})):
+            with self.subTest(env=name):
+                self.env.pop("NO_COLOR", None)
+                self.env.update({"TERM": "xterm", **env})
+                term = self.start()
+                screen = term.wait("Where do you play?")
+                self.assertIn("> RetroArch", screen)
+                screens[name] = screen
+                # pyte reads the colours drawn: RetroBIOS in the accent.
+                title = term.screen.buffer[0]
+                at = screen.splitlines()[0].index("RetroBIOS")
+                self.assertEqual(title[at].fg, "magenta" if name == "colour" else "default")
+                term.send("q")
+                self.assertEqual(term.close(), 130)
+                colours = set()
+                for params in re.findall(rb"\x1b\[([0-9;]*)m", term.raw):
+                    colours |= {int(code) for code in params.split(b";") if code} & {
+                        *range(30, 50), *range(90, 108)}
+                self.assertEqual(bool(colours), name == "colour", colours)
+        self.assertEqual(screens["colour"], screens["no_color"])
+        self.assertEqual(screens["colour"], screens["mono"])
 
 
-def _terminfo_entry(name: str, cup: str | None, extended: bool = False) -> bytes:
+def _terminfo_entry(name: str, cup: str | None, extended: bool = False,
+                    colours: int | None = 8) -> bytes:
     """A compiled term(5) entry holding the strings up to cursor_address,
-    only that one set."""
+    only that one set, and the numbers up to max_colors when colours is
+    given, columns alone when it is not."""
     def short(value: int) -> bytes:
         return value.to_bytes(2, "little", signed=True)
 
+    width = 4 if extended else 2
     names = name.encode() + b"|test terminal\0"
     table = (cup.encode("latin-1") + b"\0") if cup is not None else b""
     offsets = [-1] * (install._TERMINFO_CUP + 1)
     if cup is not None:
         offsets[install._TERMINFO_CUP] = 0
+    numbers = [80] + ([-1] * (install._TERMINFO_COLORS - 1) + [colours]
+                      if colours is not None else [])
     body = names + (b"\0" if len(names) % 2 else b"")
-    # One number, columns, in the width of the format.
-    body += (80).to_bytes(4 if extended else 2, "little")
+    body += b"".join(number.to_bytes(width, "little", signed=True) for number in numbers)
     body += b"".join(short(offset) for offset in offsets) + table
     header = b"".join(short(value) for value in (
-        0o1036 if extended else 0o432, len(names), 0, 1, len(offsets), len(table)))
+        0o1036 if extended else 0o432, len(names), 0, len(numbers), len(offsets),
+        len(table)))
     return header + body
 
 
 def _terminfo_folder(test: unittest.TestCase) -> Path:
-    """A $TERMINFO with a glass terminal, a VT52 and two ANSI terminals,
-    one in the extended format."""
+    """A $TERMINFO with a glass terminal, a VT52, two ANSI terminals of 8
+    colours, one in the extended format, and two ANSI terminals without
+    colour: one naming 2, one naming none (vt100)."""
     (REPO_ROOT / "tmp").mkdir(exist_ok=True)
     folder = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
     test.addCleanup(shutil.rmtree, folder, True)
-    for name, cup, extended in (
-            ("rbtest-glass", None, False),
-            ("rbtest-vt52", "\x1bY%p1%' '%+%c%p2%' '%+%c", False),
-            ("rbtest-ansi", "\x1b[%i%p1%d;%p2%dH", False),
-            ("rbtest-ansi2", "\x1b[%i%p1%d;%p2%dH", True)):
+    ansi = "\x1b[%i%p1%d;%p2%dH"
+    for name, cup, extended, colours in (
+            ("rbtest-glass", None, False, None),
+            ("rbtest-vt52", "\x1bY%p1%' '%+%c%p2%' '%+%c", False, None),
+            ("rbtest-ansi", ansi, False, 8),
+            ("rbtest-ansi2", ansi, True, 256),
+            ("rbtest-two", ansi, True, 2),
+            ("rbtest-mono", ansi, False, None)):
         (folder / "r").mkdir(exist_ok=True)
-        (folder / "r" / name).write_bytes(_terminfo_entry(name, cup, extended))
+        (folder / "r" / name).write_bytes(_terminfo_entry(name, cup, extended, colours))
     return folder
 
 
@@ -5101,6 +5222,55 @@ class TerminalsTheScreenCannotDraw(unittest.TestCase):
                 shown = install.Terminal(self.tty)
                 self.assertEqual((shown.live, shown.colour), (live, live))
                 self.assertEqual(shown.ok("ok") == "ok", not live)
+
+    def test_the_colours_are_read(self):
+        self.assertEqual(install.terminal_colours("rbtest-ansi", self.env), 8)
+        self.assertEqual(install.terminal_colours("rbtest-ansi2", self.env), 256)
+        self.assertEqual(install.terminal_colours("rbtest-two", self.env), 2)
+        self.assertEqual(install.terminal_colours("rbtest-mono", self.env), 0)
+        self.assertIsNone(install.terminal_colours("rbtest-none", self.env))
+        for data in (b"", b"\x00" * 12, _terminfo_entry("x", None, colours=8)[:40]):
+            with self.subTest(data=data):
+                self.assertIsNone(install.terminfo_number(data, install._TERMINFO_COLORS))
+
+    def test_fewer_than_8_colours_draw_the_line_live_and_plain(self):
+        """A vt100 moves the cursor the ANSI way and has no colour: the
+        progress line still redraws, its words unpainted."""
+        for term, colour in (("rbtest-ansi", True), ("rbtest-ansi2", True),
+                             ("rbtest-two", False), ("rbtest-mono", False),
+                             ("rbtest-none", True)):
+            with self.subTest(term=term), mock.patch.dict(
+                    os.environ, {**self.env, "TERM": term}), \
+                    mock.patch.object(install, "_enable_ansi", return_value=True):
+                os.environ.pop("NO_COLOR", None)
+                shown = install.Terminal(self.tty)
+                self.assertEqual((shown.live, shown.colour), (True, colour))
+                self.assertEqual(shown.status("1 failed") != "1 failed", colour)
+
+    def test_the_screen_draws_without_colour_for_each_reason(self):
+        """NO_COLOR, TERM dumb or unset, fewer than 8 colours, an output no
+        terminal: each turns the colour off, and says which."""
+        for env, said in (({"TERM": "rbtest-ansi"}, ""),
+                          ({"TERM": "rbtest-none"}, ""),
+                          ({"TERM": "rbtest-ansi", "NO_COLOR": "1"}, "NO_COLOR is set"),
+                          ({"TERM": "rbtest-ansi", "NO_COLOR": ""}, ""),
+                          ({"TERM": "dumb"}, "TERM is dumb or not set"),
+                          ({}, "TERM is dumb or not set"),
+                          ({"TERM": "rbtest-two"},
+                           "TERM=rbtest-two names 2 colours, fewer than 8"),
+                          ({"TERM": "rbtest-mono"},
+                           "TERM=rbtest-mono names 0 colours, fewer than 8")):
+            with self.subTest(env=env):
+                self.assertEqual(install.colour_blocker({**self.env, **env}, self.tty), said)
+        self.assertEqual(install.colour_blocker({**self.env, "TERM": "rbtest-ansi"},
+                                                io.StringIO()),
+                         "the output is not a terminal")
+        with mock.patch.dict(os.environ, {**self.env, "TERM": "rbtest-mono"}), \
+                mock.patch.object(install, "_enable_ansi", return_value=True):
+            self.assertFalse(install._TuiTerminal(self.tty, self.tty).colour)
+            os.environ["TERM"] = "rbtest-ansi"
+            os.environ.pop("NO_COLOR", None)
+            self.assertTrue(install._TuiTerminal(self.tty, self.tty).colour)
 
     def test_an_unset_term_is_a_dumb_one(self):
         with mock.patch.dict(os.environ, {"FORCE_COLOR": ""}), \

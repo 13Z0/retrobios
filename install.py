@@ -338,12 +338,100 @@ def _enable_ansi() -> bool:
         return False
 
 
+# The roles text is painted with, from the 16 basic colours only: a
+# handheld's Linux console has no more. The screens and the line questions
+# name a role, never a code. Magenta is the hue that stays legible on black
+# and on white in the xterm, VGA, Tango and Campbell palettes, so it is the
+# accent, bold. Yellow reads poorly on white: it paints a status word, never
+# a sentence. Bold red is bright red on the Linux console, where plain red on
+# black is the weakest pair.
+COLOUR_ROLES = {
+    "accent": "1;35",
+    "success": "32",
+    "warning": "33",
+    "failure": "1;31",
+    "muted": "2",
+    "strong": "1",
+    # The accent reversed: the row in focus, its > kept for no colour.
+    "selected": "7;35",
+}
+
+# The words a status takes its role from, wherever it is said. A count of
+# zero is no news and stays plain: "0 missing" is not a warning.
+_STATUS_WORDS = tuple((re.compile(pattern), role) for pattern, role in (
+    (r"(?<!of )\b[1-9][\d,]* (?:files? )?(?:installed|in place|already (?:up to date|in place)"
+     r"|up to date|ok)\b|\bDone\b|\bEverything is in place\b|\bAll files up to date\b"
+     r"|^ *ok\b", "success"),
+    (r"(?<!of )\b[1-9][\d,]* (?:files? )?(?:failed|refused)\b|\bFAILED\b|\bfailed:"
+     r"|\bFinished with errors\b|\bNothing was installed\b|\bSomething went wrong\b",
+     "failure"),
+    (r"(?<!of )\b[1-9][\d,]* (?:files? )?(?:missing|wrong cop(?:y|ies)|not fetched|left out"
+     r"|not downloaded)\b|\bFinished with files missing\b|\bNothing installed\b"
+     r"|\bStopped\b|\bLeft out\b|\bNot enough space\b", "warning"),
+))
+
+
+def _apart(spans: list[tuple[int, int, str]]) -> list[tuple[int, int, str]]:
+    """The spans in order, none empty, the longer kept where two overlap."""
+    kept: list[tuple[int, int, str]] = []
+    for span in sorted(spans, key=lambda span: (span[0], -span[1])):
+        if span[1] > span[0] and (not kept or span[0] >= kept[-1][1]):
+            kept.append(span)
+    return kept
+
+
+def status_spans(text: str) -> list[tuple[int, int, str]]:
+    """(start, end, role) of the status words in text, in order, apart."""
+    return _apart([(match.start(), match.end(), role) for pattern, role in _STATUS_WORDS
+                   for match in pattern.finditer(text)])
+
+
+def _sgr(role: str) -> str:
+    """The SGR sequence of a role, or of roles joined by + ("strong+success")."""
+    return "\033[0;" + ";".join(COLOUR_ROLES[name] for name in role.split("+")) + "m"
+
+
+def painted(text: str, spans: list[tuple[int, int, str]], base: str = "") -> str:
+    """text with each span in its role and the rest in the base role, a code
+    written where the role changes and the colours reset at the end. The
+    characters are those of text, in the same order. A span in "plain"
+    takes the terminal's own colours."""
+    pieces: list[tuple[str, str]] = []
+    at = 0
+    for start, end, role in spans:
+        pieces += [(text[at:start], base), (text[start:end], role)]
+        at = end
+    pieces.append((text[at:], base))
+    out: list[str] = []
+    current = ""
+    for piece, role in pieces:
+        role = "" if role == "plain" else role
+        if not piece:
+            continue
+        if role != current:
+            out.append(_sgr(role) if role else "\033[0m")
+            current = role
+        out.append(piece)
+    if current:
+        out.append("\033[0m")
+    return "".join(out)
+
+
+_SGR = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def unpainted(text: str) -> str:
+    """text without its SGR codes."""
+    return _SGR.sub("", text)
+
+
 class Terminal:
     """What the output stream can show: a live line, colour, or neither.
 
     A pipe or a log gets plain lines, and NO_COLOR and TERM=dumb or unset are
     honoured, as is a terminal whose description moves no cursor the ANSI way
-    (vt52).
+    (vt52), or names fewer than 8 colours (vt100), which keeps the line live
+    and plain.
     As no-color.org reads it, an empty NO_COLOR is not set: `NO_COLOR= cmd`
     turned colour off. FORCE_COLOR or CLICOLOR_FORCE paints a pipe, for a
     log viewer that shows colour, and never makes the line live.
@@ -362,25 +450,30 @@ class Terminal:
         forced = any(os.environ.get(name, "0") not in ("", "0")
                      for name in ("FORCE_COLOR", "CLICOLOR_FORCE"))
         self.colour = (
-            (self.live or forced) and not os.environ.get("NO_COLOR") and _enable_ansi()
+            ((self.live and not terminal_few_colours(os.environ)) or forced)
+            and not os.environ.get("NO_COLOR") and _enable_ansi()
         )
         if not self.colour:
             self.live = self.live and os.name != "nt"
 
-    def paint(self, text: str, code: str) -> str:
-        return f"\033[{code}m{text}\033[0m" if self.colour else text
+    def paint(self, text: str, role: str) -> str:
+        return f"\033[{COLOUR_ROLES[role]}m{text}\033[0m" if self.colour else text
+
+    def status(self, text: str) -> str:
+        """text with its status words in their roles (status_spans)."""
+        return painted(text, status_spans(text)) if self.colour else text
 
     def ok(self, text: str) -> str:
-        return self.paint(text, "32")
+        return self.paint(text, "success")
 
     def bad(self, text: str) -> str:
-        return self.paint(text, "31")
+        return self.paint(text, "failure")
 
     def dim(self, text: str) -> str:
-        return self.paint(text, "2")
+        return self.paint(text, "muted")
 
     def bold(self, text: str) -> str:
-        return self.paint(text, "1")
+        return self.paint(text, "strong")
 
 
 def format_duration(seconds: float) -> str:
@@ -5616,6 +5709,17 @@ NETWORK_FAILURE_ADVICE = (
     f"  More help: {TROUBLESHOOTING_PAGE}")
 
 
+def _status_print(term: Terminal | None) -> Callable[..., None]:
+    """print, with the status words of what it prints in their roles when
+    term paints (Terminal.status)."""
+    if term is None or not term.colour:
+        return print
+
+    def say(*parts: object, **kwargs: Any) -> None:
+        print(*(term.status(str(part)) for part in parts), **kwargs)
+    return say
+
+
 def _report_outcome(
     paths: list[Path],
     downloaded: int,
@@ -5635,6 +5739,7 @@ def _report_outcome(
     offline: int = 0,
     kinds: list[int] | None = None,
     same_choice: str = "",
+    term: Terminal | None = None,
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
     kinds is [BIOS files, game data files] installed, said apart.
@@ -5645,8 +5750,9 @@ def _report_outcome(
     the size question: counted with it, 14,696 files missing ended on Done
     and exit 0 once 4 came from this machine. They end the run as files
     that failed do, 1 when some were installed and 2 when none were, the
-    codes the full screen's run gives.
+    codes the full screen's run gives. term paints the status words.
     """
+    say = _status_print(term)
     # A file --offline left out is not a failure, whether the run asked or
     # not: without questions it was "14698 files failed", and "Run the same
     # command again to retry only those", which cannot fetch them.
@@ -5658,22 +5764,22 @@ def _report_outcome(
         offline += len(left)
     if transferred and seconds > 0:
         verb = "copied from the pack" if LOCAL.pack is not None else "downloaded"
-        print(f"\n{format_size(transferred)} {verb} in "
-              f"{format_duration(seconds)} ({format_size(int(transferred / seconds))}/s).")
+        say(f"\n{format_size(transferred)} {verb} in "
+            f"{format_duration(seconds)} ({format_size(int(transferred / seconds))}/s).")
     reasons = {reason for _dest, reason in failures or []}
     if failures and len(failures) > 1 and len(reasons) == 1 and reasons != {""}:
         # One cause, said once: a read-only folder listed ten of its files
         # and "... and 266 more" above the advice that fixes them all.
-        print(f"  failed: {_plural(len(failures), 'file')} ({reasons.pop()}), "
-              f"first {failures[0][0]}")
+        say(f"  failed: {_plural(len(failures), 'file')} ({reasons.pop()}), "
+            f"first {failures[0][0]}")
     else:
         for dest, reason in (failures or [])[:10]:
-            print(f"  failed: {dest}" + (f" ({reason})" if reason else ""))
+            say(f"  failed: {dest}" + (f" ({reason})" if reason else ""))
         if failures and len(failures) > 10:
-            print(f"  ... and {len(failures) - 10} more")
+            say(f"  ... and {len(failures) - 10} more")
     if declined and not downloaded and not errors and not interrupted and not offline:
-        print(f"\nNothing installed: {_plural(declined, 'file')} not downloaded, as answered.")
-        print(f"{_plural(up_to_date, 'file')} already up to date at {_locations(paths)}.")
+        say(f"\nNothing installed: {_plural(declined, 'file')} not downloaded, as answered.")
+        say(f"{_plural(up_to_date, 'file')} already up to date at {_locations(paths)}.")
         return
     # Left out for an unknown save directory, said with that reason in
     # every ending: "the collection does not hold it" blamed the collection.
@@ -5684,10 +5790,10 @@ def _report_outcome(
         f"{unplaced[0].get('frontend') or 'the frontend'}'s save directory left out: "
         "its place is not known. Name it with --save-dir next time."] if unplaced else [])
     if interrupted:
-        print(f"\nStopped. {_plural(downloaded, 'file')} installed.")
+        say(f"\nStopped. {_plural(downloaded, 'file')} installed.")
         for line in kept:
-            print(line)
-        print("Run the same command again to carry on from here. Nothing is lost.")
+            say(line)
+        say("Run the same command again to carry on from here. Nothing is lost.")
         sys.exit(130)
 
     # A standalone copy fails by absolute path, in an emulator's folder
@@ -5720,86 +5826,86 @@ def _report_outcome(
     if offline:
         remedy = _offline_remedy()
         if not downloaded and not errors:
-            print(f"\nNothing installed: {_plural(offline, 'file')} "
-                  f"{'needs' if offline == 1 else 'need'} the internet, which "
-                  f"{offline_named()} does not use.")
-            print(f"  {remedy}")
+            say(f"\nNothing installed: {_plural(offline, 'file')} "
+                f"{'needs' if offline == 1 else 'need'} the internet, which "
+                f"{offline_named()} does not use.")
+            say(f"  {remedy}")
             for line in kept:
-                print(line)
+                say(line)
             if up_to_date:
-                print(f"{_plural(up_to_date, 'file')} already up to date at "
-                      f"{_locations(paths)}.")
+                say(f"{_plural(up_to_date, 'file')} already up to date at "
+                    f"{_locations(paths)}.")
             sys.exit(2)
         failed = f", {errors} failed" if errors else ""
         if downloaded:
-            print(f"\nFinished with files missing. {_plural(downloaded, 'file')} installed, "
-                  f"{offline} not fetched ({offline_named()}){failed}.")
+            say(f"\nFinished with files missing. {_plural(downloaded, 'file')} installed, "
+                f"{offline} not fetched ({offline_named()}){failed}.")
         else:
             # Nothing written: "Finished with files missing. 0 files installed"
             # read as a part done.
-            print(f"\nNothing installed: {_plural(offline, 'file')} not fetched "
-                  f"({offline_named()}){failed}.")
+            say(f"\nNothing installed: {_plural(offline, 'file')} not fetched "
+                f"({offline_named()}){failed}.")
         if sources:
-            print(f"  {sources}")
+            say(f"  {sources}")
         # Under the files it is about: after the save-directory line, "They"
         # read as that one file.
-        print(f"  {remedy}")
-        print(f"Location: {_locations(paths)}")
+        say(f"  {remedy}")
+        say(f"Location: {_locations(paths)}")
         for line in kept + advice:
-            print(line)
+            say(line)
         sys.exit(1 if downloaded else 2)
 
     if errors and not downloaded:
-        print(f"\nNothing was installed. {_plural(errors, 'file')} failed.")
+        say(f"\nNothing was installed. {_plural(errors, 'file')} failed.")
         if failures and all(isinstance(r, (NetworkReason, OfflineReason))
                             for _d, r in failures):
             # The folder was never the problem: naming it as the place being
             # written to sent people looking at their disk.
-            print(f"Destination: {_locations(paths)}")
+            say(f"Destination: {_locations(paths)}")
         else:
-            print(f"Location that was being written to: {_locations(paths)}")
+            say(f"Location that was being written to: {_locations(paths)}")
         for line in kept + advice:
-            print(line)
-        print("Run the same command again once that is resolved. "
-              "Files already installed are kept.")
+            say(line)
+        say("Run the same command again once that is resolved. "
+            "Files already installed are kept.")
         sys.exit(2)
 
     if errors:
-        print(f"\nFinished with errors. {_plural(downloaded, 'file')} installed, "
-              f"{_plural(errors, 'file')} failed.")
+        say(f"\nFinished with errors. {_plural(downloaded, 'file')} installed, "
+            f"{_plural(errors, 'file')} failed.")
         if sources:
-            print(f"  {sources}")
-        print(f"Location: {_locations(paths)}")
+            say(f"  {sources}")
+        say(f"Location: {_locations(paths)}")
         for line in kept + advice:
-            print(line)
+            say(line)
         if not all(str(reason).startswith(NOT_KEPT) for _dest, reason in failures or []):
-            print("Run the same command again to retry only those.")
+            say("Run the same command again to retry only those.")
         sys.exit(1)
 
-    print(f"\nDone. {_plural(downloaded, 'file')} installed, "
-          f"{_plural(up_to_date, 'file')} already up to date.")
+    say(f"\nDone. {_plural(downloaded, 'file')} installed, "
+        f"{_plural(up_to_date, 'file')} already up to date.")
     if kinds and kinds[1]:
-        print(f"  Installed: {kinds_words(*kinds)}.")
+        say(f"  Installed: {kinds_words(*kinds)}.")
     if sources:
-        print(f"  {sources}")
-    print(f"Location: {_locations(paths)}")
+        say(f"  {sources}")
+    say(f"Location: {_locations(paths)}")
     for line in kept:
-        print(line)
+        say(line)
     if omitted > len(unplaced):
         for line in _omission_lines(omitted - len(unplaced),
                                     [entry for entry in omitted_entries or []
                                      if entry.get("reason") != "no_save_directory"],
                                     Path(paths[0]) if len(paths) == 1 else None):
-            print(line)
+            say(line)
     for line in hints or []:
-        print(line)
+        say(line)
     if same_choice:
         # After the questions, as the screen's result ends: "the same
         # command" was one that asked them (tui_audit_11 P3-21).
-        print(f"Same choice without questions: {screen_text(same_choice)}")
-        print("To check this later, run that command with --check.")
+        say(f"Same choice without questions: {screen_text(same_choice)}")
+        say("To check this later, run that command with --check.")
         return
-    print("To check this later, run the same command with --check.")
+    say("To check this later, run the same command with --check.")
 
 
 def _offline_remedy(folders: list[str] | None = None) -> str:
@@ -6513,6 +6619,7 @@ def _install_standalone_folders(
     _report_outcome(
         [folder for folder, _entries in plan], downloaded, up_to_date_count, errors,
         0, interrupted, failures=failures, transferred=transferred, seconds=seconds,
+        term=term,
     )
     return True
 
@@ -12440,6 +12547,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             sources=_run_sources(bios_indexes, total_downloaded,
                                  total_errors + total_offline),
             offline=total_offline,
+            term=term,
         )
         finish_app(args, platforms, app_cards, interactive and not total_declined)
 
@@ -12481,7 +12589,17 @@ _PASTE_END = "\x1b[201~"
 # newline does not submit it half typed.
 _SCREEN_ON = "\x1b[?1049h\x1b[?25l\x1b[?2004h\x1b[2J"
 _SCREEN_OFF = "\x1b[?2004l\x1b[0m\x1b[?25h\x1b[?1049l"
-_STYLES = {"title": "\x1b[1m", "focus": "\x1b[7m", "dim": "\x1b[2m"}
+# How a line is drawn without colour: the screen's title and a headline
+# bold, the row in focus reversed, the bar and secondary text dim.
+_STYLES = {"title": "\x1b[1m", "head": "\x1b[1m", "focus": "\x1b[7m", "dim": "\x1b[2m",
+           "hint": "\x1b[2m"}
+# The role each style is drawn in with colour (tui_paint).
+_COLOUR_BASES = {"title": "strong", "head": "strong", "focus": "selected", "dim": "muted",
+                 "hint": "muted", "refusal": "failure"}
+# A count or a size on a headline: "4 files to download, 1.0 MB".
+_KEY_NUMBER = re.compile(r"\b\d[\d,.]*(?: (?:B|KB|MB|GB|TB)\b)?")
+_PROGRESS_BAR = re.compile(r"^ *\[(#*)(-*)\]")
+_FOLDER_LABEL = "BIOS folder: "
 
 
 class TuiKey(NamedTuple):
@@ -12753,7 +12871,8 @@ def _wrap(text: str, width: int, indent: str = "  ", whole: str = "") -> list[st
 
 
 class TuiLine(str):
-    """A screen line and how it is drawn: "title", "focus", "dim" or plain."""
+    """A screen line and how it is drawn: "head" (the screen's title),
+    "title", "focus", "dim", "hint" (the bar), "refusal" or plain."""
 
     style = ""
 
@@ -12762,6 +12881,59 @@ def _styled(text: str, style: str = "") -> TuiLine:
     line = TuiLine(screen_text(text))
     line.style = style
     return line
+
+
+def _bar_keys() -> set[str]:
+    """Every name a key or a button takes on the bar, on every route."""
+    keys = {"Enter", "Esc", "Space", "Start", "Select", "Ctrl-C", "?", "/"}
+    for route in TUI_ROUTES.values():
+        keys.update(route.bar)
+        keys.update(name for name in route.bar.values() if name)
+    keys.update(short.strip() for _long, short in _SHORT_KEYS)
+    return keys
+
+
+def tui_paint(text: str, style: str, colour: bool) -> str:
+    """A drawn line as the terminal gets it: its style, and with colour the
+    roles of its words (COLOUR_ROLES). The characters are those of text.
+
+    The title names RetroBIOS in the accent, a headline its counts and
+    sizes, the bar the key it names first, a line its status words, the
+    plan and the result the BIOS folder in bold.
+    """
+    if not colour:
+        return _STYLES.get(style, "") + text
+    base = _COLOUR_BASES.get(style, "")
+    if style not in ("", "head", "title", "hint", "refusal"):
+        return painted(text, [], base)
+    spans: list[tuple[int, int, str]] = []
+    if style == "hint":
+        start = len(text) - len(text.lstrip(" "))
+        key = text[start:].split(" ", 1)[0]
+        if key in _bar_keys():
+            end = text.find("  ", start)
+            end = len(text) if end < 0 else end
+            spans = [(start, start + len(key), "accent"), (start + len(key), end, "plain")]
+        return painted(text, spans, base)
+    if style == "head":
+        at = text.find("RetroBIOS")
+        if at >= 0:
+            spans.append((at, at + len("RetroBIOS"), "accent"))
+    if style == "title":
+        spans += [(match.start(), match.end(), "accent")
+                  for match in _KEY_NUMBER.finditer(text)]
+    lead = text.lstrip(" ")
+    if lead.startswith(_FOLDER_LABEL):
+        start = len(text) - len(lead) + len(_FOLDER_LABEL)
+        spans.append((start, len(text.rstrip(" ")), "strong"))
+    bar = _PROGRESS_BAR.match(text)
+    if bar:
+        spans += [(bar.start(1), bar.end(1), "accent"), (bar.start(2), bar.end(2), "muted")]
+    # On a bold line a status word stays bold.
+    spans += [(start, end, f"strong+{role}" if base == "strong"
+               and not COLOUR_ROLES[role].startswith("1;") else role)
+              for start, end, role in status_spans(text)]
+    return painted(text, _apart(spans), base)
 
 
 def _short_path(path: Path | None, home: Path) -> str:
@@ -13103,6 +13275,8 @@ _TERMINFO_DIRS = ("/etc/terminfo", "/lib/terminfo", "/usr/share/terminfo",
                   "/usr/lib/terminfo", "/usr/share/lib/terminfo")
 # cursor_address, string capability 10 of term(5).
 _TERMINFO_CUP = 10
+# max_colors, numeric capability 13.
+_TERMINFO_COLORS = 13
 
 
 def _terminfo_folders(env: Mapping[str, str]) -> list[Path]:
@@ -13114,19 +13288,47 @@ def _terminfo_folders(env: Mapping[str, str]) -> list[Path]:
     return folders + [Path(folder) for folder in _TERMINFO_DIRS]
 
 
+def _terminfo_header(data: bytes) -> tuple[int, int, int, int, int] | None:
+    """Of a compiled term(5) entry: the width of a number, the counts of
+    names bytes, booleans, numbers and strings. None when data is none."""
+    if len(data) < 12:
+        return None
+    # The legacy format stores numbers in 2 bytes, the extended one in 4.
+    width = {0o432: 2, 0o1036: 4}.get(int.from_bytes(data[0:2], "little", signed=True))
+    if width is None:
+        return None
+    names, bools, numbers, strings = (int.from_bytes(data[at:at + 2], "little", signed=True)
+                                      for at in (2, 4, 6, 8))
+    return width, names, bools, numbers, strings
+
+
+def terminfo_number(data: bytes, index: int) -> int | None:
+    """Numeric capability index of a compiled term(5) entry, -1 when the
+    entry lacks it, None when data is no compiled entry."""
+    header = _terminfo_header(data)
+    if header is None:
+        return None
+    width, names, bools, numbers, _strings = header
+    if index >= numbers:
+        return -1
+    start = 12 + names + bools
+    start += start % 2 + index * width
+    if start + width > len(data):
+        return None
+    value = int.from_bytes(data[start:start + width], "little", signed=True)
+    return value if value >= 0 else -1
+
+
 def terminfo_string(data: bytes, index: int) -> str | None:
     """String capability index of a compiled term(5) entry, "" when the
     entry lacks it, None when data is no compiled entry."""
     def short(at: int) -> int:
         return int.from_bytes(data[at:at + 2], "little", signed=True)
 
-    if len(data) < 12:
+    header = _terminfo_header(data)
+    if header is None:
         return None
-    # The legacy format stores numbers in 2 bytes, the extended one in 4.
-    width = {0o432: 2, 0o1036: 4}.get(short(0))
-    if width is None:
-        return None
-    names, bools, numbers, strings = short(2), short(4), short(6), short(8)
+    width, names, bools, numbers, strings = header
     offsets = 12 + names + bools
     offsets += offsets % 2 + numbers * width
     if index >= strings:
@@ -13141,21 +13343,62 @@ def terminfo_string(data: bytes, index: int) -> str | None:
     return data[start:end].decode("latin-1")
 
 
-def terminal_cursor_address(term: str, env: Mapping[str, str]) -> str | None:
-    """How TERM's description here moves the cursor, "" when it cannot,
-    None when no description is found: Windows, Android and many handheld
-    images carry none, and the screen is not held back for it."""
+def _terminfo_data(term: str, env: Mapping[str, str]) -> bytes | None:
+    """TERM's compiled description, the first found, None when none is:
+    Windows, Android and many handheld images carry none."""
     if not term or "/" in term or term.startswith("."):
         return None
     for folder in _terminfo_folders(env):
         # Linux files xterm under x/, macOS under 78/.
         for sub in (term[0], f"{ord(term[0]):02x}"):
             try:
-                data = (folder / sub / term).read_bytes()
+                return (folder / sub / term).read_bytes()
             except (OSError, ValueError):
                 continue
-            return terminfo_string(data, _TERMINFO_CUP)
     return None
+
+
+def terminal_cursor_address(term: str, env: Mapping[str, str]) -> str | None:
+    """How TERM's description here moves the cursor, "" when it cannot,
+    None when no description is found, and the screen is not held back
+    for it."""
+    data = _terminfo_data(term, env)
+    return None if data is None else terminfo_string(data, _TERMINFO_CUP)
+
+
+def terminal_colours(term: str, env: Mapping[str, str]) -> int | None:
+    """The colours TERM's description here names, 0 when it names none
+    (vt100), None when no description is found or it cannot be read."""
+    data = _terminfo_data(term, env)
+    if data is None:
+        return None
+    count = terminfo_number(data, _TERMINFO_COLORS)
+    return None if count is None else max(count, 0)
+
+
+def terminal_few_colours(env: Mapping[str, str]) -> str:
+    """Why TERM's description here leaves colour off, "" when it does not:
+    no description is no refusal, as for the cursor."""
+    if os.name == "nt":
+        return ""
+    term = env.get("TERM", "")
+    count = terminal_colours(term, env)
+    if count is not None and count < 8:
+        return f"TERM={term} names {count} colours, fewer than 8"
+    return ""
+
+
+def colour_blocker(env: Mapping[str, str], stream: TextIO) -> str:
+    """Why the full-screen interface draws without colour, "" when it paints
+    with the roles of COLOUR_ROLES. The text is the same either way."""
+    if env.get("NO_COLOR"):
+        return "NO_COLOR is set"
+    isatty = getattr(stream, "isatty", None)
+    if not (isatty and isatty()):
+        return "the output is not a terminal"
+    if os.name != "nt" and env.get("TERM", "") in ("", "dumb"):
+        return "TERM is dumb or not set"
+    return terminal_few_colours(env)
 
 
 def terminal_without_ansi(env: Mapping[str, str]) -> str:
@@ -13865,9 +14108,10 @@ def _start_check(state: TuiState) -> list[tuple]:
     return [("fetch", state.platform)]
 
 
-def _closed_status(state: TuiState, closed: tuple[Path, str]) -> str:
-    return (f"This user cannot open {_short_path(closed[0], state.home)} ({closed[1]}): "
-            "choose another folder, or give this user access to it.")
+def _closed_status(state: TuiState, closed: tuple[Path, str]) -> TuiLine:
+    folder = _short_path(closed[0], state.home)
+    return _styled(f"This user cannot open {folder} ({closed[1]}): choose another folder, "
+                   "or give this user access to it.", "refusal")
 
 
 def _choose(state: TuiState, plat: str, dest: Path, proposed: bool = False) -> list[tuple]:
@@ -13968,7 +14212,7 @@ def _card_status(state: TuiState, choice: CardChoice, given: bool = False) -> No
     else:
         then = "Choose the card's top folder."
         short = choice.short or choice.refused + "."
-    state.status = f"{short} {then}"
+    state.status = _styled(f"{short} {then}", "refusal")
     state.status_more = f"{choice.refused}." + (f" {choice.detail}." if choice.detail else "")
 
 
@@ -14389,7 +14633,7 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             chosen = state.browse_dir if action == "use" else row.value
             refused = copy_source_refusal(chosen, state.dest)
             if refused:
-                state.status = refused
+                state.status = _styled(refused, "refusal")
                 return []
             if chosen not in state.from_folders:
                 state.from_folders.append(chosen)
@@ -16084,7 +16328,8 @@ def _status_after(state: TuiState) -> list[str]:
     # Said once: the full form repeated the short one under it. The help
     # holds it, and a pad, with no button for the help, reads it here.
     if state.pad in ("both", "keys"):
-        return [f"{state.status} {'F1' if state.screen == 'path' else '?'} says more."]
+        return [_styled(f"{state.status} {'F1' if state.screen == 'path' else '?'} says more.",
+                        getattr(state.status, "style", ""))]
     return [state.status, state.status_more]
 
 
@@ -16283,10 +16528,10 @@ def _view_systems(state: TuiState, width: int, height: int) -> tuple:
                 and cell_width(f"> {row.label}  {row.value}  {row.right}") + 2 <= width
                 else row for row in rows]
     chosen = _ticked_files(state)
-    footer = [f"{len(state.ticked)} of {len(state.systems)} systems: "
-              f"{_plural(len(chosen), 'file')}, "
-              f"{format_size(sum(e['size'] for e in chosen))}"
-              + (" before your options" if _counts_predate_options(state) else "")]
+    total = (f"{len(state.ticked)} of {len(state.systems)} systems: "
+             f"{_plural(len(chosen), 'file')}, {format_size(sum(e['size'] for e in chosen))}"
+             + (" before your options" if _counts_predate_options(state) else ""))
+    footer = [_styled(total, "title")]
     focused = rows[min(state.focus.get("systems", 0), len(rows) - 1)]
     drawn = str(_row_line(focused, True, width))
     if focused.action == "system" and not (
@@ -16749,6 +16994,9 @@ def tui_keeps_log(state: TuiState) -> bool:
 
 def _view_result(state: TuiState, width: int, height: int) -> tuple:
     title, lines = tui_outcome(state)
+    # The outcome in bold, its counts in their roles: it led a list of
+    # lines drawn alike.
+    lines[0] = _styled(lines[0], "title")
     rows = tui_rows(state)
     if rows:
         return (title, _compose(state, width, height, lines, rows),
@@ -16944,14 +17192,14 @@ def tui_view(state: TuiState, cols: int, rows: int) -> list[str]:
         # keys that end it, not Tick and Help.
         hint = ("Enter Done", "Esc Clear")
     hint = _route_hint(state, _back_hint(state, hint))
-    lines = [_styled(fit(f" RetroBIOS: {title}", cols), "title"), _styled("")]
+    lines = [_styled(fit(f" RetroBIOS: {title}", cols), "head"), _styled("")]
     # A long line is drawn whole, the terminal folding it into the rows
     # after it (_text_lines): cut to the width, a copied path lost its end.
     lines += [_styled(" " + line if line.style == "long" else fit(" " + line, cols), line.style)
               for line in body[:height]]
     lines += [_styled("")] * (rows - 1 - len(lines))
     # Never the last cell of the screen: a terminal may scroll when it is written.
-    lines.append(_styled(fit(" " + _hint(width, *hint), cols - 1), "dim"))
+    lines.append(_styled(fit(" " + _hint(width, *hint), cols - 1), "hint"))
     return lines
 
 
@@ -17345,6 +17593,9 @@ class _TuiTerminal:
         # Python turns a C locale into UTF-8 for itself, not for the
         # terminal: a console font there has no CJK, often no accents.
         self.ascii = not utf8 or locale_name in ("C", "POSIX")
+        # The same text without colour: NO_COLOR, a dumb or unset TERM, a
+        # description naming fewer than 8 colours, an output no terminal.
+        self.colour = not colour_blocker(os.environ, stdout) and _enable_ansi()
         self.ended = False
         self.heard = 0.0
         self.frame: list[tuple[str, str]] = []
@@ -17410,7 +17661,8 @@ class _TuiTerminal:
                 text = ascii_text(text)
             if style == "focus":
                 text = _pad(text, min(cols, TUI_MAX_WIDTH) - (index == len(frame) - 1))
-            out.append(f"\x1b[{index + 1};1H{_STYLES.get(style, '')}{text}\x1b[0m\x1b[K")
+            out.append(f"\x1b[{index + 1};1H"
+                       f"{tui_paint(text, style, getattr(self, 'colour', False))}\x1b[0m\x1b[K")
         self.frame = frame
         if out:
             self.write("".join(out))
