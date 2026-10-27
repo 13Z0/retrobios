@@ -1,7 +1,8 @@
 // What each page knows of its place in the site, computed once per page
 // from what scripts/sitestarlight.py writes beside the sidebar:
 // - breadcrumbs: the tab and the groups above the page, each linked to the
-//   page or the section that introduces it, never to a sibling page;
+//   page or the section that introduces it, never to a sibling page. A
+//   group of names by their first letter (A, B) is no crumb;
 // - previous and next: the reading order of `reading`. Start here runs on
 //   into Your setup, every other tab is read on its own, and a system,
 //   emulator or platform page has none;
@@ -19,7 +20,7 @@ import sidebar from './generated/sidebar.json' with { type: 'json' };
 
 type Entry = StarlightRouteData['sidebar'][number];
 type Link = Extract<Entry, { type: 'link' }>;
-type Group = { href: string | null; prune: boolean };
+type Group = { href: string | null; prune: boolean; crumb?: boolean };
 export type Crumb = { label: string; href?: string };
 
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
@@ -55,7 +56,11 @@ const trail = (entries: Entry[], labels: string[]): Crumb[] | undefined => {
 		const here = [...labels, entry.label];
 		const below = trail(entry.entries, here);
 		if (below) {
-			const href = groupOf(here)?.href;
+			const group = groupOf(here);
+			// A group of names by their first letter is a way through the
+			// list, not a place: the crumb stops at the list.
+			if (group?.crumb === false) return below;
+			const href = group?.href;
 			return [{ label: entry.label, href: href ? withBase(href) : undefined }, ...below];
 		}
 	}

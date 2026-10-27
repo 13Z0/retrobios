@@ -117,10 +117,12 @@ class GroupsAreGroups(unittest.TestCase):
 
     def test_explore_groups_collapse_to_their_overview(self):
         explore = {key: value for key, value in self.groups.items() if key.startswith("Explore/")}
-        self.assertEqual(explore["Explore/Systems"], {"href": "/retrobios/systems/", "prune": True})
+        self.assertEqual(explore["Explore/Systems"],
+                         {"href": "/retrobios/systems/", "prune": True, "crumb": True})
         self.assertEqual(explore["Explore/Systems/Consoles and computers"]["href"],
                          "/retrobios/systems/#consoles-and-computers")
-        self.assertEqual(explore["Explore/Emulators/D"], {"href": "/retrobios/emulators/#d", "prune": True})
+        self.assertEqual(explore["Explore/Emulators/D"],
+                         {"href": "/retrobios/emulators/#d", "prune": True, "crumb": False})
 
     def test_no_group_points_at_one_of_its_own_pages(self):
         """The overview a group opens on is its own index page or a section of

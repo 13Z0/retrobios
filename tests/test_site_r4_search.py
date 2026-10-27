@@ -120,7 +120,8 @@ class FieldsFromFrontMatter(unittest.TestCase):
             "terms": "bios not found, bios missing",
         })["text"]
         self.assertIn('data-pagefind-meta="consoles:Neo Geo Neo Geo Pocket Color"', text)
-        self.assertIn('data-pagefind-meta="terms:bios not found bios missing"', text)
+        self.assertIn('data-pagefind-meta="terms:bios not found bios missing Neo Geo BIOS '
+                      'Neo Geo Pocket Color BIOS"', text)
         # A field value is an attribute: none of it reaches an excerpt.
         self.assertNotRegex(text, r">[^<]*bios missing[^<]*<")
 

@@ -417,10 +417,6 @@ def page_aliases(rel: str) -> list[str]:
     return list(_page_aliases.get(rel, []))
 
 
-# Search fields a page's own front matter fills, never typed here.
-SEARCH_FIELDS = ("consoles", "terms")
-
-
 def field_words(value: object) -> list[str]:
     """The words of a front matter search field: a list, or one string
     with its words or phrases split at commas."""
@@ -429,6 +425,14 @@ def field_words(value: object) -> list[str]:
     if isinstance(value, (list, tuple)):
         return [str(part).strip() for part in value if str(part).strip()]
     return []
+
+
+def console_words(names: list[str]) -> list[str]:
+    """What a visitor types for a console: its name with "BIOS". A page that
+    answers "No file needed" says BIOS only where the search does not read,
+    so "nes bios" found NES.emu and never the NES page. As a task word it
+    weighs like one: in the consoles field, NES.emu's title still won."""
+    return [f"{name} BIOS" for name in names]
 
 
 def _neighbour(rel: str, value: object) -> object:
@@ -503,8 +507,9 @@ def finalize_page(
                   r'<span data-pagefind-ignore class="\1"', body)
     if rel.startswith("systems/"):
         body += file_names_meta(body) + search_field("aliases", page_aliases(rel))
-    for key in SEARCH_FIELDS:
-        body += search_field(key, field_words(authored.get(key)))
+    consoles = field_words(authored.get("consoles"))
+    body += search_field("consoles", consoles)
+    body += search_field("terms", field_words(authored.get("terms")) + console_words(consoles))
     components = used_components(body)
     stem = rel.rsplit(".", 1)[0]
     if components:
@@ -594,12 +599,33 @@ def reads_in_order(rel: str) -> bool:
     return not rel.startswith(CARD_PAGES) or rel.endswith("/index.md")
 
 
+_DIGIT_RANGE = re.compile(r"[0-9] to [0-9]")
+
+
+def by_initial(label: str, children: list[dict]) -> bool:
+    """A group that files its pages by the first character of their names
+    (A, B, "0 to 9"): a way through a long list, not a place, so it is no
+    crumb."""
+    if not children or any("items" in child for child in children):
+        return False
+    firsts = {str(child["label"])[:1].upper() for child in children}
+    if len(label) == 1:
+        return firsts == {label}
+    return bool(_DIGIT_RANGE.fullmatch(label)) and not any("A" <= first <= "Z" for first in firsts)
+
+
 def sidebar(nav: list, present: set[str], anchors: dict[str, set[str]] | None = None) -> dict:
     """The navigation as Starlight topics, one per tab, with what the route
     middleware (website/src/routeData.ts) reads beside it.
 
     A page the navigation does not list (the parts of a split page) joins
-    the topic that holds most pages of its directory.
+    the topic that holds most pages of its directory. In a directory the
+    navigation lists nothing of (get/), it joins the topic of the pages of
+    the same name, and a page with neither joins the first topic: no page
+    is left out of every tab.
+
+    A group that files names by their first letter is marked `crumb: false`:
+    the breadcrumbs skip it.
 
     `groups` gives each group, keyed by the labels from its tab down, the
     page that introduces it: its own overview page, or the heading named
@@ -649,7 +675,8 @@ def sidebar(nav: list, present: set[str], anchors: dict[str, set[str]] | None = 
         children = [child for child in (item(v, topic, here, own or parent) for v in value) if child]
         if not children:
             return None
-        groups["/".join(here)] = {"href": href, "prune": topic in PRUNED_TABS and href is not None}
+        groups["/".join(here)] = {"href": href, "prune": topic in PRUNED_TABS and href is not None,
+                                  "crumb": not by_initial(label, children)}
         return {"label": label, "items": children, "collapsed": True}
 
     topics = []
@@ -670,15 +697,35 @@ def sidebar(nav: list, present: set[str], anchors: dict[str, set[str]] | None = 
     # is the way back in. Excluded from every tab, the theme named the tabs
     # by their position, 0 to 4.
     extra: dict[str, list[str]] = {topics[0]["id"]: ["/404"]} if topics else {}
-    exclude: list[str] = []
-    for rel in sorted(present - owner.keys()):
-        tally = votes.get(rel.rpartition("/")[0])
-        path = "/" + (_sidebar_link(rel).strip("/") or "index")
+    # A folder the navigation lists nothing of (get/, one download page per
+    # setup) has no vote, and excluded from every tab its pages had the
+    # tabs numbered 0 to 4 too. Its pages take the tab of the pages of the
+    # same name (get/batocera.md, platforms/batocera.md), and its overview
+    # the tab its pages took.
+    by_name: dict[str, dict[str, int]] = {}
+    for rel, topic in owner.items():
+        tally = by_name.setdefault(PurePosixPath(rel).name, {})
+        tally[topic] = tally.get(topic, 0) + 1
+    unlisted = sorted(present - owner.keys())
+    adopted: dict[str, dict[str, int]] = {}
+    for rel in unlisted:
+        folder, name = rel.rpartition("/")[0], PurePosixPath(rel).name
+        if folder in votes or name == "index.md":
+            continue
+        tally = adopted.setdefault(folder, {})
+        for topic, count in by_name.get(name, {}).items():
+            tally[topic] = tally.get(topic, 0) + count
+    for rel in unlisted:
+        folder = rel.rpartition("/")[0]
+        tally = votes.get(folder) or adopted.get(folder)
         if tally:
-            extra.setdefault(max(tally, key=tally.get), []).append(path)
+            topic = max(tally, key=tally.get)
+        elif topics:
+            topic = topics[0]["id"]
         else:
-            exclude.append(path)
-    return {"topics": topics, "options": {"topics": extra, "exclude": exclude},
+            continue
+        extra.setdefault(topic, []).append("/" + (_sidebar_link(rel).strip("/") or "index"))
+    return {"topics": topics, "options": {"topics": extra, "exclude": []},
             "groups": groups, "reading": _reading(nav, present)}
 
 
