@@ -41,6 +41,7 @@ Usage:
     python scripts/refresh_stale.py --dry-run
     python scripts/refresh_stale.py --only platforms,targets
     python scripts/refresh_stale.py --jobs 6
+    python scripts/refresh_stale.py --findings tmp/freshness.json --only data
 """
 
 from __future__ import annotations
@@ -154,6 +155,17 @@ def _run_check_freshness(areas: tuple[str, ...], extra: list[str]) -> list[dict]
         return json.loads(proc.stdout)
     except json.JSONDecodeError as exc:
         raise RuntimeError(f"check_freshness.py returned unreadable JSON: {exc}") from exc
+
+
+def load_findings(path: Path, areas: tuple[str, ...]) -> list[dict]:
+    """A saved check_freshness.py --json report, kept to the asked areas."""
+    try:
+        findings = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise RuntimeError(f"cannot read findings from {path}: {exc}") from exc
+    if not isinstance(findings, list):
+        raise RuntimeError(f"{path} is not a check_freshness.py --json report")
+    return [f for f in findings if f.get("area") in areas]
 
 
 def _slug(subject: str) -> str:
@@ -558,6 +570,12 @@ def main() -> int:
         help="machine-readable summary (jobs, surfaced, ignored)",
     )
     parser.add_argument(
+        "--findings",
+        metavar="FILE",
+        help="read the check_freshness.py --json report from FILE instead of "
+        "running it (rows outside --only are left out)",
+    )
+    parser.add_argument(
         "--freshness-arg",
         action="append",
         default=[],
@@ -577,7 +595,10 @@ def main() -> int:
         areas = all_areas
 
     try:
-        findings = _run_check_freshness(areas, args.freshness_arg)
+        if args.findings:
+            findings = load_findings(Path(args.findings), areas)
+        else:
+            findings = _run_check_freshness(areas, args.freshness_arg)
     except RuntimeError as exc:
         print(exc, file=sys.stderr)
         return 2
