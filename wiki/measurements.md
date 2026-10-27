@@ -21,8 +21,8 @@ the emulator's page shows a **Tested** block. Every result is on the
 
 ## When tests run
 
-Tests run by themselves each night on an idle computer. A clear result updates
-the emulator's page and names the test as proof.
+A maintainer starts a test run. It then works alone on an idle computer. A clear
+result updates the emulator's page and names the test as proof.
 
 Anything else waits on the [Measurements](../measurements.md) page for someone
 to read the code.
