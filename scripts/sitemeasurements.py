@@ -27,6 +27,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import measurement_records as mr
+import siteentries
 import sitemarkup as markup
 from artifacts import json_text, write_if_changed
 from siterender import _escape_tags
@@ -496,39 +497,76 @@ def _short(commit: str | None) -> str:
     return f"`{commit[:12]}`" if commit else "unknown"
 
 
-def tested_item(item: dict) -> list[str]:
-    """One test: what ran, the result, the method and host beside it, the record."""
+# A result the probe could not settle is the one a reader should not take
+# at its word. The others describe what was seen, none of them is a fault.
+_STATUS_BADGE = {"inconclusive": "warning"}
+
+
+def _computer(host: str) -> str:
+    """The computer a host line names. The load average differs per run."""
+    return host.split(", load ")[0]
+
+
+def _build(core: dict) -> str:
+    return f"{_text(core['library'])} at {_short(core['commit'])}" if core.get("commit") \
+        else _text(core["library"])
+
+
+def _shared(items: list[dict], value) -> str | None:
+    """The value every item gives, None when they differ."""
+    values = {value(item) for item in items}
+    return values.pop() if len(values) == 1 else None
+
+
+def _plural(count: int, noun: str) -> str:
+    return f"{count} {noun}{'s' if count != 1 else ''}"
+
+
+def tested_row(item: dict, shared_build: bool) -> siteentries.Row:
+    """One test: its claim as the row, the result beside it, the method,
+    the load and the record when the row opens."""
     title = item["claim"] or f"Benchmark of {item['content'] or 'the core alone'}"
     runs = "1 run" if item["runs"] == 1 else f"{item['runs']} runs, the latest shown"
-    core = item["core"]
-    build = f"{_text(core['library'])} at {_short(core['commit'])}" if core.get("commit") \
-        else _text(core["library"])
-    lines = [
-        f"- **{_text(title)}**",
-        "",
-        f"    **Result:** `{item['status']}`. {_text(item['statement'])}.",
-        "",
-    ]
+    body = []
+    if item["statement"]:
+        body += [f"{_text(item['statement'])}.", ""]
     if item.get("method"):
-        lines += [f"    **Method:** {_text(item['method'])}", ""]
-    lines += [
-        f"    **Ran on:** {_text(item['host'])}, {item['date'][:10]}. Core build: {build}. "
-        f"{item['variants']} variant{'s' if item['variants'] != 1 else ''}, "
-        f"{item['repetitions']} repetition{'s' if item['repetitions'] != 1 else ''} each"
-        + (f", {item['flags']} flag{'s' if item['flags'] != 1 else ''} raised" if item["flags"] else "")
-        + ".",
-        "",
-        f"    [Full record]({item['record_url']}), {runs}.",
-        "",
-    ]
-    return lines
+        body += [f"**Method:** {_text(item['method'])}", ""]
+    load = item["host"].partition(", load ")[2]
+    counts = (f"{_plural(item['variants'], 'variant')}, "
+              f"{_plural(item['repetitions'], 'repetition')} each"
+              + (f", {_plural(item['flags'], 'flag')} raised" if item["flags"] else "") + ".")
+    body += [f"**Ran:** {counts}" + (f" Load {_text(load)}." if load else "")
+             + ("" if shared_build else f" Core build: {_build(item['core'])}."), ""]
+    body += [f"[Full record]({item['record_url']}), {runs}."]
+    tone = _STATUS_BADGE.get(item["status"], "muted")
+    result = f'<span class="rb-badge rb-badge-{tone}">{_text(item["status"])}</span>'
+    return siteentries.Row(_text(title), body, [_text(item["content"]), result])
 
 
 def tested_section(name: str, items: list[dict]) -> list[str]:
-    """The Tested block of an emulator page, empty when nothing was recorded."""
+    """The Tested block of an emulator page, empty when nothing was recorded.
+    What every test shares is said once above the table."""
     if not items:
         return []
-    lines = [
+    computer = _shared(items, lambda i: _computer(i["host"]))
+    build = _shared(items, lambda i: _build(i["core"]))
+    content = _shared(items, lambda i: i["content"] or "")
+    day = _shared(items, lambda i: i["date"][:10])
+    context = []
+    if content:
+        context.append(f"Played: {_text(content)}.")
+    if build:
+        context.append(f"Core build: {build}.")
+    if computer:
+        context.append(f"Ran on {_text(computer)}" + (f", {day}." if day else "."))
+    elif day:
+        context.append(f"Ran on {day}.")
+    rows = [tested_row(item, build is not None)
+            for item in sorted(items, key=lambda i: (i["date"], i["subject"]), reverse=True)]
+    if content:
+        rows = [siteentries.Row(r.title, r.body, ["", r.cells[1]]) for r in rows]
+    return [
         "## Tested",
         "",
         f"This emulator was run in real conditions by the [core probe](../{METHOD_PAGE}). "
@@ -536,17 +574,15 @@ def tested_section(name: str, items: list[dict]) -> list[str]:
         f"[All measurements](../{EXPLORER_PAGE}), "
         f"[these records as SQLite](../downloads/measurements/{name}.sqlite).",
         "",
+        *([" ".join(context), ""] if context else []),
+        *siteentries.entry_table(rows, ["Test", "Game", "Result"], f"rb-tested-{name}", "tests"),
     ]
-    for item in sorted(items, key=lambda i: (i["date"], i["subject"]), reverse=True):
-        lines += tested_item(item)
-    return lines
 
 
 def hosts_table(index: dict) -> list[str]:
     hosts: dict[str, int] = {}
     for item in index.get("items", []):
-        # The load average differs per run: the computer is what comes before it.
-        computer = item["host"].split(", load ")[0]
+        computer = _computer(item["host"])
         hosts[computer] = hosts.get(computer, 0) + 1
     if not hosts:
         return ["No result is recorded yet.", ""]

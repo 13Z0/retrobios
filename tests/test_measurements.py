@@ -383,11 +383,26 @@ class SitePages(unittest.TestCase):
         self.assertEqual(sm.tested_section("beetle_saturn", []), [])
         text = "\n".join(sm.tested_section("beetle_saturn", [self.ITEM]))
         self.assertTrue(text.startswith("## Tested\n"))
-        for expected in ("**Result:** `same`", "**Method:** Twice per card. Every input fixed.", "**Ran on:** Test CPU, 12 CPUs",
+        for expected in ('<span class="rb-badge rb-badge-muted">same</span>',
+                         "**Method:** Twice per card. Every input fixed.",
+                         "Ran on Test CPU, 12 CPUs, 2026-10-27.", "Played: disc.",
                          self.ITEM["record_url"], "1 flag raised", "2 runs",
                          "../downloads/measurements/beetle_saturn.sqlite", "../wiki/measurements.md",
-                         "&lt;image>"):
+                         "&lt;image>", '<table class="rb-entries"'):
             self.assertIn(expected, text)
+        self.assertNotIn('<th scope="col">Game</th>', text)
+
+    def test_tested_block_says_shared_context_once(self) -> None:
+        other = {**self.ITEM, "subject": "other", "content": "cart", "status": "inconclusive",
+                 "host": "Test CPU, 12 CPUs, load 1.5 before, 1.6 after",
+                 "core": {**self.ITEM["core"], "commit": "f" * 40}}
+        text = "\n".join(sm.tested_section("beetle_saturn", [self.ITEM, other]))
+        self.assertEqual(text.count("Test CPU, 12 CPUs"), 1)
+        self.assertIn('<th scope="col">Game</th>', text)
+        self.assertNotIn("Played:", text)
+        self.assertIn(f"Core build: Beetle Saturn v1.32.1 at `{'f' * 12}`.", text)
+        self.assertIn("Load 1.5 before, 1.6 after.", text)
+        self.assertIn('<span class="rb-badge rb-badge-warning">inconclusive</span>', text)
 
     def test_hosts_table_on_the_method_page(self) -> None:
         page = sm.with_hosts(f"x\n\n{sm.HOSTS_MARKER}\n",
