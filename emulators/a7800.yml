@@ -7,6 +7,10 @@ profiled_date: "2026-08-08"
 source_commit: "7a2afdc1ea08fc331b16b750d8c1f02d4ef62fc8"
 upstream_commit: "39eb9e44c394df9aec8186f2d2ef7517ace232e1"
 core_version: "5.2"
+version_basis:
+  kind: file
+  path: "makefile"
+  pattern: '#define BARE_BUILD_VERSION \\?"([^"\\]+)'
 display_name: "Atari - 7800 (A7800)"
 cores:
   - a7800

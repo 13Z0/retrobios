@@ -6,7 +6,11 @@ upstream: "https://github.com/Rinnegatamante/vitaQuakeII"
 profiled_date: "2026-03-25"
 source_commit: "4b333fe18e8816974f04432af01f87654ae16e21"
 prose_written_at: "4b333fe18e8816974f04432af01f87654ae16e21"
-core_version: "git"
+core_version: "2.3"
+version_basis:
+  kind: file
+  path: "qcommon/qcommon.h"
+  pattern: '^#define\s+VERSION\s+([0-9.]+)'
 display_name: "Quake II (vitaQuake 2)"
 cores: [vitaquake2, vitaquake2-rogue, vitaquake2-xatrix, vitaquake2-zaero]
 systems: [quake2]

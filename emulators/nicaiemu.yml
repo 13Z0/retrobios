@@ -7,6 +7,10 @@ profiled_date: "2026-10-21"
 source_commit: "4c9b73f7213b1537d2361a8b1d438857bdcdc798"
 pin_frozen: "the nicaiemu core is this revision, the last one whose .gitlab-ci.yml sets CORENAME: nicaiemu. The next master commit, 7496d513 (PR #78, 2026-10-16), renames the project and its crates to CoolbarEmu and the buildbot recipe to CORENAME: coolbaremu, so later commits build the coolbaremu core, described by coolbaremu.yml."
 core_version: "0.1.0"
+version_basis:
+  kind: file
+  path: "Cargo.toml"
+  pattern: 'version\s+=\s+"([^"]+)'
 display_name: "MStar - Nicai (NicaiEmu)"
 cores:
   - nicaiemu

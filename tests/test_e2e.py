@@ -4951,7 +4951,8 @@ struct BurnDriver BurnDrvneogeo = {
         rom = next(f for f in result["files"] if f["name"] == "sp-s2.sp1")
         self.assertEqual(rom["crc32"], "newcrc")
         self.assertEqual(rom["system"], "snk-neogeo-mvs")
-        self.assertEqual(result["core_version"], "v1.0.0.03")
+        # The version is the pin's, read through version_basis.
+        self.assertEqual(result["core_version"], "v1.0.0.02")
 
 
     def _load_config(self, platform_name: str) -> dict:

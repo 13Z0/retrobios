@@ -6,7 +6,9 @@ upstream: "https://github.com/Tinob/Ishiiruka"
 profiled_date: "2026-03-24"
 source_commit: "f228bde5fbf4861ba749a229803addcd6238663f"
 upstream_commit: "cba6d7279b44894297d8c1dde1effdbba3605c32"
-core_version: "Git"
+core_version: null
+version_basis:
+  kind: none
 display_name: "Nintendo - GameCube / Wii (Ishiiruka)"
 library_name: "Ishiiruka"
 cores:

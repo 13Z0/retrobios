@@ -6,7 +6,11 @@ upstream: "https://github.com/stenzek/duckstation"
 source_commit: "80cdb6da6b51d687192a6346efe4499b10fe4faf"
 upstream_commit: "526b4a128827ecaef037134095cd95f431b52d06"
 profiled_date: "2026-10-26"
-core_version: "0.6.0"
+core_version: "0.6.0-dev"
+version_basis:
+  kind: file
+  path: "src/scmversion/arcadeduck_version.h"
+  pattern: '#define\s+ARCADEDUCK_SEMANTIC_VERSION\s+"([^"]+)"'
 display_name: "Arcade - Sony ZN-1, Namco System 11, Konami GV/GQ (ArcadeDuck)"
 cores:
   - arcadeduck

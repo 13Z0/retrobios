@@ -6,6 +6,10 @@ upstream: "https://www.mamedev.org"
 profiled_date: "2026-03-24"
 source_commit: "b9ac708f922386a0ae1f2379dbb31b60d7ec7b25"
 core_version: "0.78"
+version_basis:
+  kind: file
+  path: "src/mame2003/mame2003.c"
+  pattern: 'library_version\s*=\s*"([^"]+)"'
 display_name: "Arcade (MAME 2003)"
 
 cores:

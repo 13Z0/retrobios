@@ -5,7 +5,11 @@ source: "https://github.com/libretro/libretro-2048"
 upstream: "https://github.com/gabrielecirulli/2048"
 profiled_date: "2026-03-22"
 source_commit: "39333f7b13dc4daea7c151d9c38d22b961246343"
-core_version: "1.0"
+core_version: "v1.0"
+version_basis:
+  kind: file
+  path: "libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "2048"
 cores: ["2048"]
 systems: []

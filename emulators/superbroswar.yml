@@ -5,7 +5,11 @@ source: "https://github.com/libretro/superbroswar-libretro"
 upstream: "https://github.com/mmatyas/supermariowar"
 profiled_date: "2026-03-25"
 source_commit: "7f94e03163e1641ecd2a5703eb9ca7e1312b5e8d"
-core_version: "v0.1"
+core_version: "0.1"
+version_basis:
+  kind: file
+  path: "libretro/libretro.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Super Bros War"
 cores: [superbroswar]
 systems: []

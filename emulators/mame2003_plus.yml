@@ -6,7 +6,9 @@ upstream: "https://www.mamedev.org"
 logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/MAMElogo.svg"
 profiled_date: "2026-03-24"
 source_commit: "993403d0332946b8aa6abab56fbd9864498790a1"
-core_version: "2003-Plus"
+core_version: null
+version_basis:
+  kind: none
 display_name: "Arcade (MAME 2003-Plus)"
 mame_version: "0.78 (plus backports)"
 

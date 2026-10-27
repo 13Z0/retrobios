@@ -6,6 +6,10 @@ upstream: "https://np2.yui.ne.jp"
 profiled_date: "2026-10-20"
 source_commit: "2e995768b55e97acfaac32d45fbb8351645cba62"
 core_version: "0.83"
+version_basis:
+  kind: file
+  path: "np2ver.h"
+  pattern: '#define\s+NP2VER_CORE\s+"ver\.([0-9][^"]*)"'
 display_name: "NEC - PC-98 (np2pi)"
 mode: standalone
 cores:

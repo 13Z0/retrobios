@@ -5,7 +5,11 @@ source: "https://github.com/habib256/pom2"
 upstream: "https://github.com/habib256/pom2"
 profiled_date: "2026-10-23"
 source_commit: "dbf7673d0ca938884419335f3d88e9029c15494f"
-core_version: "v0.9.9"
+core_version: "0.9.9"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'project\(pom2_imgui\s+VERSION\s+([0-9][\w.+-]*)'
 display_name: "Apple - Apple II (POM2)"
 cores:
   - pom2

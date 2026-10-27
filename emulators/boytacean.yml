@@ -6,6 +6,10 @@ upstream: "https://github.com/joamag/boytacean"
 profiled_date: "2026-03-23"
 source_commit: "4d806d0770f117cc8e6ac0fe75b95aa9dc39fc4f"
 core_version: "0.13.2"
+version_basis:
+  kind: file
+  path: "setup.py"
+  pattern: 'version="([^"]+)'
 display_name: "Nintendo - Game Boy / Color (Boytacean)"
 cores:
   - boytacean

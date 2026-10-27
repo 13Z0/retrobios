@@ -6,6 +6,10 @@ upstream: "https://www.retropc.net/showzoh/quasi88/"
 profiled_date: "2026-03-29"
 source_commit: "7884be5277776a5d8c4fdc4e574e9b5b589945c9"
 core_version: "0.6.4"
+version_basis:
+  kind: file
+  path: "src/version.h"
+  pattern: '#define\s+Q_VERSION\s+"([^"]+)'
 display_name: "NEC - PC-8000 / PC-8800 series (QUASI88)"
 cores:
   - quasi88

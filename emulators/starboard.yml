@@ -7,6 +7,11 @@ author: "force9"
 profiled_date: "2026-10-27"
 source_commit: "d3a21a9aaeabb90e59d7a48241b293dba3ee9309"
 core_version: "0.40.0"
+version_basis:
+  kind: package
+  url: "https://github.com/get-starboard/starboard/releases/download/v0.40.0/Starboard-v0.40.0.apk"
+  pattern: 'Starboard-v([0-9][0-9.]*[0-9])\.apk'
+  artifact: "Starboard-v0.40.0.apk"
 display_name: "PortMaster library (Starboard)"
 verification: existence
 cores:

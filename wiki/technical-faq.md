@@ -124,38 +124,40 @@ per catalog and the full list of catalogued dumps still missing.
 Your game sets and BIOS sets must come from the same version as your arcade
 emulator.
 
+<!-- generated: romsets -->
 | Emulator, as RetroArch names it | Sets from |
 |---|---|
 | MAME 2000 | MAME 0.37b5 |
 | MAME 2003, MAME 2003 Midway | MAME 0.78 |
-| MAME 2003-Plus | MAME 0.78, with later fixes |
+| MAME 2003-Plus | MAME 0.78 (plus backports) |
 | MAME 2009 | MAME 0.135u4 |
 | MAME 2010 | MAME 0.139 |
-| MAME 2014, MAME 2015 | MAME 0.160 |
+| MAME 2014, MAME 2015 | MAME 0.159 |
 | MAME 2016 | MAME 0.174 |
-| MAME/MESS | MAME 0.287 |
-| MAME, MAME/Arcade | MAME 0.289 |
-| FB Alpha 2012 CPS-1, FB Alpha 2012 CPS-2 | FB Alpha 0.2.97.28 |
-| FB Alpha 2012, FB Alpha 2012 CPS-3, FB Alpha 2012 Neo Geo | FB Alpha 0.2.97.29 |
-| FB Alpha 2019 | FB Alpha 0.2.97.44 |
-| FinalBurn Neo, FinalBurn Neo (Neo-Geo), FinalBurn Neo (CPS-1 / CPS-2) | FinalBurn Neo 1.0.0.2 |
+| MAME, MAME/Arcade, MAME/MESS | MAME 0.289 |
+| FB Alpha 2012 CPS-1, FB Alpha 2012 CPS-2 | FB Alpha v0.2.97.28 |
+| FB Alpha 2012 Neo Geo | FB Alpha v0.2.97.29 |
+| FB Alpha 2012, FB Alpha 2012 CPS-3 | FB Alpha v0.2.97.30 |
+| FB Alpha 2019 | FB Alpha v0.2.97.44 |
+| FinalBurn Neo, FinalBurn Neo (CPS-1 / CPS-2), FinalBurn Neo (Neo-Geo) | FinalBurn Neo v1.0.0.03 |
+<!-- /generated: romsets -->
 
 Each emulator's page names its version too.
 
 ### How this is known
 
 Arcade BIOS sets are coupled to the romset version, so there is one
-profile per MAME core generation: MAME 2000 (0.37b5), MAME 2003 (0.78),
-MAME 2003-Plus, MAME 2009 (0.135u4), MAME 2010 (0.139), MAME 2015
-(0.160), MAME 2016 (0.174), and current MAME (0.289), each read from that
-version's own source tree, because the BIOS root sets differ between
-versions. Derivatives and ports carry their own profiles on top of those
-generations: `mamearcade`, `mamemess`, `mame2003_midway`, the three
-`mame4droid` drops, `advancemame`, `groovymame` and `hbmame`. Recalbox
-compiles two MAME versions of its own, 0.258 and 0.278, profiled as
-`mame0258` and `mame0278`. The pack
-ships the sets matching the core you run, and a generic unversioned arcade
-pack cannot do that.
+profile per MAME core generation (MAME 2000, 2003, 2003-Plus, 2009, 2010,
+2015, 2016 and current MAME), each read from that version's own source
+tree, because the BIOS root sets differ between versions. The table is
+written from the profiles, and each version is the one the core's source
+states at the revision its profile was read at. Derivatives and ports
+carry their own profiles on top of those generations: `mamearcade`,
+`mamemess`, `mame2003_midway`, the three `mame4droid` drops,
+`advancemame`, `groovymame` and `hbmame`. Recalbox compiles two MAME
+versions of its own, 0.258 and 0.278, profiled as `mame0258` and
+`mame0278`. The pack ships the sets matching the core you run, and a
+generic unversioned arcade pack cannot do that.
 
 ## Why does my verification report say UNTESTED?
 

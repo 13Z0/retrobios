@@ -7,6 +7,10 @@ profiled_date: "2026-10-23"
 source_commit: "dea3528cc0e3f54098e1fb91e3ae7e0e5d90a590"
 upstream_commit: "e366ca817f5b750ad06a8e2c5976d79b3758ea0a"
 core_version: "v1.7.4"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Sega - MS/GG/MD/CD (Genesis Plus GX Expanded)"
 cores:
   - genesis_plus_gx_expanded

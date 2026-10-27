@@ -5,7 +5,11 @@ source: "https://github.com/libretro/galaxy-libretro"
 upstream: "https://github.com/nikp123/Galaksija-Emulator"
 profiled_date: "2026-03-23"
 source_commit: "185758296c17f59cba832511139381a197986474"
-core_version: "v0.1"
+core_version: "0.1"
+version_basis:
+  kind: file
+  path: "src/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Elektronika Inženjering - Galaksija (Galaksija)"
 cores:
   - galaksija

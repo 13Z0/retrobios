@@ -5,7 +5,12 @@ source: "https://github.com/libretro/ThePowderToy"
 upstream: "https://github.com/The-Powder-Toy/The-Powder-Toy"
 profiled_date: "2026-03-25"
 source_commit: "bb2d9f6623d2ccf25a0021045af9591c8a0bbaff"
-core_version: "v92.5.336"
+core_version: "92.5.336"
+version_basis:
+  kind: file
+  path: "src/Config.h"
+  pattern: '#define SAVE_VERSION (\d+)[\s\S]*?#define MINOR_VERSION (\d+)[\s\S]*?#define BUILD_NUM (\d+)'
+  format: "{1}.{2}.{3}"
 display_name: "The Powder Toy"
 cores: [thepowdertoy]
 systems: []

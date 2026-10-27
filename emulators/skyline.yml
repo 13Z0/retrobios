@@ -6,6 +6,9 @@ upstream: "https://archive.softwareheritage.org/browse/revision/dc20a615275f66be
 profiled_date: "2026-08-12"
 source_commit: "dc20a615275f66bee20a4fd851ef0231daca4f14"
 core_version: "0.0.3"
+version_basis:
+  kind: unverified
+  why: host_unsupported
 display_name: "Nintendo - Switch (Skyline)"
 cores:
   - "skyline"

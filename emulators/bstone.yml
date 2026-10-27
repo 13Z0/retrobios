@@ -6,6 +6,10 @@ upstream: "https://github.com/bibendovsky/bstone"
 profiled_date: "2026-10-04"
 source_commit: "e65a6b40b960a409d7ea840580c2431f56fb6fd4"
 core_version: "v1.3.4"
+version_basis:
+  kind: tag
+  tag: "v1.3.4"
+  distance: 0
 display_name: "Blake Stone (BStone)"
 cores: [bstone]
 systems: [blake-stone]

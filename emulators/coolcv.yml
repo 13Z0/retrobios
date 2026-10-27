@@ -5,6 +5,10 @@ source: "https://files.retropie.org.uk/archives/coolcv.tar.gz"
 upstream: "http://nanochess.org/"
 profiled_date: "2026-10-20"
 core_version: "0.6.2"
+version_basis:
+  kind: package
+  url: "https://files.retropie.org.uk/archives/coolcv.tar.gz"
+  artifact: "coolcv.tar.gz, latest entry of coolcv.txt"
 display_name: "Coleco - ColecoVision / Adam (CoolCV)"
 cores:
   - coolcv

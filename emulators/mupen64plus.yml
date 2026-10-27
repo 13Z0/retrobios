@@ -8,6 +8,11 @@ source_commit: "c8ac4862a019d7885b24927d9b4db5dd3e42a528"
 upstream_commit: "6dca4c15370ac3e2171ce7b31426695f8f39b460"
 upstream_frozen: "AmberELEC builds the core at this revision with the front end at source_commit. Later core commits are not part of that build."
 core_version: "2.6.0"
+version_basis:
+  kind: file
+  path: "src/version.h"
+  pattern: '#define\s+CONSOLE_UI_VERSION\s+0x0?((?<=0)[0-9]|[1-9][0-9])0?((?<=0)[0-9]|[1-9][0-9])0?((?<=0)[0-9]|[1-9][0-9])\b'
+  format: "{1}.{2}.{3}"
 display_name: "Nintendo - Nintendo 64 (Mupen64Plus)"
 cores:
   - "mupen64plus"

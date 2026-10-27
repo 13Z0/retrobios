@@ -9,6 +9,12 @@ version_source:
 based_on: "XM6 v2.06 by PI."
 profiled_date: "2026-08-10"
 core_version: "3.38"
+version_basis:
+  kind: package
+  url: "http://retropc.net/pi/xm6/index.html"
+  pattern: 'xm6_typeg_(\d)(\d+)_\d+\.zip'
+  format: "{1}.{2}"
+  artifact: "xm6_typeg_338_20260223.zip"
 display_name: "XM6 TypeG (Sharp X68000)"
 mode: standalone
 cores:

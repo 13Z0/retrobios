@@ -7,6 +7,10 @@ profiled_date: "2026-03-25"
 source_commit: "ba52c43b9eda950eb0c0eec69cda9b17dee8c39b"
 upstream_commit: "408dd6a30cc6fd91decc602403281c7dcfbc1b82"
 core_version: "7.0_pre"
+version_basis:
+  kind: file
+  path: "src/common/Version.hxx"
+  pattern: '#define\s+STELLA_VERSION\s+"([^"]+)'
 display_name: "Atari - 2600 (Stella 2023)"
 cores:
   - stella2023

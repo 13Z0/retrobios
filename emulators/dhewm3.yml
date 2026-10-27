@@ -6,6 +6,10 @@ upstream: "https://github.com/dhewm/dhewm3"
 profiled_date: "2026-10-04"
 source_commit: "455b88e8dff2be822f08eb498f51b383e851fa38"
 core_version: "1.5.5"
+version_basis:
+  kind: tag
+  tag: "1.5.5"
+  distance: 0
 display_name: "dhewm3"
 cores: []
 systems: [doom3]

@@ -5,6 +5,10 @@ source: "https://github.com/winterheart/quasi88"
 profiled_date: "2026-10-20"
 source_commit: "0d4e171415cad7ac19ae4ff0dcf8cdcfd825947b"
 core_version: "0.7.1"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: '^project\(quasi88 VERSION ([0-9.]+)\)'
 display_name: "NEC - PC-8800 series (QUASI88kai)"
 mode: standalone
 cores: ["quasi88"]

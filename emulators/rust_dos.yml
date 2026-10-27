@@ -7,6 +7,10 @@ profiled_date: "2026-10-04"
 source_commit: "152d9bca7820f0d9a5d1ca820a2d20855698a211"
 upstream_commit: "152d9bca7820f0d9a5d1ca820a2d20855698a211"
 core_version: "1.7.5"
+version_basis:
+  kind: file
+  path: "Cargo.toml"
+  pattern: 'version\s+=\s+"([^"]+)'
 display_name: "DOS (Rust-DOS)"
 cores:
   - rust_dos

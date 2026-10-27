@@ -7,6 +7,10 @@ upstream: "https://github.com/allkern/psxe"
 profiled_date: "2026-10-26"
 source_commit: "d96a5b8ad6ccccb40a431488aa89b06f0318c217"
 core_version: "0.3.6"
+version_basis:
+  kind: file
+  path: "android/app/build.gradle"
+  pattern: 'armsxVersionName\s*=\s*\(project\.findProperty\(.armsx\.versionName.\)\s*\?:\s*.([^\x27"]+).'
 display_name: "Sony - PlayStation (ARMSX1)"
 verification: md5
 found_by: content

@@ -10,8 +10,18 @@ source_commit:
   libretro: "09ed8e5b2e97e7a848ea2514545c34c7b809e399"
   standalone: "a40dace1ae0af3ebd45848549fdf396f40e3930f"
 core_version:
-  libretro: "v2.6.8"
+  libretro: "3.4.2"
   standalone: "1.11.beta3"
+version_basis:
+  libretro:
+    kind: file
+    path: "yabause/src/libretro/Makefile.common"
+    pattern: '-DVERSION=\\"([^\\"]+)\\"'
+  standalone:
+    kind: file
+    path: "yabause/CMakeLists.txt"
+    pattern: 'set\(YAB_VERSION_MAJOR (\w+)\)\nset\(YAB_VERSION_MINOR (\w+)\)\nset\(YAB_VERSION_PATCH (\w+)\)'
+    format: "{1}.{2}.{3}"
 display_name: "Sega - Saturn (YabaSanshiro)"
 cores:
   - yabasanshiro

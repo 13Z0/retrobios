@@ -6,7 +6,12 @@ upstream: "https://github.com/stenzek/duckstation"
 logo: "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/images/duck.png"
 profiled_date: "2026-03-23"
 source_commit: "526b4a128827ecaef037134095cd95f431b52d06"
-core_version: "v0.1-12070"
+core_version: "v0.1-12083-406-g526b4a1"
+version_basis:
+  kind: tag
+  match: "v*"
+  tag: "v0.1-12083"
+  distance: 406
 display_name: "Sony - PlayStation (DuckStation)"
 cores: [duckstation, "Duckstation", "duckstation-sa"]
 found_by: content

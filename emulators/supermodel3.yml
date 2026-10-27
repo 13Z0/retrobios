@@ -10,6 +10,10 @@ prose_written_at: "11726c4bad3696a50a8b834eaba6aee3fa08a590"
 upstream_commit: "14815455dc28fca2c8662fb1ed99d447ecf8f364"
 upstream_frozen: "The fork is rebased on trzy's tree at 1481545, the revision its version string names. Later trzy commits are not in the fork."
 core_version: "0.3a-1481545-mm DirtBagXon (Sinden)"
+version_basis:
+  kind: file
+  path: "Src/Version.h"
+  pattern: '#define\s+SUPERMODEL_VERSION\s+"([^"]+)'
 display_name: "Sega - Model 3 (Supermodel, Sinden fork)"
 verification: existence
 cores:

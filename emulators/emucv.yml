@@ -6,6 +6,11 @@ profiled_date: "2026-09-17"
 pin_frozen: "the shipping core is this revision. HEAD removed the prototype from the tree on 2026-09-11 (a188c0f) and archived its last description files on 2026-09-12 (06a066a). The new skeleton has not yet been copied from libretro-emuscv1 (ROADMAP step 4.3). Recaling would repoint these refs at a tree that currently holds nothing but a roadmap."
 source_commit: "6a6e1b15c5d5afefbc3fefdd8b52f3f2c8c0a0eb"
 core_version: "0.00"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'set\(CORE_VERSION_MAJOR\s+"([^"]+)"\)[\s\S]*?set\(CORE_VERSION_MINOR\s+"([^"]+)"\)'
+  format: "{1}.{2}"
 display_name: "EPOCH - Cassette Vision (EmuCV)"
 cores:
   - emucv

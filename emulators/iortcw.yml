@@ -5,6 +5,11 @@ source: "https://github.com/iortcw/iortcw"
 upstream: "https://github.com/iortcw/iortcw"
 profiled_date: "2026-10-04"
 source_commit: "438e7d413b5f7277187c35b032eb0ef9093ae778"
+core_version: "1.51d"
+version_basis:
+  kind: file
+  path: "SP/Makefile"
+  pattern: '^VERSION=([0-9][^-\s]*)-SP'
 display_name: "ioRTCW"
 cores: []
 systems: [return-to-castle-wolfenstein]

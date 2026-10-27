@@ -7,6 +7,10 @@ profiled_date: "2026-03-23"
 source_commit: "9793f6a8040c416d147003cada29363b955b54e7"
 upstream_commit: "e1c9b84a9460909d4dc2030ad1d4e050012b1910"
 core_version: "v0.4"
+version_basis:
+  kind: file
+  path: "src/libretro/core.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Acorn - BBC Micro (b2)"
 cores: [b2]
 systems:

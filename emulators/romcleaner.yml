@@ -6,6 +6,10 @@ upstream: "https://github.com/JesseTG/rom-cleaner"
 profiled_date: "2026-03-25"
 source_commit: "f75e2b58733de180f28a73286c6a82505be7bbb2"
 core_version: "1.0.0"
+version_basis:
+  kind: file
+  path: "libretro.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "ROM Cleaner"
 cores:
   - romcleaner

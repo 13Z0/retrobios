@@ -5,6 +5,11 @@ source: "https://github.com/captainys/TOWNSEMU"
 upstream: "https://github.com/captainys/TOWNSEMU"
 profiled_date: "2026-03-26"
 source_commit: "e27adde120fe06150f3d57a6dc7cba66b5f43a32"
+core_version: "v20260522-179-ge27adde"
+version_basis:
+  kind: tag
+  tag: "v20260522"
+  distance: 179
 cores:
   - tsugaru
 systems:

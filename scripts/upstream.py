@@ -12,6 +12,7 @@ import http.client
 import json
 import os
 import socket
+import subprocess
 import tempfile
 import time
 import urllib.error
@@ -1086,3 +1087,103 @@ def commits_touching(
         1 for entry in payload
         if isinstance(entry, dict) and (entry.get("sha") or entry.get("id")) != base
     )
+
+
+# Commit graphs kept to count the commits between a tag and a pin. A
+# treeless bare clone holds commits and tags only: the files a profile reads
+# come from fetch_file, by sha.
+GIT_DIR = "_git"
+
+
+def clone_dir(cache_dir: str, repo: Repo) -> Path:
+    """Where the commit graph of a repository is kept."""
+    return Path(cache_dir) / GIT_DIR / repo.host / repo.owner / f"{repo.name}.git"
+
+
+def _git(args: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess:
+    env = dict(os.environ, GIT_TERMINAL_PROMPT="0")
+    return subprocess.run(
+        ["git", *args], cwd=cwd, capture_output=True, text=True, env=env, check=False
+    )
+
+
+def _has_commit(clone: Path, sha: str) -> bool:
+    return _git(["cat-file", "-e", f"{sha}^{{commit}}"], clone).returncode == 0
+
+
+def _graph(repo: Repo, sha: str, cache_dir: str, offline: bool) -> Path:
+    """A clone holding sha and every tag, fetched again once tags may have moved."""
+    clone = clone_dir(cache_dir, repo)
+    url = f"https://{repo.host}/{repo.slug}.git"
+    if not (clone / "HEAD").is_file():
+        if offline:
+            raise NotCachedError(f"{repo.slug}: no commit graph in the offline cache")
+        clone.parent.mkdir(parents=True, exist_ok=True)
+        result = _git(["clone", "--quiet", "--bare", "--filter=tree:0", url, str(clone)])
+        if result.returncode:
+            raise UpstreamError(f"{url}: clone failed: {result.stderr.strip()}")
+        _git(["fetch", "--quiet", "--filter=tree:0", "--tags", "origin"], clone)
+    stamp = clone / "FETCH_HEAD"
+    fresh = stamp.is_file() and time.time() - stamp.stat().st_mtime <= MOVING_TTL
+    if offline or (fresh and _has_commit(clone, sha)):
+        if not _has_commit(clone, sha):
+            raise NotCachedError(f"{repo.slug}@{sha[:8]}: not in the offline commit graph")
+        return clone
+    # Tags are fetched again: a tag pushed since the clone can be nearer.
+    result = _git(
+        ["fetch", "--quiet", "--filter=tree:0", "--force", "--tags", "origin",
+         "+refs/heads/*:refs/heads/*"], clone,
+    )
+    if result.returncode:
+        raise UpstreamError(f"{url}: fetch failed: {result.stderr.strip()}")
+    if not _has_commit(clone, sha):
+        # A commit no branch reaches any more: a rewritten fork, a PR head.
+        _git(["fetch", "--quiet", "--filter=tree:0", "origin", sha], clone)
+    if not _has_commit(clone, sha):
+        raise UpstreamError(f"{url}: {sha[:8]} is on no branch the forge serves")
+    return clone
+
+
+def describe(
+    repo: Repo, sha: str, cache_dir: str, offline: bool = False,
+    match: str | None = None,
+) -> tuple[str, int] | None:
+    """The tag nearest to sha in its history, and the commits after it.
+
+    git describe counts the commits sha has that the tag lacks, the count a
+    forge compare reports as ahead. ``match`` is a glob the tag must fit.
+    None when no tag is reachable from sha.
+    """
+    clone = _graph(repo, sha, cache_dir, offline)
+    argv = ["describe", "--tags", "--long", "--abbrev=40"]
+    if match:
+        argv += ["--match", match]
+    result = _git([*argv, sha], clone)
+    if result.returncode:
+        if any(text in result.stderr for text in (
+            "No names found", "No tags can describe", "cannot describe",
+        )):
+            return None
+        raise UpstreamError(f"{repo.slug}: describe {sha[:8]}: {result.stderr.strip()}")
+    tag, _distance, _commit = result.stdout.strip().rsplit("-", 2)
+    # describe's own count is an estimate across merges (ares: 149 where the
+    # pin holds 143 commits the tag lacks): the exact count is rev-list's.
+    counted = _git(["rev-list", "--count", f"refs/tags/{tag}..{sha}"], clone)
+    if counted.returncode:
+        raise UpstreamError(f"{repo.slug}: {tag}..{sha[:8]}: {counted.stderr.strip()}")
+    return tag, int(counted.stdout.strip())
+
+
+def graph_ancestry(
+    repo: Repo, base: str, head: str, cache_dir: str, offline: bool = False
+) -> tuple[int, int]:
+    """(ahead, behind) counted in the commit graph, for a pair a forge
+    refuses to compare (GitHub answers 422 past a diff size)."""
+    clone = _graph(repo, head, cache_dir, offline)
+    counts = []
+    for spec in (f"{base}..{head}", f"{head}..{base}"):
+        result = _git(["rev-list", "--count", spec], clone)
+        if result.returncode:
+            raise UpstreamError(f"{repo.slug}: {spec}: {result.stderr.strip()}")
+        counts.append(int(result.stdout.strip()))
+    return counts[0], counts[1]

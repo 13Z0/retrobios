@@ -6,6 +6,9 @@ upstream: "https://git.citron-emu.org/citron-emu/Citron"
 profiled_date: "2026-03-26"
 upstream_gone: "git.citron-emu.org no longer resolves, and git.citron-emu.com redirects to an unrelated survey site, the domain having been taken. Observed 2026-09-04, no mirror found."
 core_version: "2026.03.12"
+version_basis:
+  kind: unverified
+  why: host_gone
 display_name: "Citron (Nintendo Switch)"
 cores:
   - citron

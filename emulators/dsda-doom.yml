@@ -4,7 +4,11 @@ core_classification: game_engine
 source: "https://github.com/dsda-org/dsda-doom"
 profiled_date: "2026-10-20"
 source_commit: "e443ff7a3e6090a1ff92ad7a426916c4fd35ecc5"
-core_version: "0.29.4"
+core_version: "v0.29.4"
+version_basis:
+  kind: tag
+  tag: "v0.29.4"
+  distance: 0
 display_name: "Doom (dsda-doom)"
 cores: [dsda-doom]
 systems: [doom, heretic, hexen, chex]

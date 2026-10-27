@@ -4,7 +4,11 @@ core_classification: community_fork
 source: "https://github.com/RetroPie/osmose-rpi"
 profiled_date: "2026-10-20"
 source_commit: "7775add582ad2595e876ca38d4675510f2df866e"
-core_version: "0.8.1+rpi20130302"
+core_version: "0.8.1+rpi20121122"
+version_basis:
+  kind: file
+  path: "Version.h"
+  pattern: '#define\s+__OSMOSE_VERSION__\s+"OsmOse\s+([^"]+)"'
 display_name: "Sega - Master System / Game Gear (Osmose)"
 mode: standalone
 cores:

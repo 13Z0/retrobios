@@ -5,7 +5,11 @@ source: "https://github.com/libretro/xrick-libretro"
 upstream: "https://github.com/fabiensanglard/xrick"
 profiled_date: "2026-03-30"
 source_commit: "fcfde3623a04b4e986548e06d46630fcd0bd1e18"
-core_version: "1.0.0.6"
+core_version: "021212"
+version_basis:
+  kind: file
+  path: "include/config.h"
+  pattern: '#define\s+VERSION\s+"([^"]+)"'
 display_name: "Rick Dangerous (XRick)"
 cores:
   - xrick

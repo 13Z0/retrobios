@@ -8,6 +8,11 @@ version_source:
   pattern: '<li><b>Mednafen (\d+(?:\.\d+)+)</b>'
 profiled_date: "2026-08-08"
 core_version: "1.32.1"
+version_basis:
+  kind: package
+  url: "https://mednafen.github.io/releases/files/mednafen-1.32.1.tar.xz"
+  pattern: 'mednafen-(\d+(?:\.\d+)+)\.tar\.xz'
+  artifact: "mednafen-1.32.1.tar.xz"
 display_name: "Mednafen"
 cores: [mednafen]
 mode: standalone

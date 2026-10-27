@@ -6,6 +6,10 @@ upstream: "https://github.com/mupen64plus-ae/mupen64plus-ae"
 profiled_date: "2026-08-12"
 source_commit: "33bf7021549d7873e976884370fbd1a8e7333bc7"
 core_version: "3.0.249 (beta)"
+version_basis:
+  kind: file
+  path: "build_common/version_common.gradle"
+  pattern: 'versionName\s*=\s*"([^"]+)"'
 display_name: "Nintendo - Nintendo 64 (Mupen64Plus AE)"
 cores:
   - mupen64plus-ae

@@ -8,6 +8,10 @@ profiled_date: "2026-10-26"
 source_commit: "e092175b9196438ee2712bf6f45398fe2970b5fe"
 upstream_commit: "26fcbe54f17e496bdf530dad9f237e74e2f943fc"
 core_version: "1.3.2"
+version_basis:
+  kind: tag
+  tag: "1.3.2"
+  distance: 0
 display_name: "Microsoft - Xbox (X1 BOX)"
 cores:
   - "x1-box"

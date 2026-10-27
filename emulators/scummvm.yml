@@ -7,7 +7,11 @@ logo: "https://raw.githubusercontent.com/scummvm/scummvm/master/icons/scummvm.sv
 profiled_date: "2026-03-25"
 source_commit: "e0ddc60bfabb1efdf1e135006c8914ca59d0596c"
 upstream_commit: "e0ddc60bfabb1efdf1e135006c8914ca59d0596c"
-core_version: "2.8.0git"
+core_version: "2026.4.1git"
+version_basis:
+  kind: file
+  path: "base/internal_version.h"
+  pattern: '#define SCUMMVM_VERSION "([^"]+)"'
 display_name: "ScummVM"
 cores: [scummvm]
 systems: [scummvm]

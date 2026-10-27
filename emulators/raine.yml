@@ -7,6 +7,10 @@ profiled_date: "2026-10-20"
 source_commit: "8e25d5d8907ae459181610912b0030c955683015"
 pin_frozen: "RetroBat, the only platform that ships it, installs this release: the raine.exe of its raine.7z package (8 August 2026) reports 0.97.5 and was built on 16 March 2025, the bump its changelog records (RetroBat CHANGELOG.md:176). Later commits are not part of that package."
 core_version: "0.97.5"
+version_basis:
+  kind: file
+  path: "makefile"
+  pattern: 'VERSION\s+=\s+"([^"]+)'
 display_name: "Arcade (RAINE)"
 mode: standalone
 cores:

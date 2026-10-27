@@ -5,6 +5,10 @@ source: "https://github.com/TurtleBazooka/px68k"
 profiled_date: "2026-10-23"
 source_commit: "bdc3d87efb9f09df88c5c6eb271f9535aaf13210"
 core_version: "0.15+K"
+version_basis:
+  kind: file
+  path: "version.txt"
+  pattern: '^PX68K_VERSION=(\S+)'
 display_name: "Sharp - X68000 (px68k SDL)"
 mode: standalone
 cores: ["px68k"]

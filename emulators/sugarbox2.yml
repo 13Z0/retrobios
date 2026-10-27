@@ -6,6 +6,10 @@ upstream: "https://github.com/Tom1975/SugarboxV2"
 profiled_date: "2026-10-17"
 source_commit: "6b565a43a25e4dfb69867f7e927a707e15ea460f"
 core_version: "v0.9"
+version_basis:
+  kind: tag
+  tag: "v0.9"
+  distance: 0
 display_name: "Amstrad - CPC / GX4000 (Sugarbox2)"
 cores:
   - "sugarbox2"

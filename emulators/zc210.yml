@@ -3,7 +3,12 @@ type: libretro
 core_classification: game_engine
 source: https://github.com/netux79/zc210-libretro
 upstream: https://www.zeldaclassic.com/
-core_version: "2.10 Beta 5"
+core_version: "2.10"
+version_basis:
+  kind: file
+  path: "zc/zdefs.h"
+  pattern: '#define\s+ZELDA_VERSION\s+0x0*([0-9])([0-9]{2})\b'
+  format: "{1}.{2}"
 display_name: Zelda Classic v2.10 (ZC210)
 profiled_date: "2026-03-26"
 source_commit: "b6426da40b074245fda097fd345fa7c9cdbf152a"

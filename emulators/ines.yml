@@ -9,6 +9,10 @@ version_source:
 author: "Marat Fayzullin (Garage Research)"
 profiled_date: "2026-10-20"
 core_version: "6.1.12"
+version_basis:
+  kind: package
+  url: "https://play.google.com/store/apps/details?id=com.fms.ines.free"
+  artifact: "com.fms.ines.free APK versionName (versionCode 6112)"
 display_name: "Nintendo - NES / Famicom (iNES)"
 cores:
   - ines

@@ -7,7 +7,11 @@ upstream: "https://github.com/melonDS-emu/melonDS"
 profiled_date: "2026-10-04"
 source_commit: "f394adbacb5722ee97c1b37c8064da9a25818310"
 upstream_commit: "7d8dea42e221b13521270c423b61add41a741b97"
-core_version: "1.4.0"
+core_version: "v1.4.0"
+version_basis:
+  kind: tag
+  tag: "v1.4.0"
+  distance: 0
 display_name: "Nintendo - DS (melonDS DS)"
 systems:
   - nintendo-ds

@@ -6,7 +6,11 @@ upstream: "https://github.com/tonioni/WinUAE"
 profiled_date: "2026-10-26"
 source_commit: "49dbd1f027ef2afc12862b30c0c31ac8efa66221"
 upstream_commit: "15110cf6606d1188800ea7ad86bf1cbd9c688741"
-core_version: "v8.4.2"
+core_version: "8.4.2"
+version_basis:
+  kind: file
+  path: "CMakeLists.txt"
+  pattern: 'project\(amiberry\s+VERSION\s+([0-9][0-9.]*)'
 display_name: "Commodore - Amiga (Amiberry)"
 cores: [amiberry, "AMIBERRY"]
 systems:

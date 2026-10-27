@@ -6,6 +6,10 @@ logo: "https://raw.githubusercontent.com/scummvm/scummvm/master/icons/scummvm.sv
 profiled_date: "2026-10-24"
 source_commit: "21955df19b580dad2807ec55f573b5f348690a81"
 core_version: "2026.4.1git"
+version_basis:
+  kind: file
+  path: "base/internal_version.h"
+  pattern: '#define\s+SCUMMVM_VERSION\s+"([^"]+)'
 display_name: "ScummVM (SDL2)"
 mode: standalone
 cores:

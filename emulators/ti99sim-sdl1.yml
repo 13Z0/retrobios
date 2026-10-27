@@ -6,6 +6,11 @@ source: "https://files.retropie.org.uk/archives/ti99sim-0.15.0.src.tar.gz"
 upstream: "https://www.mrousseau.org/programs/ti99sim/"
 profiled_date: "2026-10-20"
 core_version: "0.15.0"
+version_basis:
+  kind: package
+  url: "https://files.retropie.org.uk/archives/ti99sim-0.15.0.src.tar.gz"
+  pattern: 'ti99sim-(\d+\.\d+\.\d+)\.src\.tar\.gz'
+  artifact: "ti99sim-0.15.0.src.tar.gz"
 cores:
   - ti99sim-sdl1
 systems:

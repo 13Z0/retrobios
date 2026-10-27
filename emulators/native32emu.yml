@@ -6,6 +6,10 @@ upstream: "https://github.com/AloysHF/Native32Emu"
 profiled_date: "2026-10-26"
 source_commit: "059fa33c658caa4dbbad140ebf2af1197f9dd778"
 core_version: "1.4.0"
+version_basis:
+  kind: file
+  path: "Cargo.toml"
+  pattern: 'version\s+=\s+"([^"]+)'
 display_name: "Sunplus - Native32 (Native32Emu)"
 cores:
   - native32emu

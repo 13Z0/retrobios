@@ -9,6 +9,11 @@ version_source:
 author: "AltmerSoft (Maxim Grishin)"
 profiled_date: "2026-08-12"
 core_version: "1.0.32"
+version_basis:
+  kind: package
+  url: "http://www.arts-union.ru/node/23"
+  pattern: 'real3DOPlayer_free_(\d+(?:\.\d+)+)\.zip'
+  artifact: "real3DOPlayer_free_1.0.32.zip"
 display_name: "The 3DO Company - 3DO (Real3DOPlayer)"
 mode: standalone
 cores:

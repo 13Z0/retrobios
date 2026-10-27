@@ -2,7 +2,10 @@ emulator: "mednafen_saturn"
 type: alias
 alias_of: "beetle_saturn"
 profiled_date: "2026-03-24"
-core_version: "v0.9.45.1"
+core_version: "v1.32.1"
+version_basis:
+  kind: alias
+  of: "beetle_saturn"
 display_name: "Sega - Saturn (Beetle Saturn)"
 cores:
   - mednafen_saturn

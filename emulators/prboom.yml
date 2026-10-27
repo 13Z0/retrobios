@@ -6,6 +6,10 @@ upstream: "http://prboom.sourceforge.net/"
 profiled_date: "2026-10-23"
 source_commit: "4849268e7342494193f2bbf2d0128a751cf58da7"
 core_version: "v2.5.0"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Doom (PrBoom)"
 cores: [prboom]
 systems: [doom, heretic]

@@ -6,7 +6,11 @@ upstream: "https://github.com/djyt/cannonball"
 profiled_date: "2026-03-23"
 source_commit: "0d83575d920ea4c0a280847a19d7802f673e6a68"
 upstream_commit: "27493ebf62be3498dff93ed6a45e8e2db819bae1"
-core_version: "1.0"
+core_version: "0.3"
+version_basis:
+  kind: file
+  path: "src/main/frontend/menu.c"
+  pattern: 'menu_about\[[^\]]+\]\s*=\s*"CANNONBALL ([0-9.]+) '
 display_name: "Cannonball"
 cores:
   - cannonball

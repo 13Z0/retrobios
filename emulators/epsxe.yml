@@ -9,6 +9,12 @@ version_source:
 author: "calb, _Demo_, Galtor (ePSXe Software S.L.)"
 profiled_date: "2026-08-11"
 core_version: "2.0.18"
+version_basis:
+  kind: package
+  url: "https://www.epsxe.com/files/ePSXe2018.zip"
+  pattern: 'ePSXe(\d)(\d)(\d+)\.zip'
+  format: "{1}.{2}.{3}"
+  artifact: "ePSXe2018.zip"
 display_name: "Sony - PlayStation (ePSXe)"
 cores:
   - epsxe

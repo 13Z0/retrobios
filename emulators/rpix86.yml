@@ -5,6 +5,10 @@ source: "http://rpix86.patrickaalto.com/rdown.html"
 upstream: ~
 profiled_date: "2026-10-20"
 core_version: "0.19"
+version_basis:
+  kind: package
+  url: "https://files.retropie.org.uk/archives/rpix86.tar.gz"
+  artifact: "rpix86.tar.gz, rpix86 binary banner"
 display_name: "DOS (rpix86)"
 cores: [rpix86]
 systems: [dos]

@@ -6,6 +6,10 @@ upstream: "http://gigo.retrogames.com/download.html#tgb-dual"
 profiled_date: "2026-03-25"
 source_commit: "0392c9c469e653205e471114c7949c07c83bfce9"
 core_version: "v0.8.3"
+version_basis:
+  kind: file
+  path: "libretro/libretro.cpp"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "Nintendo - Game Boy / Color (TGB Dual)"
 cores:
   - TGB Dual

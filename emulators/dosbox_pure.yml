@@ -8,6 +8,11 @@ profiled_date: "2026-03-23"
 source_commit: "cdaea10ce8cac231bc341ca05d4c5e4e5fe0fbd5"
 upstream_commit: "cdaea10ce8cac231bc341ca05d4c5e4e5fe0fbd5"
 core_version: "1.0-preview7"
+version_basis:
+  kind: tag
+  repo: upstream
+  tag: "1.0-preview7"
+  distance: 0
 display_name: "DOS (DOSBox-Pure)"
 cores: [dosbox_pure]
 systems: [dos]

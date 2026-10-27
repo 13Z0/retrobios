@@ -6,6 +6,10 @@ upstream: "https://github.com/akiraink/RemoteJoyLite"
 profiled_date: "2026-03-25"
 source_commit: "745b97ca8d2d825d0bfde4bb321d1bf7b49fd91d"
 core_version: "v1"
+version_basis:
+  kind: file
+  path: "libretro/libretro.c"
+  pattern: 'info->library_version\s+=\s+"([^"]+)'
 display_name: "PSP RemotePlay (RemoteJoy)"
 cores:
   - remotejoy

@@ -4,7 +4,12 @@ source: "https://github.com/ares-emulator/ares"
 upstream: "https://github.com/ares-emulator/ares"
 profiled_date: "2026-10-23"
 source_commit: "d400eee9764fe22a8de0247a52757d2021d0539c"
-core_version: "v148"
+core_version: "v148-143-gd400eee"
+version_basis:
+  kind: tag
+  match: "v[0-9]*"
+  tag: "v148"
+  distance: 143
 display_name: "ares"
 cores: [ares, "ares-sa"]
 mode: standalone

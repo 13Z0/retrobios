@@ -7,7 +7,11 @@ logo: "https://raw.githubusercontent.com/dolphin-emu/dolphin/master/Data/dolphin
 profiled_date: "2026-03-23"
 source_commit: "3aac3f052f733f8df2f1616843a4d2e14002ed11"
 upstream_commit: "0d93fc035539f25790deca638d06ee3b3b45ee64"
-core_version: "Git"
+core_version: "2609-437-g3aac3f0"
+version_basis:
+  kind: tag
+  tag: "2609"
+  distance: 437
 display_name: "Nintendo - GameCube / Wii (Dolphin)"
 library_name: "dolphin-emu"
 cores:

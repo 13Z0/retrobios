@@ -5,7 +5,11 @@ source: "https://github.com/CorsixTH/CorsixTH"
 upstream: ~
 profiled_date: "2026-10-04"
 source_commit: "e5668b9b2a6f59c492b2446821528d67f5d0ee53"
-core_version: "0.70.1"
+core_version: "v0.70.1-263-ge5668b9"
+version_basis:
+  kind: tag
+  tag: "v0.70.1"
+  distance: 263
 display_name: "Theme Hospital (CorsixTH)"
 cores: [corsixth]
 systems: [theme-hospital]

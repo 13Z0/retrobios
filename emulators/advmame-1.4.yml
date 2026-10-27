@@ -6,7 +6,12 @@ upstream: "https://www.mamedev.org"
 profiled_date: "2026-10-20"
 source_commit: "237ca5c898e51e1b7a70ce52bccf008aa722e924"
 pin_frozen: "RetroPie builds the advancemame-1.4 release tarball, whose src/ tree is this tag. Later commits are not part of that build."
-core_version: "1.4"
+core_version: "advancemame-1.4"
+version_basis:
+  kind: tag
+  match: "advancemame-*"
+  tag: "advancemame-1.4"
+  distance: 0
 mame_version: "0.106"
 display_name: "Arcade (AdvanceMAME 1.4)"
 mode: standalone

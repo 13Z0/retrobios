@@ -2,7 +2,10 @@ emulator: "mednafen_psx_hw"
 type: alias
 alias_of: "beetle_psx"
 profiled_date: "2026-03-24"
-core_version: "v0.9.44.1"
+core_version: "0.9.44.1"
+version_basis:
+  kind: alias
+  of: "beetle_psx"
 display_name: "Sony - PlayStation (Beetle PSX HW)"
 cores:
   - mednafen_psx_hw

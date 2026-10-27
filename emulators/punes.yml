@@ -6,6 +6,11 @@ upstream: "https://github.com/punesemu/puNES"
 profiled_date: "2026-08-08"
 source_commit: "b1758ec26a3d6da10abf50dc184fa837236c5f61"
 core_version: "0.112"
+version_basis:
+  kind: file
+  path: "src/core/version.h"
+  pattern: '#define VER1\s+"(\d+)"[\s\S]*?#define VER2\s+"(\d+)"'
+  format: "{1}.{2}"
 display_name: "Nintendo - NES / Famicom (puNES)"
 cores:
   - punes
