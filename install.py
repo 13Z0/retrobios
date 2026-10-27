@@ -9907,7 +9907,7 @@ def card_install_dest(named: str, plat: str, interactive: bool, ask: bool = True
     card listed for Onion was taken, and the run became a muOS install.
     Without questions the run stops on the --dest that names the card. ask
     is whether creating several missing folders is asked first, as it is
-    for --dest; no to it asks for the card again.
+    for --dest, and no to it asks for the card again.
     """
     setup = card_setup(named, plat) or CardSetup(display_name(plat), plat, "")
     system = setup.name

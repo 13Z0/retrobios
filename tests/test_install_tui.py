@@ -3601,6 +3601,8 @@ class LineModeOffline(unittest.TestCase):
     """tui_audit_5 P2-3 and P3-8.4: the line mode under --offline asked to
     download, and said nothing of the data files."""
 
+    @unittest.skipUnless(pyte and pty and hasattr(pty, "fork"),
+                         "the line mode run needs pyte and a pty")
     def test_nothing_is_offered_that_cannot_come(self):
         with FakeRepository() as repo:
             env = {**repo.env(), "TERM": "xterm", install.OFFLINE_VARIABLE: "1"}
