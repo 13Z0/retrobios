@@ -51,7 +51,7 @@ import weakref
 import xml.etree.ElementTree as ET
 import zipfile
 import zlib
-from collections.abc import Callable, Collection, Iterator, Mapping
+from collections.abc import Callable, Collection, Iterable, Iterator, Mapping
 from pathlib import Path, PurePosixPath
 from typing import Any, BinaryIO, ContextManager, NamedTuple, TextIO
 
@@ -508,6 +508,8 @@ class Progress:
         # Files written to their place, which a stopped run counts: the
         # queue's length said "118 files installed" over 8 on disk.
         self.installed = 0
+        # The entries of those files, which the end of the run counts apart.
+        self.landed: list[dict] = []
         self.start = time.monotonic()
         self._drawn = 0.0
         self._evented = self.start
@@ -862,30 +864,60 @@ def leave_out_game_data(
     )
 
 
-def category_split(entries: list[dict]) -> tuple[int, int, int, int]:
-    """(BIOS files, their bytes, game data files, their bytes) of entries,
-    each with its size and the category the list gives it."""
-    games = [entry for entry in entries if entry.get("category") == GAME_DATA]
-    bios = [entry for entry in entries if entry.get("category") != GAME_DATA]
-    return (len(bios), sum(int(entry.get("size") or 0) for entry in bios),
-            len(games), sum(int(entry.get("size") or 0) for entry in games))
+class Tally(NamedTuple):
+    """Files and bytes of one list, BIOS files and game data apart. bios
+    and games add up to files, their bytes to size: every count a run
+    prints of a list comes from here."""
+
+    files: int
+    size: int
+    bios: int
+    bios_size: int
+    games: int
+    game_size: int
 
 
-def kinds_words(bios: int, games: int) -> str:
-    """BIOS files and game data files, counted apart."""
-    return f"{_plural(bios, 'BIOS file')} and {_plural(games, 'game data file')}"
+def tally(entries: Iterable[dict]) -> Tally:
+    """The counts of entries, each with its size and the category the list
+    gives it, anything not game data being a BIOS file.
+
+    The run said 8069 files (6.5 GB) while its menu said 8348 (7.1 GB) and
+    3259 BIOS files and 5089 game data files: three counts of three lists.
+    """
+    bios = bios_size = games = game_size = 0
+    for entry in entries:
+        size = int(entry.get("size") or 0)
+        if entry.get("category") == GAME_DATA:
+            games += 1
+            game_size += size
+        else:
+            bios += 1
+            bios_size += size
+    return Tally(bios + games, bios_size + game_size, bios, bios_size, games, game_size)
 
 
-def split_words(entries: list[dict]) -> str:
+def sized_words(counts: Tally) -> str:
+    """The count and the size, as in 8358 files, 6.6 GB."""
+    return f"{_plural(counts.files, 'file')}, {format_size(counts.size)}"
+
+
+def kinds_words(bios: int, games: int, data: int = 0) -> str:
+    """BIOS files and game data files, counted apart, and the files of the
+    data trees when some were installed."""
+    parts = [_plural(bios, "BIOS file"), _plural(games, "game data file")]
+    if data:
+        parts.append(_plural(data, "data file"))
+    return f"{', '.join(parts[:-1])} and {parts[-1]}"
+
+
+def split_words(counts: Tally) -> str:
     """BIOS files and game data apart, in words, "" when there is no game
     data: the installer tells them apart (--no-game-data), and no count
-    showed it. RetroArch's list is 3259 BIOS files (4.4 GB) and 5089 game
-    data files (2.7 GB)."""
-    bios, bios_bytes, games, game_bytes = category_split(entries)
-    if not games:
+    showed it. Both parts come from the count they divide."""
+    if not counts.games:
         return ""
-    return (f"{_plural(bios, 'BIOS file')} ({format_size(bios_bytes)}) and "
-            f"{_plural(games, 'game data file')} ({format_size(game_bytes)})")
+    return (f"{_plural(counts.bios, 'BIOS file')} ({format_size(counts.bios_size)}) and "
+            f"{_plural(counts.games, 'game data file')} ({format_size(counts.game_size)})")
 
 
 def keep_declared(files: list[dict], omitted: list[dict]) -> tuple[list[dict], list[dict]]:
@@ -932,13 +964,19 @@ def declared_copy(entry: dict) -> dict:
 def _left_out_lines(left_out: list[dict], every: bool) -> list[str]:
     """What --no-game-data left out, named per category, ten each unless every."""
     lines = []
+    # The omitted ones apart: "leave out the 5089 game data files" was
+    # followed by "Left out as game data: 5099 files", the other ten being
+    # files the list cannot install anyway.
     for group in _left_out_events(left_out):
         dests = group["dests"]
         shown = dests if every else dests[:10]
         more = (f" ... and {len(dests) - len(shown)} more (--verbose lists them all)"
                 if len(shown) < len(dests) else "")
+        omitted = sum(1 for entry in left_out if entry.get("reason")
+                      and entry.get("category", "") == group["category"])
+        aside = f", {omitted} of them not installable" if omitted else ""
         lines.append(f"  Left out as {group['label']} (--no-game-data): "
-                     f"{_plural(len(dests), 'file')}: {', '.join(shown)}{more}")
+                     f"{_plural(len(dests), 'file')}{aside}: {', '.join(shown)}{more}")
     return lines
 
 
@@ -5737,12 +5775,13 @@ def _report_outcome(
     hints: list[str] | None = None,
     sources: str = "",
     offline: int = 0,
-    kinds: list[int] | None = None,
+    kinds: tuple[Tally, int] | None = None,
     same_choice: str = "",
     term: Terminal | None = None,
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
-    kinds is [BIOS files, game data files] installed, said apart.
+    kinds is the count of the files installed (tally) and of the data
+    tree files, given for a list marking its game data, said apart.
 
     A run that installed nothing used to end on the word Done and a zero exit,
     which reads as success to a person and to a script alike. offline counts
@@ -5884,8 +5923,8 @@ def _report_outcome(
 
     say(f"\nDone. {_plural(downloaded, 'file')} installed, "
         f"{_plural(up_to_date, 'file')} already up to date.")
-    if kinds and kinds[1]:
-        say(f"  Installed: {kinds_words(*kinds)}.")
+    if kinds and kinds[0].games:
+        say(f"  Installed: {kinds_words(kinds[0].bios, kinds[0].games, kinds[1])}.")
     if sources:
         say(f"  {sources}")
     say(f"Location: {_locations(paths)}")
@@ -6074,15 +6113,15 @@ def _print_plan(
     total out of sight (599 lines for RetroArch): it gives way to the
     largest systems, and --verbose lists every file.
     """
-    total = sum(f.get("size", 0) for f in to_download)
+    counts = tally(to_download)
     trees = [(entry, needed) for entry, needed in trees if needed]
-    tree_files = sum(len(needed) for _entry, needed in trees)
-    tree_size = sum(meta.get("size", 0) for _entry, needed in trees for meta in needed.values())
+    tree_counts = tally(meta for _entry, needed in trees for meta in needed.values())
+    tree_files = tree_counts.files
     parts = []
     if to_download:
-        parts.append(f"{_plural(len(to_download), 'file')} ({format_size(total)})")
+        parts.append(f"{_plural(counts.files, 'file')} ({format_size(counts.size)})")
     if trees:
-        parts.append(f"{_plural(tree_files, 'data file')} ({format_size(tree_size)}, "
+        parts.append(f"{_plural(tree_files, 'data file')} ({format_size(tree_counts.size)}, "
                      f"extracted from {_plural(len(trees), 'archive')})")
     # A pack is copied from, not downloaded: "Would download 23 files" was
     # said of a run that makes no network request.
@@ -6255,10 +6294,11 @@ def download_files(
             print("\n  Stopping. Files already installed are kept.")
     # The pool has run every future by now: a file that landed after Ctrl+C
     # is on disk and counts.
-    progress.installed = sum(
-        1 for future in future_map
+    progress.landed = [
+        entry for future, entry in future_map.items()
         if not future.cancelled() and future.exception() is None and future.result()[1]
-    )
+    ]
+    progress.installed = len(progress.landed)
     progress.finish()
     progress.emit_transfer()
     return failed, interrupted
@@ -7226,7 +7266,7 @@ def _quit() -> None:
 
 
 def _sized(files: list[dict]) -> str:
-    return f"{_plural(len(files), 'file')}, {format_size(sum(f.get('size', 0) for f in files))}"
+    return sized_words(tally(files))
 
 
 # A core whose files are all the platform's own. "pcsx_rearmed 0 files,
@@ -7490,10 +7530,12 @@ def _prompt_custom_selection(
     current = given
     toggled = False
     while True:
+        cutting = bool(cut and cut[0])
         shown, shown_omitted = ((leave_out_game_data(files, omitted)[:2])
-                                if cut and cut[0] else (files, omitted))
+                                if cutting else (files, omitted))
         _print_menu_head(plat, shown, shown_omitted, installed, name, trees, bios_path,
-                         current, object() if toggled else given, manifest, narrowed)
+                         current, object() if toggled else given, manifest, narrowed,
+                         menu_choice(files, omitted, installed, current, cutting))
         if (current is not given or toggled) and command is not None:
             print(f"  Same choice without questions: {screen_text(command(current))}")
         offline = _offline_only()
@@ -7528,15 +7570,20 @@ def _prompt_custom_selection(
         copying = not dry_run
         if copying:
             print("  f) copy from a folder or an old card")
-        if cut is not None:
-            games = [entry for entry in files if entry.get("category") == GAME_DATA]
+        # The game data of the choice the head counts, which g takes out of
+        # it or puts back: counted over the whole list, it said 5089 files
+        # under a head counting 12 for one system. Not offered for a
+        # choice that holds none.
+        games = tally(menu_choice(files, omitted, installed, current, False)[0]
+                      if cut is not None else [])
+        if cut is not None and games.games:
             print(f"  g) {'keep' if cut[0] else 'leave out'} the "
-                  f"{_plural(len(games), 'game data file')} ({format_size(_bytes(games))}), "
+                  f"{_plural(games.games, 'game data file')} ({format_size(games.game_size)}), "
                   f"{GAME_DATA_WORDS}")
         print("  q) quit")
         keys = ["", "q", *(["c"] if choosable else []),
                 *(["i"] if installed is not None and current != INSTALLED_ONLY else []),
-                *(["f"] if copying else []), *(["g"] if cut is not None else [])]
+                *(["f"] if copying else []), *(["g"] if games.games else [])]
         answer = _ask("> ").lower()
         while answer not in keys:
             print(f"  Type {', '.join(['Enter', *keys[2:]])} or q.")
@@ -7545,7 +7592,7 @@ def _prompt_custom_selection(
             return current
         if answer == "q":
             _quit()
-        if answer == "g" and cut is not None:
+        if answer == "g" and cut is not None and games.games:
             cut[0] = not cut[0]
             toggled = True
         elif answer == "i":
@@ -7560,15 +7607,13 @@ def _print_menu_head(
     plat: str, files: list[dict], omitted: list[dict],
     installed: tuple[list[dict], list[dict]] | None, name: str, trees: list[dict],
     bios_path: Path | None, current: object, given: object, manifest: dict | None,
-    narrowed: bool,
+    narrowed: bool, chosen: tuple[list[dict], list[dict]] | None = None,
 ) -> None:
     """The plan above the line menu: what the choice holds, its folder, what
-    stands in its way and where the save files go, as the screen's plan."""
-    shown, kept_omitted = files, omitted
-    if current == INSTALLED_ONLY and installed is not None:
-        shown, kept_omitted = installed
-    elif isinstance(current, tuple):
-        shown, kept_omitted = narrow(files, omitted, *current)
+    stands in its way and where the save files go, as the screen's plan.
+    chosen is what the choice keeps (menu_choice), the list every count of
+    the head is taken from."""
+    shown, kept_omitted = chosen or menu_choice(files, omitted, installed, current, False)
     # The trees of the systems kept: 2636 data files of blueMSX, Dolphin
     # and PPSSPP were counted for every --system tried.
     kept_trees = select_data_directories({"data_directories": trees}, shown,
@@ -7591,10 +7636,11 @@ def _print_menu_head(
         named = "" if named == ", " else named
     if current is not given:
         print("\n  Counted again for your choices. Nothing is written before Enter.")
-    print(f"\n{name or display_name(plat)}: {_sized(shown)}"
+    counts = tally(shown)
+    print(f"\n{name or display_name(plat)}: {sized_words(counts)}"
           + (f", and {_plural(data, 'data file')} ({format_size(data_size)})" if data else "")
           + named + ".")
-    split = split_words(shown) if (manifest or {}).get("categorized") else ""
+    split = split_words(counts) if (manifest or {}).get("categorized") else ""
     if split:
         print(f"  {split}.")
     if bios_path is None:
@@ -7609,6 +7655,21 @@ def _print_menu_head(
     # screen name it: "Onion's" before the menu, "RetroArch's" after.
     for line in save_lines(shown, kept_omitted, bios_path, display_name(plat, manifest)):
         print(f"  {line}")
+
+
+def menu_choice(
+    files: list[dict], omitted: list[dict],
+    installed: tuple[list[dict], list[dict]] | None, current: object, cut: bool,
+) -> tuple[list[dict], list[dict]]:
+    """The files and omissions a choice at the line menu keeps, in the order
+    the run applies it: the systems, cores and regions chosen, or what the
+    installed cores read (i), then the game data left out (g)."""
+    kept, kept_omitted = files, omitted
+    if current == INSTALLED_ONLY and installed is not None:
+        kept, kept_omitted = installed
+    elif isinstance(current, tuple):
+        kept, kept_omitted = narrow(files, omitted, *current)
+    return leave_out_game_data(kept, kept_omitted)[:2] if cut else (kept, kept_omitted)
 
 
 def narrowing_words(files: list[dict], omitted: list[dict]) -> str:
@@ -11881,8 +11942,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     failures: list[tuple[str, str]] = []
     installed_paths: list[Path] = []
     bulk_lines: list[str] = []
-    # BIOS files and game data files installed, of a list marking them.
-    kinds_done = [0, 0]
+    # The entries installed and the data tree files: the end line counts
+    # BIOS files and game data among them, the data files apart.
+    landed: list[dict] = []
+    data_landed = 0
+    categorized = False
     # The BIOS folders read for misplaced files, one per platform.
     bios_indexes: list[FolderIndex] = []
 
@@ -11942,6 +12006,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         else:
             print(f"\nFetching file index for {plat_name}...")
         manifest = fetch_manifest(plat_name)
+        categorized = categorized or bool(manifest.get("categorized"))
         files = manifest.get("files", [])
         omitted_files = manifest.get("omitted_files", [])
         variants = manifest.get("case_variants", [])
@@ -12089,6 +12154,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # What declining the size question points back at, when it was asked.
         smaller = ""
         given = selection
+        # g at the menu: whether it left the game data out.
+        cut: list[bool] | None = None
         menu = interactive and not args.check and not listing
         if menu:
             installed = (
@@ -12137,19 +12204,21 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 _INVOCATION.chosen[plat_name] = chosen_flags(selection)
             else:
                 _INVOCATION.chosen.pop(plat_name, None)
-            if cut and cut[0]:
-                # Left out at g, as --no-game-data leaves it out.
-                files, omitted_files, left_out = leave_out_game_data(files, omitted_files)
-                left_out_seen.extend(left_out)
-                _INVOCATION.chosen[plat_name] = (_INVOCATION.chosen.get(plat_name, [])
-                                                 + [("--no-game-data", None)])
-                for line in _left_out_lines(left_out, args.verbose):
-                    print(line)
         if selection is not None:
             before = len(files)
             files, omitted_files = narrow(files, omitted_files, *selection)
             unplaced = narrow([], unplaced, *selection)[1]
             print(f"  Narrowed {before} to {len(files)} files")
+        if cut and cut[0]:
+            # Left out at g, as --no-game-data leaves it out, from what the
+            # choice kept: g offered the game data of the systems chosen,
+            # and the line below counted the whole list's.
+            files, omitted_files, left_out = leave_out_game_data(files, omitted_files)
+            left_out_seen.extend(left_out)
+            _INVOCATION.chosen[plat_name] = (_INVOCATION.chosen.get(plat_name, [])
+                                             + [("--no-game-data", None)])
+            for line in _left_out_lines(left_out, args.verbose):
+                print(line)
         if unplaced:
             total_omitted += len(unplaced)
             omitted_seen.extend(unplaced)
@@ -12159,8 +12228,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             _print_choices(plat_name, files, omitted_files, args.list_systems, manifest)
             continue
 
-        total_size = sum(f.get("size", 0) for f in files)
-        print(f"  {len(files)} files ({format_size(total_size)})")
+        # The count every later line of the platform divides: the files
+        # checked, planned, offered and installed are these.
+        run_counts = tally(files)
+        print(f"  {_plural(run_counts.files, 'file')} ({format_size(run_counts.size)})")
+        split = split_words(run_counts) if manifest.get("categorized") else ""
+        if split:
+            print(f"    {split}.")
         if omitted_files:
             required_omitted = sum(
                 1 for entry in omitted_files if entry.get("required", True)
@@ -12205,7 +12279,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         )
         present = len(up_to_date) + len(mismatched)
         print(
-            f"  {present}/{len(files)} present "
+            f"  {present}/{run_counts.files} present "
             f"({len(up_to_date)} verified, {len(mismatched)} wrong hash)"
         )
 
@@ -12421,13 +12495,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             )
             bulk_lines += hint
             total_downloaded += progress.installed
-            if not interrupted and manifest.get("categorized"):
-                # The end line tells BIOS files from game data, as the
-                # menu counted them.
-                gone = [str(dest) for dest, _reason in failed]
-                for entry in to_download:
-                    if not any(dest.endswith(str(entry.get("dest", ""))) for dest in gone):
-                        kinds_done[entry.get("category") == GAME_DATA] += 1
+            # The end line tells BIOS files from game data, as the menu
+            # counted them, over the files that landed: matched by the end
+            # of a failed path, a.bin was dropped when x/a.bin failed.
+            landed.extend(progress.landed)
             files_pending += len(to_download) - progress.installed if interrupted \
                 else len(failed)
             total_errors += len(failed)
@@ -12450,6 +12521,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             for entry in data_dirs:
                 counts = install_data_directory(entry, bios_path)
                 total_downloaded += counts["installed"]
+                data_landed += counts["installed"]
                 total_up_to_date += counts["present"]
                 if isinstance(counts["error"], OfflineReason):
                     # Left out as the BIOS files above are: counted missing,
@@ -12541,7 +12613,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             omitted_entries=omitted_seen,
             platform_of={path: plat for plat, path in platforms},
             hints=bulk_lines,
-            kinds=kinds_done,
+            kinds=((tally(landed), data_landed) if categorized else None),
             same_choice=(_INVOCATION.command(*platforms[0])
                          if interactive and len(platforms) == 1 else ""),
             sources=_run_sources(bios_indexes, total_downloaded,
@@ -13821,32 +13893,62 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
 
 def _tui_categories(state: TuiState) -> dict[str, str]:
     """Each destination's category, from the list the screen holds, for a
-    list that marks its game data."""
+    list that marks its game data. The second spellings a folder that keeps
+    case installs are in it too: counted as nothing, the result's BIOS and
+    game data fell short of its total."""
     manifest = state.manifest or {}
     if not manifest.get("categorized"):
         return {}
     return {str(entry.get("dest")): str(entry.get("category") or "")
-            for entry in manifest.get("files", [])}
+            for entry in [*manifest.get("files", []), *manifest.get("case_variants", [])]}
 
 
-def _tui_split(state: TuiState, dests: list[tuple[str, int]]) -> str:
-    """BIOS files and game data apart, for (dest, size) pairs, "" when the
-    list marks none or holds no game data among them."""
+def _tui_tally(state: TuiState, events: Iterable[dict]) -> Tally:
+    """The count of file events (dest and size), each with the category the
+    list gives its destination: the one count the plan, its game data row
+    and the result divide."""
     categories = _tui_categories(state)
-    if not categories:
+    return tally({"size": event["size"], "category": categories.get(event["dest"], "")}
+                 for event in events)
+
+
+def _tui_split(state: TuiState, events: Iterable[dict]) -> str:
+    """BIOS files and game data apart, for file events, "" when the list
+    marks none or holds no game data among them."""
+    if not _tui_categories(state):
         return ""
-    return split_words([{"size": size, "category": categories.get(dest, "")}
-                        for dest, size in dests])
+    return split_words(_tui_tally(state, events))
+
+
+def _tui_estimating(state: TuiState) -> bool:
+    """Whether the plan counts the systems ticked since the check, not the
+    check itself."""
+    return bool(_choice_line(state) and state.systems and state.check is not None
+                and not _offline_only())
+
+
+def _plan_files(state: TuiState) -> list[dict]:
+    """The file events the plan's headline counts: the systems ticked when
+    it estimates them, the check's own otherwise."""
+    return _ticked_files(state) if _tui_estimating(state) else state.files
 
 
 def _game_data_row(state: TuiState) -> TuiRow | None:
     """The plan's game data row, one press to leave it out or keep it, for
-    a list that marks game data: inside Options alone, it went unseen."""
-    games = [entry for entry in (state.manifest or {}).get("files", [])
-             if entry.get("category") == GAME_DATA]
-    if not _tui_categories(state) or not games:
+    a list that marks game data: inside Options alone, it went unseen.
+
+    Counted over the files the plan counts, as g at the line menu: over
+    the whole list, it said 5089 files beside a plan of 12. Once left out
+    the check holds none, and the list's own game data is counted."""
+    if not _tui_categories(state):
         return None
-    sized = f"{_plural(len(games), 'file')}, {format_size(_bytes(games))}"
+    games = _tui_tally(state, _plan_files(state))
+    if not games.games:
+        games = tally(entry for entry in (state.manifest or {}).get("files", [])
+                      if entry.get("category") == GAME_DATA)
+    if not games.games:
+        return None
+    sized = f"{_plural(games.games, 'file')}, {format_size(games.game_size)}"
     return TuiRow("gamedata", f"Game data ({sized}): "
                   + ("left out, change" if state.no_game_data else "kept, leave out"))
 
@@ -16434,7 +16536,7 @@ def _view_plan(state: TuiState, width: int, height: int) -> tuple:
     check = state.check or {}
     lines = _plan_lines(check, state.dest, state)
     choice = _choice_line(state)
-    if choice and state.systems and check is state.check and not _offline_only():
+    if _tui_estimating(state):
         # The headline counts the systems ticked, as the list just did: at
         # 40x12 the line below it was dropped, and the plan showed the
         # total of all of them.
@@ -16463,8 +16565,10 @@ def _view_plan(state: TuiState, width: int, height: int) -> tuple:
     lines[at:at] = [*([state.card_note] if state.card_note
                       and state.card_note != state.status else []),
                     *([f"{said[0].upper()}{said[1:]}."] if said else []), *choice]
-    split = _tui_split(state, [(event["dest"], event["size"]) for event in state.files
-                               if event["state"] != "present"])
+    # Of the files the headline counts: those ticked when it estimates
+    # them, those to install otherwise.
+    split = _tui_split(state, _ticked_files(state) if _tui_estimating(state) else [
+        event for event in state.files if event["state"] != "present"])
     if split or (state.no_game_data and _game_data_row(state) is not None):
         # BIOS files and game data apart, and what game data is, beside the
         # row that leaves it out.
@@ -16890,13 +16994,14 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
         title = "Done"
         head = "Everything is in place."
     lines = [head]
-    categories = _tui_categories(state)
-    done = [categories.get(dest, "") for dest, good, _why in state.finished
-            if good and dest in categories]
-    if GAME_DATA in done:
-        # As the plan counted them, and as line mode ends.
-        games = done.count(GAME_DATA)
-        lines.append(f"Installed: {kinds_words(len(done) - games, games)}.")
+    if _tui_categories(state) and title != "Stopped":
+        # As the plan counted them, and as line mode ends: the data tree
+        # files are the installed ones no file event names.
+        done = _tui_tally(state, [{"dest": dest, "size": 0}
+                                  for dest, good, _why in state.finished if good])
+        if done.games:
+            lines.append("Installed: " + kinds_words(
+                done.bios, done.games, max(0, installed - done.files)) + ".")
     sources = _tui_sources(state, installed, len(failed) + left)
     if left and installed and sources:
         # One count, then the remedy, as line mode says it: the count came

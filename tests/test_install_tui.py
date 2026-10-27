@@ -7456,8 +7456,15 @@ class LineModeAndScreenDecideAlike(_LineModeFindings, _OutsideTextFindings,
             *state.manifest["files"],
             {"dest": "doom/doom1.wad", "size": 30, "category": "game_data", "cores": None}]}
         state.finished = [("scph5500.bin", True, ""), ("doom/doom1.wad", True, "")]
+        state.summary = {**state.summary, "installed": 2}
         _title, lines = install.tui_outcome(state)
         self.assertIn("Installed: 1 BIOS file and 1 game data file.", lines)
+        # The data tree files are installed without a file event: the parts
+        # still add up to the head's count.
+        state.summary = {**state.summary, "installed": 5}
+        _title, lines = install.tui_outcome(state)
+        self.assertIn("5 files installed.", lines[0])
+        self.assertIn("Installed: 1 BIOS file, 1 game data file and 3 data files.", lines)
         listing, _files = self.game_list()
         backup = self.root / "old"
         (backup / "doom").mkdir(parents=True)
@@ -7475,6 +7482,98 @@ class LineModeAndScreenDecideAlike(_LineModeFindings, _OutsideTextFindings,
             install._install(args, real)
         self.assertIn("Done. 2 files installed", real.getvalue())
         self.assertIn("Installed: 1 BIOS file and 1 game data file.", real.getvalue())
+
+    # 2026-10-27, CI run 40541886959: the run said 8069 files, the menu
+    # 8348 and 3259 BIOS files and 5089 game data files, the real dry run
+    # 8358. Every count of a run is one tally of one list.
+
+    def counted_list(self) -> Path:
+        files = [self.entry("gba_bios.bin", b"gba", ["nintendo-gba"]),
+                 self.entry("doom/doom1.wad", b"wad" * 10, ["doom"], category="game_data"),
+                 self.entry("doom/doom2.wad", b"two" * 20, ["doom"], category="game_data")]
+        variant = {**self.entry("DOOM/DOOM1.WAD", b"WAD" * 10, ["doom"]),
+                   "category": "game_data"}
+        omitted = [{"dest": "doom/doom3.wad", "name": "doom3.wad", "system": "doom",
+                    "systems": ["doom"], "required": False, "reason": "not_found",
+                    "category": "game_data"}]
+        return self.listing("retroarch", files, categorized=True, case_variants=[variant],
+                            omitted_files=omitted)
+
+    def test_every_count_of_a_line_run_is_one_list(self):
+        args = dict(manifest=self.counted_list(), dest=self.here, declared_only=False,
+                    dry_run=True)
+        text, _asked = self.line_run(_args(**args), [""])
+        # The second spelling a folder keeping case installs is counted
+        # everywhere or nowhere: here, everywhere.
+        self.assertIn("RetroArch: 4 files, 123 B.\n  1 BIOS file (3 B) and 3 game data files "
+                      "(120 B).", text)
+        self.assertIn("g) leave out the 3 game data files (120 B)", text)
+        self.assertIn("  4 files (123 B)\n    1 BIOS file (3 B) and 3 game data files (120 B).",
+                      text)
+        self.assertIn("0/4 present", text)
+        self.assertIn("4 files (123 B)", text[text.index("Checking existing files"):])
+
+    def test_g_counts_the_systems_chosen_and_leaves_out_what_it_said(self):
+        args = dict(manifest=self.counted_list(), dest=self.here, declared_only=False,
+                    dry_run=True)
+        text, _asked = self.line_run(_args(**args), ["c", "2", ""])
+        after = text[text.index("Counted again"):]
+        self.assertIn("RetroArch: 1 file, 3 B, for 1 of 2 systems.", after)
+        # No game data among the systems chosen: nothing for g to leave out.
+        self.assertNotIn("g) leave out", after)
+        text, _asked = self.line_run(_args(**args), ["c", "1", "g", ""])
+        after = text[text.index("Counted again"):]
+        self.assertIn("g) leave out the 3 game data files (120 B)", after)
+        last = after[after.rindex("Counted again"):]
+        self.assertIn("g) keep the 3 game data files (120 B)", last)
+        self.assertIn("Left out as game data (--no-game-data): 4 files, 1 of them not "
+                      "installable", text)
+
+    def test_the_parts_add_up_on_every_committed_list(self):
+        for path in sorted((REPO_ROOT / "install").glob("*.json")):
+            manifest = json.loads(path.read_text(encoding="utf-8"))
+            if not manifest.get("categorized"):
+                continue
+            with self.subTest(path.name):
+                for files in (manifest.get("files", []),
+                              manifest.get("files", []) + manifest.get("case_variants", [])):
+                    counts = install.tally(files)
+                    self.assertEqual(counts.bios + counts.games, counts.files)
+                    self.assertEqual(counts.files, len(files))
+                    self.assertEqual(counts.bios_size + counts.game_size, counts.size)
+                    self.assertEqual(counts.size, sum(e.get("size") or 0 for e in files))
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    install._print_menu_head(
+                        manifest["platform"], manifest["files"], [], None, "", [], None,
+                        None, None, manifest, False)
+                head = re.search(r"(\d+) files?, ", out.getvalue())
+                split = re.search(r"(\d+) BIOS files? \(.*?\) and (\d+) game data files?",
+                                  out.getvalue())
+                if split:
+                    self.assertEqual(int(split[1]) + int(split[2]), int(head[1]))
+
+    def test_the_screen_divides_the_count_it_shows(self):
+        state = checked_state()
+        manifest = json.loads(json.dumps(state.manifest))
+        manifest["case_variants"] = [{"dest": "PCSX/EXTRA.BIN", "size": 4,
+                                      "category": "game_data", "cores": ["pcsx_rearmed"],
+                                      "systems": ["sony-playstation"]}]
+        for entry in manifest["files"]:
+            if entry["dest"] == "pcsx/extra.bin":
+                entry["category"] = "game_data"
+        state.manifest = manifest
+        state.files = [*state.files, {
+            "event": "file", "platform": "retroarch", "dest": "PCSX/EXTRA.BIN",
+            "systems": ["sony-playstation"], "size": 4, "state": "missing"}]
+        state.check = {**state.check, "missing": state.check["missing"] + 1,
+                       "files": state.check["files"] + 1,
+                       "bytes_needed": state.check["bytes_needed"] + 4}
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("5 files to download", text)
+        self.assertIn("3 BIOS files (1.0 MB) and 2 game data files (8 B).", text)
+        row = next(row for row in install.tui_rows(state) if row.action == "gamedata")
+        self.assertIn("Game data (2 files, 8 B)", row.label)
 
     # code_audit_18 P3-5, tui_audit_11 P3-10 and P3-21: line mode wording.
 
@@ -8443,13 +8542,14 @@ class AuditSeventeenAndTen(unittest.TestCase):
     def test_the_docs_say_what_the_installer_does(self):
         """code_audit_17 P3-7."""
         page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
-        menu = page[page.index("RetroArch: 8348 files, 7.1 GB."):]
+        menu = page[re.search(r"RetroArch: \d+ files, [\d.]+ [KMG]B[.,]", page).start():]
         menu = menu[:menu.index("```")]
         self.assertIn("BIOS folder:", menu)
         self.assertIn("f) copy from a folder or an old card", menu)
         # The owner's request of 2026-10-27: game data counted apart, g.
-        self.assertIn("3259 BIOS files (4.4 GB) and 5089 game data files (2.7 GB).", menu)
-        self.assertIn("g) leave out the 5089 game data files", menu)
+        # test_doc_pages checks that the figures add up.
+        self.assertRegex(menu, r"\d+ BIOS files \([\d.]+ [KMG]B\) and \d+ game data files")
+        self.assertRegex(menu, r"g\) leave out the \d+ game data files")
         env = page[page.index("## Environment overrides"):]
         self.assertIn("`TERMINFO`", env)
         self.assertIn("`TERMINFO_DIRS`", env)
