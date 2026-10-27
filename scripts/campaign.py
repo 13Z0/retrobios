@@ -1,41 +1,51 @@
 #!/usr/bin/env python3
-"""Run the real-condition campaign unattended: cores, content, checks, rules.
+"""Run the real-condition campaign end to end: cores, content, checks, rules.
 
-For each emulator profile in scope, the campaign takes the core (the libretro
-x86_64 Linux nightly, else a build of the profile's pinned commit), the test
-content of each of its systems (tests/campaign/content.yml, fetched through
-romfetch when it is not on disk), and runs core_probe.py:
+A maintainer starts each pass. For each emulator profile in scope, the
+campaign takes the core (the libretro x86_64 Linux nightly, else a build of
+the profile's pinned commit), the test content of each of its systems
+(tests/campaign/content.yml, fetched through romfetch when it is not on
+disk), and runs core_probe.py. The boot oracle of core_probe judges every
+run: boots, bios_error, crash, hang or unknown, against the reference frames
+and error patterns of tests/campaign/oracle.yml.
 
-  files      every declared file the collection holds, staged, and which ones
-             the core opens
-  boot       the content with no file against the content with the declared
-             file, compared on the frames the core shows
+  files      every declared file the collection holds, staged: the full set,
+             and which files the core opens
+  none       no BIOS at all
+  negative   per declared file of the content's region: the file alone, then
+             zeros of its size, its first half and other regions' dumps
+             staged under its name
   path       a declared file staged where the core looked for it
   alias      a declared file staged under a name the core looked for
   variants   each .variants/ copy of a file the core opened
-  bench      the content timed, warm-up excluded, 5 repetitions
+  bench      with --bench only: the content timed, warm-up excluded
 
 Every run is a record in measurements/<emulator>.jsonl. The fixed rule table
-(campaign_rules.py) turns records into verdicts. A verdict the table settles
-is written into the profile with the record ids as `evidence:`. Any other
-goes to measurements/findings.jsonl, where the site lists it as open. Each
-pass adds one line to measurements/campaign-runs.jsonl.
+(campaign_rules.py) reads the verdicts, never a comparison of frames. A
+verdict the table settles is written into the profile with the record ids
+as `evidence:`. Any other goes to measurements/findings.jsonl, where the
+site lists it as open. Each pass adds one line to
+measurements/campaign-runs.jsonl.
+
+`references` runs the full set once per core and content with its frames
+saved as PNG, and lists the screens that stay on for several samples: the
+candidates a reviewer looks at before writing them into oracle.yml.
 
 State is .cache/campaign/state.json of the main checkout: per check done,
-failed or pending with the reason, and the core sha256 and profile digest it
-ran against. A pass skips what is done unless the core build or the profile
-changed. The campaign holds the host-wide automation lock, waits for an idle
-host, stops cleanly on a busy host or a full disk, and resumes on the next
-pass. Under autorun (`campaign` job) the lock is the job's.
+failed or pending with the reason, and the core sha256, profile digest,
+oracle sha256 and record version it ran against. A pass skips what is done
+unless one of them changed. The campaign holds the host-wide automation
+lock, waits for an idle host, stops cleanly on a busy host or a full disk,
+and the next pass a maintainer starts resumes there.
 
 Usage:
-    python scripts/campaign.py run [--only CORE,...] [--system ID] [--budget 6h]
+    python scripts/campaign.py run [--only CORE,...] [--system ID] [--budget 6h] [--bench]
     python scripts/campaign.py run --dry-run
     python scripts/campaign.py run --commit [--commit-every N]
+    python scripts/campaign.py references --only CORE,... [--system ID]
     python scripts/campaign.py status [--json]
     python scripts/campaign.py findings [--all] [--json]
     python scripts/campaign.py gate
-    python scripts/campaign.py install-timer [--enable]
 """
 
 from __future__ import annotations
@@ -86,6 +96,7 @@ PENDING = "pending"
 CRASH_ATTEMPTS = 3
 NETWORK_DELAYS = (10, 60, 300)
 MAX_ALIAS_CANDIDATES = 6
+MAX_REGION_DUMPS = 2
 BENCH_WARMUP = 600
 BENCH_FRAMES = 1800
 BENCH_REPEAT = 5
@@ -175,6 +186,11 @@ def region_matches(entry: dict, region: str | None) -> bool:
     return region in regions or "world" in regions
 
 
+def regions_of(entry: dict) -> list[str]:
+    regions = entry.get("region") or []
+    return [regions] if isinstance(regions, str) else list(regions)
+
+
 def is_bios(entry: dict) -> bool:
     return entry.get("category", "bios") == "bios" and entry.get("type") != "directory"
 
@@ -235,6 +251,8 @@ class Settings:
     bench_frames: int = BENCH_FRAMES
     romfetch: str = ""
     network: bool = True
+    # Benchmarks only choose between variants: never part of a default pass.
+    bench: bool = False
     delays: tuple[float, ...] = NETWORK_DELAYS
     echo: bool = True
     # Third-party code (a nightly core, a project's Makefile) runs only under
@@ -252,6 +270,7 @@ class Paths:
     content: Path
     db: Path
     content_file: Path = CONTENT_FILE
+    oracle: Path = core_probe.DEFAULT_ORACLE
 
     @property
     def state(self) -> Path:
@@ -470,14 +489,17 @@ def save_state(path: Path, state: dict) -> None:
     autorun.save_state(path, state)
 
 
-def should_run(previous: dict | None, core_sha: str, digest: str) -> bool:
+def should_run(previous: dict | None, core_sha: str, digest: str, oracle_sha: str = "") -> bool:
     """A check runs again when it never ran, is pending, or ran against
-    another core build or another version of the profile."""
+    another core build, another version of the profile, another oracle, or
+    before records carried a verdict."""
     if not previous:
         return True
     if previous.get("status") == PENDING:
         return True
-    return previous.get("core_sha256") != core_sha or previous.get("profile_digest") != digest
+    return (previous.get("core_sha256") != core_sha or previous.get("profile_digest") != digest
+            or previous.get("record_version") != mr.RECORD_VERSION
+            or previous.get("oracle_sha256", "") != oracle_sha)
 
 
 # --------------------------------------------------------------------------
@@ -875,6 +897,7 @@ class Campaign:
         self.cores = Cores(self)
         self.store = ContentStore(self)
         self.content = load_content(paths.content_file)
+        self.oracle_sha = file_sha256(paths.oracle) if paths.oracle.is_file() else ""
         self.deadline = 0.0
         self.current: Pass | None = None
         self.dirty_at_start: set[str] = set()
@@ -1004,6 +1027,8 @@ class Campaign:
                 "--emulator", emulator, "--subject", subject,
                 "--max-load", str(self.host.max_load), "--timeout", str(self.settings.probe_timeout),
                 "--work-dir", str(self.paths.root / "tmp" / "core_probe")]
+        if self.paths.oracle.is_file():
+            argv += ["--oracle", str(self.paths.oracle)]
         if not self.settings.allow_unsandboxed:
             argv.append("--require-sandbox")
         if core.artifact:
@@ -1026,7 +1051,8 @@ class Campaign:
     def remember(self, emulator: str, key: str, result: ProbeResult, core: Core | None,
                  digest: str) -> None:
         entry = {"status": result.status, "at": now_iso(), "profile_digest": digest,
-                 "core_sha256": core.sha256 if core else None}
+                 "core_sha256": core.sha256 if core else None,
+                 "record_version": mr.RECORD_VERSION, "oracle_sha256": self.oracle_sha}
         if result.reason:
             entry["reason"] = result.reason
         if result.log:
@@ -1041,6 +1067,20 @@ class Campaign:
     def pending(self, emulator: str, key: str, reason: str, digest: str = "") -> None:
         self.state["checks"].setdefault(emulator, {})[key] = {
             "status": PENDING, "reason": reason, "at": now_iso(), "profile_digest": digest}
+
+    def needed(self, emulator: str, key: str, core: Core, digest: str) -> bool:
+        return should_run(self.state["checks"].get(emulator, {}).get(key), core.sha256, digest,
+                          self.oracle_sha)
+
+    def check(self, emulator: str, key: str, core: Core, digest: str, argv: list[str],
+              log_name: str) -> dict | None:
+        """The record of a check: run now when needed, else the one kept."""
+        if not self.needed(emulator, key, core, digest):
+            previous = self.state["checks"].get(emulator, {}).get(key) or {}
+            return self.read_record(emulator, previous.get("record"))
+        result = self.probe(argv, log_name)
+        self.remember(emulator, key, result, core, digest)
+        return result.record
 
     def system_entries(self, profile: dict, system: str) -> list[tuple[int, dict]]:
         from validation import filter_files_by_mode
@@ -1060,84 +1100,148 @@ class Campaign:
         held.sort(key=lambda item: (item[1].get("priority", 1 << 30), item[0]))
         return held[0] if held else None
 
+    @staticmethod
+    def other_regions(entry: dict, staged: dict[str, tuple[int, dict, Path]], local: Path) -> list[Path]:
+        """Held dumps of the same system for regions this entry does not
+        serve, one per distinct file: the wrong-region variants."""
+        mine = set(regions_of(entry))
+        if not mine or "world" in mine:
+            return []
+        out: dict[str, Path] = {}
+        for _, other, path in staged.values():
+            theirs = set(regions_of(other))
+            if theirs and "world" not in theirs and not theirs & mine and path.resolve() != local.resolve():
+                out.setdefault(file_sha1(path), path)
+        return sorted(out.values(), key=lambda p: p.name)[:MAX_REGION_DUMPS]
+
     def run_unit_content(self, unit: Unit, core: Core, content: Content, digest: str) -> None:
         emulator, profile = unit.emulator, unit.profile
-        checks = self.state["checks"].setdefault(emulator, {})
         entries = self.system_entries(profile, content.system)
-        boot = self.boot_entry(entries, content)
-        keys = {name: self.check_key(core, content, name) for name in ("files", "bench")}
-        if boot:
-            keys["boot"] = self.check_key(core, content, f"boot:{boot[1]['name']}")
-        todo = [k for k in keys.values() if should_run(checks.get(k), core.sha256, digest)]
-        if not todo:
-            return
-        try:
-            folder = self.store.get(content)
-            load = load_file(folder, content.load)
-        except Unavailable as exc:
-            for key in todo:
-                self.pending(emulator, key, str(exc), digest)
-            return
-        frames = ["--frames", str(content.frames), "--frame-hash-every", str(content.frame_hash_every)]
-        stem = f"{core.name}-{slug(content.name)}"
-
-        # files: every declared file the collection holds, at its place.
         staged: dict[str, tuple[int, dict, Path]] = {}
         for index, entry in entries:
             local = self.local_file(entry)
             if local and entry_dest(entry) not in staged:
                 staged[entry_dest(entry)] = (index, entry, local)
-        files_record = None
-        if keys["files"] in todo:
-            argv = self.probe_args("run", core, emulator, slug(f"files-{stem}"), content, load) + frames
-            for dest, (_, _, local) in sorted(staged.items()):
-                argv += ["--system-file", f"{dest}={local}"]
-            result = self.probe(argv, f"{emulator}-{stem}-files")
-            self.remember(emulator, keys["files"], result, core, digest)
-            files_record = result.record
-        elif checks.get(keys["files"], {}).get("status") == DONE:
-            files_record = self.read_record(emulator, checks[keys["files"]].get("record"))
+        tested = {dest: item for dest, item in staged.items() if region_matches(item[1], content.region)}
+        keys = {"files": self.check_key(core, content, "files"),
+                "none": self.check_key(core, content, "none")}
+        for dest in tested:
+            keys[f"negative:{dest}"] = self.check_key(core, content, f"negative:{dest}")
+        if self.settings.bench:
+            keys["bench"] = self.check_key(core, content, "bench")
+        if not any(self.needed(emulator, key, core, digest) for key in keys.values()):
+            return
+        try:
+            folder = self.store.get(content)
+            load = load_file(folder, content.load)
+        except Unavailable as exc:
+            for key in keys.values():
+                if self.needed(emulator, key, core, digest):
+                    self.pending(emulator, key, str(exc), digest)
+            return
+        frames = ["--frames", str(content.frames), "--frame-hash-every", str(content.frame_hash_every)]
+        repeat = ["--repeat", str(self.settings.check_repeat)]
+        stem = f"{core.name}-{slug(content.name)}"
 
-        boot_record = None
-        if boot and keys["boot"] in todo:
-            index, entry = boot
-            local = self.local_file(entry)
-            dest = entry_dest(entry)
-            argv = self.probe_args("check", core, emulator, slug(f"boot-{entry['name']}-{stem}"),
-                                   content, load) + frames
-            argv += ["--vary", f"{dest}=", "--vary", f"{dest}={local}", "--observable", "frame_hashes",
-                     "--repeat", str(self.settings.check_repeat),
-                     "--claim", f"{core.name} reaches the game on {content.name} without {entry['name']}",
-                     "--method", (f"Two variants, {entry['name']} absent and {entry['name']} as the "
-                                  f"collection holds it, each run {self.settings.check_repeat} times "
-                                  f"from a fresh process for {content.frames} frames with no button "
-                                  f"pressed. Every {content.frame_hash_every}th frame is hashed. The "
-                                  f"runs without the file are compared with the runs with it on the "
-                                  f"frames that are not one colour.")]
-            result = self.probe(argv, f"{emulator}-{stem}-boot")
-            self.remember(emulator, keys["boot"], result, core, digest)
-            boot_record = result.record
-            if boot_record:
-                absent, present = (v["label"] for v in boot_record["variants"])
-                verdicts = rules.rule_bios_need(rules.boot_outcome(boot_record, absent, present),
-                                                entry, boot_record["id"])
+        # files: every declared file the collection holds, at its place.
+        argv = self.probe_args("run", core, emulator, slug(f"files-{stem}"), content, load) + frames + repeat
+        for dest, (_, _, local) in sorted(staged.items()):
+            argv += ["--system-file", f"{dest}={local}"]
+        files_record = self.check(emulator, keys["files"], core, digest, argv, f"{emulator}-{stem}-files")
+        # none: no BIOS at all.
+        argv = self.probe_args("run", core, emulator, slug(f"none-{stem}"), content, load) + frames + repeat
+        none_record = self.check(emulator, keys["none"], core, digest, argv, f"{emulator}-{stem}-none")
+        if not files_record or not none_record:
+            return
+        full = rules.run_of(files_record, files_record["variants"][0]["label"])
+        none = rules.run_of(none_record, none_record["variants"][0]["label"])
+        self.log(f"{emulator}: {core.name} on {content.name}: full set {full.verdict}, "
+                 f"no BIOS {none.verdict}")
+
+        for dest, (index, entry, local) in sorted(tested.items()):
+            record = self.negative(unit, core, content, load, frames, digest, keys[f"negative:{dest}"],
+                                   dest, entry, local, staged)
+            if not record:
+                continue
+            labels = [v["label"] for v in record["variants"]]
+            present = rules.run_of(record, labels[0])
+            zeros, half = (rules.run_of(record, label) for label in labels[1:3])
+            for label in labels[3:]:
+                self.log(f"{emulator}: {rules.rule_region(rules.run_of(record, label), present, entry, content.region)}")
+            if dest in self.opened(files_record, 0) or dest in self.opened(record, 0):
+                verdicts = rules.rule_need(none, present, entry)
+                validation = rules.rule_validation(zeros, half, none, present, entry)
+                if validation:
+                    verdicts.append(validation)
                 self.settle(emulator, content, core, index, entry, verdicts)
-                self.follow_aliases(unit, core, content, load, frames, digest, index, entry,
-                                    local, boot_record, absent)
+                variants = self.variant_files(entry, local)
+                if variants:
+                    self.run_variants(unit, core, content, load, frames, digest, index, entry, dest,
+                                      local, variants)
+            else:
+                self.moved(unit, core, content, load, frames, digest, index, entry, dest, local,
+                           files_record, record)
 
-        if files_record and keys["files"] in todo:
-            self.read_files(unit, core, content, load, frames, digest, staged, files_record)
+        boot = self.boot_entry(entries, content)
+        if boot and entry_dest(boot[1]) in tested:
+            index, entry = boot
+            self.follow_aliases(unit, core, content, load, frames, digest, index, entry,
+                                tested[entry_dest(entry)][2], none_record)
 
-        if keys["bench"] in todo:
+        if self.settings.bench and full.verdict == rules.BOOTS:
             argv = self.probe_args("bench", core, emulator, slug(f"bench-{stem}"), content, load)
             argv += ["--warmup", str(self.settings.bench_warmup), "--frames",
                      str(self.settings.bench_frames), "--repeat", str(self.settings.bench_repeat),
                      "--no-trace"]
             if boot:
-                local = self.local_file(boot[1])
-                argv += ["--system-file", f"{entry_dest(boot[1])}={local}"]
-            result = self.probe(argv, f"{emulator}-{stem}-bench")
-            self.remember(emulator, keys["bench"], result, core, digest)
+                argv += ["--system-file", f"{entry_dest(boot[1])}={self.local_file(boot[1])}"]
+            self.check(emulator, keys["bench"], core, digest, argv, f"{emulator}-{stem}-bench")
+
+    def negative(self, unit: Unit, core: Core, content: Content, load: Path, frames: list[str],
+                 digest: str, key: str, dest: str, entry: dict, local: Path,
+                 staged: dict[str, tuple[int, dict, Path]]) -> dict | None:
+        """The file alone, then wrong files under its name: zeros of its
+        size, its first half, and other regions' dumps."""
+        stem = f"{core.name}-{slug(content.name)}"
+        size = local.stat().st_size
+        others = self.other_regions(entry, staged, local)
+        argv = self.probe_args("check", core, unit.emulator, slug(f"negative-{entry['name']}-{stem}"),
+                               content, load) + frames
+        argv += ["--vary", f"{dest}={local}", "--vary", f"{dest}=@zeros:{size}",
+                 "--vary", f"{dest}=@head:{size // 2}:{local}"]
+        for other in others:
+            argv += ["--vary", f"{dest}={other}"]
+        regions = f", then {', '.join(p.name for p in others)} staged under its name" if others else ""
+        argv += ["--observable", "frame_hashes", "--repeat", str(self.settings.check_repeat),
+                 "--claim", (f"{core.name} boots {content.name} with {entry['name']} alone and "
+                             f"refuses a wrong file under its name"),
+                 "--method", (f"{entry['name']} alone as {dest}, then {size} zero bytes and its "
+                              f"first {size // 2} bytes{regions}, nothing else staged. Each run "
+                              f"{self.settings.check_repeat} times from a fresh process for "
+                              f"{content.frames} frames with no button pressed, every "
+                              f"{content.frame_hash_every}th frame hashed. The boot oracle judges "
+                              f"each variant against the reference frames of {content.name}.")]
+        return self.check(unit.emulator, key, core, digest, argv, f"{unit.emulator}-{stem}-negative")
+
+    def moved(self, unit: Unit, core: Core, content: Content, load: Path, frames: list[str],
+              digest: str, index: int, entry: dict, dest: str, local: Path, files_record: dict,
+              alone: dict) -> None:
+        """A file the core opened neither in the full set nor alone: where
+        else it looked for a file of that name, else flagged."""
+        probed = [p for record in (files_record, alone) for r in record["variants"][0]["repetitions"]
+                  for p in r.get("files_probed_absent") or ()]
+        others = [p for p in dict.fromkeys(probed) if p != dest
+                  and p.rsplit("/", 1)[-1].casefold() == dest.rsplit("/", 1)[-1].casefold()]
+        for candidate in others[:MAX_ALIAS_CANDIDATES]:
+            found = self.follow_up(unit, core, content, load, frames, digest, entry, local, candidate,
+                                   f"path:{entry['name']}:{candidate}")
+            if found and candidate in self.opened(found, 0):
+                verdict = rules.rule_path(entry, dest, rules.Opened(candidate, found["id"]))
+                if verdict:
+                    self.settle(unit.emulator, content, core, index, entry, [verdict])
+                    return
+        verdict = rules.rule_never_opened(entry, [files_record["id"], alone["id"]], content.name)
+        self.settle(unit.emulator, content, core, index, entry, [verdict])
 
     def read_record(self, emulator: str, rid: str | None) -> dict | None:
         if not rid:
@@ -1150,49 +1254,10 @@ class Campaign:
                 return json.loads(line)
         return None
 
-    def read_files(self, unit: Unit, core: Core, content: Content, load: Path, frames: list[str],
-                   digest: str, staged: dict[str, tuple[int, dict, Path]], record: dict) -> None:
-        """Which staged files the core opened: path follow-ups, variants, flags."""
-        emulator = unit.emulator
-        rep = record["variants"][0]["repetitions"][0]
-        if rep.get("files_opened") is None:
-            return
-        opened = {item["path"] for item in rep.get("files_opened") or ()}
-        probed = list(rep.get("files_probed_absent") or ())
-        for dest, (index, entry, local) in sorted(staged.items()):
-            if dest in opened:
-                variants = self.variant_files(entry, local)
-                if variants:
-                    self.run_variants(unit, core, content, load, frames, digest, index, entry, dest,
-                                      local, variants)
-                continue
-            if not region_matches(entry, content.region):
-                continue
-            # A fallback is read only when the files before it are absent:
-            # staged alone, it shows whether the core reads it at all.
-            alone = self.follow_up(unit, core, content, load, frames, digest, entry, local, dest,
-                                   f"alone:{entry['name']}")
-            if alone is None:
-                continue
-            if dest in self.opened(alone, 1):
-                continue
-            probed_alone = [p for r in alone["variants"][0]["repetitions"]
-                            for p in r.get("files_probed_absent") or ()]
-            others = [p for p in dict.fromkeys(probed + probed_alone) if p != dest
-                      and p.rsplit("/", 1)[-1].casefold() == dest.rsplit("/", 1)[-1].casefold()]
-            moved = False
-            for candidate in others[:MAX_ALIAS_CANDIDATES]:
-                record_c = self.follow_up(unit, core, content, load, frames, digest, entry, local,
-                                          candidate, f"path:{entry['name']}:{candidate}")
-                if record_c and candidate in self.opened(record_c, 1):
-                    verdict = rules.rule_path(entry, dest, rules.Opened(candidate, record_c["id"]))
-                    if verdict:
-                        self.settle(emulator, content, core, index, entry, [verdict])
-                        moved = True
-                        break
-            if not moved:
-                verdict = rules.rule_never_opened(entry, [record["id"], alone["id"]], content.name)
-                self.settle(emulator, content, core, index, entry, [verdict])
+    def judged(self, emulator: str, rid: str) -> bool:
+        """True for a record the boot oracle judged: only those prove a field."""
+        record = self.read_record(emulator, rid)
+        return bool(record) and record.get("record_version", 0) >= 4
 
     @staticmethod
     def opened(record: dict, position: int) -> set[str]:
@@ -1203,34 +1268,23 @@ class Campaign:
 
     def follow_up(self, unit: Unit, core: Core, content: Content, load: Path, frames: list[str],
                   digest: str, entry: dict, local: Path, dest: str, check: str) -> dict | None:
-        """The file staged at dest alone, against nothing there."""
-        key = self.check_key(core, content, check)
-        previous = self.state["checks"].get(unit.emulator, {}).get(key)
-        if not should_run(previous, core.sha256, digest):
-            return self.read_record(unit.emulator, (previous or {}).get("record"))
+        """The file staged at dest alone: does the core open it there."""
         stem = f"{core.name}-{slug(content.name)}"
-        argv = self.probe_args("check", core, unit.emulator, slug(f"{check}-{stem}"), content, load)
-        argv += frames + ["--vary", f"{dest}=", "--vary", f"{dest}={local}",
-                          "--observable", "frame_hashes", "--repeat", "1",
-                          "--claim", f"{core.name} opens {entry['name']} as {dest}",
-                          "--method", (f"{entry['name']} staged as {dest}, against nothing there, "
-                                       f"{content.frames} frames of {content.name}. The files the "
-                                       f"core opened are read from strace.")]
-        result = self.probe(argv, f"{unit.emulator}-{stem}-{slug(check)}")
-        self.remember(unit.emulator, key, result, core, digest)
-        return result.record
+        argv = self.probe_args("run", core, unit.emulator, slug(f"{check}-{stem}"), content, load)
+        argv += frames + ["--system-file", f"{dest}={local}"]
+        return self.check(unit.emulator, self.check_key(core, content, check), core, digest, argv,
+                          f"{unit.emulator}-{stem}-{slug(check)}")
 
     def follow_aliases(self, unit: Unit, core: Core, content: Content, load: Path, frames: list[str],
-                       digest: str, index: int, entry: dict, local: Path, record: dict,
-                       absent_label: str) -> None:
-        """Names the core looked for, with the file absent, that no entry declares."""
+                       digest: str, index: int, entry: dict, local: Path, none_record: dict) -> None:
+        """Names the core looked for, with no BIOS, that no entry declares."""
         declared = {e["name"] for e in unit.profile.get("files") or ()}
         declared |= {a for e in unit.profile.get("files") or () for a in e.get("aliases") or ()}
         suffix = Path(entry["name"]).suffix.casefold()
         dest = entry_dest(entry)
         folder = dest.rsplit("/", 1)[0] if "/" in dest else ""
         probed: list[str] = []
-        for rep in rules.variant(record, absent_label)["repetitions"]:
+        for rep in none_record["variants"][0]["repetitions"]:
             for path in rep.get("files_probed_absent") or ():
                 name = path.rsplit("/", 1)[-1]
                 where = path.rsplit("/", 1)[0] if "/" in path else ""
@@ -1240,7 +1294,7 @@ class Campaign:
         for candidate in probed[:MAX_ALIAS_CANDIDATES]:
             found = self.follow_up(unit, core, content, load, frames, digest, entry, local, candidate,
                                    f"alias:{entry['name']}:{candidate.rsplit('/', 1)[-1]}")
-            if found and candidate in self.opened(found, 1):
+            if found and candidate in self.opened(found, 0):
                 verdict = rules.rule_alias(self.reload_entry(unit, index), rules.Opened(candidate, found["id"]))
                 if verdict:
                     self.settle(unit.emulator, content, core, index, self.reload_entry(unit, index), [verdict])
@@ -1249,7 +1303,7 @@ class Campaign:
                      digest: str, index: int, entry: dict, dest: str, primary: Path,
                      variants: list[Path]) -> None:
         key = self.check_key(core, content, f"variants:{entry['name']}")
-        if not should_run(self.state["checks"].get(unit.emulator, {}).get(key), core.sha256, digest):
+        if not self.needed(unit.emulator, key, core, digest):
             return
         stem = f"{core.name}-{slug(content.name)}"
         argv = self.probe_args("check", core, unit.emulator, slug(f"variants-{entry['name']}-{stem}"),
@@ -1257,16 +1311,14 @@ class Campaign:
         for path in [primary, *variants]:
             argv += ["--vary", f"{dest}={path}"]
         argv += ["--observable", "frame_hashes", "--repeat", str(self.settings.check_repeat),
-                 "--claim", f"the copies of {entry['name']} change what {core.name} shows on {content.name}",
-                 "--method", (f"Each copy the collection holds staged as {dest}, each run "
-                              f"{self.settings.check_repeat} times for {content.frames} frames, "
-                              f"compared on the sampled frame hashes.")]
-        result = self.probe(argv, f"{unit.emulator}-{stem}-variants")
-        self.remember(unit.emulator, key, result, core, digest)
-        if result.record:
-            status = result.record["check"]["result"]["status"]
-            verdict = rules.rule_variants(status, [v["label"] for v in result.record["variants"]],
-                                          entry, result.record["id"])
+                 "--claim", f"every copy of {entry['name']} boots {content.name} on {core.name}",
+                 "--method", (f"Each copy the collection holds staged alone as {dest}, each run "
+                              f"{self.settings.check_repeat} times for {content.frames} frames. The "
+                              f"boot oracle judges each copy.")]
+        record = self.check(unit.emulator, key, core, digest, argv, f"{unit.emulator}-{stem}-variants")
+        if record:
+            verdict = rules.rule_variants([rules.run_of(record, v["label"]) for v in record["variants"]],
+                                          entry)
             if verdict:
                 self.settle(unit.emulator, content, core, index, entry, [verdict])
 
@@ -1291,9 +1343,10 @@ class Campaign:
             agrees = verdict.field in rules.SETTLED_FIELDS and rules.agrees(fresh, verdict)
             if verdict.apply:
                 updates: dict[str, object] = {}
-                if not agrees or verdict.field not in fresh:
+                if not agrees or (verdict.field not in fresh and verdict.field != "validation"):
                     updates[verdict.field] = verdict.value
-                evidence = rules.merge_evidence(fresh.get("evidence"), verdict)
+                evidence = rules.merge_evidence(fresh.get("evidence"), verdict,
+                                                keep=lambda rid: self.judged(emulator, rid))
                 if evidence != fresh.get("evidence"):
                     updates["evidence"] = evidence
                 if updates:
@@ -1363,6 +1416,60 @@ class Campaign:
             if record:
                 return record["core"].get("library_version")
         return None
+
+    # -- reference frames -----------------------------------------------------------
+
+    def references(self, only: set[str], system: str | None, png_dir: Path) -> list[dict]:
+        """The full set run once per core and content, frames written as PNG,
+        and the screens that stay on long enough to serve as references."""
+        self.deadline = self.host.clock() + self.settings.budget
+        listed = []
+        for unit in self.units(only, system):
+            contents = self.unit_contents(unit, system)
+            if unit.pending or not contents:
+                continue
+            try:
+                cores = self.unit_cores(unit.emulator, unit.profile, unit.buildbot_only)
+            except Unavailable as exc:
+                self.log(f"{unit.emulator}: {exc}")
+                continue
+            for core in cores:
+                for content in contents:
+                    self.guard()
+                    self.store.hold(content, "references")
+                    try:
+                        load = load_file(self.store.get(content), content.load)
+                    except Unavailable as exc:
+                        self.log(f"{unit.emulator}: {exc}")
+                        continue
+                    stem = f"{core.name}-{slug(content.name)}"
+                    target = png_dir / slug(core.name) / slug(content.name)
+                    shutil.rmtree(target, ignore_errors=True)
+                    argv = self.probe_args("run", core, unit.emulator, slug(f"references-{stem}"),
+                                           content, load)
+                    argv += ["--frames", str(content.frames), "--frame-hash-every",
+                             str(content.frame_hash_every), "--repeat", str(self.settings.check_repeat),
+                             "--png-dir", str(target)]
+                    for index, entry in self.system_entries(unit.profile, content.system):
+                        local = self.local_file(entry)
+                        if local and f"{entry_dest(entry)}=" not in " ".join(argv):
+                            argv += ["--system-file", f"{entry_dest(entry)}={local}"]
+                    result = self.probe(argv, f"{unit.emulator}-{stem}-references")
+                    self.store.release(content, "references")
+                    if not result.record:
+                        self.log(f"{unit.emulator}: references of {content.name}: {result.reason}")
+                        continue
+                    record = result.record
+                    listed.append({
+                        "emulator": unit.emulator, "core": core.name,
+                        "library_name": record["core"]["library_name"], "content": content.name,
+                        "content_sha1": record["inputs"]["content"]["sha1"], "record": record["id"],
+                        "verdict": record["variants"][0]["verdict"],
+                        "png_dir": str(target / record["variants"][0]["label"]),
+                        "candidates": reference_candidates(record),
+                    })
+        save_state(self.paths.state, self.state)
+        return listed
 
     # -- the pass -----------------------------------------------------------------
 
@@ -1567,6 +1674,32 @@ class Campaign:
         return made
 
 
+def reference_candidates(record: dict, min_samples: int = 3) -> list[dict]:
+    """Screens of a record's first variant that are not one colour and stay
+    on for at least min_samples consecutive samples in every repetition:
+    what a reviewer looks at to choose reference frames."""
+    found: list[dict[str, tuple[int, int]]] = []
+    for rep in record["variants"][0]["repetitions"]:
+        observables = rep.get("observables") or {}
+        uniform = set(observables.get("uniform_frames") or ())
+        runs: dict[str, tuple[int, int]] = {}
+        previous, start, length = None, 0, 0
+        for frame, digest in [*(observables.get("frame_hashes") or ()), (None, None)]:
+            if digest == previous:
+                length += 1
+                continue
+            if previous and previous not in uniform and length >= min_samples:
+                first, longest = runs.get(previous, (start, 0))
+                runs[previous] = (min(first, start), max(longest, length))
+            previous, start, length = digest, frame, 1
+        found.append(runs)
+    common = set(found[0]) if found else set()
+    for runs in found[1:]:
+        common &= set(runs)
+    return sorted(({"sha1": digest, "first_frame": found[0][digest][0], "samples": found[0][digest][1]}
+                   for digest in common), key=lambda item: item["first_frame"])
+
+
 def reason_class(reason: str) -> str:
     """A pending reason without its detail, to count them."""
     head = reason.split(":", 1)[0].strip() if ":" in reason else reason
@@ -1661,9 +1794,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.split("\n\n")[0],
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
-    run_p = sub.add_parser("run", help="one pass: cores, content, checks, rules")
-    run_p.add_argument("--only", default="", help="emulator profiles or core names, comma-separated")
-    run_p.add_argument("--system", help="one system id")
+    scope = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
+    scope.add_argument("--only", default="", help="emulator profiles or core names, comma-separated")
+    scope.add_argument("--system", help="one system id")
+    scope.add_argument("--romfetch", default="",
+                       help=f"romfetch command (default: ${ROMFETCH_ENV}, else romfetch on PATH)")
+    scope.add_argument("--offline", action="store_true", help="no buildbot, no romfetch, no build")
+    scope.add_argument("--allow-unsandboxed", action="store_true",
+                       help="run cores and builds without bubblewrap when it is missing (refused by default)")
+    run_p = sub.add_parser("run", parents=[scope], help="one pass: cores, content, checks, rules")
     run_p.add_argument("--budget", type=parse_budget, default=6 * 3600.0,
                        help="stop starting checks after this long (6h, 90m, 3600s)")
     run_p.add_argument("--max-load-wait", type=float, default=3600,
@@ -1671,34 +1810,28 @@ def main(argv: Sequence[str] | None = None) -> int:
     run_p.add_argument("--min-free-gb", type=float, default=30, help="pause below this free space")
     run_p.add_argument("--cache-cap-gb", type=float, default=20,
                        help="content the campaign fetched is evicted past this size, oldest use first")
-    run_p.add_argument("--romfetch", default="",
-                       help=f"romfetch command (default: ${ROMFETCH_ENV}, else romfetch on PATH)")
-    run_p.add_argument("--offline", action="store_true", help="no buildbot, no romfetch, no build")
-    run_p.add_argument("--allow-unsandboxed", action="store_true",
-                       help="run cores and builds without bubblewrap when it is missing (refused by default)")
+    run_p.add_argument("--bench", action="store_true",
+                       help="also time each content that boots (benchmarks only choose between variants)")
     run_p.add_argument("--dry-run", action="store_true", help="print the plan, run nothing")
     run_p.add_argument("--commit", action="store_true",
                        help="commit records, findings and each changed profile behind the gate")
     run_p.add_argument("--commit-every", type=int, default=0, metavar="N",
                        help="with --commit, also commit after every N emulators")
+    refs_p = sub.add_parser("references", parents=[scope],
+                            help="run the full set with PNG frames and list reference candidates")
+    refs_p.add_argument("--png-dir", default=str(ROOT / "tmp" / "campaign" / "references"),
+                        help="where the frames are written, one folder per core and content")
     status_p = sub.add_parser("status", help="done, failed and pending checks, and why")
     status_p.add_argument("--json", action="store_true", help="the report as JSON")
     findings_p = sub.add_parser("findings", help="profile claims the runs contradict, open for review")
     findings_p.add_argument("--all", action="store_true", help="applied and resolved too")
     findings_p.add_argument("--json", action="store_true", help="the findings as JSON")
     sub.add_parser("gate", help="tests, schemas, verify and pack of the changed profiles")
-    timer_p = sub.add_parser("install-timer",
-                             help="write the autorun units, the campaign job's timer among them")
-    timer_p.add_argument("--enable", action="store_true",
-                         help="also reload systemd and enable the timers")
     args = parser.parse_args(argv)
 
     paths = Paths.default()
     if args.command == "gate":
         return gate(paths.root, changed_profiles(paths.root))
-    if args.command == "install-timer":
-        command = [sys.executable, str(ROOT / "scripts" / "autorun.py"), "install-timers"]
-        return subprocess.run(command + (["--enable"] if args.enable else []), check=False).returncode
     if args.command == "findings":
         lines = open_findings(paths.root, args.all)
         if args.json:
@@ -1713,6 +1846,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         settings = Settings(budget=args.budget, max_load_wait=args.max_load_wait,
                             min_free_gb=args.min_free_gb, cache_cap_gb=args.cache_cap_gb,
                             romfetch=args.romfetch, network=not args.offline,
+                            allow_unsandboxed=args.allow_unsandboxed, bench=args.bench)
+    elif args.command == "references":
+        settings = Settings(romfetch=args.romfetch, network=not args.offline,
                             allow_unsandboxed=args.allow_unsandboxed)
     campaign = Campaign(paths, settings)
     if args.command == "status":
@@ -1720,13 +1856,22 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps(report, indent=2) if args.json else render_status(report))
         return 0
     only = {item.strip() for item in args.only.split(",") if item.strip()}
+    if args.command == "references":
+        try:
+            with host_lock(campaign.lock_path):
+                listed = campaign.references(only, args.system, Path(args.png_dir))
+        except autorun.LockBusy as exc:
+            print(f"campaign: deferred, {exc}", file=sys.stderr)
+            return 75
+        print(json.dumps(listed, indent=2))
+        return 0
     if args.dry_run:
         campaign.run(only, args.system, dry_run=True)
         return 0
     campaign.dirty_at_start = set(autorun.changed_files(paths.root)) if args.commit else set()
 
     def stop(signum: int, frame: object) -> None:
-        # A timer's TimeoutStartSec ends the pass like Ctrl-C: state saved, pass line written.
+        # SIGTERM ends the pass like Ctrl-C: state saved, pass line written.
         raise KeyboardInterrupt
     signal.signal(signal.SIGTERM, stop)
     try:

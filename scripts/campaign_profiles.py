@@ -23,6 +23,7 @@ ANCHORS = {
     "hle_fallback": ("required", "name"),
     "path": ("name",),
     "aliases": ("path", "name"),
+    "validation": ("sha1", "md5", "crc32", "size", "name"),
 }
 
 

@@ -16,6 +16,7 @@ import io
 import json
 import os
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -92,15 +93,20 @@ void retro_init(void) {}
 void retro_deinit(void) {}
 static FILE *try_open(const char *dir, const char *name) {
   char path[4096]; snprintf(path, sizeof path, "%s/%s", dir, name); return fopen(path, "rb"); }
+/* booted: 0 a black screen to the end, 1 the BIOS logo then the title,
+   2 the title alone (the built-in stand-in of FAKE_HLE). */
 bool retro_load_game(const void *g) {
-  const char *dir = NULL; FILE *f; (void)g; env(9, &dir);
+  const char *dir = NULL; FILE *f; unsigned char buf[8]; size_t n = 0; (void)g; env(9, &dir);
   f = try_open(dir, "bios.bin");
   if (!f) f = try_open(dir, "BIOS.BIN");
+  if (f) { n = fread(buf, 1, sizeof buf, f); fclose(f); }
+  int valid = f && n == 4 && buf[0] == 'B';
 #ifdef FAKE_HLE
-  if (f) fclose(f);
-  booted = 1;
+  /* Checks the size only: a file of the wrong size is refused for the
+     stand-in, one of the right size is run, whatever it holds. */
+  booted = valid ? 1 : (f && n == 4) ? 0 : 2;
 #else
-  if (f) { fclose(f); booted = 1; } else booted = 0;
+  booted = valid ? 1 : 0;
 #endif
   return true; }
 void retro_unload_game(void) {}
@@ -109,7 +115,8 @@ void retro_run(void) {
 #ifdef FAKE_HANG
   for (;;) {}
 #endif
-  for (int i = 0; i < 8; i++) pixels[i] = booted ? (uint16_t)(frame / 2 + i) : 0;
+  int shown = frame < 4 ? 0 : booted == 1 && frame < 8 ? 1 : booted ? 2 : 0;
+  for (int i = 0; i < 8; i++) pixels[i] = shown == 0 ? 0 : (uint16_t)((shown == 1 ? 1 : 20) + i);
   frame++;
   video(pixels, 4, 2, 8); batch(s, 2); }
 size_t retro_serialize_size(void) { return 0; }
@@ -117,78 +124,94 @@ bool retro_serialize(void *d, size_t n) { (void)d; (void)n; return false; }
 """
 
 
-def rep(frames: list[str], uniform: list[str] | None = None, loaded: bool = True) -> dict:
-    return {"loaded": loaded, "observables": {
-        "frame_hashes": [[i * 10, h] for i, h in enumerate(frames)],
-        "uniform_frames": sorted(set(uniform or []))}}
+def run(verdict: str, label: str = "v", stages: tuple[str, ...] = (),
+        rid: str = "2026-10-27-aaaaaaaaaaaa") -> rules.Run:
+    return rules.Run(verdict, rid, label, stages)
 
 
-def boot_record(absent: list[dict], present: list[dict], rid: str = "2026-10-27-aaaaaaaaaaaa") -> dict:
-    return {"id": rid, "variants": [{"label": "bios.bin-absent", "repetitions": absent},
-                                    {"label": "bios.bin", "repetitions": present}]}
-
-
-class BootOutcome(unittest.TestCase):
-    GAME = ("black", "logo", "title", "title2")
-
-    def test_boots_when_screens_are_shared(self) -> None:
-        record = boot_record([rep(["black", "hle", "logo", "title"], ["black"])] * 2,
-                             [rep(self.GAME, ["black"])] * 2)
-        boot = rules.boot_outcome(record, "bios.bin-absent", "bios.bin")
-        self.assertEqual((boot.status, boot.shared), (rules.BOOTS, 2))
-
-    def test_one_colour_and_no_load_fail(self) -> None:
-        black = boot_record([rep(["black"], ["black"]), rep([], [], loaded=False)],
-                            [rep(self.GAME, ["black"])])
-        self.assertEqual(rules.boot_outcome(black, "bios.bin-absent", "bios.bin").status, rules.FAILS)
-
-    def test_a_shared_blank_screen_proves_nothing(self) -> None:
-        # The black frame both runs start on is one colour: it is no game screen.
-        record = boot_record([rep(["black", "error"], ["black"])], [rep(self.GAME, ["black"])])
-        self.assertEqual(rules.boot_outcome(record, "bios.bin-absent", "bios.bin").status,
-                         rules.INCONCLUSIVE)
-
-    def test_one_shared_screen_is_not_enough(self) -> None:
-        record = boot_record([rep(["logo", "error"])], [rep(self.GAME, ["black"])])
-        self.assertEqual(rules.boot_outcome(record, "bios.bin-absent", "bios.bin").status,
-                         rules.INCONCLUSIVE)
-
-    def test_repetitions_that_disagree_settle_nothing(self) -> None:
-        record = boot_record([rep(["logo", "title"]), rep(["black"], ["black"])],
-                             [rep(self.GAME, ["black"])])
-        self.assertEqual(rules.boot_outcome(record, "bios.bin-absent", "bios.bin").status,
-                         rules.INCONCLUSIVE)
-
-    def test_a_reference_that_shows_nothing_settles_nothing(self) -> None:
-        record = boot_record([rep(["logo", "title"])], [rep(["black"], ["black"])])
-        self.assertEqual(rules.boot_outcome(record, "bios.bin-absent", "bios.bin").status,
-                         rules.INCONCLUSIVE)
-        record = boot_record([rep(["logo", "title"])], [rep(self.GAME, loaded=False)])
-        self.assertEqual(rules.boot_outcome(record, "bios.bin-absent", "bios.bin").status,
-                         rules.INCONCLUSIVE)
+NONE_BOOTS = run(rules.BOOTS, "none", ("game",), "2026-10-27-000000000001")
+NONE_HANGS = run(rules.HANG, "none", (), "2026-10-27-000000000001")
+PRESENT = run(rules.BOOTS, "bios.bin", ("bios", "game"), "2026-10-27-000000000002")
 
 
 class RuleTable(unittest.TestCase):
     ENTRY = MappingProxyType({"name": "bios.bin", "required": True, "aliases": ["Bios.bin"]})
     RID = "2026-10-27-bbbbbbbbbbbb"
 
-    def test_boots_without_settles_hle_and_queues_required(self) -> None:
-        verdicts = rules.rule_bios_need(rules.Boot(rules.BOOTS, "x", 3), self.ENTRY, self.RID)
+    def test_a_verdict_is_read_from_the_record(self) -> None:
+        record = {"id": self.RID, "variants": [
+            {"label": "a", "verdict": "boots", "verdict_evidence": {"rule": "repetitions_agree",
+                                                                    "detail": "d", "stages": ["bios"]}},
+            {"label": "old"}]}
+        self.assertEqual(rules.run_of(record, "a"), rules.Run("boots", self.RID, "a", ("bios",)))
+        # A record from before the oracle proves nothing.
+        self.assertEqual(rules.run_of(record, "old").verdict, rules.UNKNOWN)
+
+    def test_boots_with_no_bios_settles_hle_and_queues_required(self) -> None:
+        verdicts = rules.rule_need(NONE_BOOTS, PRESENT, self.ENTRY)
         self.assertEqual([(v.field, v.value, v.apply) for v in verdicts],
                          [("hle_fallback", True, True), ("required", False, False)])
-        self.assertEqual(verdicts[0].evidence, (self.RID,))
-        optional = rules.rule_bios_need(rules.Boot(rules.BOOTS, "x", 3),
-                                        {"name": "a", "required": False}, self.RID)
+        self.assertEqual(verdicts[0].evidence, (NONE_BOOTS.record_id,))
+        optional = rules.rule_need(NONE_BOOTS, PRESENT, {"name": "a", "required": False})
         self.assertEqual([v.field for v in optional], ["hle_fallback"])
 
-    def test_fails_without_settles_required_and_no_hle(self) -> None:
-        verdicts = rules.rule_bios_need(rules.Boot(rules.FAILS, "x"), self.ENTRY, self.RID)
-        self.assertEqual([(v.field, v.value, v.apply) for v in verdicts],
-                         [("required", True, True), ("hle_fallback", False, True)])
+    def test_fails_without_and_boots_alone_settles_required(self) -> None:
+        for failure in rules.FAILS:
+            verdicts = rules.rule_need(run(failure, "none"), PRESENT, self.ENTRY)
+            self.assertEqual([(v.field, v.value, v.apply) for v in verdicts],
+                             [("required", True, True), ("hle_fallback", False, True)])
 
-    def test_inconclusive_is_queued(self) -> None:
-        (verdict,) = rules.rule_bios_need(rules.Boot(rules.INCONCLUSIVE, "x"), self.ENTRY, self.RID)
-        self.assertFalse(verdict.apply)
+    def test_unknown_or_no_boot_alone_settles_nothing(self) -> None:
+        for none, present in ((run(rules.UNKNOWN), PRESENT), (NONE_HANGS, run(rules.HANG)),
+                              (NONE_HANGS, run(rules.UNKNOWN))):
+            (verdict,) = rules.rule_need(none, present, self.ENTRY)
+            self.assertFalse(verdict.apply)
+            self.assertEqual(verdict.rule, "unsettled")
+
+    def test_file_use(self) -> None:
+        self.assertEqual(rules.file_use(run(rules.BIOS_ERROR), NONE_HANGS, PRESENT), rules.REFUSED)
+        # It boots without the BIOS screens the right file shows: a fallback.
+        self.assertEqual(rules.file_use(run(rules.BOOTS, stages=("game",)), NONE_BOOTS, PRESENT),
+                         rules.REFUSED)
+        self.assertEqual(rules.file_use(run(rules.BOOTS, stages=("bios", "game")), NONE_BOOTS, PRESENT),
+                         rules.USED)
+        self.assertEqual(rules.file_use(run(rules.HANG), NONE_BOOTS, PRESENT), rules.USED)
+        self.assertEqual(rules.file_use(run(rules.CRASH), NONE_BOOTS, PRESENT), rules.USED)
+        # A hang the run with no file shows too says nothing about the file.
+        self.assertIsNone(rules.file_use(run(rules.HANG), NONE_HANGS, PRESENT))
+        self.assertIsNone(rules.file_use(run(rules.UNKNOWN), NONE_BOOTS, PRESENT))
+        self.assertIsNone(rules.file_use(run(rules.BIOS_ERROR), NONE_BOOTS, run(rules.HANG)))
+        no_logo = run(rules.BOOTS, stages=("game",))
+        self.assertIsNone(rules.file_use(run(rules.BOOTS, stages=("game",)), NONE_BOOTS, no_logo))
+
+    def test_validation_agrees_or_adds_size(self) -> None:
+        refused = run(rules.BOOTS, stages=("game",))
+        used = run(rules.HANG)
+        entry = {"name": "bios.bin", "validation": ["size", "md5"]}
+        verdict = rules.rule_validation(refused, refused, NONE_BOOTS, PRESENT, entry)
+        self.assertEqual((verdict.rule, verdict.apply), ("validation_agrees", True))
+        self.assertTrue(rules.agrees(entry, verdict))
+        added = rules.rule_validation(used, refused, NONE_BOOTS, PRESENT, {"name": "bios.bin"})
+        self.assertEqual((added.rule, added.value, added.apply), ("validation_size_added", ["size"], True))
+        self.assertFalse(rules.agrees({"name": "bios.bin"}, added))
+        self.assertEqual(rules.rule_validation(used, used, NONE_BOOTS, PRESENT, {"name": "b"}).rule,
+                         "validation_agrees")
+
+    def test_validation_contradicted_is_queued(self) -> None:
+        refused = run(rules.BIOS_ERROR)
+        used = run(rules.HANG)
+        cases = [
+            (refused, None, {"name": "b", "validation": ["size"]}),        # content check undeclared
+            (used, None, {"name": "b", "validation": ["md5"]}),            # declared, not done
+            (None, used, {"name": "b", "validation": ["size"]}),           # half of it runs
+            (used, refused, {"name": "b", "validation": {"core": ["md5"]}}),  # per-build form
+        ]
+        for zeros, half, entry in cases:
+            verdict = rules.rule_validation(zeros, half, NONE_BOOTS, PRESENT, entry)
+            self.assertEqual((verdict.rule, verdict.apply), ("validation_contradicted", False), entry)
+            self.assertFalse(rules.agrees(entry, verdict))
+        self.assertIsNone(rules.rule_validation(run(rules.UNKNOWN), None, NONE_BOOTS, PRESENT,
+                                                {"name": "b"}))
 
     def test_path_and_alias(self) -> None:
         self.assertIsNone(rules.rule_path(self.ENTRY, "bios.bin", rules.Opened("bios.bin", self.RID)))
@@ -204,8 +227,9 @@ class RuleTable(unittest.TestCase):
         self.assertEqual(verdict.rule, "never_opened")
 
     def test_variants(self) -> None:
-        self.assertIsNone(rules.rule_variants("same", ["a", "b"], self.ENTRY, self.RID))
-        self.assertFalse(rules.rule_variants("differs", ["b", "a"], self.ENTRY, self.RID).apply)
+        self.assertIsNone(rules.rule_variants([run(rules.BOOTS, "a"), run(rules.BOOTS, "b")], self.ENTRY))
+        verdict = rules.rule_variants([run(rules.BOOTS, "b"), run(rules.HANG, "a")], self.ENTRY)
+        self.assertEqual((verdict.value, verdict.apply), (["a", "b"], False))
 
     def test_agreement_and_evidence(self) -> None:
         self.assertTrue(rules.agrees({"name": "a"}, rules.Verdict("r", "hle_fallback", False, "", ())))
@@ -213,6 +237,22 @@ class RuleTable(unittest.TestCase):
         self.assertTrue(rules.agrees(self.ENTRY, rules.Verdict("r", "aliases", ["Bios.bin"], "", ())))
         merged = rules.merge_evidence({"required": ["x"]}, rules.Verdict("r", "required", True, "", ("y", "x")))
         self.assertEqual(merged, {"required": ["x", "y"]})
+        # An id a frame comparison wrote no longer proves the field.
+        merged = rules.merge_evidence({"required": ["old"], "path": ["p"]},
+                                      rules.Verdict("r", "required", True, "", ("new",)),
+                                      keep=lambda rid: rid != "old")
+        self.assertEqual(merged, {"path": ["p"], "required": ["new"]})
+
+    def test_reference_candidates(self) -> None:
+        def rep(hashes: list[str]) -> dict:
+            return {"observables": {"frame_hashes": [[i * 10, h] for i, h in enumerate(hashes)],
+                                    "uniform_frames": ["black"]}}
+        record = {"variants": [{"repetitions": [
+            rep(["black"] * 4 + ["logo"] * 3 + ["flash"] + ["title"] * 5),
+            rep(["black"] * 5 + ["logo"] * 3 + ["title"] * 3)]}]}
+        self.assertEqual(campaign.reference_candidates(record),
+                         [{"sha1": "logo", "first_frame": 40, "samples": 3},
+                          {"sha1": "title", "first_frame": 80, "samples": 5}])
 
 
 class ProfileEditor(unittest.TestCase):
@@ -286,6 +326,11 @@ class FakeHost(campaign.Host):
         return result
 
 
+def screen(base: int) -> str:
+    """The sha1 of a frame of FAKE_CORE: eight 16-bit pixels from base up."""
+    return hashlib.sha1(struct.pack("<8H", *range(base, base + 8))).hexdigest()
+
+
 class Workspace(unittest.TestCase):
     def setUp(self) -> None:
         TMP.mkdir(parents=True, exist_ok=True)
@@ -309,9 +354,17 @@ class Workspace(unittest.TestCase):
                 "name": "Fake Game (World)", "catalog": "no-intro", "reason": "a test",
                 "frames": 12, "frame_hash_every": 2}]}}}), encoding="utf-8")
         self.game = self.tmp / "content" / "fakesys" / "Fake Game (World)"
+        self.oracle = self.tmp / "oracle.yml"
+        self.oracle.write_text(yaml.safe_dump({
+            "error_patterns": [], "cores": {}, "content": [{
+                "name": "Fake Game (World)", "sha1": hashlib.sha1(b"GAME").hexdigest(),
+                "references": {"Fake": {"recorded_from": "2026-10-27-000000000000", "frames": [
+                    {"sha1": screen(1), "stage": "bios", "shows": "the fake logo"},
+                    {"sha1": screen(20), "stage": "game", "shows": "the fake title"}]}}}]}),
+            encoding="utf-8")
         self.paths = campaign.Paths(root=self.root, home=self.tmp / "home",
                                     content=self.tmp / "content", db=self.root / "database.json",
-                                    content_file=self.content_file)
+                                    content_file=self.content_file, oracle=self.oracle)
 
     def tearDown(self) -> None:
         shutil.rmtree(self.tmp, ignore_errors=True)
@@ -333,8 +386,12 @@ class Workspace(unittest.TestCase):
 class StateAndResume(Workspace):
     def test_should_run(self) -> None:
         self.assertTrue(campaign.should_run(None, "a", "d"))
-        done = {"status": "done", "core_sha256": "a", "profile_digest": "d"}
+        done = {"status": "done", "core_sha256": "a", "profile_digest": "d",
+                "record_version": mr.RECORD_VERSION, "oracle_sha256": ""}
         self.assertFalse(campaign.should_run(done, "a", "d"))
+        # A record from before the verdicts, or judged against another oracle, runs again.
+        self.assertTrue(campaign.should_run({**done, "record_version": 3}, "a", "d"))
+        self.assertTrue(campaign.should_run(done, "a", "d", "f" * 64))
         self.assertTrue(campaign.should_run(done, "b", "d"))
         self.assertTrue(campaign.should_run(done, "a", "e"))
         self.assertTrue(campaign.should_run({**done, "status": "pending"}, "a", "d"))
@@ -752,8 +809,14 @@ class Findings(Workspace):
     def entry(self, index: int = 0) -> dict:
         return yaml.safe_load(self.profile.read_text())["files"][index]
 
+    def none(self, verdict: str) -> rules.Run:
+        return rules.Run(verdict, self.RID, "none")
+
+    def present(self) -> rules.Run:
+        return rules.Run(rules.BOOTS, self.RID, "bios.bin", ("game",))
+
     def test_a_settled_field_is_written_with_its_evidence(self) -> None:
-        verdicts = rules.rule_bios_need(rules.Boot(rules.BOOTS, "shown", 4), self.entry(), self.RID)
+        verdicts = rules.rule_need(self.none(rules.BOOTS), self.present(), self.entry())
         self.c.settle("fake", self.content, self.core, 0, self.entry(), verdicts)
         entry = self.entry()
         self.assertEqual(entry["hle_fallback"], True)
@@ -767,7 +830,7 @@ class Findings(Workspace):
         self.assertEqual(len(self.lines()), 2)
 
     def test_an_agreeing_run_adds_evidence_only(self) -> None:
-        verdicts = rules.rule_bios_need(rules.Boot(rules.FAILS, "nothing"), self.entry(), self.RID)
+        verdicts = rules.rule_need(self.none(rules.HANG), self.present(), self.entry())
         self.c.settle("fake", self.content, self.core, 0, self.entry(), verdicts)
         entry = self.entry()
         self.assertEqual((entry["required"], entry["hle_fallback"]), (True, False))
@@ -775,7 +838,7 @@ class Findings(Workspace):
         self.assertEqual(self.lines(), [])
 
     def test_a_later_agreement_resolves_the_open_finding(self) -> None:
-        (verdict,) = rules.rule_bios_need(rules.Boot(rules.INCONCLUSIVE, "?"), self.entry(), self.RID)
+        (verdict,) = rules.rule_need(self.none(rules.UNKNOWN), self.present(), self.entry())
         self.c.settle("fake", self.content, self.core, 0, self.entry(), [verdict])
         self.assertEqual(self.lines()[-1]["status"], "open")
         later = rules.Verdict("inconclusive", "hle_fallback", False, "agrees now", ("2026-10-28-000000000000",))
@@ -789,7 +852,7 @@ class Findings(Workspace):
         self.assertNotIn("evidence", self.entry(1))
 
     def test_finding_lines_validate(self) -> None:
-        verdicts = rules.rule_bios_need(rules.Boot(rules.BOOTS, "shown", 4), self.entry(), self.RID)
+        verdicts = rules.rule_need(self.none(rules.BOOTS), self.present(), self.entry())
         self.c.settle("fake", self.content, self.core, 0, self.entry(), verdicts)
         self.c.write_run_line(self.c.current)
         try:
@@ -802,7 +865,7 @@ class Findings(Workspace):
                 self.assertEqual(list(Draft202012Validator(schema).iter_errors(line)), [], name)
 
     def test_the_batch_commit_plan(self) -> None:
-        verdicts = rules.rule_bios_need(rules.Boot(rules.BOOTS, "shown", 4), self.entry(), self.RID)
+        verdicts = rules.rule_need(self.none(rules.BOOTS), self.present(), self.entry())
         self.c.settle("fake", self.content, self.core, 0, self.entry(), verdicts)
         self.c.current.touched.add(mr.records_path("fake"))
         plan = self.c.plan_commits(set())
@@ -937,12 +1000,19 @@ class FakeCorePasses(Workspace):
         isolations = {rep["isolation"] for r in records for v in r["variants"] for rep in v["repetitions"]}
         self.assertEqual(isolations, {campaign.core_probe.SANDBOX})
         kinds = sorted(r["subject"].split("-")[0] for r in records)
-        self.assertEqual(kinds, ["alias", "bench", "boot", "files"])
-        boot = next(r for r in records if r["subject"].startswith("boot"))
-        alias = next(r for r in records if r["subject"].startswith("alias"))
+        self.assertEqual(kinds, ["alias", "files", "negative", "none"])
+        by_kind = {r["subject"].split("-")[0]: r for r in records}
+        self.assertEqual(by_kind["files"]["variants"][0]["verdict"], "boots")
+        self.assertEqual(by_kind["none"]["variants"][0]["verdict_evidence"]["stages"], ["game"])
+        self.assertEqual(by_kind["negative"]["check"]["result"]["verdicts"],
+                         {"bios.bin": "boots", "bios.bin-zeros-4": "hang",
+                          "bios.bin-head-2-of-bios.bin": "boots"})
         entry = yaml.safe_load((self.root / "emulators" / "fake.yml").read_text())["files"][0]
         self.assertEqual(entry["hle_fallback"], True)
-        self.assertEqual(entry["evidence"], {"aliases": [alias["id"]], "hle_fallback": [boot["id"]]})
+        self.assertEqual(entry["validation"], ["size"])
+        self.assertEqual(entry["evidence"], {
+            "aliases": [by_kind["alias"]["id"]], "hle_fallback": [by_kind["none"]["id"]],
+            "validation": [by_kind["none"]["id"], by_kind["negative"]["id"]]})
         statuses = {(f["field"], f["status"]) for f in mr.read_campaign(self.root, mr.FINDINGS)}
         self.assertEqual(statuses, {("hle_fallback", "applied"), ("required", "open"),
                                     ("aliases", "applied")})
@@ -961,8 +1031,22 @@ class FakeCorePasses(Workspace):
         with rebuilt.open("ab") as handle:
             handle.write(b"\0")
         third = self.passing("hle", core=rebuilt)
-        # BIOS.BIN is declared now, so no alias run follows the boot test.
+        # BIOS.BIN is declared now, so no alias run follows.
         self.assertEqual(len(third.run(set(), None).records), 3)
+
+    def test_a_size_check_the_profile_lacks_is_written(self) -> None:
+        profile = self.root / "emulators" / "fake.yml"
+        profile.write_text(PROFILE.replace("    validation: [size]\n", ""), encoding="utf-8")
+        self.passing("hle").run(set(), None)
+        entry = yaml.safe_load(profile.read_text())["files"][0]
+        self.assertEqual(entry["validation"], ["size"])
+        applied = {f["field"] for f in mr.read_campaign(self.root, mr.FINDINGS) if f["status"] == "applied"}
+        self.assertIn("validation", applied)
+
+    def test_bench_runs_only_when_asked(self) -> None:
+        self.passing("plain", bench=True).run(set(), None)
+        subjects = [s.record["subject"] for s in mr.read_records(self.root)]
+        self.assertEqual(sum(s.startswith("bench") for s in subjects), 1)
 
     def test_no_stand_in_settles_required_and_finds_an_alias(self) -> None:
         c = self.passing()
@@ -982,9 +1066,13 @@ class FakeCorePasses(Workspace):
         self.assertEqual(left.stdout, b"")
         checks = c.state["checks"]["fake"]
         self.assertTrue(checks)
-        self.assertEqual({entry["status"] for entry in checks.values()}, {"failed"})
-        self.assertEqual({entry["reason"] for entry in checks.values()}, {"timeout"})
-        self.assertEqual(mr.read_records(self.root), [])
+        # A run killed after its timeout is a record whose verdict is a hang.
+        self.assertEqual({entry["status"] for entry in checks.values()}, {"done"})
+        records = [s.record for s in mr.read_records(self.root)]
+        self.assertTrue(records)
+        self.assertEqual({v["verdict"] for r in records for v in r["variants"]}, {"hang"})
+        self.assertEqual({rep["verdict_evidence"]["rule"] for r in records for v in r["variants"]
+                          for rep in v["repetitions"]}, {"timeout"})
 
     def test_missing_content_leaves_the_checks_pending(self) -> None:
         c = self.passing(romfetch=str(self.tmp / "no-romfetch"))

@@ -1,0 +1,26 @@
+# The boot oracle of scripts/core_probe.py: what a run must reach to boot,
+# and what tells a BIOS error apart.
+#
+# content       per piece of test content (by the sha1 of the file handed to
+#               the core, the .cue for a disc), per core (by the library name
+#               retro_get_system_info gives): the reference frames a run with
+#               the full BIOS set reaches. Each was recorded once
+#               (`recorded_from`, the record id) and reviewed by looking at its
+#               PNG. `stage: bios` is a screen only the console's own BIOS
+#               draws, `stage: game` a screen of the content. A run that reaches
+#               one of them boots.
+# error_patterns  log lines after which a core stops, read from its source
+#               (`source_ref`). Shared ones at the top level, a core's own under
+#               cores:. A line a core logs and then carries on (a fallback to a
+#               built-in BIOS) is not an error pattern.
+# error_screens per core, the sha1 of a frame that shows its BIOS error message.
+#
+# A run that reaches no reference frame, matches no pattern or screen and
+# does not end on one colour is `unknown`: frames that differ from another
+# run's never make a boot.
+
+error_patterns: []
+
+cores: {}
+
+content: []
