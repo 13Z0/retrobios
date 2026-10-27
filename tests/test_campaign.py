@@ -240,6 +240,11 @@ class RuleTable(unittest.TestCase):
         verdict = rules.rule_variants([run(rules.BOOTS, "b"), run(rules.HANG, "a")], self.ENTRY)
         self.assertEqual((verdict.value, verdict.apply), (["a", "b"], False))
 
+    def test_every_settled_field_can_carry_evidence(self) -> None:
+        schema = json.loads((REPO_ROOT / "schemas" / "emulator.schema.json").read_text())
+        evidence = schema["properties"]["files"]["items"]["properties"]["evidence"]["properties"]
+        self.assertEqual(set(rules.SETTLED_FIELDS), set(evidence))
+
     def test_agreement_and_evidence(self) -> None:
         self.assertTrue(rules.agrees({"name": "a"}, rules.Verdict("r", "hle_fallback", False, "", ())))
         self.assertFalse(rules.agrees({"name": "a"}, rules.Verdict("r", "hle_fallback", True, "", ())))
