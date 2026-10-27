@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://abdess.github.io/retrobios/api/v1/schemas/core-probe-record.schema.json",
+  "title": "RetroBIOS core probe record",
+  "description": "One run of scripts/core_probe.py: a libretro core executed headless, with what is needed to reproduce it and what was measured.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["record_version", "kind", "recorded_at", "core", "frontend", "host", "inputs", "variants", "flags"],
+  "properties": {
+    "record_version": { "const": 1 },
+    "kind": { "enum": ["run", "bench", "check"] },
+    "recorded_at": { "type": "string", "format": "date-time" },
+    "core": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "sha256", "repo", "commit", "build_command", "compiler", "library_name", "library_version"],
+      "properties": {
+        "file": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "repo": { "type": ["string", "null"], "format": "uri" },
+        "commit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{7,40}$" },
+        "build_command": { "type": ["string", "null"] },
+        "compiler": { "type": ["array", "null"], "items": { "type": "string" } },
+        "library_name": { "type": ["string", "null"] },
+        "library_version": { "type": ["string", "null"] }
+      }
+    },
+    "frontend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["script", "commit", "script_modified", "script_sha256"],
+      "properties": {
+        "script": { "const": "scripts/core_probe.py" },
+        "commit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{40}$" },
+        "script_modified": { "type": ["boolean", "null"] },
+        "script_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cpu_model", "cpu_count", "os", "kernel", "machine", "python", "load_before", "load_after", "max_load"],
+      "properties": {
+        "cpu_model": { "type": ["string", "null"] },
+        "cpu_count": { "type": ["integer", "null"], "minimum": 1 },
+        "os": { "type": "string" },
+        "kernel": { "type": "string" },
+        "machine": { "type": "string" },
+        "python": { "type": "string" },
+        "load_before": { "$ref": "#/$defs/load" },
+        "load_after": { "$ref": "#/$defs/load" },
+        "max_load": { "type": "number", "minimum": 0 }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content", "options", "env", "frames", "warmup", "repetitions", "presses", "observables", "frame_hash_every", "joypad_ports"],
+      "properties": {
+        "content": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "sha1", "size", "tracks"],
+              "properties": {
+                "label": { "type": ["string", "null"] },
+                "sha1": { "$ref": "#/$defs/sha1" },
+                "size": { "type": "integer", "minimum": 0 },
+                "tracks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["file", "sha1", "size"],
+                    "properties": {
+                      "file": { "type": "string" },
+                      "sha1": { "$ref": "#/$defs/sha1" },
+                      "size": { "type": "integer", "minimum": 0 }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "options": { "type": "object", "additionalProperties": { "type": "string" } },
+        "env": { "type": "object", "additionalProperties": { "type": "string" } },
+        "joypad_ports": { "type": "integer", "minimum": 0 },
+        "frames": { "type": "integer", "minimum": 1 },
+        "warmup": { "type": "integer", "minimum": 0 },
+        "repetitions": { "type": "integer", "minimum": 1 },
+        "presses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["frame", "button", "length"],
+            "properties": {
+              "frame": { "type": "integer", "minimum": 0 },
+              "button": { "type": "integer", "minimum": 0, "maximum": 15 },
+              "length": { "type": "integer", "minimum": 1 }
+            }
+          }
+        },
+        "observables": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "frame_hash_every": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "variants": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "system_files", "repetitions", "flags"],
+        "properties": {
+          "label": { "type": "string", "minLength": 1 },
+          "system_files": {
+            "type": "object",
+            "additionalProperties": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha1" }] }
+          },
+          "repetitions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/repetition" } },
+          "flags": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "flags": { "type": "array", "items": { "type": "string" } },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ms_per_frame", "fps"],
+      "properties": {
+        "ms_per_frame": { "$ref": "#/$defs/stats" },
+        "fps": { "$ref": "#/$defs/stats" }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim", "method", "observable", "variable", "result"],
+      "properties": {
+        "claim": { "type": "string", "minLength": 1 },
+        "method": { "type": "string", "minLength": 1 },
+        "observable": { "type": "string", "minLength": 1 },
+        "variable": { "type": "string", "minLength": 1 },
+        "result": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "statement", "groups"],
+          "properties": {
+            "status": { "enum": ["same", "differs", "inconclusive"] },
+            "statement": { "type": "string", "minLength": 1 },
+            "groups": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["value", "variants"],
+                "properties": {
+                  "value": {},
+                  "variants": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    { "if": { "properties": { "kind": { "const": "bench" } } }, "then": { "required": ["timing"], "properties": { "inputs": { "properties": { "repetitions": { "minimum": 5 } } } } } },
+    { "if": { "properties": { "kind": { "const": "check" } } }, "then": { "required": ["check"] } }
+  ],
+  "$defs": {
+    "sha1": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "load": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number", "minimum": 0 } }
+      ]
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["median", "mean", "stdev", "min", "max", "raw"],
+      "properties": {
+        "median": { "type": "number" },
+        "mean": { "type": "number" },
+        "stdev": { "type": "number", "minimum": 0 },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "raw": { "type": "array", "minItems": 1, "items": { "type": "number" } }
+      }
+    },
+    "repetition": {
+      "type": "object",
+      "required": ["loaded", "library_name", "logs"],
+      "properties": {
+        "loaded": { "type": "boolean" },
+        "library_name": { "type": "string" },
+        "library_version": { "type": "string" },
+        "fps_nominal": { "type": "number" },
+        "frames": { "type": "integer", "minimum": 1 },
+        "warmup": { "type": "integer", "minimum": 0 },
+        "wall_s": { "type": "number", "minimum": 0 },
+        "ms_per_frame": { "type": "number", "minimum": 0 },
+        "fps": { "type": "number", "minimum": 0 },
+        "observables": { "type": "object" },
+        "logs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["frame", "level", "text"],
+            "properties": {
+              "frame": { "type": "integer", "minimum": 0 },
+              "level": { "type": "string" },
+              "text": { "type": "string" }
+            }
+          }
+        },
+        "options_declared": { "type": "object" },
+        "env_unanswered": { "type": "object" },
+        "last_frame_size": { "type": "array", "items": { "type": "integer" } },
+        "tracing": { "type": "string" },
+        "input_queries": { "type": "integer", "minimum": 0 },
+        "input_pressed": { "type": "integer", "minimum": 0 },
+        "files_opened": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["path", "sha1_after", "sha1_staged"],
+                "properties": {
+                  "path": { "type": "string" },
+                  "sha1_after": { "$ref": "#/$defs/sha1" },
+                  "sha1_staged": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha1" }] }
+                }
+              }
+            }
+          ]
+        },
+        "files_probed_absent": { "oneOf": [{ "type": "null" }, { "type": "array", "items": { "type": "string" } }] }
+      }
+    }
+  }
+}

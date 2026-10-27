@@ -704,6 +704,60 @@ python scripts/refresh_stale.py
 python scripts/refresh_stale.py --only platforms,targets --jobs 6
 ```
 
+### core_probe.py
+
+Runs a libretro core with no window, no sound and no input device, and
+reports what it did. It is the test in real conditions behind a claim about
+a core: which files it opens, what it shows, how fast it runs.
+
+```bash
+# one run, printed as JSON
+python scripts/core_probe.py run --core mednafen_saturn_libretro.so \
+  --content game.cue --system-file sega_101.bin=bios/Sega/Saturn/sega_101.bin \
+  --option beetle_saturn_region=Japan --frames 600
+
+# timed repetitions after warm-up, written as a record
+python scripts/core_probe.py bench --core core.so --content game.cue \
+  --warmup 300 --frames 3000 --repeat 5 --record measurements/
+
+# one system file swapped between runs, compared on one observable
+python scripts/core_probe.py check --core core.so --content disc.cue \
+  --vary mpeg_card.bin=a.bin --vary mpeg_card.bin=b.bin --vary mpeg_card.bin= \
+  --observable video_sha1 --claim "..." --method "..." --record measurements/
+```
+
+Each repetition runs in a fresh process under `strace -f -e trace=openat,open`
+when strace is installed. The files the core opened under the system
+directory come from the kernel, each hashed again after the run. Without
+strace the record says that tracing was unavailable.
+
+| Option | Effect |
+|--------|--------|
+| `--system-file DEST=SRC` | copy SRC into a staged system directory as DEST |
+| `--option KEY=VALUE` | core option. Unset options take the first value the core declares |
+| `--frames`, `--warmup` | frames timed, and frames run before timing starts |
+| `--press FRAME:BUTTON[:LEN]` | hold a libretro joypad button on port 0 (`a`, `b`, `start`, `up`...). A menu may need 15 frames or more to see it |
+| `--joypad-ports N` | ports given a joypad after loading, as RetroArch does (default 2) |
+| `--env KEY=VALUE` | environment of the core process. A core that reads the host clock repeats only with the clock fixed, for example `LD_PRELOAD` of libfaketime with `FAKETIME` |
+| `--frame-hash-every K`, `--png-dir` | sha1 of every K-th frame, and those frames as PNG |
+| `--state-var SECTION.VAR` | a variable of a Mednafen save state, as an observable |
+| `--state-dir` | keep the save state taken at the end of the first repetition |
+| `--core-repo`, `--core-commit`, `--build-command` | where the core build comes from, copied into the record |
+| `--record DIR` | write `DIR/<core>/<date>-<sha12>.json` (schema `core-probe-record.schema.json`) |
+| `--max-load` | refuse to record when the 1-minute load average is above it (default: a quarter of the CPU count) |
+| `--no-trace` | run without strace |
+| `@FILE` | read arguments from FILE, one per line |
+
+Observables are `frame_sha1` (last frame), `video_sha1` (every frame, chained),
+`audio_sha1`, `state_sha1` (save state at the end), plus `state:SECTION.VAR`
+and `frame_hashes` when asked for. A repetition that disagrees with the first
+one is flagged, and a `check` with a flagged variant reports `inconclusive`
+instead of a comparison. A record carries the core build (sha256 of the
+`.so`, the compilers its `.comment` section names), the frontend commit, the
+host (CPU, kernel, Python, load before and after) and each input by hash.
+Core log lines arrive through the libretro log interface. Floating-point
+arguments of a log line cannot be read from Python and print as `<double>`.
+
 ### Other tools
 
 | Script | Purpose |

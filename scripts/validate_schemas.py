@@ -616,6 +616,12 @@ def main() -> int:
     errors.extend(_save_directory_blocks())
     errors.extend(_registry_contract())
     errors.extend(_event_schema_errors())
+    errors.extend(
+        _validate_json_files(
+            sorted((ROOT / "measurements").glob("**/*.json")),
+            "core-probe-record.schema.json",
+        )
+    )
 
     if not args.source_only:
         database_path = ROOT / "database.json"
