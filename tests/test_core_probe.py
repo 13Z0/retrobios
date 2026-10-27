@@ -418,5 +418,45 @@ class Sandbox(unittest.TestCase):
         self.assertIn("--require-sandbox: environment only: bwrap not found", problems)
 
 
+
+class TheInterpreterIsInTheSandbox(unittest.TestCase):
+    """CI's setup-python, a venv and uv put Python outside /usr. The sandbox
+    bound only the system trees, so the worker could not start and every run
+    crashed on the runner."""
+
+    def test_each_link_to_the_interpreter_is_bound(self):
+        from unittest import mock  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            real = root / "uv" / "cpython-3.13.12" / "bin"
+            real.mkdir(parents=True)
+            (real / "python3.13").write_text("")
+            alias = root / "uv" / "cpython-3.13"
+            alias.symlink_to(root / "uv" / "cpython-3.13.12")
+            venv = root / "venv" / "bin"
+            venv.mkdir(parents=True)
+            (venv / "python").symlink_to(alias / "bin" / "python3.13")
+            with mock.patch.object(core_probe.sys, "executable", str(venv / "python")), \
+                    mock.patch.object(core_probe.sys, "prefix", str(root / "venv")), \
+                    mock.patch.object(core_probe.sys, "base_prefix", str(root / "uv" / "cpython-3.13.12")):
+                paths = core_probe.interpreter_paths()
+        self.assertIn(root / "venv", paths)
+        self.assertIn(alias, paths)
+        self.assertIn(root / "uv" / "cpython-3.13.12", paths)
+
+    def test_a_link_is_mounted_at_its_own_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "real"
+            target.mkdir()
+            link = Path(tmp) / "link"
+            link.symlink_to(target)
+            prefix, isolation = core_probe.sandbox_argv([], [link])
+        if isolation != core_probe.SANDBOX:
+            self.skipTest(f"no sandbox here ({isolation})")
+        self.assertIn(["--ro-bind", str(target.resolve()), str(link)],
+                      [prefix[i:i + 3] for i in range(len(prefix) - 2)])
+
+
 if __name__ == "__main__":
     unittest.main()
