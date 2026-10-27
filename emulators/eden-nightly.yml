@@ -9,7 +9,11 @@ upstream: "https://git.eden-emu.dev/eden-emu/eden"
 source_mirror: "https://codeberg.org/eden-emu/eden"
 source_commit: "8648c27cbb4c17b176076b09ac245271829cbd9f"
 profiled_date: "2026-08-11"
-core_version: "Git"
+core_version: "v0.2.0-220-g8648c27"
+version_basis:
+  kind: tag
+  tag: "v0.2.0"
+  distance: 220
 display_name: "Eden Nightly (Nintendo Switch)"
 cores: ["eden-nightly"]
 systems: [nintendo-switch]

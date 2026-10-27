@@ -3,6 +3,9 @@ type: alias
 alias_of: "beetle_pce"
 profiled_date: "2026-03-24"
 core_version: "v1.29.0"
+version_basis:
+  kind: alias
+  of: "beetle_pce"
 display_name: "NEC - PC Engine / SuperGrafx / CD (Beetle PCE)"
 cores:
   - mednafen_pce
