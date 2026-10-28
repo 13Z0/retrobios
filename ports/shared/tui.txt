@@ -542,6 +542,15 @@ rb_font_restore() {
   RB_FONT_BACK=""
 }
 
+# Whether a job this shell started is still running.
+rb_job_running() {
+  local job
+  for job in $(jobs -rp); do
+    [ "$job" = "$1" ] && return 0
+  done
+  return 1
+}
+
 # The number of the console in front, which a switch has to come back to.
 rb_active_vt() {
   local active
@@ -558,13 +567,15 @@ rb_active_vt() {
 
 # chvt, and whether the console really came to the front. chvt waits for the
 # switch (VT_WAITACTIVE): a compositor that keeps the display would hold it
-# forever, so it gets 3 s.
+# forever, so it gets 3 s. The switch is done once chvt has ended too: the
+# console to go back to is often in front already, and returning on that
+# alone left the launcher ending before a chvt started late had run.
 rb_chvt() {
   local pid waited=0
   $ESUDO chvt "$1" >> "$RB_LOG" 2>&1 &
   pid=$!
   while [ "$waited" -lt 12 ]; do
-    [ "$(rb_active_vt)" = "$1" ] && return 0
+    [ "$(rb_active_vt)" = "$1" ] && ! rb_job_running "$pid" && return 0
     rb_nap 0.25
     waited=$((waited + 1))
   done

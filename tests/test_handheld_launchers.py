@@ -625,6 +625,8 @@ printf '%s\\n' "$(basename "$0") $*" >> "$FAKE_STATE/tools.log"
 # compositor that keeps the display (FAKE_CHVT_REFUSED) leaves chvt waiting
 # in VT_WAITACTIVE and the console in front unchanged.
 FAKE_CHVT = """#!/bin/sh
+# A loaded machine starts the process late (FAKE_CHVT_DELAY seconds).
+[ -n "$FAKE_CHVT_DELAY" ] && sleep "$FAKE_CHVT_DELAY"
 printf '%s\\n' "chvt $*" >> "$FAKE_STATE/tools.log"
 [ -n "$FAKE_CHVT_REFUSED" ] && exec sleep 30
 [ -n "$RB_VT_ACTIVE" ] && printf 'tty%s\\n' "$1" > "$RB_VT_ACTIVE"
@@ -1509,13 +1511,13 @@ class TheBatoceraPort(unittest.TestCase):
         self.assertEqual(chvt, [f"chvt {self.number}", f"chvt {self.home}"])
         device.assert_console_restored()
 
-    def test_a_refused_console_switch_shows_nothing_on_an_unseen_console(self):
+    def test_a_refused_console_switch_shows_nothing_on_an_unseen_console(self, **slow):
         """The compositor keeps the display: chvt waits and the console in
         front stays the same. The launcher switches back and stops, instead
         of an interface no key reaches."""
         device, ports = self.device(FAKE_PGREP="0")
         proc = device.run(["/bin/bash", str(ports / "RetroBIOS.sh")], FAKE_CHVT_REFUSED="1",
-                          **self.console_switch(device))
+                          **self.console_switch(device), **slow)
         self.assertEqual(proc.returncode, 125)
         self.assertLess(device.elapsed, 20)
         self.assertEqual(device.tui_calls(), [])
@@ -1525,6 +1527,23 @@ class TheBatoceraPort(unittest.TestCase):
         log = (ports / "retrobios" / "log.txt").read_text()
         self.assertIn(f"console {self.number} did not come to the front", log)
         self.assertNotIn("\x1bc", device.screen)
+
+    def test_the_switch_back_is_waited_for_on_a_slow_machine(self):
+        """The console to go back to was already in front, so rb_chvt
+        returned before its chvt had even started, and the launcher ended
+        with the switch back still pending: under load the log missed
+        "chvt 2". A chvt that starts 1.2 s late made it fail every time."""
+        self.test_a_refused_console_switch_shows_nothing_on_an_unseen_console(
+            FAKE_CHVT_DELAY="1.2")
+
+    def test_a_slow_console_switch_still_comes_back(self):
+        device, ports = self.device(FAKE_PGREP="0")
+        proc = device.run(["/bin/bash", str(ports / "RetroBIOS.sh")], FAKE_CHVT_DELAY="1.2",
+                          **self.console_switch(device))
+        self.assertEqual(proc.returncode, 0, proc.stderr.decode())
+        chvt = [line for line in device.tools() if line.startswith("chvt")]
+        self.assertEqual(chvt, [f"chvt {self.number}", f"chvt {self.home}"])
+        self.assertEqual((device.root / "active").read_text(), f"tty{self.home}\n")
 
     def test_xterm_that_cannot_open_hands_over_to_the_console(self):
         device, ports = self.device(DISPLAY=":0", FAKE_PGREP="0")
