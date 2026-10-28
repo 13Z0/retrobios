@@ -170,10 +170,6 @@ class Outcome(unittest.TestCase):
         self.assertEqual(text, "The US BIOS boots the US game, and on its built-in BIOS with the "
                                "others' files refused.")
         self.assertNotIn("so do the other regions", text)
-        import sitemeasurements as sm
-        line = sm.core_region_line([result])
-        self.assertIn("built-in BIOS", line)
-        self.assertNotIn("on the other regions' BIOS", line)
 
     def test_no_own_run(self) -> None:
         self.assertEqual(rc.sentence("japan", rc.outcome({}, self.ENTRIES, "japan")),
@@ -243,75 +239,25 @@ class RequiredFromTheRegionRuns(unittest.TestCase):
 
 
 class SitePages(unittest.TestCase):
-    def test_region_section_links_every_record(self) -> None:
-        import sitemeasurements as sm
-
-        records = {"full": record("f", Outcome.ALL, ["scph5500.bin"], [[0, "a"]], "boots"),
-                   "own": record("o", ["scph5500.bin"], ["scph5500.bin"], [[0, "a"]], "boots"),
-                   "others": record("x", Outcome.ALL[1:], [], [[0, "b"]], "bios_error")}
-        result = rc.outcome(records, Outcome.ENTRIES, "japan")
-        result.update(core="mednafen_psx", game="Puzzle Bobble 2 (Japan)",
-                      sentence=rc.sentence("japan", result))
-        for label, item in result["variants"].items():
-            item["url"] = f"https://example.org/{label}"
-        text = "\n".join(sm.region_section([result]))
-        self.assertIn("- **mednafen&#95;psx**: Each region's game boots on its own BIOS only.", text)
-        self.assertIn("The Japanese BIOS boots the Japanese game, the other regions&#x27; BIOS do not.", text)
-        # The per-game lines and their records wait in a closed fold.
-        self.assertIn('<details class="rb-region-runs">', text)
-        self.assertIn('<a href="https://example.org/own">its own region&#x27;s BIOS only</a>', text)
-        self.assertIn("<code>scph5500.bin</code>", text)
-        self.assertNotIn("reference frames are recorded", text)
-        self.assertEqual(sm.region_section([]), [])
-
-    def test_the_emulator_page_folds_region_runs_into_one_line(self) -> None:
+    def test_a_region_run_reaches_a_page_only_as_the_proof_of_a_field(self) -> None:
+        """No page shows region outcomes. The Beetle PSX page names the runs
+        its required: false rests on, each with the BIOS the core ran."""
         import measurement_records as mr
         import sitemeasurements as sm
 
         stored = mr.read_records(ROOT)
         index = sm.build_index(stored, {"repo": sm.REPO, "commit": "0" * 40}, sm.load_profiles(ROOT / "emulators"))
         items = sm.by_emulator(index).get("beetle_psx") or []
-        regional = [i for i in items if sm.REGION_SUBJECT.match(i["subject"])]
-        if not regional:
-            self.skipTest("no region record")
-        text = "\n".join(sm.tested_section("beetle_psx", items))
-        self.assertIn(f"Region check: {len(regional)} runs of 3 games, read on the system page.", text)
-        for item in regional:
-            self.assertNotIn(item["record_url"], text)
-
-    def test_coverage_names_tested_and_uncovered_systems(self) -> None:
-        import sitemeasurements as sm
-
-        cov = {"systems": [{"system": "sony-playstation", "tested": True, "games": [
-                   {"name": "A (USA)", "region": "north-america", "emulators": ["beetle_psx"]}]},
-                           {"system": "sega-32x", "tested": False, "games": [
-                   {"name": "B (World)", "region": None, "emulators": []}]}],
-               "uncovered": [{"system": "msx", "want": "Gradius", "reason": "No MSX catalog.",
-                              "romfetch": {"exit": 1, "code": "unknown_system"}}]}
-        text = "\n".join(sm.coverage_section(cov, {"sony-playstation": "PlayStation"}))
-        self.assertIn("1 of 2 listed systems have a recorded run, and 1 system has no test game", text)
-        self.assertIn("| PlayStation | A (USA) | beetle&#95;psx |", text)
-        self.assertIn("| sega-32x | B (World) | not yet: no run recorded |", text)
-        self.assertIn("exit 1, <code>unknown&#95;system</code>", text)
-
-    def test_one_catalog_name_on_two_systems_counts_only_where_it_ran(self) -> None:
-        import measurement_records as mr
-        import sitemeasurements as sm
-
-        label = "Bust-A-Move 2 - Arcade Edition (USA)"
-        stored = [mr.Stored("beetle_psx", 1, {"inputs": {"content": {"label": label}}})]
-        cov = sm.coverage(ROOT, stored, {"beetle_psx": {"systems": ["sony-playstation"]}})
-        by_system = {item["system"]: item for item in cov["systems"]}
-        self.assertTrue(by_system["sony-playstation"]["tested"])
-        self.assertFalse(by_system["sega-saturn"]["tested"])
-
-    def test_coverage_reads_the_real_content_list(self) -> None:
-        import sitemeasurements as sm
-
-        cov = sm.coverage(ROOT, [])
-        systems = {item["system"] for item in cov["systems"]}
-        self.assertIn("sony-playstation", systems)
-        self.assertTrue(all(item["romfetch"].get("exit") for item in cov["uncovered"]))
+        if not items:
+            self.skipTest("no beetle_psx record")
+        text = "\n".join(sm.proof_section(items))
+        self.assertNotIn("Region check", text)
+        lines = [line for line in text.splitlines() if line.startswith("- ")]
+        self.assertEqual(len(lines), sum(1 for i in items if i["proves"]))
+        required = [line for line in lines if line.startswith("- required of scph55")]
+        self.assertEqual(len(required), 3)
+        for line in required:
+            self.assertIn("boots on the core&#x27;s built-in BIOS", line)
 
 
 if __name__ == "__main__":

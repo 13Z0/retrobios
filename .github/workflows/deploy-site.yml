@@ -40,7 +40,6 @@ on:
       - "scripts/provenance_report.py"
       - "scripts/refresh_data_dirs.py"
       - "scripts/region.py"
-      - "scripts/region_check.py"
       - "scripts/release_record.py"
       - "scripts/restore_large_files.py"
       - "scripts/safeparse.py"

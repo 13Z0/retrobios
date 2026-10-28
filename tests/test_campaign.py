@@ -34,7 +34,6 @@ import campaign
 import campaign_profiles
 import campaign_rules as rules
 import measurement_records as mr
-import sitemeasurements
 
 TMP = REPO_ROOT / "tmp" / "tests"
 
@@ -1001,50 +1000,6 @@ class Registry(unittest.TestCase):
     def test_autorun_tells_its_steps_the_lock_is_held(self) -> None:
         job = campaign.autorun.load_jobs()["campaign"]
         self.assertEqual(campaign.autorun.job_env(job)[campaign.LOCK_HELD_ENV], "1")
-
-
-class SitePage(unittest.TestCase):
-    def test_last_pass_and_open_findings(self) -> None:
-        summary = {
-            "last_run": {"ended_at": "2026-10-27T10:00:00+00:00", "result": "complete", "detail": "",
-                         "counts": {"done": 12, "failed": 1, "pending": 3},
-                         "pending_reasons": {"standalone": 3},
-                         "failed": [{"emulator": "fake", "check": "fake/x/y/bench", "reason": "timeout"}]},
-            "passes": 1, "applied": 2,
-            "open": [{"emulator": "fake", "file": "bios.bin", "field": "required", "status": "open",
-                      "profile_says": True, "run_shows": False, "statement": "the core boots without it",
-                      "evidence": ["2026-10-27-aaaaaaaaaaaa"], "links": ["https://x/l#L1"]}],
-        }
-        page = "\n".join(sitemeasurements.campaign_section(summary))
-        self.assertIn("12 tests done, 1 failed, 3 waiting", page)
-        self.assertIn("| standalone | 3 |", page)
-        self.assertIn("the profile says <code>true</code>, the run shows <code>false</code>", page)
-        self.assertIn("[2026-10-27-aaaaaaaaaaaa](https://x/l#L1)", page)
-        self.assertIn("<code>false</code>. The core boots without it. Records:", page)
-        self.assertEqual(sitemeasurements.campaign_section({"last_run": None}), [])
-
-    def test_observed_values_cannot_leave_their_place(self) -> None:
-        # A value comes from a core's output or a romfetch error: it may hold
-        # backticks, MDX braces and HTML.
-        hostile = "``}{import x}<script>alert(1)</script>`` | [a](javascript:x) *b*"
-        summary = {
-            "last_run": {"ended_at": "2026-10-27T10:00:00+00:00", "result": "paused", "detail": hostile,
-                         "counts": {"done": 0, "failed": 1, "pending": 1},
-                         "pending_reasons": {hostile: 1},
-                         "failed": [{"emulator": hostile, "check": hostile, "reason": hostile}]},
-            "passes": 1, "applied": 0,
-            "open": [{"emulator": "fake", "file": hostile, "field": hostile, "status": "open",
-                      "profile_says": {"k": hostile}, "run_shows": [hostile], "statement": hostile,
-                      "evidence": ["2026-10-27-aaaaaaaaaaaa"], "links": [None]}],
-        }
-        page = "\n".join(sitemeasurements.campaign_section(summary))
-        for raw in ("<script", "{import", "}{", "``", "](javascript", "*b*", "| [a]"):
-            self.assertNotIn(raw, page)
-        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", page)
-        self.assertIn("&#123;import x&#125;", page)
-        # The JSON dumps are escaped too: no brace reaches the page as syntax.
-        self.assertNotIn("{", page)
-        self.assertNotIn("}", page)
 
 
 @unittest.skipUnless(shutil.which("cc") and shutil.which("strace"), "no C compiler or no strace")
