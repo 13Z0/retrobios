@@ -24,6 +24,7 @@ Steps, numbered as the run prints them:
   5    consistency check            verify == pack: counts, paths, every emulator pack
   6    --verify-packs               pack integrity, extraction and hashes
   7    generate_readme.py           README.md and CONTRIBUTING.md
+       generate_installer_doc.py    run samples and tables of wiki/installer.md
   8    generate_site.py             site pages, into the Starlight project in website/
   8b   npm run build (website/)     rendered as the site deploy renders it, then validate_site.py
 
@@ -1106,6 +1107,11 @@ def main() -> None:
             ],
             STEP_LABELS["generate_readme"],
         )
+        # The run samples of wiki/installer.md, printed by install.py from
+        # the manifests step 4b just wrote.
+        doc_ok, _ = run([sys.executable, "scripts/generate_installer_doc.py"],
+                        "7 generate installer page")
+        ok = ok and doc_ok
         results["generate_readme"] = ok
         all_ok = all_ok and ok
     else:

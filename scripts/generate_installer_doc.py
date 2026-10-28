@@ -13,16 +13,32 @@ does, when an event comes) are kept as written, matched by their row. A row
 install.py gains has no prose yet: the generator names it and writes nothing,
 and the row is added by hand inside the markers, its first cell holding the
 option, kind, code or value alone.
+
+The run samples (a dry run, a first install, a later check) are printed by
+install.py itself, run in its own process against the committed
+install/<platform>.json served on the loopback, from a home and a card made
+under tmp/ and shown as /home/me and /userdata. Only the transport and the
+machine are stood in for, see _child. Each is dated by the `generated` field
+of its list, so a rendering is the same from one day to the next.
 """
 
 from __future__ import annotations
 
 import argparse
 import ast
+import contextlib
+import http.server
 import importlib.util
+import json
+import os
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
+import threading
 from pathlib import Path, PurePosixPath
+from typing import Callable
 
 ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "wiki" / "installer.md"
@@ -198,10 +214,7 @@ def line_menu() -> str:
     function line mode runs, its questions answered here. The page carried
     a copy typed by hand, whose keys and counts drifted from the installer
     (code_audit_22, owner's note on which-pack)."""
-    import contextlib  # noqa: PLC0415
     import io  # noqa: PLC0415
-    import json  # noqa: PLC0415
-    import os  # noqa: PLC0415
     from unittest import mock  # noqa: PLC0415
 
     manifest = json.loads((ROOT / "install" / "retroarch.json").read_text(encoding="utf-8"))
@@ -239,8 +252,240 @@ def line_menu() -> str:
     return "```\n" + out.getvalue().strip("\n") + "\n```"
 
 
+# The home and the card the run samples show, in place of the sandbox's.
+SHOWN_HOME = "/home/me"
+SHOWN_CARD = ""
+RETROARCH_CFG = ('system_directory = "~/.config/retroarch/system"\n'
+                 'savefile_directory = "~/.config/retroarch/saves"\n')
+
+
+class _ListHandler(http.server.SimpleHTTPRequestHandler):
+    """Serves the committed file lists, install/<platform>.json, and nothing
+    else: a sample that asks for a file is a sample that downloads."""
+
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        super().__init__(*args, directory=str(ROOT), **kwargs)
+
+    def do_GET(self) -> None:  # noqa: N802
+        if not re.fullmatch(r"/install/[a-z0-9_-]+\.json", self.path):
+            self.send_error(404)
+            return
+        super().do_GET()
+
+    def log_message(self, *_args: object) -> None:
+        return
+
+
+def _child(spec: dict) -> int:
+    """install.main() as the sample runs it, in its own process. Only the
+    transport and the machine are stood in for: no connection leaves the
+    loopback, detection finds the card folder the spec names, a file of a
+    landed run reports its bytes written without fetching them, and a held
+    run finds every file in place. The counts, sizes and words are the
+    installer's own."""
+    import concurrent.futures  # noqa: PLC0415
+    import socket  # noqa: PLC0415
+    from unittest import mock  # noqa: PLC0415
+
+    real_connect = socket.create_connection
+
+    def loopback_only(address: tuple, *args: object, **kwargs: object) -> socket.socket:
+        if address[0] not in ("127.0.0.1", "localhost"):
+            raise OSError(f"the sample makes no request to {address[0]}")
+        return real_connect(address, *args, **kwargs)
+
+    def landed(f: dict, _bios: Path, _verbose: bool = False, progress: object = None,
+               _copy: object = None) -> tuple[str, bool, str]:
+        if progress is not None:
+            progress.add(f["size"])
+        return f["dest"], True, ""
+
+    def held(files: list[dict], _bios: Path, **_kwargs: object) -> tuple:
+        return [], list(files), []
+
+    patches = [
+        mock.patch.object(socket, "create_connection", loopback_only),
+        # One worker and the submission order: the progress lines of a log.
+        mock.patch.object(concurrent.futures, "as_completed", list),
+        mock.patch.object(sys, "argv", ["install.py", *spec["argv"]]),
+    ]
+    if spec.get("card"):
+        patches += [
+            mock.patch.object(_install, "detect_platforms",
+                              lambda _os: [(spec["platform"], Path(spec["card"]))]),
+            mock.patch.object(_install, "_mounted_cards", lambda: []),
+        ]
+    if spec.get("landed"):
+        patches.append(mock.patch.object(_install, "_download_one", landed))
+    if spec.get("held"):
+        patches.append(mock.patch.object(_install, "check_local", held))
+    with contextlib.ExitStack() as stack:
+        for patch in patches:
+            stack.enter_context(patch)
+        try:
+            _install.main()
+        except SystemExit as exc:
+            return exc.code if isinstance(exc.code, int) else 1
+    return 0
+
+
+# What the process of a run sample executes, the spec as its one argument.
+CHILD = ("import json, sys; sys.path.insert(0, 'scripts'); import generate_installer_doc; "
+         "sys.exit(generate_installer_doc._child(json.loads(sys.argv[1])))")
+
+
+class Sandbox:
+    """A home with a RetroArch config and a card folder, under tmp/, and the
+    committed file lists served on the loopback. Every run sample of the page
+    is printed here."""
+
+    def __enter__(self) -> Sandbox:
+        (ROOT / "tmp").mkdir(exist_ok=True)
+        self.root = Path(tempfile.mkdtemp(prefix="installer-doc-", dir=ROOT / "tmp"))
+        self.home = self.root / "home"
+        self.card = self.root / "card"
+        config = self.home / ".config" / "retroarch" / "retroarch.cfg"
+        config.parent.mkdir(parents=True)
+        config.write_text(RETROARCH_CFG, encoding="utf-8")
+        self.server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _ListHandler)
+        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+        return self
+
+    def __exit__(self, *_exc: object) -> None:
+        self.server.shutdown()
+        self.server.server_close()
+        shutil.rmtree(self.root)
+
+    def run(self, platform: str, *argv: str, landed: bool = False,
+            held: bool = False) -> str:
+        """What install.py prints for the run, the sandbox read as a user's
+        home and card."""
+        card = self.card / "userdata" / "bios" if platform != "retroarch" else None
+        if card is not None:
+            card.mkdir(parents=True, exist_ok=True)
+        spec = {"platform": platform, "argv": ["--plain", "--platform", platform, *argv],
+                "card": str(card) if card else None, "landed": landed, "held": held}
+        env = {"PATH": os.environ.get("PATH", ""), "HOME": str(self.home),
+               "RETROBIOS_OS": "linux", "LANG": "C.UTF-8",
+               "RETROBIOS_BASE_URL": f"http://127.0.0.1:{self.server.server_address[1]}"}
+        done = subprocess.run(
+            [sys.executable, "-s", "-c", CHILD, json.dumps(spec)],
+            cwd=ROOT, env=env, stdin=subprocess.DEVNULL, capture_output=True, text=True,
+            check=False)
+        if done.returncode != 0:
+            raise SampleFailed(f"install.py {' '.join(spec['argv'])} exited "
+                               f"{done.returncode}: {done.stderr.strip()[-2000:]}")
+        return done.stdout.replace(str(self.home), SHOWN_HOME).replace(str(self.card), SHOWN_CARD)
+
+
+# The runs printed in this process, by what they read: the page is rendered
+# more than once by --check and by the tests, from the same installer and lists.
+_RUNS: dict[tuple, str] = {}
+
+
+def _stamp(platform: str) -> tuple[int, int]:
+    return tuple(hash(path.read_bytes()) for path in
+                 (INSTALLER, ROOT / "install" / f"{platform}.json"))
+
+
+class _LazySandbox:
+    """A Sandbox opened at the first run a rendering asks for, and only then."""
+
+    def __init__(self, stack: contextlib.ExitStack) -> None:
+        self.stack = stack
+        self.box: Sandbox | None = None
+
+    def run(self, platform: str, *argv: str, **kinds: bool) -> str:
+        key = (platform, argv, kinds.get("landed", False), kinds.get("held", False),
+               _stamp(platform))
+        if key in _RUNS:
+            return _RUNS[key]
+        if self.box is None:
+            self.box = self.stack.enter_context(Sandbox())
+        _RUNS[key] = self.box.run(platform, *argv, **kinds)
+        return _RUNS[key]
+
+
+class SampleFailed(Exception):
+    """A run sample install.py could not print."""
+
+
+def _lines_from(text: str, first: str, last: str | None = None, count: int | None = None
+                ) -> list[str]:
+    """The lines of a run from the one starting with first, through the one
+    starting with last or for count lines."""
+    lines = text.splitlines()
+    start = next((i for i, line in enumerate(lines) if line.startswith(first)), None)
+    if start is None:
+        raise SampleFailed(f"the run printed no line starting {first!r}")
+    if count is not None:
+        return lines[start:start + count]
+    end = next((i for i in range(start, len(lines)) if lines[i].startswith(last)), None)
+    if end is None:
+        raise SampleFailed(f"the run printed no line starting {last!r} after {first!r}")
+    return lines[start:end + 1]
+
+
+def _fenced(lines: list[str]) -> str:
+    return "```\n" + "\n".join(lines) + "\n```"
+
+
+def list_date(platform: str) -> str:
+    """The day the committed list was generated, which dates its samples."""
+    manifest = json.loads((ROOT / "install" / f"{platform}.json").read_text(encoding="utf-8"))
+    return manifest["generated"][:10]
+
+
+# The platform of the run walked through under Reading a run.
+WALKTHROUGH = "batocera"
+# A system of the RetroArch list one core pulls most of: the sample of the
+# line naming it. A list where it no longer does fails the rendering, and
+# another system is named here.
+BULK_SYSTEM = "sony-playstation"
+
+
+def _bulk_line(box: Sandbox | _LazySandbox) -> str:
+    run = box.run("retroarch", "--dry-run", "--system", BULK_SYSTEM)
+    found = [line for line in run.splitlines() if re.match(r"  \S+ pulls ", line)]
+    if len(found) != 1:
+        raise SampleFailed(f"a RetroArch run with --system {BULK_SYSTEM} names no core "
+                           "pulling most of its download: name another BULK_SYSTEM")
+    return found[0]
+
+
+def sample_writers(box: Sandbox) -> dict[str, Callable[[str], str]]:
+    """The run samples, each from the run that prints it."""
+    install_run = lambda: box.run(WALKTHROUGH, "--yes", "--jobs", "1", landed=True)  # noqa: E731
+    check_run = lambda: box.run(WALKTHROUGH, "--check", held=True)  # noqa: E731
+    dry_run = lambda: box.run("retroarch", "--dry-run")  # noqa: E731
+    return {
+        "dry-run": lambda _body: (
+            f"A RetroArch dry run into an empty folder, with the list of "
+            f"{list_date('retroarch')}, printed this:\n\n"
+            + _fenced(_lines_from(dry_run(), "Fetching file index", "  0 in place"))),
+        "run-date": lambda _body: (
+            f"Each line a first install prints, and what it means. The run below is a\n"
+            f"{_install.display_name(WALKTHROUGH)} install into an empty folder, from the "
+            f"list of {list_date(WALKTHROUGH)}.\nThe figures change with each release."),
+        "run-first-lines": lambda _body: _fenced(
+            _lines_from(install_run(), "Looking for setups", "  Found")),
+        "run-index": lambda _body: _fenced(
+            _lines_from(install_run(), "Fetching file index", "  0 in place")),
+        "run-download": lambda _body: _fenced(
+            _lines_from(install_run(), "Downloading ", count=4)),
+        "run-end": lambda _body: _fenced(
+            _lines_from(install_run(), "Done.", "To check this later")),
+        "bulk-hint": lambda _body: (
+            f"RetroArch with `--system {BULK_SYSTEM}`, from the list of "
+            f"{list_date('retroarch')}:\n\n"
+            + _fenced([_bulk_line(box)])),
+        "run-check": lambda _body: _fenced(
+            _lines_from(check_run(), "Checking existing files", "  Everything is in place")),
+    }
+
+
 def render(page: str) -> str:
-    """The page with each marked table written from install.py."""
+    """The page with each marked table and run sample written from install.py."""
     writers = {
         "options": lambda body: _table(["Option", "Effect"], option_rows(body)),
         "exit-codes": lambda body: _table(["Code", "Meaning"], exit_rows(body)),
@@ -252,16 +497,19 @@ def render(page: str) -> str:
         "line-menu": lambda _body: line_menu(),
     }
     seen = []
+    with contextlib.ExitStack() as stack:
+        box = _LazySandbox(stack)
+        writers.update(sample_writers(box))
 
-    def write(match: re.Match[str]) -> str:
-        name = match.group("name")
-        if name not in writers:
-            raise MissingProse(f"no table is written for the marker {name!r}")
-        seen.append(name)
-        table = writers[name](match.group("body"))
-        return f"{match.group('open')}\n{table}\n{match.group('close')}"
+        def write(match: re.Match[str]) -> str:
+            name = match.group("name")
+            if name not in writers:
+                raise MissingProse(f"no table is written for the marker {name!r}")
+            seen.append(name)
+            table = writers[name](match.group("body"))
+            return f"{match.group('open')}\n{table}\n{match.group('close')}"
 
-    text = BLOCK.sub(write, page)
+        text = BLOCK.sub(write, page)
     absent = sorted(set(writers) - set(seen))
     if absent:
         raise MissingProse(f"markers missing from the page: {', '.join(absent)}")
@@ -282,10 +530,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{args.page}: {exc}. Add the row inside its markers, then run "
               "python scripts/generate_installer_doc.py", file=sys.stderr)
         return 1
+    except SampleFailed as exc:
+        print(f"{args.page}: {exc}", file=sys.stderr)
+        return 1
     if text == current:
         return 0
     if args.check:
-        print(f"{args.page} differs from install.py: run "
+        print(f"{args.page} differs from install.py and install/*.json: run "
               "python scripts/generate_installer_doc.py", file=sys.stderr)
         return 1
     args.page.write_text(text, encoding="utf-8")
