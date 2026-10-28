@@ -1806,7 +1806,27 @@ class TestDetectedPlatformPrompt(unittest.TestCase):
 
 
 class TestManualPlatformPrompt(unittest.TestCase):
-    """With nothing detected, an interactive run asks instead of exiting."""
+    """With nothing detected, an interactive run asks instead of exiting.
+
+    Every test runs on no drive and a home of its own: two read the host's
+    drives and home, and failed with a card in the reader (code_audit_23
+    P3-7)."""
+
+    def setUp(self):
+        home = Path(_tempdir(self))
+        for patcher in (unittest.mock.patch.object(install, "_mounted_cards", return_value=[]),
+                        unittest.mock.patch.object(install, "_mount_points",
+                                                   return_value=frozenset()),
+                        unittest.mock.patch.object(install.Path, "home", return_value=home),
+                        unittest.mock.patch.dict(os.environ, {"HOME": str(home)}),
+                        unittest.mock.patch("sys.stdout", io.StringIO())):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def test_the_host_is_not_read(self):
+        self.assertEqual(install._mounted_cards(), [])
+        self.assertEqual(install._default_dest("linux", "retroarch"),
+                         Path.home() / ".config" / "retroarch" / "system")
 
     def test_number_picks_the_platform_and_default_directory(self):
         answers = iter(["1", ""])

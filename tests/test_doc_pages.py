@@ -90,12 +90,15 @@ class InstallerOutputExample(unittest.TestCase):
         intro, run = re.search(r"(?s)\n([^\n]*)\n\n```\n(Fetching file index.*?)```", text).groups()
         self.assertRegex(intro, r"\d{4}-\d{2}-\d{2}", "an output example says when it was taken")
         manifest = json.loads((ROOT / "install" / "retroarch.json").read_text(encoding="utf-8"))
-        omitted = re.search(r"Not installable: \d+ files? \(\d+ required, (.*)\)\.", run)
+        # The line as the installer writes it (not_installable_words), or
+        # its earlier "(1 required, not found: 37)" form.
+        omitted = re.search(r"Not installable: \d+ files? (?:\(\d+ required, (.*)\)\.|(?:is|are) "
+                            r"not in the collection|.*Why: (.*)\.)", run)
         if manifest.get("omitted_files"):
             self.assertIsNotNone(omitted, "the manifest omits files and the run shows no line for it")
-        if omitted:
-            for part in omitted.group(1).split(", "):
-                self.assertIn(part.rsplit(":", 1)[0], install.OMISSION_REASONS.values())
+        if omitted and (omitted.group(1) or omitted.group(2)):
+            for part in (omitted.group(1) or omitted.group(2)).split(", "):
+                self.assertIn(re.split(r":| \(", part)[0], install.OMISSION_REASONS.values())
         count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", run).groups()
         self.assertIn(f"0 in place, {count} missing", run)
         self.assertSplitAddsUp(run, count, size)
@@ -772,11 +775,12 @@ class FirstInstallWalkthrough(unittest.TestCase):
         self.assertIn(f"Done. {count} files installed", step4)
         self.assertIn(f"{count} in place, 0 missing", step5)
         manifest = json.loads((ROOT / "install" / "batocera.json").read_text(encoding="utf-8"))
-        omitted = re.search(r"Not installable: (\d+) files \((\d+) required", step3)
+        omitted = re.search(r"Not installable: (\d+) files (?:\((\d+) required|.*?, (\d+) of them "
+                            r"required)", step3)
         if manifest.get("omitted_files"):
             self.assertIsNotNone(omitted, "the manifest omits files and the run shows no line for it")
         if omitted:
-            total, required = map(int, omitted.groups())
+            total, required = int(omitted.group(1)), int(omitted.group(2) or omitted.group(3))
             first, needed = install._omission_lines(
                 total, [{"required": True, "dest": str(i)} for i in range(required)]
             )[:2]

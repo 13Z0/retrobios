@@ -3940,8 +3940,13 @@ def first_screen_words() -> list[str]:
     showed a line menu (Enter, i, c, q) nobody saw, whose keys had changed
     since."""
     installer = _installer()
-    return [f"The command opens a screen. **{installer.TUI_INSTALL_ROW}** gets every "
-            f"file, **{installer.TUI_SYSTEMS_ROW}** fewer."]
+    # The screen it opens first: the setup found, or the list when none
+    # is. Install and Choose systems come on the next one (tui_audit_16
+    # P3-10).
+    return [f"The command asks **{installer.TUI_FOUND_TITLE}** with the setup it found, "
+            f"or **{installer.TUI_CHOOSE_TITLE}** with a list when it finds none. Then "
+            f"**{installer.TUI_INSTALL_ROW}** gets every file, "
+            f"**{installer.TUI_SYSTEMS_ROW}** only the consoles you pick."]
 
 
 def check_pass_line() -> str:
