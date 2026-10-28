@@ -74,6 +74,9 @@ export default defineConfig({
 			head: [
 				{ tag: 'link', attrs: { rel: 'icon', type: 'image/svg+xml', href: `${BASE}assets/brand/favicon.svg` } },
 				{ tag: 'link', attrs: { rel: 'apple-touch-icon', sizes: '180x180', href: `${BASE}assets/brand/apple-touch-icon.png` } },
+				// Ownership of the URL-prefix property https://abdess.github.io/retrobios/
+				// in Google Search Console. Removing it unverifies the property.
+				{ tag: 'meta', attrs: { name: 'google-site-verification', content: '8SueST3hNHl8_vM-OJJP0rz-ZMlI2DALLpChrwZoGMs' } },
 			],
 			social: [{ icon: 'github', label: 'RetroBIOS on GitHub', href: 'https://github.com/Abdess/retrobios' }],
 			customCss: ['./src/styles/retrobios.css'],

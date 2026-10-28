@@ -388,5 +388,21 @@ class LogosAtTheirDisplaySize(unittest.TestCase):
         self.assertIn('src="/retrobios/assets/logos/emudeck.webp"', html)
 
 
+class SearchConsoleOwnership(unittest.TestCase):
+    """Search Console checks the tag on every recrawl: without it the
+    property goes unverified and the sitemap stops being read."""
+
+    def test_the_head_carries_the_verification_tag(self):
+        self.assertIn("{ tag: 'meta', attrs: { name: 'google-site-verification', "
+                      "content: '8SueST3hNHl8_vM-OJJP0rz-ZMlI2DALLpChrwZoGMs' } }",
+                      CONFIG.read_text(encoding="utf-8"))
+
+    @unittest.skipUnless((DIST / "index.html").is_file(), "site not built")
+    def test_the_home_page_serves_it(self):
+        self.assertIn('<meta name="google-site-verification" '
+                      'content="8SueST3hNHl8_vM-OJJP0rz-ZMlI2DALLpChrwZoGMs"',
+                      (DIST / "index.html").read_text(encoding="utf-8"))
+
+
 if __name__ == "__main__":
     unittest.main()
