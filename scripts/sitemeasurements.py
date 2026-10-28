@@ -409,25 +409,52 @@ VARIANT_WORDS = {"full": "every regional BIOS", "own": "its own region's BIOS on
                  "others": "the other regions' BIOS only", "pack": "the region's pack"}
 
 
+REGION_SHORT = {"japan": "Japanese", "north-america": "US", "europe": "European"}
+OUTCOME_WORDS = {True: "boots", False: "does not boot", None: "no verdict"}
+
+
+def core_region_line(results: list[dict]) -> str:
+    """One core's outcome over its region games, in a sentence: each game
+    on its own BIOS, then on the other regions' BIOS."""
+    own = {r["own_boots"] for r in results}
+    others = {r["others_boot"] for r in results}
+    if own == {True} and others == {True}:
+        return "Each region's game boots on its own BIOS and on the other regions' BIOS."
+    if own == {True} and others == {False}:
+        return "Each region's game boots on its own BIOS only."
+    parts = [f"{REGION_SHORT.get(r['region'], r['region'])} game: {OUTCOME_WORDS[r['own_boots']]} "
+             f"on its BIOS, {OUTCOME_WORDS[r['others_boot']]} on the others" for r in results]
+    return ", ".join(parts) + "."
+
+
 def region_section(results: list[dict], level: int = 3) -> list[str]:
-    """What the region runs showed for one system, with the records."""
+    """What the region runs showed for one system: a line per core, the
+    games and their records in a fold."""
     if not results:
         return []
     lines = ["#" * level + " Region check", "",
              f"Each game ran with {VARIANT_WORDS['own']}, then with {VARIANT_WORDS['others']} "
              f"([method](../{METHOD_PAGE})).", ""]
+    by_core: dict[str, list[dict]] = {}
     for result in results:
-        links = ", ".join(
-            f"[{VARIANT_WORDS[label]}]({item['url']})" if item.get("url") else _plain(VARIANT_WORDS[label])
-            for label, item in result["variants"].items())
-        read = (f" It reads {', '.join(_code(name) for name in result['selected'])} "
-                f"when every regional BIOS is there ({_plain(result['claim'])} against the profile)."
-                if result["selected"] else "")
+        by_core.setdefault(result["core"], []).append(result)
+    for core, items in by_core.items():
+        lines.append(f"- **{_plain(core)}**: {_plain(core_region_line(items))}")
+    lines.append("")
+    rows = []
+    for result in results:
+        links = ", ".join(_link(item.get("url"), _cell(VARIANT_WORDS[label]))
+                          for label, item in result["variants"].items())
+        names = ", ".join(f"<code>{_cell(name)}</code>" for name in result["selected"])
+        read = (f" It reads {names} with every regional BIOS there "
+                f"({_cell(result['claim'])} against the profile)." if result["selected"] else "")
         basis = ("" if result["judged_by"] == "verdict"
                  else " Judged against the run with every regional BIOS until reference frames are recorded.")
-        lines.append(f"- **{_plain(result['core'])}**, {_plain(result['game'])}: "
-                     f"{_plain(result['sentence'])}{read}{basis} Records: {links}.")
-    lines.append("")
+        rows.append(f"<li><strong>{_cell(result['core'])}</strong>, {_cell(result['game'])}: "
+                    f"{_cell(result['sentence'])}{read}{basis} Records: {links}.</li>")
+    # One line: MDX reads an HTML block split over lines as paragraphs.
+    lines += ['<details class="rb-region-runs"><summary>Each game and its records</summary><ul>'
+              + "".join(rows) + "</ul></details>", ""]
     return lines
 
 

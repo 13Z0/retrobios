@@ -225,8 +225,11 @@ class SitePages(unittest.TestCase):
         for label, item in result["variants"].items():
             item["url"] = f"https://example.org/{label}"
         text = "\n".join(sm.region_section([result]))
-        self.assertIn("The Japanese BIOS boots the Japanese game, the other regions' BIOS do not.", text)
-        self.assertIn("[its own region's BIOS only](https://example.org/own)", text)
+        self.assertIn("- **mednafen&#95;psx**: Each region's game boots on its own BIOS only.", text)
+        self.assertIn("The Japanese BIOS boots the Japanese game, the other regions&#x27; BIOS do not.", text)
+        # The per-game lines and their records wait in a closed fold.
+        self.assertIn('<details class="rb-region-runs">', text)
+        self.assertIn('<a href="https://example.org/own">its own region&#x27;s BIOS only</a>', text)
         self.assertIn("<code>scph5500.bin</code>", text)
         self.assertNotIn("reference frames are recorded", text)
         self.assertEqual(sm.region_section([]), [])
