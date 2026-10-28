@@ -6166,6 +6166,13 @@ DATA_FILES_WORDS = ("data files: the files an emulator reads from a data folder 
                     "such as Dolphin's Sys and PPSSPP's assets")
 
 
+# The definitions in a few words, for a help with no room for the sentences.
+_SHORT_DEFINITIONS = (
+    ("Game data:", "Game data: what a game reads, of no use to other cores."),
+    ("Data files:", "Data files: what an emulator reads from its own data folder."),
+)
+
+
 def game_data_missing(names: str, count: int, folders: list[Path]) -> str:
     """The game data a run could not supply, and the folder each goes in:
     "Copy it from your own copy of the game" named no folder."""
@@ -18615,12 +18622,19 @@ def _view_help(state: TuiState, width: int, height: int) -> tuple:
     # Cut from its end at 40x12, the help lost Quit and This help with no
     # sign: what a list's keys also say elsewhere goes first.
     for spare in ("First, last", "All, none", "extra", "Filter by setup or device name",
-                  "Filter", "Options", "Choose a row, tap it again to open it", "This help"):
+                  "Filter", "Options", "Choose a row, tap it again to open it", "This help",
+                  "definitions"):
         if (len(drawn(keys)) + len(extra) + len(defined)
                 + len(_text_lines(more, width)) <= height):
             break
         if spare == "extra":
             extra = []
+        elif spare == "definitions":
+            # The short form at 40x12, whole: the long one was cut in the
+            # middle of its second sentence.
+            short = " ".join(brief for long_form, brief in _SHORT_DEFINITIONS
+                             if long_form in words)
+            defined = ["", *textwrap.wrap(short, width)] if short else []
         else:
             keys = [entry for entry in keys if entry[1] != spare]
     return ("Keys", _compose(state, width, height, drawn(keys) + defined + extra + more, []),

@@ -11449,6 +11449,13 @@ class AuditTwentyAndThirteen(unittest.TestCase):
             with self.subTest(rows=rows):
                 text = " ".join(" ".join(install.tui_view(state, 40, rows)).split())
                 self.assertIn("Game data: files a game or a game engine reads", text)
+        # Data files too, each said whole: in a few words at 40x12.
+        state.check = {**state.check, "data_missing": 7, "data_bytes": 2048}
+        text = " ".join(" ".join(install.tui_view(state, 40, 12)).split())
+        self.assertIn("Game data: what a game reads, of no use to other cores. Data files: "
+                      "what an emulator reads from its own data folder.", text)
+        text = " ".join(" ".join(install.tui_view(state, 40, 15)).split())
+        self.assertIn("such as Dolphin's Sys and PPSSPP's assets.", text)
 
     def test_the_40_column_bar_keeps_help_and_the_help_its_tap_line(self):
         """code_audit_20 P3-1."""
