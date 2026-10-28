@@ -457,6 +457,18 @@ class ResultTests(unittest.TestCase):
                                      "--claim", "c", "--method", "m"])
         self.assertTrue(any("--observable nope" in p for p in core_probe.validate_args(unknown)))
 
+    def test_a_preload_the_loader_cannot_find_is_refused(self) -> None:
+        # libfaketime.so.1 by bare name, with libfaketime not installed, was
+        # skipped by the loader: every run recorded a fixed clock it never had.
+        parser = core_probe.build_parser()
+        core = sys.executable
+        for value in ("libfaketime.so.1", "/nonexistent/libfaketime.so.1", f"{core}:libfaketime.so.1"):
+            args = parser.parse_args(["run", "--core", core, "--env", f"LD_PRELOAD={value}"])
+            with self.subTest(value=value):
+                self.assertTrue(any("LD_PRELOAD" in p for p in core_probe.validate_args(args)))
+        found = parser.parse_args(["run", "--core", core, "--env", f"LD_PRELOAD={core}"])
+        self.assertFalse([p for p in core_probe.validate_args(found) if "LD_PRELOAD" in p])
+
 
 @unittest.skipUnless(shutil.which("cc"), "no C compiler")
 class FakeCoreTests(unittest.TestCase):

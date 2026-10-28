@@ -935,7 +935,8 @@ def run_once(args: argparse.Namespace, system_dir: Path, scratch: Path, state_ou
     readonly = [Path(__file__), Path(args.core), system_dir, *interpreter_paths()]
     if args.content:
         readonly.append(Path(args.content).resolve().parent)
-    readonly += [Path(value) for _, value in args.env if Path(value).is_absolute() and Path(value).exists()]
+    readonly += [Path(part) for _, value in args.env for part in value.replace(":", " ").split()
+                 if Path(part).is_absolute() and Path(part).exists()]
     prefix, isolation = sandbox_argv(writable, readonly)
     if args.require_sandbox and isolation != SANDBOX:
         raise ProbeError(f"refused to run the core outside a sandbox: {isolation}")
@@ -1157,6 +1158,15 @@ def validate_args(args: argparse.Namespace) -> list[str]:
         isolation = sandbox_argv([])[1]
         if isolation != SANDBOX:
             problems.append(f"--require-sandbox: {isolation}")
+    for key, value in args.env:
+        if key != "LD_PRELOAD":
+            continue
+        # A library the loader cannot find is skipped without a word, and
+        # the run would record a fixed clock it never had. Only a file that
+        # exists is bound into the sandbox and recorded by sha256.
+        for library in value.replace(":", " ").split():
+            if not (Path(library).is_absolute() and Path(library).is_file()):
+                problems.append(f"--env LD_PRELOAD: {library} is not an absolute path to a file")
     if args.oracle and not Path(args.oracle).is_file():
         problems.append(f"--oracle {args.oracle}: not a file")
     if args.png_dir and not args.frame_hash_every:
