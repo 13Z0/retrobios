@@ -11679,6 +11679,28 @@ class AuditTwentyAndThirteen(unittest.TestCase):
         self.assertIn("So is a platform named by a file list or a pack", page)
 
 
+class TheUsageNamesTheInstaller(unittest.TestCase):
+    """The Windows one-liner's --help said "usage: retrobios-install-<guid>.py",
+    the name install.ps1 gives its copy."""
+
+    def test_a_copy_under_a_temporary_name_says_install_py(self):
+        scratch = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, scratch, True)
+        copy = scratch / "retrobios-install-33826e0b-37cc-4ad3-a6c4-6ed168e3fe9e.py"
+        shutil.copyfile(REPO_ROOT / "install.py", copy)
+        env = {**os.environ, "RETROBIOS_BOOTSTRAP": "ps1"}
+        for option in ("--help", "--no-such-option"):
+            with self.subTest(option=option):
+                proc = subprocess.run([sys.executable, str(copy), option], env=env,
+                                      capture_output=True, text=True, timeout=60,
+                                      stdin=subprocess.DEVNULL, check=False)
+                said = proc.stdout + proc.stderr
+                self.assertIn("usage: install.py", said)
+                self.assertNotIn("retrobios-install-", said)
+        with mock.patch.object(sys, "argv", [str(copy), "--help"]):
+            self.assertEqual(install.build_parser().prog, "install.py")
+
+
 class TapsSeenBeforeTheyAct(unittest.TestCase):
     """code_audit_20 P3-2 and tui_audit_13 P2-1, P2-2: a tap acts on the
     frame it was made on, and never commits on one tap."""

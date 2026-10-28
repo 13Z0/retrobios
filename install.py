@@ -10423,6 +10423,9 @@ def build_parser() -> argparse.ArgumentParser:
     """The options, in the order --help and wiki/installer.md list them
     (scripts/generate_installer_doc.py writes its table from this parser)."""
     parser = argparse.ArgumentParser(
+        # Never the file's own name: install.ps1 runs a copy named
+        # retrobios-install-<guid>.py, which usage and errors printed.
+        prog="install.py",
         allow_abbrev=False,
         description="Download missing BIOS files for retrogaming emulators. "
                     "For questions line by line, as a screen reader reads them, "
