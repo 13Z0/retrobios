@@ -265,15 +265,21 @@ does. On any other row it moves the cursor there, and a second one on that
 row does what Enter does: one row of a terminal is far smaller than a finger,
 and the row a screen opens on (**Install** on Confirm) is never chosen by one
 tap. The entries of the bottom line press their key, **Exit** on the result
-too. One that installs, quits or goes on to Confirm takes two taps as a row
-does: the first adds `tap again` to it, the second presses it. A row of
+too. One that writes files with no screen after it to look first, **Install**
+on the plan and **Put it on the card**, takes two taps: the first adds
+`click or tap again` to it in the accent colour, the second presses it.
+**Install** on Confirm, which is that look, Quit, Continue and Close take one,
+so installing or quitting never takes more than two. A row of
 Preferred regions stays where it is when it is ticked, its number giving the
 order, which the list shows sorted the next time it opens. The line that says
 which rows are in view shows the next page, and the wheel scrolls a list or a
 text without moving the cursor unless it would leave the screen. Nothing
 happens until the button or the finger comes up, and only where it went down,
-on the screen drawn when it went down: the second tap of a double tap that
-changes the screen does nothing on the new one. The right and middle buttons
+on the screen drawn when it went down. A new screen takes no press for its
+first 400 ms: a double click is two presses at most 400 ms (GNOME) to 500 ms
+(Windows, macOS) apart and the new screen is drawn on the first release, so
+the second tap of a double tap that changes the screen does nothing on the
+new one, and a tap made later acts. The right and middle buttons
 do nothing. The help and the bottom line of a list of boxes say how a tap acts.
 
 Clicks are off in the Windows console the PowerShell command runs in, which

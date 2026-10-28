@@ -3820,7 +3820,9 @@ class LineModeOffline(unittest.TestCase):
         with mock.patch.object(install, "_ask", return_value=""), \
                 contextlib.redirect_stdout(io.StringIO()) as out:
             install._prompt_custom_selection("retroarch", files, [], data_trees=trees)
-        self.assertIn("RetroArch: 1 file, 1.0 KB, and 2 data files (4.0 KB).", out.getvalue())
+        # One total, the kinds under it adding up to it (code_audit_21 P3-8).
+        self.assertIn("RetroArch: 3 files, 5.0 KB.\n  1 BIOS file (1.0 KB) and 2 data files "
+                      "(4.0 KB).", out.getvalue())
 
     def test_one_save_file_goes(self):
         files = [{"dest": "keys.txt", "root": "save", "size": 1}]
@@ -6638,7 +6640,11 @@ class AuditSevenScreens(unittest.TestCase):
         state.found = [found("gba_bios.bin", str(self.root / "from1"))]
         with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
             text = " ".join(" ".join(install.tui_view(state, 100, 40)).split())
-        self.assertIn("They are not in from1", text)
+        # The rest named by kind as not in it, the remedy after
+        # (tui_audit_14 P3-7).
+        self.assertIn("Not in from1: ", text)
+        self.assertIn("Run the installer again with a pack (--from-pack)", text)
+        self.assertNotIn("They are not in", text)
         self.assertNotIn("Copy them from your old card", text)
 
     def test_the_card_browser_focuses_the_card_asked_for(self):
@@ -10024,8 +10030,16 @@ def drawn(state: install.TuiState, cols: int, rows: int) -> list:
     return lines
 
 
+def settled(state: install.TuiState) -> None:
+    """The clock moved on past TUI_TAP_SETTLE since the screen was drawn."""
+    if state.hits is not None:
+        state.now = max(state.now, state.hits.shown + install.TUI_TAP_SETTLE)
+
+
 def tap(state: install.TuiState, col: int, row: int, button: int = 0) -> list:
-    """Press and release on one cell, columns and lines counted from 0."""
+    """Press and release on one cell, columns and lines counted from 0, made
+    once the screen settled (TUI_TAP_SETTLE): a reader's deliberate tap."""
+    settled(state)
     effects = install.tui_update(state, install.TuiMouse(button, col + 1, row + 1))
     return effects + install.tui_update(state, install.TuiMouse(button, col + 1, row + 1,
                                                                 True))
@@ -10226,13 +10240,13 @@ class MouseOnEveryScreen(unittest.TestCase):
                             self.assertIn(label, install._BAR_CLICKS)
                             effects = tap(state, first, line)
                             if install._bar_commits(base, target[1]):
-                                # Install, Quit and Continue into Confirm: the
-                                # first tap arms the entry, drawn so, the
+                                # Install on the plan and Put it on the card:
+                                # the first tap arms the entry, drawn so, the
                                 # second on the same entry presses it.
                                 self.assertEqual(effects, [])
                                 self.assertEqual(state.stack, base.stack)
                                 again = drawn(state, cols, rows)
-                                self.assertIn("tap again", str(again[-1]))
+                                self.assertIn(install.TUI_ARMED, str(again[-1]))
                                 at = next(first for row, first, _end, mark in state.hits.targets
                                           if mark == target)
                                 effects = tap(state, at, line)
@@ -10258,7 +10272,9 @@ class MouseOnEveryScreen(unittest.TestCase):
         lines = drawn(state, 80, 24)
         row = next(i for i, line in enumerate(lines) if line.style != "focus"
                    and getattr(line, "mark", None) and line.mark[0] == "row")
+        settled(state)
         install.tui_update(state, install.TuiMouse(0, 5, row + 1))
+        self.assertIsNotNone(state.pressed)
         self.assertEqual(state.focus.get("setup", 0), 0)
         # Released on another row: a swipe, which does nothing.
         focused = next(i for i, line in enumerate(lines) if line.style == "focus")
@@ -10275,6 +10291,7 @@ class MouseOnEveryScreen(unittest.TestCase):
         row = next(i for i, line in enumerate(lines) if line.style != "focus"
                    and getattr(line, "mark", None) and line.mark[0] == "row")
         decoder = install.KeyDecoder()
+        settled(state)
         for event in decoder.feed(x10(5, row + 1) + x10(5, row + 1, 3)):
             install.tui_update(state, event)
         self.assertEqual(state.focus["setup"], lines[row].mark[1])
@@ -10431,6 +10448,9 @@ class MouseOnAPty(unittest.TestCase):
         return next(index for index, line in enumerate(term.screen.display) if needle in line)
 
     def click(self, term: Pty, col: int, row: int) -> None:
+        # A deliberate tap, after the screen settled: a press sooner is the
+        # second of a double tap on the screen before.
+        time.sleep(install.TUI_TAP_SETTLE)
         term.send(sgr(col + 1, row + 1), sgr(col + 1, row + 1, release=True))
 
     def test_taps_choose_a_row_and_press_the_bar(self):
@@ -10454,6 +10474,7 @@ class MouseOnAPty(unittest.TestCase):
         term.wait("Which setup?")
         # Legacy reports move the focus the same way.
         row = self.line_of(term, " > ") + 2
+        time.sleep(install.TUI_TAP_SETTLE)
         term.send(x10(20, row + 1), x10(20, row + 1, 3))
         term.settle()
         self.assertTrue(term.screen.buffer[row][3].reverse, term.text())
@@ -10634,7 +10655,7 @@ class AuditNineteenAndTwelve(_CardFixtures, unittest.TestCase):
         plan = checked_state()
         plan.mouse, plan.help = True, True
         text = " ".join(" ".join(install.tui_view(plan, 80, 24)).split())
-        self.assertIn("Tap Choose a row, tap it again to open it", text)
+        self.assertIn("Tap A row or Install: click or tap twice", text)
         # The tick entry of the bar is pressed by a tap too.
         state.help = False
         lines = drawn(state, 80, 24)
@@ -11451,7 +11472,7 @@ class AuditTwentyAndThirteen(unittest.TestCase):
         state.check = {**state.check, "data_missing": 7, "data_bytes": 2048}
         text = " ".join(" ".join(install.tui_view(state, 40, 12)).split())
         self.assertIn("Game data: what a game reads, of no use to other cores. Data files: "
-                      "what an emulator reads from its own data folder.", text)
+                      "an emulator's own data folder.", text)
         text = " ".join(" ".join(install.tui_view(state, 40, 15)).split())
         self.assertIn("such as Dolphin's Sys and PPSSPP's assets.", text)
 
@@ -11710,7 +11731,9 @@ class TapsSeenBeforeTheyAct(unittest.TestCase):
         row = next(i for i, line in enumerate(lines)
                    if getattr(line, "mark", None) and line.mark[0] == "row"
                    and line.mark[2][0] == "systems")
+        settled(state)
         install.tui_update(state, install.TuiMouse(0, 5, row + 1))
+        self.assertIsNotNone(state.pressed)
         # The screen changes under the finger before it comes up.
         state.stack.append("options")
         drawn(state, 80, 24)
@@ -11728,7 +11751,7 @@ class TapsSeenBeforeTheyAct(unittest.TestCase):
         self.assertEqual(tap(state, 3, bar), [])
         self.assertEqual(state.screen, "plan")
         armed = drawn(state, 80, 24)
-        self.assertIn("A/Enter Install: tap again", str(armed[-1]))
+        self.assertIn(f"A/Enter Install: {install.TUI_ARMED}", str(armed[-1]))
         self.assertEqual(tap(state, 3, bar), [("run", "install")])
 
     def test_a_tapped_quit_quits_with_the_quit_code(self):
@@ -11739,10 +11762,8 @@ class TapsSeenBeforeTheyAct(unittest.TestCase):
         lines = drawn(state, 80, 24)
         self.assertFalse(str(lines[-1]).strip().startswith("Ctrl-C"))
         at = str(lines[-1]).index("Ctrl-C")
-        tap(state, at, len(lines) - 1)
-        self.assertIsNone(state.exit_code)
-        drawn(state, 80, 24)
-        at = str(install.tui_view(state, 80, 24)[-1]).index("Ctrl-C")
+        # One tap: quitting writes nothing, and the settle time keeps a
+        # double tap on the screen before from reaching it.
         tap(state, at, len(lines) - 1)
         self.assertEqual(state.exit_code, install.QUIT_CODE)
 
@@ -11769,6 +11790,168 @@ class TapsSeenBeforeTheyAct(unittest.TestCase):
         self.assertIn("as A", " ".join(install.tui_view(state, 80, 24)))
 
 
+class DoubleTapsAcrossScreens(unittest.TestCase):
+    """tui_audit_14 P2-1: the second tap of a double tap acted on the screen
+    the first one opened, at every gap measured (0, 80, 150 and 250 ms).
+    A press within TUI_TAP_SETTLE of a new screen is dropped, and a slow
+    deliberate second tap still acts."""
+
+    GAPS = (0.0, 0.08, 0.15, 0.25)
+
+    @staticmethod
+    def bar_cell(lines: list) -> tuple[int, int]:
+        return len(str(lines[-1])) - len(str(lines[-1]).lstrip()), len(lines) - 1
+
+    def double_tap(self, state: install.TuiState, gap: float) -> list:
+        """Two taps gap seconds apart on the bar's first entry, the screen
+        drawn after each event as the loop draws it."""
+        lines = drawn(state, 80, 24)
+        col, row = self.bar_cell(lines)
+        state.now = state.hits.shown + 2.0
+        effects = []
+        for release in (False, True):
+            effects += install.tui_update(state, install.TuiMouse(0, col + 1, row + 1, release))
+        first = state.now
+        drawn(state, 80, 24)
+        state.now = first + gap
+        for release in (False, True):
+            effects += install.tui_update(state, install.TuiMouse(0, col + 1, row + 1, release))
+            drawn(state, 80, 24)
+        return effects
+
+    def one_tap(self, state: install.TuiState) -> list:
+        lines = drawn(state, 80, 24)
+        col, row = self.bar_cell(lines)
+        return tap(state, col, row)
+
+    def plan_on(self, action: str) -> install.TuiState:
+        state = checked_state()
+        state.mouse = True
+        rows = install.tui_rows(state)
+        state.focus["plan"] = next(i for i, row in enumerate(rows) if row.action == action)
+        return state
+
+    def both(self, make, gap: float) -> tuple:
+        once = make()
+        one = self.one_tap(once)
+        twice = make()
+        return one, once, self.double_tap(twice, gap), twice
+
+    def test_continue_on_the_first_screen(self):
+        def make() -> install.TuiState:
+            state = fresh_state()
+            state.mouse = True
+            return state
+        for gap in self.GAPS:
+            with self.subTest(gap=gap):
+                with mock.patch.object(install.Path, "exists", return_value=True):
+                    one, once, two, twice = self.both(make, gap)
+                self.assertNotEqual(once.stack, ["setup"])
+                self.assertEqual(two, one)
+                self.assertEqual(twice.stack, once.stack)
+
+    def test_open_on_the_plan_keeps_the_systems_ticked(self):
+        for gap in self.GAPS:
+            with self.subTest(gap=gap):
+                one, once, two, twice = self.both(lambda: self.plan_on("systems"), gap)
+                self.assertEqual(once.screen, "systems")
+                self.assertEqual((twice.stack, twice.ticked), (once.stack, once.ticked))
+                self.assertEqual(two, one)
+
+    def test_choose_on_copy_from(self):
+        for gap in self.GAPS:
+            with self.subTest(gap=gap):
+                one, once, two, twice = self.both(lambda: self.plan_on("fromcard"), gap)
+                self.assertEqual(once.screen, "browse")
+                self.assertEqual((twice.stack, twice.browse_dir),
+                                 (once.stack, once.browse_dir))
+                self.assertEqual(two, one)
+
+    def test_a_slow_second_tap_acts(self):
+        once = self.plan_on("systems")
+        self.double_tap(once, 0.0)
+        slow = self.plan_on("systems")
+        self.double_tap(slow, install.TUI_TAP_SETTLE + 0.2)
+        self.assertEqual(once.screen, "systems")
+        # On Choose systems the first entry goes on to Confirm: the slow
+        # tap pressed it.
+        self.assertEqual(slow.screen, "confirm")
+
+    def test_a_release_whose_press_came_before_the_frame_does_nothing(self):
+        state = self.plan_on("systems")
+        lines = drawn(state, 80, 24)
+        col, row = self.bar_cell(lines)
+        state.now = state.hits.shown + 2.0
+        install.tui_update(state, install.TuiMouse(0, col + 1, row + 1))
+        # Another screen drawn between the press and its release.
+        state.stack.append("options")
+        drawn(state, 80, 24)
+        state.now += 1.0
+        self.assertEqual(install.tui_update(state, install.TuiMouse(0, col + 1, row + 1, True)),
+                         [])
+        self.assertEqual(state.screen, "options")
+
+    def test_the_settle_time_is_documented(self):
+        page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        self.assertIn(f"{round(install.TUI_TAP_SETTLE * 1000)} ms", page)
+
+
+class TwoTapsOnlyWhereFilesAreWritten(unittest.TestCase):
+    """tui_audit_14 P3-2 and P3-4: with the settle time in place, a second
+    tap is asked only of an entry that writes files with nothing to look at
+    after it, drawn in the accent and said in the help at every size."""
+
+    def test_install_on_the_plan_arms_in_the_accent(self):
+        state = checked_state()
+        state.mouse = True
+        lines = drawn(state, 80, 24)
+        self.assertEqual(tap(state, 2, len(lines) - 1), [])
+        armed = str(drawn(state, 80, 24)[-1])
+        entry = f"A/Enter Install: {install.TUI_ARMED}"
+        self.assertIn(entry, armed)
+        painted = install.tui_paint(armed, "hint", True)
+        self.assertIn(f"{install.COLOUR_ROLES['accent']}m{entry}\x1b[0m", painted)
+        self.assertEqual(tap(state, 2, len(lines) - 1), [("run", "install")])
+
+    def test_quit_takes_two_activations(self):
+        state = fresh_state()
+        state.mouse = True
+        lines = drawn(state, 80, 24)
+        tap(state, str(lines[-1]).index("B/Esc"), len(lines) - 1)
+        self.assertEqual(state.screen, "quit")
+        state.focus["quit"] = next(i for i, row in enumerate(install.tui_rows(state))
+                                   if row.action == "quit")
+        lines = drawn(state, 80, 24)
+        tap(state, 2, len(lines) - 1)
+        self.assertEqual(state.exit_code, install.QUIT_CODE)
+
+    def test_install_from_choose_systems_takes_two_activations(self):
+        state = checked_state()
+        state.mouse = True
+        rows = install.tui_rows(state)
+        state.focus["plan"] = next(i for i, row in enumerate(rows) if row.action == "systems")
+        install.tui_update(state, Key("enter"))
+        self.assertEqual(state.screen, "systems")
+        lines = drawn(state, 80, 24)
+        self.assertEqual(tap(state, 2, len(lines) - 1), [("run", "confirm")])
+        self.assertEqual(state.screen, "confirm")
+        install.tui_receive(state, ("event", state.run_id, CHECK))
+        install.tui_receive(state, ("ended", state.run_id, 1, []))
+        lines = drawn(state, 80, 24)
+        self.assertIn("A/Enter Install", str(lines[-1]))
+        self.assertEqual(tap(state, 2, len(lines) - 1), [("run", "install")])
+
+    def test_the_help_says_it_at_every_size(self):
+        for cols, rows in ((40, 12), (60, 20), (80, 24)):
+            with self.subTest(size=(cols, rows)):
+                state = checked_state()
+                state.mouse = True
+                state.help = True
+                text = " ".join(" ".join(str(line).split())
+                                for line in install.tui_view(state, cols, rows))
+                self.assertIn("A row or Install: click or tap twice", text)
+
+
 @unittest.skipUnless(pyte and pty and hasattr(pty, "fork"),
                      "screen tests need pyte (pip install pyte==0.8.2) and a pty")
 class TapsOnAPtySeeFirst(unittest.TestCase):
@@ -11791,7 +11974,7 @@ class TapsOnAPtySeeFirst(unittest.TestCase):
         term.wait("> Install")
         term.settle()
         self.click(term, *self.bar_entry(term, "Install"))
-        self.assertIn("tap again", term.settle().splitlines()[-1])
+        self.assertIn(install.TUI_ARMED, term.settle().splitlines()[-1])
         self.assertEqual(repo.installed(), [])
         self.click(term, *self.bar_entry(term, "Install"))
         term.wait("files installed")
@@ -11816,6 +11999,30 @@ class TapsOnAPtySeeFirst(unittest.TestCase):
             term.send("\r")
         self.assertIn(term.close(), (install.QUIT_CODE, 0))
 
+    def test_a_double_tap_on_continue_stays_on_what_it_opened(self):
+        # tui_audit_14 P2-1: at 0, 80, 150 and 250 ms the second tap pressed
+        # B/Esc Back on the Checking screen, back to the first screen.
+        for gap in (0.0, 0.08, 0.15, 0.25):
+            with self.subTest(gap=gap):
+                repo = self.repo()
+                term = self.start()
+                term.wait("Where do you play?")
+                term.settle()
+                time.sleep(install.TUI_TAP_SETTLE)
+                col, line = self.bar_entry(term, "Continue")
+                press = sgr(col + 1, line + 1)
+                release = sgr(col + 1, line + 1, release=True)
+                os.write(term.fd, (press + release).encode())
+                time.sleep(gap)
+                os.write(term.fd, (press + release).encode())
+                screen = term.settle(0.8)
+                self.assertNotIn("Where do you play?", screen)
+                self.assertNotIn("Quit?", screen)
+                term.wait("> Install")
+                self.assertEqual(repo.installed(), [])
+                term.send("q")
+                term.close()
+
     def test_continue_then_install_in_one_cell_stops_on_confirm(self):
         repo = self.repo()
         term = self.start()
@@ -11832,17 +12039,18 @@ class TapsOnAPtySeeFirst(unittest.TestCase):
         term.settle()
         col, line = self.bar_entry(term, "Continue")
         report = sgr(col + 1, line + 1) + sgr(col + 1, line + 1, release=True)
-        # A double tap: the first arms Continue, the second opens Confirm.
+        # A double tap: the first opens Confirm, the second lands on its
+        # Install inside the settle time and does nothing (tui_audit_14 P2-1).
+        time.sleep(install.TUI_TAP_SETTLE)
         term.send(report + report)
         term.wait("Counted again for your choices")
-        term.settle()
-        self.assertEqual(repo.installed(), [])
-        # Install in the same cell: one tap arms it, nothing is written.
-        term.send(report)
         screen = term.settle(0.6)
         self.assertIn("RetroBIOS: Confirm", screen)
-        self.assertIn("Install: tap again", screen.splitlines()[-1])
         self.assertEqual(repo.installed(), [])
+        # A tap made later installs: Confirm is the look before the install.
+        term.send(report)
+        term.wait("files installed")
+        self.assertNotEqual(repo.installed(), [])
         term.send("q")
         term.close()
 
@@ -11909,6 +12117,103 @@ class TapsOnAPtySeeFirst(unittest.TestCase):
         self.assertNotIn("[1]", screen)
         term.send("q")
         term.close()
+
+
+class AuditTwentyOneAndFourteen(unittest.TestCase):
+    """code_audit_21 and tui_audit_14: one choice state in both modes, the
+    cards found first, packs that hold nothing, and words that fit."""
+
+    setUp = LineModeAndScreenDecideAlike.setUp
+    line_run = LineModeAndScreenDecideAlike.line_run
+    listing = LineModeAndScreenDecideAlike.listing
+    entry = staticmethod(LineModeAndScreenDecideAlike.entry)
+    receive = staticmethod(AuditTwentyAndThirteen.receive)
+    game_manifest = AuditTwentyAndThirteen.game_manifest
+    game_events = AuditTwentyAndThirteen.game_events
+    game_plan = AuditTwentyAndThirteen.game_plan
+
+    @staticmethod
+    def screen(state: install.TuiState, cols: int = 80, rows: int = 24) -> str:
+        return " ".join(" ".join(str(line).split())
+                        for line in install.tui_view(state, cols, rows))
+
+    def toggle_game_data(self, state: install.TuiState) -> None:
+        rows = install.tui_rows(state)
+        state.focus["plan"] = next(index for index, row in enumerate(rows)
+                                   if row.action == "gamedata")
+        self.assertEqual(install.tui_update(state, Key("enter")), [("run", "check")])
+        self.receive(state, self.game_events(self.game_manifest(),
+                                             left_out=state.no_game_data))
+
+    def test_the_game_data_toggle_never_unticks_a_system_for_good(self):
+        """tui_audit_14 P2-2: DS and Dreamcast ticked, game data left out
+        then kept: Dreamcast was gone, and so was the row to turn it back."""
+        state = self.game_plan()
+        state.ticked = {"nintendo-ds", "sega-dreamcast"}
+        self.toggle_game_data(state)
+        self.assertEqual(state.ticked, {"nintendo-ds"})
+        self.assertIn("for 1 of 2 systems", self.screen(state))
+        row = next(row for row in install.tui_rows(state) if row.action == "gamedata")
+        self.assertEqual((row.label, row.right), ("Game data: left out", "2 files, 2.0 KB"))
+        self.toggle_game_data(state)
+        self.assertEqual(state.ticked, {"nintendo-ds", "sega-dreamcast"})
+        self.assertIn("for 2 of 3 systems", self.screen(state))
+        # Line mode, the same choice: c, the two systems, g twice.
+        manifest = self.game_manifest()
+        listing = self.listing("retroarch", [
+            self.entry(entry["dest"], b"x" * entry["size"], entry["systems"],
+                       **({"category": entry["category"]} if "category" in entry else {}))
+            for entry in manifest["files"]], categorized=True)
+        text, _asked = self.line_run(_args(manifest=listing, dest=self.here,
+                                           declared_only=False, dry_run=True),
+                                     ["c", "1,2", "g", "g"])
+        self.assertIn("for 1 of 2 systems", text)
+        self.assertIn("for 2 of 3 systems", text.rsplit("for 1 of 2 systems", 1)[1])
+
+    def game_listing(self) -> Path:
+        manifest = self.game_manifest()
+        return self.listing("retroarch", [
+            self.entry(entry["dest"], b"x" * entry["size"], entry["systems"],
+                       **({"category": entry["category"]} if "category" in entry else {}))
+            for entry in manifest["files"]], categorized=True)
+
+    def test_line_mode_offers_no_enter_for_an_emptied_choice(self):
+        """code_audit_21 P3-6: Dreamcast alone, game data left out: line mode
+        said "0 files, 0 B, for 0 of 2 systems", offered Enter and a command
+        that installs nothing, then refused the Enter."""
+        text, asked = self.line_run(_args(manifest=self.game_listing(), dest=self.here,
+                                          declared_only=False),
+                                    ["c", "2", "g", ""])
+        menu = text.rsplit("Counted again for your choices", 1)[1]
+        self.assertIn("RetroArch: sega-dreamcast holds only game data: nothing is left to "
+                      "install.", menu)
+        self.assertNotIn("0 files, 0 B", menu)
+        self.assertNotIn("Enter)", menu)
+        self.assertNotIn("Same choice without questions", menu)
+        # Enter is not an answer here: asked again, never refused after.
+        self.assertIn("Type c, f, g or q.", menu)
+        self.assertEqual(asked[-1], "> ")
+
+    def test_a_kept_choice_in_place_offers_no_install(self):
+        """code_audit_21 P3-4: one system ticked, its files in place, the
+        plan said "About 0 files" over Install, and Confirm "Everything is
+        in place" over Install too."""
+        state = checked_state()
+        state.ticked = {"nintendo-famicom-disk"}
+        text = self.screen(state)
+        self.assertIn("(ファミコン) is in place: nothing is left to install.", text)
+        self.assertNotIn("About 0 files", text)
+        actions = [row.action for row in install.tui_rows(state)]
+        self.assertNotIn("install", actions)
+        self.assertEqual(actions[0], "systems")
+        # Confirm counted nothing to install: Close, never Install.
+        state.stack.append("confirm")
+        state.dry = {**CHECK, "present": 1, "missing": 0, "wrong_hash": 0,
+                     "bytes_needed": 0, "files": 1}
+        state.dry_files = []
+        self.assertEqual([row.action for row in install.tui_rows(state)], ["close", "back"])
+        install.tui_update(state, Key("enter"))
+        self.assertEqual(state.exit_code, 0)
 
 
 if __name__ == "__main__":
