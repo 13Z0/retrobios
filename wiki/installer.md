@@ -324,8 +324,8 @@ file list is downloaded once and handed to each run.
 3. Prints the file count and total size, then a safety notice counting the
    entries the collection cannot serve, how many of those the platform marks
    required, and why. At a terminal, the
-   [full-screen interface](#the-full-screen-interface) then offers to install
-   everything or to choose systems, cores and regions, and `--plain` asks the
+   [full-screen interface](#the-full-screen-interface) then offers **Install**
+   for everything and **Choose systems** for fewer, and `--plain` asks the
    same as questions (see below).
 4. Hashes what is already in the destination and reports how many entries are
    present, verified, or present with the wrong contents.
@@ -702,25 +702,38 @@ the plan screen of the [full-screen interface](#the-full-screen-interface)
 offers **Install**, **Choose systems** and **Options**. With `--plain`, or where
 the full screen cannot open (a terminal smaller than 40x12, `TERM=dumb`), the
 same choice comes as questions after detection. A RetroArch run with `--plain`
-printed this on 2026-10-28, `g` then pressed:
+prints this for the RetroArch list, `g` then pressed (written from install.py
+by `scripts/generate_installer_doc.py`):
+
+<!-- generated: line-menu -->
 
 ```
 RetroArch: 10994 files, 6.7 GB.
   3269 BIOS files (4.1 GB), 5089 game data files (2.5 GB) and 2636 data files (38.5 MB).
   Game data: files a game or a game engine reads, of no use to the other cores. Data files: the files an emulator reads from a data folder of its own, such as Dolphin's Sys and PPSSPP's assets.
   BIOS folder: /home/me/.config/retroarch/system
-  106 files read from RetroArch's save directory go to a folder per core under /home/me/.config/retroarch/saves
   Enter) install everything
   c) choose systems, cores and regions
   f) copy from a folder or an old card
   g) Game data: kept (5089 files, 2.5 GB): leave it out
   q) quit
->
+> g
+
   Counted again for your choices. Nothing is written before Enter.
 
-RetroArch: 5905 files, 4.1 GB.
+RetroArch: 5905 files, 4.2 GB.
   3269 BIOS files (4.1 GB) and 2636 data files (38.5 MB). 5089 game data files left out.
+  Game data: files a game or a game engine reads, of no use to the other cores. Data files: the files an emulator reads from a data folder of its own, such as Dolphin's Sys and PPSSPP's assets.
+  BIOS folder: /home/me/.config/retroarch/system
+  Same choice without questions: python3 install.py --platform retroarch --dest /home/me/.config/retroarch/system --no-game-data
+  Enter) install everything
+  c) choose systems, cores and regions
+  f) copy from a folder or an old card
+  g) Game data: left out (5089 files, 2.5 GB): keep it
+  q) quit
+>
 ```
+<!-- /generated: line-menu -->
 
 A list that marks its game data counts three kinds of file apart, on the plan,
 in this menu and on the result (`Installed: 3269 BIOS files, 5089 game data
@@ -735,9 +748,8 @@ count follows the systems chosen, as `g` counts them, and a choice that holds
 no game data has no row. Given `--no-game-data`, neither the menu nor the plan
 offers the game data back.
 
-`i) only what the installed cores read: 87 files, 43.8 MB` appears for
-RetroArch, Lakka and RetroPie when cores are found installed, here a RetroArch
-with Beetle PSX HW, Snes9x, mGBA, Genesis Plus GX and FCEUmm.
+An `i` entry, with the count and size of only what the installed cores read,
+appears for RetroArch, Lakka and RetroPie when cores are found installed.
 It keeps what those cores read and drops the systems none of them emulates,
 the rule `--installed-cores` applies.
 

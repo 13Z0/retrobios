@@ -193,8 +193,13 @@ class IphoneAndIpad(unittest.TestCase):
 
 
 class WhatItAsks(unittest.TestCase):
-    def test_the_prompt_block_is_framed_as_a_terminal(self):
-        self.assertIn('```text title="What it asks" frame="terminal"', _page("which-pack.md"))
+    def test_the_page_says_the_screen_not_a_line_menu(self):
+        # The one-liner opens the full screen: a "What it asks" block of the
+        # line menu showed keys a beginner never sees (owner's note).
+        text = _page("which-pack.md")
+        self.assertNotIn('title="What it asks"', text)
+        for line in generate_site.first_screen_words():
+            self.assertIn(line, text)
 
 
 if __name__ == "__main__":

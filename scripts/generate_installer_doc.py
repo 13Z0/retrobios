@@ -188,6 +188,57 @@ def card_marker_rows() -> list[list[str]]:
     return rows
 
 
+# The folder the line menu example names: a home that is no one's.
+MENU_FOLDER = "/home/me/.config/retroarch/system"
+
+
+def line_menu() -> str:
+    """The line menu of a RetroArch run, g then Enter pressed, as install.py
+    prints it for the RetroArch list (install/retroarch.json): the very
+    function line mode runs, its questions answered here. The page carried
+    a copy typed by hand, whose keys and counts drifted from the installer
+    (code_audit_22, owner's note on which-pack)."""
+    import contextlib  # noqa: PLC0415
+    import io  # noqa: PLC0415
+    import json  # noqa: PLC0415
+    import os  # noqa: PLC0415
+    from unittest import mock  # noqa: PLC0415
+
+    manifest = json.loads((ROOT / "install" / "retroarch.json").read_text(encoding="utf-8"))
+    files = [*manifest["files"], *(manifest.get("case_variants") or [])]
+    folder = Path(MENU_FOLDER)
+    out = io.StringIO()
+    answers = iter(["g", ""])
+
+    def answer(prompt: str) -> str:
+        given = next(answers)
+        print(f"{prompt}{given}".rstrip())
+        return given
+
+    invocation = _install.Invocation()
+    invocation.os_type = "linux"
+    environment = {key: value for key, value in os.environ.items()
+                   if key not in (_install.OFFLINE_VARIABLE, "RETROBIOS_BOOTSTRAP")}
+    with mock.patch.dict(os.environ, environment, clear=True), \
+            mock.patch.object(_install, "_INVOCATION", invocation), \
+            mock.patch.object(_install, "_ask", answer), \
+            mock.patch.object(_install, "folder_warnings", return_value=[]), \
+            contextlib.redirect_stdout(out):
+        cut = [False]
+
+        def command(choice: object) -> str:
+            invocation.chosen["retroarch"] = (
+                (_install.chosen_flags(choice) if choice is not None else [])
+                + ([("--no-game-data", None)] if cut[0] else []))
+            return invocation.command("retroarch", folder)
+
+        _install._prompt_custom_selection(
+            "retroarch", files, manifest.get("omitted_files") or [], None, "RetroArch",
+            False, manifest.get("data_directories") or [], folder,
+            _install.records_selection(files), None, manifest, False, command, cut)
+    return "```\n" + out.getvalue().strip("\n") + "\n```"
+
+
 def render(page: str) -> str:
     """The page with each marked table written from install.py."""
     writers = {
@@ -198,6 +249,7 @@ def render(page: str) -> str:
         "route-keys": lambda _body: route_keys(),
         "card-markers": lambda _body: _table(["On the card", "System", "Files go to"],
                                              card_marker_rows()),
+        "line-menu": lambda _body: line_menu(),
     }
     seen = []
 

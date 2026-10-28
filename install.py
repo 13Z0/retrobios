@@ -5791,6 +5791,14 @@ class Invocation:
 
 _INVOCATION = Invocation()
 
+# What a run says when every file is in place, on the screen and in line
+# mode: the site's "How to check" quotes it (scripts/generate_site.py).
+EVERYTHING_IN_PLACE = "Everything is in place."
+# The plan's two rows a beginner reads first: the README and the site name
+# them from here, so they say what the screen shows.
+TUI_INSTALL_ROW = "Install"
+TUI_SYSTEMS_ROW = "Choose systems"
+
 
 def _on_read_only_mount(path: Path) -> bool:
     """Whether the file system holding path, or the folder it would go in,
@@ -6135,7 +6143,7 @@ def _report_outcome(
     # (code_audit_22 P3-4).
     in_place = f" {_plural(up_to_date, 'file')} already in place." if up_to_date else ""
     if not downloaded:
-        say("\nDone. Everything is in place.")
+        say(f"\nDone. {EVERYTHING_IN_PLACE}")
     elif sources and "," not in sources and not KEPT.summary():
         # Every file from one place: "22 files installed." over "22 files
         # copied from packx." said one count twice (tui_audit_15 P3-8).
@@ -6400,7 +6408,7 @@ def _print_plan(
     # said of a run that makes no network request.
     verb = "copy" if LOCAL.pack is not None else "download"
     if not parts and not copied:
-        print(f"\n  Everything is in place. A real run would {verb} nothing.")
+        print(f"\n  {EVERYTHING_IN_PLACE} A real run would {verb} nothing.")
         return
     if parts and _offline_only():
         # --offline fetches none of them: "Would download" promised a
@@ -6908,7 +6916,7 @@ def _install_standalone_folders(
             if not args.verbose and len(missing) > 10:
                 print(f"    ... and {len(missing) - 10} more missing (--verbose lists them all)")
             if not to_download:
-                print("  Everything is in place.")
+                print(f"  {EVERYTHING_IN_PLACE}")
             pending += len(to_download)
             continue
         if args.dry_run:
@@ -6916,7 +6924,7 @@ def _install_standalone_folders(
                         verbose=args.verbose)
             continue
         if not to_download:
-            print("  Everything is in place.")
+            print(f"  {EVERYTHING_IN_PLACE}")
             continue
         size = sum(entry.get("size", 0) for entry in to_download)
         _check_free_space(folder, size, code=1 if downloaded else 2)
@@ -7827,7 +7835,9 @@ def _pick(
     print(f"\n{title}")
     shown = {name: screen_text((labels or {}).get(name, name)) for name, _files in rows}
     sizes = {name: sizer(files) for name, files in rows}
-    cols = shutil.get_terminal_size((80, 24)).columns
+    # Python 3.8 gives a pty of no size as 0 columns, where 3.11 falls back:
+    # a list laid out in 0 columns never ended.
+    cols = max(shutil.get_terminal_size((80, 24)).columns or 80, 20)
     # The fewest lines, the whole words where they cost no line: one
     # wording for the whole list, the id dropped where it takes a tenth
     # more lines (40 columns).
@@ -8279,15 +8289,23 @@ def found_head(files: list[dict], trees: list[dict], bios_path: Path) -> str:
     """What the --from folders hold of the files not in place, and what is
     left, in the screen plan's words: "6 found in OLD, 16 need the
     internet". "" when they hold none of them. A file in place is one of
-    the right size and hash, a data file one of the right size: its tree is
-    hashed once, by the run (data_directory_state)."""
+    the right size: the run hashes what is in place once, after Enter
+    (check_local, data_directory_state), and a card read twice is read at
+    the speed of its reader."""
+
+    def held(path: Path, size: object) -> bool:
+        try:
+            return _is_file(path) and path.stat().st_size == size
+        except OSError:
+            return False
+
     needed = []
     for entry in files:
         try:
             path = _entry_path(bios_path, entry)
         except ValueError:
             continue
-        if not (_is_file(path) and _classify_local(entry, path) == "up_to_date"):
+        if not held(path, entry.get("size")):
             needed.append(entry)
     copies = plan_local_copies(needed, bios_path, None, LOCAL.folders)
     if not copies:
@@ -8300,12 +8318,7 @@ def found_head(files: list[dict], trees: list[dict], bios_path: Path) -> str:
         root = (_destination_path(bios_path, tree["dest"]) if tree.get("dest")
                 else bios_path)
         for rel, meta in (tree.get("files") or {}).items():
-            target = _destination_path(root, rel)
-            try:
-                held = _is_file(target) and target.stat().st_size == meta.get("size")
-            except OSError:
-                held = False
-            if not held:
+            if not held(_destination_path(root, rel), meta.get("size")):
                 data += 1
                 data_bytes += meta.get("size", 0)
     left = [entry for entry in needed if id(entry) not in copies]
@@ -13183,7 +13196,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                                         len(lacking)))
                 check_pending += len(to_download)
             else:
-                print("\n  Everything is in place.")
+                print(f"\n  {EVERYTHING_IN_PLACE}")
             absent = _absent_required(omitted_files, bios_path)
             # The collection cannot supply these, so they leave the exit
             # code alone, but a user asking why a game will not start needs
@@ -13376,7 +13389,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 total_interrupted = True
                 break
         else:
-            print("\n  Everything is in place.")
+            print(f"\n  {EVERYTHING_IN_PLACE}")
 
         total_up_to_date += len(up_to_date)
 
@@ -15230,7 +15243,7 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     if (state.emptied and state.systems and not state.ticked) or _choice_in_place(state):
         # The choice emptied by an option: Choose systems first, never an
         # Install that would refuse or take the whole list.
-        rows = [TuiRow("systems", "Choose systems")]
+        rows = [TuiRow("systems", TUI_SYSTEMS_ROW)]
         game_data = _game_data_row(state)
         return rows + ([game_data] if game_data is not None else []) + [
             TuiRow("options", "Options"), TuiRow("quit", "Quit")]
@@ -15241,7 +15254,8 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     lacking = set(_tui_pack_lacks(state, [event["dest"] for event in state.files]))
     size = check.get("bytes_needed", 0) - sum(event["size"] for event in state.files
                                               if event["dest"] in lacking)
-    label = f"Install {format_size(size)}" if size >= CONFIRM_FROM_BYTES else "Install"
+    label = (f"{TUI_INSTALL_ROW} {format_size(size)}" if size >= CONFIRM_FROM_BYTES
+             else TUI_INSTALL_ROW)
     rows = [TuiRow("install", label)]
     if _offline_only() and not _plan_copies(state, check):
         # Nothing here to copy, and the network refused: Install would
@@ -15277,7 +15291,7 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
         rows.append(copy)
     if "systems" in recorded_axes((state.manifest or {}).get("files", [])) and (
             len(state.systems) > 1 or state.cli_systems):
-        rows.append(TuiRow("systems", "Choose systems"))
+        rows.append(TuiRow("systems", TUI_SYSTEMS_ROW))
     game_data = _game_data_row(state)
     if game_data is not None:
         rows.append(game_data)
@@ -19188,7 +19202,7 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
             head += f" {_plural(up_to_date, 'file')} already in place."
     else:
         title = "Done"
-        head = "Everything is in place."
+        head = EVERYTHING_IN_PLACE
     lines = [head]
     sources = _tui_sources(state, installed, len(failed) + left)
     if left and installed and sources:

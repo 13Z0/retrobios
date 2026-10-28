@@ -104,16 +104,17 @@ class GetPagesGiveTheSetupsOwnRoutes(unittest.TestCase):
 class CheckNeedsTheFiles(unittest.TestCase):
     def test_the_pass_line_is_what_the_installer_prints_only_when_complete(self):
         installer = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
-        printed = re.search(r"`([^`]+)`", generate_site.CHECK_PASS_LINE)[1]
-        self.assertIn(f'print("\\n  {printed}")', installer)
-        self.assertNotIn("wrong hash", generate_site.CHECK_PASS_LINE)
+        printed = re.search(r"`([^`]+)`", generate_site.check_pass_line())[1]
+        self.assertEqual(printed, generate_site._installer().EVERYTHING_IN_PLACE)
+        self.assertIn('print(f"\\n  {EVERYTHING_IN_PLACE}")', installer)
+        self.assertNotIn("wrong hash", generate_site.check_pass_line())
 
     def test_no_setup_page_passes_an_empty_folder(self):
         for name in SETUPS:
             text = _page(f"platforms/{name}.md")
             with self.subTest(setup=name):
                 self.assertNotIn("All good when you see `0 wrong hash`", text)
-                self.assertIn(generate_site.CHECK_PASS_LINE, text)
+                self.assertIn(generate_site.check_pass_line(), text)
 
 
 class ARouteWithoutANetwork(unittest.TestCase):
@@ -234,6 +235,58 @@ class HomeAndWhichPack(unittest.TestCase):
         self.assertIsNotNone(meta)
         for word in ("ios", "iphone", "ipad", "delta", "provenance"):
             self.assertIn(word, meta[1].split())
+
+
+class TheSiteSaysWhatTheInstallerShows(unittest.TestCase):
+    """which-pack showed a line menu (Enter, i, c, q) the one-liner never
+    opens, typed by hand, its keys out of date. The site, the README and
+    the wiki now take the screen's words and the line menu from install.py."""
+
+    MENU_LINES = ("Enter) install everything", "i) only what the installed cores read",
+                  "c) choose systems, cores and regions")
+
+    def test_which_pack_describes_the_screen_in_the_installers_words(self):
+        installer = generate_site._installer()
+        text = _page("which-pack.md")
+        for line in generate_site.first_screen_words():
+            self.assertIn(line, text)
+        self.assertIn(f"**{installer.TUI_INSTALL_ROW}**", text)
+        self.assertIn(f"**{installer.TUI_SYSTEMS_ROW}**", text)
+        for line in self.MENU_LINES:
+            self.assertNotIn(line, text)
+        self.assertNotIn("press **c**", text)
+
+    def test_the_plan_rows_are_the_words_the_pages_use(self):
+        installer = generate_site._installer()
+        state = installer.TuiState(os_type="linux", home=Path("/home/me"))
+        state.stack = ["plan"]
+        state.check = {"files": 2, "present": 0, "missing": 2, "wrong_hash": 0, "need": 2,
+                       "bytes_needed": 10}
+        state.systems = [{"system": name, "missing": 1, "wrong_hash": 0, "present": 0,
+                          "files": 1, "bytes_needed": 5} for name in ("a", "b")]
+        state.manifest = {"files": [{"dest": "a.bin", "systems": ["a"]},
+                                    {"dest": "b.bin", "systems": ["b"]}]}
+        state.ticked = {"a", "b"}
+        state.checked_flags = installer.tui_flags(state)
+        labels = [row.label for row in installer.tui_rows(state)]
+        self.assertEqual(labels[0], installer.TUI_INSTALL_ROW)
+        self.assertIn(installer.TUI_SYSTEMS_ROW, labels)
+
+    def test_the_readme_and_the_wiki_take_the_same_words(self):
+        installer = generate_site._installer()
+        readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn(f"fewer under **{installer.TUI_SYSTEMS_ROW}**", readme)
+        self.assertNotIn("offers to install everything or to choose systems", readme)
+        source = (REPO_ROOT / "scripts" / "generate_readme.py").read_text(encoding="utf-8")
+        self.assertIn("_installer_words().TUI_SYSTEMS_ROW", source)
+        import generate_installer_doc  # noqa: PLC0415
+
+        page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        self.assertIn(generate_installer_doc.line_menu(), page)
+        menu = page.split("<!-- generated: line-menu -->", 1)[1]
+        outside = page.replace(menu.split("<!-- /generated: line-menu -->", 1)[0], "")
+        for line in self.MENU_LINES:
+            self.assertNotIn(line, outside)
 
 
 if __name__ == "__main__":

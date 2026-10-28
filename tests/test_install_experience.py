@@ -1159,10 +1159,14 @@ class NotFoundWithAClosedFolder(unittest.TestCase):
         asked = []
         install._DETECTION_REFUSED[:] = [(home / ".config" / "EmuDeck", "Permission denied")]
         self.addCleanup(install._DETECTION_REFUSED.clear)
+        # The drives of the machine running the tests are not read, and the
+        # question is not printed into the test output.
         with mock.patch.dict(os.environ, {"HOME": str(home)}), \
+                mock.patch.object(install, "_mounted_cards", return_value=[]), \
                 mock.patch.object(install, "_choose_platform", return_value="retroarch"), \
                 mock.patch.object(install, "_ask",
-                                  lambda prompt: asked.append(prompt) or str(home / "b")):
+                                  lambda prompt: asked.append(prompt) or str(home / "b")), \
+                contextlib.redirect_stdout(io.StringIO()):
             install._prompt_manual_platform("linux")
         self.assertEqual(len(asked), 1)
         self.assertNotIn("no default on this system", asked[0])

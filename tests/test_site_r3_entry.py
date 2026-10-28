@@ -158,7 +158,9 @@ class SetupPagesOfferPartOfThePack(unittest.TestCase):
             with self.subTest(platform=key):
                 text = _guide_part(_page(f"platforms/{key}.md"))
                 self.assertIn(f"/retrobios/which-pack/?platform={key}#only-some-consoles", text)
-                self.assertIn("or press **c** in the command.", text)
+                # The screen's own row: the line menu's c is not what the
+                # one-liner opens.
+                self.assertIn("or choose **Choose systems** in the command.", text)
 
     def test_the_anchor_exists(self):
         self.assertIn("## Only some consoles?", _page("which-pack.md"))

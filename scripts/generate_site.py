@@ -3934,11 +3934,22 @@ MISSING_IN_PLACE = "Reported missing anyway? `--check` names a wrong file."
 # page shows in full, so the setup page links it.
 SAFE_LINK = "[Is it safe?](../index.md#is-it-safe)"
 
-# The pass line of "How to check". `--check` prints "All files up to date."
-# only when no file is missing or wrong (install.py, the args.check branch
-# after check_local). "0 wrong hash" alone is also what an empty folder
-# prints: 0/14508 present (0 verified, 0 wrong hash).
-CHECK_PASS_LINE = "All good when it says `All files up to date.`"
+def first_screen_words() -> list[str]:
+    """What a beginner sees when the command runs, the screen's own words
+    read from install.py: the one-liner opens the full screen, and the page
+    showed a line menu (Enter, i, c, q) nobody saw, whose keys had changed
+    since."""
+    installer = _installer()
+    return [f"The command opens a screen. **{installer.TUI_INSTALL_ROW}** gets every "
+            f"file, **{installer.TUI_SYSTEMS_ROW}** fewer."]
+
+
+def check_pass_line() -> str:
+    """The pass line of "How to check": the words `--check` prints only when
+    no file is missing or wrong (install.py EVERYTHING_IN_PLACE), read from
+    the installer. Typed here, it kept "All files up to date." after the
+    installer said "Everything is in place." (tui_audit_15 P3-10)."""
+    return f"All good when it says `{_installer().EVERYTHING_IN_PLACE}`"
 
 # Under "From your computer": a device with no network installs from the ZIP
 # (`--from-pack`). The id is the one wiki/installer.md gives its section.
@@ -4099,7 +4110,8 @@ def only_some_consoles(name: str, prefix: str = "") -> list[str]:
     """The way to a smaller download, in the words Get your files uses."""
     return [
         f"Only some consoles? [Pick them]({prefix}which-pack.md?platform={name}"
-        "#only-some-consoles), or press **c** in the command.",
+        f"#only-some-consoles), or choose **{_installer().TUI_SYSTEMS_ROW}** in the "
+        "command.",
         "",
     ]
 
@@ -4260,7 +4272,7 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
         "Add `--check` to the command. It changes nothing.",
         "",
         *terminal_tabs(guide.run, check_args, steps=False),
-        CHECK_PASS_LINE,
+        check_pass_line(),
         "",
         _check_sentence(display, cov["mode"], cov["config"], no_list),
         "",
@@ -11397,7 +11409,7 @@ def generate_which_pack() -> str:
         "## Only some consoles?",
         "",
         "Pick them here, and get the files and the command. Or run the command "
-        "below and press **c** when it asks.",
+        f"below and choose **{_installer().TUI_SYSTEMS_ROW}**.",
         "",
         "<FilePicker />",
         "",
@@ -11410,14 +11422,7 @@ def generate_which_pack() -> str:
         "On Batocera, Recalbox and other game systems, run it on the device. "
         "Your setup's page shows how.",
         "",
-        "The command asks what to install. Press **Enter** for everything.",
-        "",
-        "```text title=\"What it asks\" frame=\"terminal\"",
-        "  Enter) install everything",
-        "  i) only what the installed cores read",
-        "  c) choose systems, cores and regions",
-        "  q) quit",
-        "```",
+        *first_screen_words(),
         "",
         *trust_box(""),
         "**Check your folder later.** Add `--check`. It changes nothing.",
