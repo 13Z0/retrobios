@@ -226,8 +226,9 @@ def flow(boxes: list[Box], vertical: bool, total: float) -> tuple[float, float, 
     if vertical:
         width = total
         y = 1.0
-        for index, box in enumerate(boxes):
-            title_lines, body, height = _box_height(box, width - 2)
+        measured = [_box_height(box, width - 2) for box in boxes]
+        height = max(m[2] for m in measured)
+        for index, (box, (title_lines, body, _)) in enumerate(zip(boxes, measured)):
             out.extend(_draw_box(box, 1, y, width - 2, height, title_lines, body))
             y += height
             if index < len(boxes) - 1:
@@ -238,10 +239,11 @@ def flow(boxes: list[Box], vertical: bool, total: float) -> tuple[float, float, 
     width = (total - gap * (len(boxes) - 1) - 2) / len(boxes)
     measured = [_box_height(box, width) for box in boxes]
     height = max(m[2] for m in measured)
-    for index, (box, (title_lines, body, own)) in enumerate(zip(boxes, measured)):
+    for index, (box, (title_lines, body, _)) in enumerate(zip(boxes, measured)):
         x = 1 + index * (width + gap)
-        # A box is as tall as its lines, centred on the row the arrows run along.
-        out.extend(_draw_box(box, x, 1 + (height - own) / 2, width, own, title_lines, body))
+        # One height for the row: boxes as tall as their own lines made four
+        # sizes side by side.
+        out.extend(_draw_box(box, x, 1, width, height, title_lines, body))
         if index < len(boxes) - 1:
             mid = 1 + height / 2
             out.extend(_line([(x + width, mid), (x + width + gap - 1, mid)]))
@@ -253,8 +255,9 @@ def columns(boxes: list[Box], vertical: bool, total: float) -> tuple[float, floa
     out: list[str] = []
     if vertical:
         y = 1.0
-        for box in boxes:
-            title_lines, body, height = _box_height(box, total - 2)
+        measured = [_box_height(box, total - 2) for box in boxes]
+        height = max(m[2] for m in measured)
+        for box, (title_lines, body, _) in zip(boxes, measured):
             out.extend(_draw_box(box, 1, y, total - 2, height, title_lines, body))
             y += height + 12
         return total, y - 11, out
@@ -262,8 +265,8 @@ def columns(boxes: list[Box], vertical: bool, total: float) -> tuple[float, floa
     width = (total - gap * (len(boxes) - 1) - 2) / len(boxes)
     measured = [_box_height(box, width) for box in boxes]
     height = max(m[2] for m in measured)
-    for index, (box, (title_lines, body, own)) in enumerate(zip(boxes, measured)):
-        out.extend(_draw_box(box, 1 + index * (width + gap), 1, width, own, title_lines, body))
+    for index, (box, (title_lines, body, _)) in enumerate(zip(boxes, measured)):
+        out.extend(_draw_box(box, 1 + index * (width + gap), 1, width, height, title_lines, body))
     return total, height + 2, out
 
 

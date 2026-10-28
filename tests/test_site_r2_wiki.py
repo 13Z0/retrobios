@@ -328,10 +328,14 @@ class DiagramText(unittest.TestCase):
         html = sitediagrams.figure_html("bios-chain")
         self.assertRegex(html, r'<text [^>]*style="font-family: var\(--sl-font-mono[^>]*>/userdata/bios/</text>')
 
-    def test_boxes_take_the_height_of_their_lines(self):
-        width, _height, body = sitediagrams.flow(sitediagrams._bios_chain_boxes(), False, sitediagrams.WIDE)
-        heights = {float(h) for h in re.findall(r'<rect [^>]*height="([\d.]+)"[^>]*class="rb-d-box', "".join(body))}
-        self.assertGreater(len(heights), 1)
+    def test_boxes_of_a_row_share_one_height(self):
+        for layout in (sitediagrams.flow, sitediagrams.columns):
+            for vertical, total in ((False, sitediagrams.WIDE), (True, sitediagrams.NARROW)):
+                _width, _height, body = layout(sitediagrams._bios_chain_boxes(), vertical, total)
+                heights = {float(h) for h in re.findall(r'<rect [^>]*height="([\d.]+)"[^>]*class="rb-d-box',
+                                                         "".join(body))}
+                with self.subTest(layout=layout.__name__, vertical=vertical):
+                    self.assertEqual(len(heights), 1)
 
 
 class ExampleHashesStayOutOfSearch(unittest.TestCase):
