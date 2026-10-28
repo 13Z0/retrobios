@@ -6084,7 +6084,7 @@ def _report_outcome(
             say(f"Location that was being written to: {_locations(paths)}")
         for line in kept + advice:
             say(line)
-        say("Run the same command again once that is resolved. "
+        say(_retry_words(failures) or "Run the same command again once that is resolved. "
             "Files already installed are kept.")
         sys.exit(2)
 
@@ -6098,7 +6098,10 @@ def _report_outcome(
         say(f"Location: {_locations(paths)}")
         for line in kept + advice:
             say(line)
-        if not all(str(reason).startswith(NOT_KEPT) for _dest, reason in failures or []):
+        retry = _retry_words(failures)
+        if retry:
+            say(retry)
+        elif not all(str(reason).startswith(NOT_KEPT) for _dest, reason in failures or []):
             say("Run the same command again to retry only those.")
         sys.exit(1)
 
@@ -6145,9 +6148,33 @@ def _offline_remedy(folders: list[str] | None = None, named: bool = False) -> st
             f"again with a pack (--from-pack) or {offline_undo()}.")
 
 
-def _check_fetch_line(fetch: int, beside: str) -> str:
+def _retry_words(failures: list | None) -> str:
+    """What to do when every failure is a file the pack does not hold: a
+    second run fails them the same way, and "run it again to retry only
+    those" sent people round (code_audit_21 P3-3). "" otherwise."""
+    lacking = [dest for dest, reason in failures or [] if str(reason) == NOT_IN_PACK]
+    if not lacking or len(lacking) != len([
+            dest for dest, reason in failures or [] if not str(reason).startswith(NOT_KEPT)]):
+        return ""
+    name = LOCAL.pack.name if LOCAL.pack is not None else "The pack"
+    return (f"{name} does not hold {'it' if len(lacking) == 1 else 'them'}: a newer pack, "
+            "or a run without --from-pack, installs "
+            f"{'it' if len(lacking) == 1 else 'them'}.")
+
+
+def _check_fetch_line(fetch: int, beside: str, lacking: int = 0) -> str:
     """What --check says a run without it does with the files not in place:
-    offline, those it cannot fetch are said so, not "run it to fetch them"."""
+    offline, those it cannot fetch are said so, not "run it to fetch them".
+    With a pack, those it holds are copied and those it lacks are said lacking
+    (lacking): "fetch them" was said with a pack and no network."""
+    if LOCAL.pack is not None:
+        held = fetch - lacking
+        if not held:
+            return (f"  {LOCAL.pack.name} holds none of them: a newer pack, or a run "
+                    "without --from-pack, installs them.")
+        return (f"  Run the same command without --check to copy {held} of them from "
+                f"{LOCAL.pack.name}. A file with a wrong hash is replaced, and the one in "
+                f"place kept in {BACKUP_DIR} beside {beside}.")
     if _offline_only():
         if not fetch:
             return "  Run the same command without --check to copy them into place."
@@ -7212,7 +7239,51 @@ def drive_targets(plat: str) -> list[tuple[str, Path]]:
             targets.append((f"{_drive_folder(mount, below)} ({what})", found[1]))
         else:
             targets.append((f"{_drive_folder(mount, 'bios')} (card or drive)", mount / "bios"))
-    return targets
+    # A handheld's card no file names first: its bios folder is where its
+    # system reads (unnamed_cards).
+    cards = {mount / "bios" for mount in unnamed_cards()}
+    return sorted(targets, key=lambda target: target[1] not in cards)
+
+
+# The folders a handheld card's games part holds, one per console: the
+# names people type for a system (SYSTEM_SHORT_NAMES) and the ArkOS and
+# AmberELEC roms folders those miss.
+_CONSOLE_FOLDERS = frozenset({*SYSTEM_SHORT_NAMES, "arcade", "atari2600", "atarilynx",
+                              "fbneo", "gamegear", "mame", "mastersystem", "megadrive",
+                              "neogeo", "pcengine", "psp", "segacd", "wonderswan"})
+
+
+def unnamed_cards() -> list[Path]:
+    """The mounted drives no file names whose root holds a bios folder and
+    console folders: ArkOS's EASYROMS, AmberELEC's GAMES. Which system runs
+    them cannot be told (their own files are on a part a computer does not
+    open), but they are a handheld's card: "Nothing was found here" over
+    one, and two presses of Enter filled this computer's folder for a
+    RetroArch that was not there (tui_audit_14 P2-3)."""
+    cards = []
+    for mount in _mounted_cards():
+        if (card_system(mount) is not None or share_doubt(mount)[0]
+                or not _is_dir(mount / "bios")):
+            continue
+        if any(name.casefold() in _CONSOLE_FOLDERS and _is_dir(mount / name)
+               for name in _listed(mount)):
+            cards.append(mount)
+    return cards
+
+
+def unnamed_card_words(cards: list[Path], tail: str = ".") -> str:
+    """What the first screen and line mode say of those cards."""
+    names = ", ".join(_mount_name(mount) for mount in cards)
+    what = "A card is" if len(cards) == 1 else "Cards are"
+    return f"{what} in the reader ({names}): choose its system{tail}"
+
+
+def say_unnamed_cards() -> None:
+    """Line mode's words for the cards no file names, where it says what
+    was not found here."""
+    cards = unnamed_cards()
+    if cards:
+        print(f"  {unnamed_card_words(cards)}")
 
 
 def _drive_folder(mount: Path, below: str) -> str:
@@ -7267,9 +7338,17 @@ def ask_platform_folder(os_type: str, plat: str, ask: bool = True,
     name = display_name(plat)
     shared = plat in _SHARE_FOLDERS and found is None
     default = found if found is not None else None if shared else _default_dest(os_type, plat)
+    # A handheld's card in the reader and no setup found here: Enter puts
+    # the files on the card, never in this computer's folder for a RetroArch
+    # that is not there (tui_audit_14 P2-3).
+    cards = [] if shared or found is not None else unnamed_cards()
     print(f"\nWhich folder do {name}'s BIOS files go to?")
     if shared:
         print(f"  {share_words(plat)}")
+    elif cards:
+        default = cards[0] / "bios"
+        print(f"  The card in the reader keeps them in its bios folder: "
+              f"{shown_path(default)}.")
     elif found is not None:
         print(f"  {name} reads its BIOS files from: {shown_path(found)}.")
     elif default is not None:
@@ -7280,13 +7359,21 @@ def ask_platform_folder(os_type: str, plat: str, ask: bool = True,
     # rows: never its root, and never for a system that reads another list.
     targets = (share_targets(plat) if shared else
                [*(other_side(os_type, plat) if found is None else []), *drive_targets(plat)])
+    if cards:
+        # The card first, this computer's usual folder after it.
+        targets = [*targets, (f"{side_name(os_type, plat)}'s usual folder",
+                              _default_dest(os_type, plat))]
+        targets = [target for target in targets if target[1] is not None]
     for index, (label, folder) in enumerate(targets, 1):
-        made = "" if _is_dir(folder) else ", created"
+        # Said of a folder that is missing, as the screen says it: "created"
+        # was said of folders nobody had created (code_audit_21 P3-7).
+        missing = "" if _is_dir(folder) else "does not exist yet"
         # A label that spells its folder (the Windows side's) is not
         # followed by it again.
         shown = shown_path(folder)
-        print(f"    {index}) {label}" + (f" ({shown}{made})" if shown not in label
-                                         else f" ({made[2:]})" if made else ""))
+        print(f"    {index}) {label}" + (
+            f" ({shown}{', ' + missing if missing else ''})" if shown not in label
+            else f" ({missing})" if missing else ""))
     left_out = "" if shared else drives_left_out(plat)
     if left_out:
         print(f"  {left_out}")
@@ -7295,7 +7382,8 @@ def ask_platform_folder(os_type: str, plat: str, ask: bool = True,
     why = ("" if default is not None or shared
            else " (no default, a folder above could not be opened)"
            if _default_set_aside(os_type, plat) else " (no default on this system)")
-    enter = (f"the folder {name} reads" if found is not None else "the default above")
+    enter = (f"the folder {name} reads" if found is not None
+             else "the card's bios folder" if cards else "the default above")
     prompt = (f"BIOS folder{numbers}, q to quit (Enter for {enter}): " if default
               else f"BIOS folder{numbers}, q to quit{why}: ")
     usage = f"  Type a folder{', a number' if targets else ''}, or q to quit."
@@ -8712,6 +8800,13 @@ def pack_lacks(entries: list[dict]) -> list[dict]:
     """The entries the pack given to this run does not hold, none without
     a pack: they cannot be installed from it."""
     return [] if LOCAL.pack is None else [e for e in entries if LOCAL.pack.find(e) is None]
+
+
+def pack_holds_trees(data_dirs: list[dict]) -> bool:
+    """Whether the pack given to this run holds a file of any of these data
+    trees, which an install takes from it."""
+    return LOCAL.pack is not None and any(
+        next(LOCAL.pack.tree(entry.get("dest", "")), None) is not None for entry in data_dirs)
 
 
 def pack_lacks_words(count: int, total: int) -> str:
@@ -12134,6 +12229,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             # RetroArch first, as the screen offers them. Its folder question
             # alone left ArkOS, muOS and JELOS out of reach (tui_audit_11 P1-2).
             print(f"  {display_name(args.platform)} was not found here.")
+            say_unnamed_cards()
             platforms = _prompt_manual_platform(
                 os_type, not (args.check or args.dry_run or args.yes), True,
                 f"Which setup is the {display_name(args.platform)} list for?", setups, mounted)
@@ -12142,6 +12238,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             # filled with a card mounted in the reader, and with nothing
             # found here, without a question.
             print(f"  {display_name(args.platform)} was not found here.")
+            say_unnamed_cards()
             platforms = [(args.platform, ask_platform_folder(
                 os_type, args.platform, not (args.check or args.dry_run or args.yes)))]
         elif getattr(args, "platform_from_list", False):
@@ -12235,7 +12332,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         if not platforms:
             # The screen's words where a person answers: "platform" was said
             # nowhere else.
-            print("  Nothing was found here." if interactive and not listing
+            unnamed = unnamed_cards() if interactive and not listing else []
+            print(f"  {unnamed_card_words(unnamed)}"
+                  if unnamed else "  Nothing was found here." if interactive and not listing
                   else "  No supported platform detected.")
             EVENTS.emit("detect", os=os_type, os_name=_os_name(), platforms=[])
             # Standalone emulators read their BIOS from folders of their own,
@@ -12769,14 +12868,21 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 for line in split_pack_lines(bios_path):
                     print(line)
                 offline = _offline_only()
+                # What the pack lacks is said before the count, as the
+                # screen says it (code_audit_21 P3-3).
+                lacking = pack_lacks([f for f in to_download if id(f) not in copies])
+                if lacking:
+                    print(f"\n  {pack_lacks_words(len(lacking), len(to_download) - len(copies))}")
                 print(f"\n  {_plural(len(to_download), 'file')} "
-                      + ("not in place:" if offline else "to download:"))
+                      + ("not in place:" if offline or LOCAL.pack is not None
+                         else "to download:"))
                 for line in check_lines(missing, mismatched, files, manifest, bios_path,
                                         args.verbose, up_to_date, bios_index, copies):
                     print(line)
                 for line in unreadable_lines(unread, args.verbose):
                     print(line)
-                print(_check_fetch_line(len(to_download) - len(copies), "the BIOS folder"))
+                print(_check_fetch_line(len(to_download) - len(copies), "the BIOS folder",
+                                        len(lacking)))
                 check_pending += len(to_download)
             else:
                 print("\n  All files up to date.")
@@ -12804,7 +12910,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 {"dest": f"{entry['dest']}/{rel}" if entry.get("dest") else rel}
                 for entry, needed in trees for rel in needed
             ], bios_path)
-            _print_plan([f for f in to_download if id(f) not in copies], bios_path, term,
+            planned = [f for f in to_download if id(f) not in copies]
+            # Said before the plan promises a count and a size, as an
+            # install says it: the dry run promised 23 files where the pack
+            # held 20 (code_audit_21 P3-3).
+            lacking = {id(f) for f in pack_lacks(planned)}
+            if lacking:
+                print(f"\n  {pack_lacks_words(len(lacking), len(planned))}")
+            _print_plan([f for f in planned if id(f) not in lacking], bios_path, term,
                         trees, kept, copy_plan_lines(to_download, copies, bios_index,
                                                      bios_path, files, args.verbose, True),
                         verbose=args.verbose, manifest=manifest)
@@ -12834,6 +12947,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             lacking = {id(f) for f in pack_lacks(fetched)}
             if lacking:
                 print(f"\n  {pack_lacks_words(len(lacking), len(fetched))}")
+            if lacking and len(lacking) == len(to_download) and not pack_holds_trees(data_dirs):
+                # Nothing here can come from the pack: no "Copying 0 files", no
+                # folder made, each file failed as not in it.
+                failures.extend((f["dest"], NOT_IN_PACK) for f in to_download)
+                total_errors += len(to_download)
+                files_pending += len(to_download)
+                total_up_to_date += len(up_to_date)
+                continue
             dl_size = sum(f.get("size", 0) for f in to_download if id(f) not in lacking)
             fetch_size = _bytes([f for f in fetched if id(f) not in lacking])
             if not to_download:
@@ -12868,8 +12989,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 for line in copy_plan_lines(to_download, copies, bios_index, bios_path,
                                             files, args.verbose, False):
                     print(line)
+                held = len(fetched) - len(lacking)
                 rest = (f" and {'copying' if LOCAL.pack is not None else 'downloading'} "
-                        f"{len(fetched)}" if fetched else "")
+                        f"{held}" if held else "")
                 where = f" from {LOCAL.pack.name}" if fetched and LOCAL.pack is not None else ""
                 # Named by the folder they come from, as the line above
                 # names it: "found on this machine" followed "from E:\".
@@ -12884,8 +13006,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 print(f"\nCopying {_plural(len(copies), 'file')}{'' if rest else sized} "
                       f"{origin}{rest}{where}{sized if rest else ''}...")
             elif LOCAL.pack is not None:
-                print(f"\nCopying {len(to_download)} files ({format_size(dl_size)}) "
-                      f"from {LOCAL.pack.name}...")
+                # The files the pack holds: "Copying 23 files (85.0 KB)" sat
+                # beside the size of 20 (code_audit_21 P3-3).
+                print(f"\nCopying {_plural(len(to_download) - len(lacking), 'file')} "
+                      f"({format_size(dl_size)}) from {LOCAL.pack.name}...")
             else:
                 print(f"\nDownloading {len(to_download)} files ({format_size(dl_size)})...")
             print("  Press Ctrl+C to stop. Running the same command again "
@@ -12978,7 +13102,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     line = f"  {entry['ref']}: {counts['installed']} installed, " \
                            f"{counts['present']} already up to date"
                     if counts["changed"] or counts["absent"]:
-                        line += (f", {counts['changed'] + counts['absent']} no longer in "
+                        # From a pack, the pack is the source that lacks them.
+                        line += (f", {counts['changed'] + counts['absent']} not in "
+                                 f"{LOCAL.pack.name}" if LOCAL.pack is not None else
+                                 f", {counts['changed'] + counts['absent']} no longer in "
                                  "the source (the pack has them)")
                     print(line)
                 if counts["error"]:
@@ -13671,6 +13798,9 @@ class TuiState:
         # (platform, folder) of the setups that are a card in a reader, not
         # this machine: a setup chosen for that system asks for its card.
         self.mounted_setups: set = set()
+        # The mounted drives that are a handheld's card no file names
+        # (unnamed_cards): their bios folder comes first at Which folder?.
+        self.unnamed: list = []
         self.notes: list = []
         # The folders detection could not look in, one line each.
         self.refused: list = []
@@ -14515,14 +14645,22 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
             # The Windows side's folder said missing where it is: taken, the
             # plan said RetroArch reads a folder no RetroArch had (tui_audit_13
             # P3-9).
+            # Every row whose folder is missing says so, in both modes: the
+            # Windows row alone did (code_audit_21 P3-7).
             drives = [] if state.folder_kind == "share" else [
-                TuiRow("drive", label, value=folder)
-                for label, folder in [*((label + ("" if _is_dir(folder)
-                                                  else " (does not exist yet)"), folder)
-                                        for label, folder in (
-                                            other_side(state.os_type, state.platform)
-                                            if state.folder_kind == "usual" else [])),
+                TuiRow("drive", label + ("" if _is_dir(folder) else " (does not exist yet)"),
+                       value=folder)
+                for label, folder in [*(other_side(state.os_type, state.platform)
+                                        if state.folder_kind == "usual" else []),
                                       *drive_targets(state.platform)]]
+            cards = {mount / "bios" for mount in state.unnamed}
+            if state.folder_kind == "usual" and any(row.value in cards for row in drives):
+                # A handheld's card in the reader, no setup found here: the
+                # card first, under A (tui_audit_14 P2-3).
+                first = [row for row in drives if row.value in cards]
+                return first + rows + [TuiRow("browse", "Browse for a folder"),
+                                       TuiRow("type", "Type a path")] + [
+                    row for row in drives if row not in first]
             return rows + [TuiRow("browse", "Browse for a folder"),
                            TuiRow("type", "Type a path")] + drives
         # Only the cards whose own files say they run the system: A on the
@@ -14671,8 +14809,9 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     files = {event["dest"] for event in state.files}
     if (LOCAL.pack is not None and files and not _plan_copies(state, check)
             and len(_tui_pack_lacks(state, sorted(files))) == len(files)
-            and not check.get("data_missing")):
-        # The pack holds none of them: Install would fail every one.
+            and not (check.get("data_missing") and _tui_pack_trees(state))):
+        # The pack holds none of them, nor the data files: Install would
+        # fail every one (tui_audit_14 P3-1).
         rows = []
     if _on_its_card(state) and (state.facts.get("writable") is False
                                 or _short_of_space(state, check)):
@@ -14734,8 +14873,15 @@ def _tui_tally(state: TuiState, events: Iterable[dict]) -> Tally:
 def _tui_estimating(state: TuiState) -> bool:
     """Whether the plan counts the systems ticked since the check, not the
     check itself."""
-    return bool(_choice_line(state) and state.systems and state.check is not None
-                and not _offline_only())
+    if not (_choice_line(state) and state.systems and state.check is not None):
+        return False
+    if _offline_only():
+        # Offline the estimate is of the ticks alone: a folder to copy from
+        # is counted by the check it starts.
+        def ticked(flags: list) -> list:
+            return [flag for flag in flags if flag[0] == "--system"]
+        return ticked(tui_flags(state)) != ticked(state.checked_flags)
+    return True
 
 
 def _choice_entries(state: TuiState, hidden: bool = False) -> list[dict]:
@@ -17418,7 +17564,10 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         headline = (f"{_plural(data, 'data file')} to fetch{data_size}" if data
                     else "Everything is in place")
     elif lacking and not fetch and not copied:
-        headline = pack_lacks_words(len(lacking), len(lacking))
+        # The data files too, when the pack holds none of them: "8252
+        # files" said nothing of the 2636 it cannot give either.
+        lacked = len(lacking) + (data if data and not _tui_pack_trees(state) else 0)
+        headline = pack_lacks_words(lacked, lacked)
     wrong = check["wrong_hash"]
     # Where some were found, the plan names the rest by kind ("Not in old:
     # 10 BIOS files and 6 game data files.", _view_plan), and the remedy
@@ -17529,6 +17678,12 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     # folder (tui_audit_12 P3-15).
     at = 1 if check is state.dry else 3 if found_in else 2
     return lines[:at] + offline_lines + lines[at:]
+
+
+def _tui_pack_trees(state: TuiState) -> bool:
+    """Whether the pack given to the run holds a file of the list's data
+    trees."""
+    return pack_holds_trees((state.manifest or {}).get("data_directories") or [])
 
 
 def _tui_pack_lacks(state: TuiState, dests: list[str]) -> list[str]:
@@ -17648,7 +17803,11 @@ def _view_platforms(state: TuiState, width: int, height: int) -> tuple:
         # A handheld's owner knows its device, not its system's name: the
         # filter finds it, and a pad that cannot type finds the cards right
         # after RetroArch (_cards_first).
-        pinned.append("Nothing was found here. Choose the setup, or type your device's "
+        pinned.append(unnamed_card_words(state.unnamed, ", or type your device's name (/)."
+                                         if state.pad in ("both", "keys") else
+                                         ", handhelds after RetroArch.")
+                      if state.unnamed else
+                      "Nothing was found here. Choose the setup, or type your device's "
                       "name (/)." if state.pad in ("both", "keys") else
                       "Nothing was found here. Choose the setup: handhelds come after "
                       "RetroArch.")
@@ -17703,6 +17862,10 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
                     f"{side_name(state.os_type, state.platform)} usually reads its BIOS "
                     "files from:")
         before = [lead, str(state.folder_default)]
+        if (state.folder_kind == "usual" and tui_rows(state)
+                and tui_rows(state)[0].value in {mount / "bios" for mount in state.unnamed}):
+            before = ["The card in the reader keeps them in its bios folder, first below. "
+                      f"{lead}", str(state.folder_default)]
     elif state.folder_kind == "closed":
         title = "Which folder?"
         before = [f"Choose another folder for {name}: browse for it or type it."]
@@ -17853,6 +18016,26 @@ def _view_plan(state: TuiState, width: int, height: int) -> tuple:
         lines[0] = _styled(f"About {_plural(len(chosen) + data, 'file')}, "
                            f"{format_size(sum(e['size'] for e in chosen) + (data_size or 0))}"
                            f", for {len(state.ticked)} of {len(state.systems)} systems", "title")
+        if _offline_only():
+            # Offline, what the folders copied from hold of the systems
+            # ticked: the plan counted the whole list beside "For your 1 of
+            # 11 systems" (code_audit_21 P3-5).
+            took = {event["dest"] for events in _tui_found_elsewhere(state).values()
+                    for event in events}
+            held = [event for event in chosen if event["dest"] in took]
+            rest = len(chosen) - len(held) + data
+            lines[0] = _styled(
+                f"About {_plural(len(held), 'file')}, "
+                f"{format_size(sum(e['size'] for e in held))}, for {len(state.ticked)} of "
+                f"{len(state.systems)} systems"
+                + (f", {rest} {'needs' if rest == 1 else 'need'} the internet "
+                   f"({offline_named()})" if rest else ""), "title")
+            if not rest:
+                # The remedy was for files of the whole list: none of the
+                # choice needs the internet.
+                names = [_last_name(str(folder)) for folder in state.from_folders]
+                remedies = {_offline_remedy(names), _offline_remedy(names, named=True)}
+                lines = [line for line in lines if str(line) not in remedies]
         # The in place and missing counts are the whole list's: under an
         # estimate for some systems they read as its own.
         whole = (f"{check['present']} in place, "
@@ -18472,6 +18655,14 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
             shown += 1
     if shown > 20:
         lines.append(f"  ... and {shown - 20} more")
+    expected = (state.dry if state.dry is not None else state.check or {}).get(
+        "data_missing", 0)
+    landed = max(0, installed - sum(1 for _dest, good, _why in state.finished if good))
+    if expected > landed and not left and title != "Stopped" and summary:
+        # The data files the plan counted, never named on a result that
+        # counted the BIOS files alone (tui_audit_14 P3-1).
+        lines.append(f"{_plural(expected - landed, 'data file')} not installed"
+                     + (f": not in {LOCAL.pack.name}." if LOCAL.pack is not None else "."))
     if state.dest is not None and any(failure["reason"] == NOT_WRITABLE
                                       for failure in failed):
         # The plan's own advice: the result offered nothing after 22 files
@@ -19057,6 +19248,7 @@ def tui_start(
         captured = io.StringIO()
         with contextlib.redirect_stdout(captured), contextlib.redirect_stderr(captured):
             state.setups, state.mounted_setups = found_setups(os_type)
+            state.unnamed = unnamed_cards()
             frontends = detect_frontends(os_type)
         # Said on the normal screen before this one covered it, and kept
         # above the list: a status line under 18 setups was never drawn.

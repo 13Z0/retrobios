@@ -1495,10 +1495,16 @@ pinned raw URL. A URL with any other scheme is refused outright.
 They cap the download at 2 MB and require the SHA-256 to equal the 64 hex
 characters embedded in the wrapper, `RETROBIOS_INSTALL_SHA256` when set. A
 mismatch aborts with "the downloaded installer does not match its expected
-fingerprint" and nothing runs. Right after an update of this project the
-wrapper and `install.py` can come from caches a few minutes apart, which reads
-the same way: waiting five minutes settles it. Any change to `install.py`
-therefore means recomputing that pin in both wrappers.
+fingerprint" and nothing runs. The copies the site serves name the commit's
+`install.py`, which never changes, and both downloaders stop on a cut transfer
+before the hash is read: there a mismatch is a file changed on its way, by a
+proxy or an antivirus, and that is what they say. The raw form reads `main`,
+whose two files can come from caches a few minutes apart right after an
+update: it says to try again, and that waiting five minutes settles it. The
+site build refuses to publish a copy whose pin is not the SHA-256 of the
+`install.py` it names, and Deploy Site runs the bootstrap tests before it
+deploys, so a failed check keeps the last good pair served. Any change to
+`install.py` therefore means recomputing that pin in both wrappers.
 
 They locate a Python 3.8 or newer interpreter (`python3` then `python` on
 POSIX, `py -3` then `python3` then `python` on Windows). Without one,

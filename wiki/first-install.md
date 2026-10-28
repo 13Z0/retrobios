@@ -159,7 +159,9 @@ curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --platform retropie -
 
 ### Error: the downloaded installer does not match its expected fingerprint.
 
-The download was cut short. Run the command again.
+Nothing ran. The file was changed on its way, most often by a proxy or an
+antivirus that rewrites downloads. Run the command from another network, or
+with that web protection paused.
 
 ### Cannot create ...
 

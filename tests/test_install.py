@@ -4210,8 +4210,11 @@ class RunsAgainstTheRealLists(unittest.TestCase, _LoopbackRun):
         self.assertEqual(proc.returncode, 0, proc.stderr)
         lines = [line for line in proc.stdout.splitlines() if line.strip()]
         self.assertIn("Nothing was written", lines[-1])
-        header = next(line for line in lines if line.startswith("Would download"))
-        self.assertIn("data files", header)
+        at = next(index for index, line in enumerate(lines) if line.startswith("Would download"))
+        # One total on the header, the data files among the kinds under it
+        # (code_audit_21 P3-8).
+        self.assertNotIn("data files", lines[at])
+        self.assertIn("data files", lines[at + 1])
 
     def test_dest_alone_says_whose_list_it_is(self):
         proc = _install_run(self.env, "--dest", str(self.home / "card"), "--dry-run",

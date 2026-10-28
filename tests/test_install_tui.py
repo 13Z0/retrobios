@@ -9203,7 +9203,7 @@ class AuditSixteenAndNineLineMode(unittest.TestCase):
             folder = install.ask_platform_folder("linux", "batocera")
         self.assertEqual(folder, share / "bios")
         text = out.getvalue()
-        self.assertIn(f"1) SHARE: bios ({share / 'bios'}, created)", text)
+        self.assertIn(f"1) SHARE: bios ({share / 'bios'}, does not exist yet)", text)
         self.assertNotIn("MUOS", text)
 
     def test_the_folder_question_quits_on_q_and_says_what_to_type(self):
@@ -12214,6 +12214,176 @@ class AuditTwentyOneAndFourteen(unittest.TestCase):
         self.assertEqual([row.action for row in install.tui_rows(state)], ["close", "back"])
         install.tui_update(state, Key("enter"))
         self.assertEqual(state.exit_code, 0)
+
+    def test_offline_the_plan_counts_the_systems_ticked(self):
+        """code_audit_21 P3-5: offline, one system ticked, the plan counted
+        every file of the list beside "For your 1 of 3 systems"."""
+        state = checked_state()
+        folder = str(self.root / "from1")
+        state.from_folders = [self.root / "from1"]
+        state.found = [found("gba_bios.bin", folder)]
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            state.ticked = {"nintendo-gba"}
+            text = self.screen(state, 100, 40)
+            self.assertIn("About 1 file, 16.0 KB, for 1 of 3 systems ", text)
+            self.assertNotIn("found in from1", text)
+            self.assertNotIn("Run the installer again", text)
+            state.ticked = {"sony-playstation"}
+            text = self.screen(state, 100, 40)
+        self.assertIn("About 0 files, 0 B, for 1 of 3 systems, 3 need the internet", text)
+
+    def easyroms(self, name: str = "EASYROMS") -> Path:
+        """An ArkOS games part as a computer mounts it: bios/ and console
+        folders, no file naming the system."""
+        card = self.root / "media" / name
+        for folder in ("bios", "nes", "gba", "psx"):
+            (card / folder).mkdir(parents=True)
+        return card
+
+    def test_an_arkos_card_is_found_and_comes_first(self):
+        """tui_audit_14 P2-3: an EASYROMS partition mounted, "Nothing was
+        found here", and two presses of Enter filled this computer's
+        ~/.config/retroarch/system for a RetroArch that was not there."""
+        for name in ("EASYROMS", "GAMES"):
+            with self.subTest(card=name):
+                card = self.easyroms(name)
+                home = self.root / "home"
+                with mock.patch.object(install, "_mounted_cards", return_value=[card]), \
+                        mock.patch.object(install, "detect_platforms", return_value=[]), \
+                        mock.patch.object(install, "detect_frontends", return_value=[]), \
+                        mock.patch.object(install.Path, "home", return_value=home):
+                    state, _effects = install.tui_start(_args(), "linux")
+                    self.assertEqual(state.unnamed, [card])
+                    text = self.screen(state)
+                    self.assertIn(f"A card is in the reader ({name}): choose its system",
+                                  text)
+                    self.assertNotIn("Nothing was found here", text)
+                    install.tui_update(state, Key("enter"))
+                    self.assertEqual(state.screen, "folder")
+                    rows = install.tui_rows(state)
+                    self.assertEqual(rows[0].value, card / "bios")
+                    install.tui_update(state, Key("enter"))
+                self.assertEqual(state.dest, card / "bios")
+                shutil.rmtree(card)
+
+    def lacking_pack(self, held: list[tuple[str, bytes]]) -> Path:
+        pack_dir = self.root / "downloads"
+        pack_dir.mkdir(exist_ok=True)
+        pack = pack_dir / "RetroArch_BIOS_Pack.zip"
+        with zipfile.ZipFile(pack, "w") as archive:
+            archive.writestr("manifest.json", json.dumps({"files": []}))
+            for dest, payload in held:
+                archive.writestr(dest, payload)
+        return pack
+
+    def test_line_mode_names_what_the_pack_lacks_before_its_plan(self):
+        """code_audit_21 P3-3: --dry-run promised 23 files, --check said to
+        fetch them, the install counted 23 beside the size of 20 and advised
+        retrying files that always fail."""
+        files = [self.entry(f"bios{n}.bin", b"x" * (n + 1), ["nintendo-gba"])
+                 for n in range(4)]
+        listing = self.listing("retroarch", files)
+        pack = self.lacking_pack([("bios0.bin", b"x")])
+        dest = self.root / "card" / "system"
+        common = dict(manifest=listing, from_pack=[pack], dest=dest, declared_only=False,
+                      no_input=True)
+        text, _asked = self.line_run(_args(**common, dry_run=True), [])
+        lacks = "3 of these 4 files are not in RetroArch_BIOS_Pack.zip"
+        self.assertIn(lacks, text)
+        self.assertLess(text.index(lacks), text.index("Would copy"))
+        self.assertIn("Would copy 1 file (1 B) from the pack", text)
+        text, _asked = self.line_run(_args(**common, check=True), [])
+        self.assertIn(lacks, text)
+        self.assertNotIn("to fetch them", text)
+        self.assertIn("to copy 1 of them from RetroArch_BIOS_Pack.zip", text)
+        options = ("--platform", "retroarch", "--manifest", str(listing), "--dest", str(dest),
+                   "--yes")
+        proc = install_run(*options, "--from-pack", str(pack))
+        text = proc.stdout + proc.stderr
+        self.assertIn("Copying 1 file (1 B) from RetroArch_BIOS_Pack.zip...", text)
+        self.assertNotIn("retry only those", text)
+        self.assertIn("RetroArch_BIOS_Pack.zip does not hold them: a newer pack", text)
+        # A pack holding none: no copy, no folder.
+        shutil.rmtree(dest.parent, ignore_errors=True)
+        proc = install_run(*options, "--from-pack", str(self.lacking_pack([])))
+        text = proc.stdout + proc.stderr
+        self.assertNotIn("Copying 0 files", text)
+        self.assertIn("RetroArch_BIOS_Pack.zip does not hold them", text)
+        self.assertFalse(dest.exists())
+
+    def test_a_pack_holding_none_offers_no_install_with_data_files(self):
+        """tui_audit_14 P3-1: data files left, the pack holding none of the
+        files nor the trees: Install was offered and failed every file, and
+        the result never named the data files."""
+        state = checked_state()
+        state.check = {**state.check, "data_missing": 7, "data_bytes": 2048}
+        state.manifest = {**MANIFEST, "data_directories": [
+            {"ref": "dolphin", "dest": "dolphin-emu/Sys", "files": {}}]}
+
+        class Empty:
+            name = "RetroArch_BIOS_Pack.zip"
+
+            @staticmethod
+            def find(entry: dict) -> None:
+                return None
+
+            @staticmethod
+            def tree(prefix: str):
+                return iter(())
+
+        with mock.patch.object(install.LOCAL, "pack", Empty()):
+            actions = [row.action for row in install.tui_rows(state)]
+            self.assertNotIn("install", actions)
+            self.assertEqual(actions[0], "fromcard")
+            text = self.screen(state)
+            self.assertIn("RetroArch_BIOS_Pack.zip holds none of these 11 files", text)
+            # The result of an install run anyway names them.
+            state.stack = ["result"]
+            state.summary = {"installed": 0, "up_to_date": 0, "pending": 4, "kept": [],
+                             "failed": [{"dest": event["dest"], "reason": "not in the pack"}
+                                        for event in state.files]}
+            state.code = 2
+            _title, lines = install.tui_outcome(state)
+        self.assertIn("7 data files not installed: not in RetroArch_BIOS_Pack.zip.", lines)
+
+    def test_a_missing_folder_does_not_exist_yet_on_every_row(self):
+        """code_audit_21 P3-7: line mode said "(created)" of folders nobody
+        created, and the screen said "does not exist yet" of the Windows row
+        alone."""
+        drives = [self.root / "media" / "D", self.root / "media" / "E"]
+        for drive in drives:
+            drive.mkdir(parents=True)
+        (drives[1] / "bios").mkdir()
+        with mock.patch.object(install, "_mounted_cards", return_value=drives), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()), \
+                mock.patch.object(install, "_ask", return_value="q"), \
+                contextlib.redirect_stdout(io.StringIO()) as out, \
+                contextlib.suppress(SystemExit):
+            install.ask_platform_folder("linux", "retroarch")
+        text = out.getvalue()
+        self.assertNotIn(", created)", text)
+        self.assertNotIn("(created)", text)
+        self.assertIn(f"D: bios (card or drive) ({drives[0] / 'bios'}, does not exist yet)", text)
+        self.assertIn(f"E: bios (card or drive) ({drives[1] / 'bios'})\n", text)
+        state = fresh_state()
+        state.platform = "retroarch"
+        with mock.patch.object(install, "_mounted_cards", return_value=drives):
+            install._open_folder_screen(state, SYSTEM_DIR)
+            labels = [row.label for row in install.tui_rows(state) if row.action == "drive"]
+        self.assertEqual(labels, ["D: bios (card or drive) (does not exist yet)",
+                                  "E: bios (card or drive)"])
+
+    def test_line_mode_puts_the_arkos_card_first(self):
+        card = self.easyroms()
+        text, asked = self.line_run(_args(manifest=self.game_listing(), dry_run=True,
+                                          declared_only=False), ["1", ""], mounts=[card])
+        self.assertIn("A card is in the reader (EASYROMS): choose its system.", text)
+        self.assertNotIn("Nothing was found here", text)
+        self.assertIn(f"The card in the reader keeps them in its bios folder: {card / 'bios'}.",
+                      text)
+        self.assertIn(f"1) EASYROMS: bios (card or drive) ({card / 'bios'})", text)
+        self.assertIn("Enter for the card's bios folder", asked[-2])
+        self.assertIn(f"BIOS folder: {card / 'bios'}", text)
 
 
 if __name__ == "__main__":
