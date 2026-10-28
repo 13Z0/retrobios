@@ -218,6 +218,27 @@ class OracleTests(unittest.TestCase):
         self.assertEqual((verdict, evidence["stages"]), ("boots", ["bios", "game"]))
         self.assertEqual(core_probe.judge(self.rep(frames((0, self.TITLE))), oracle)[1]["stages"], ["game"])
 
+    def test_the_bios_used_comes_from_the_log(self) -> None:
+        oracle = {**self.ORACLE, "fallback_patterns": [r"^Firmware is missing: "],
+                  "load_patterns": [r"^Firmware found: (?P<path>.+)$"]}
+        cases = [
+            (["Searching for firmware checksum: 0555", "Firmware is missing: scph5501.bin"], "builtin"),
+            (["Firmware found: <system>/scph5501.bin", "Firmware SHA1: 0555"], "staged:scph5501.bin"),
+            # A file tried, then the fallback: the last line decides.
+            (["Firmware found: <system>/a.bin", "Firmware is missing: b.bin"], "builtin"),
+            (["nothing about the BIOS"], "unknown"),
+        ]
+        for logs, expected in cases:
+            self.assertEqual(core_probe.bios_used(self.rep([], logs=logs), oracle)[0], expected, logs)
+        rep = self.rep(frames((10, self.TITLE)), logs=["Firmware is missing: scph5501.bin"])
+        core_probe.judge_repetition(rep, oracle)
+        self.assertEqual((rep["verdict"], rep["bios_used"]), ("boots", "builtin"))
+        self.assertTrue(rep["verdict_evidence"]["detail"].endswith("on the core's built-in BIOS"))
+        self.assertEqual(rep["verdict_evidence"]["bios_log"], "Firmware is missing: scph5501.bin")
+        variant = {"repetitions": [rep, {**rep, "bios_used": "staged:a.bin"}]}
+        core_probe.judge_variant(variant)
+        self.assertEqual(variant["bios_used"], "unknown")
+
     def test_the_bios_screens_alone_are_not_a_boot(self) -> None:
         # A console that shows its logo and then refuses the disc never reached the game.
         verdict, evidence = core_probe.judge(
@@ -309,6 +330,29 @@ class OracleTests(unittest.TestCase):
                     checked += 1
         self.assertGreaterEqual(checked, 2 * 14)
 
+    def test_the_repository_names_the_bios_each_core_ran(self) -> None:
+        data, _ = core_probe.load_oracle(core_probe.DEFAULT_ORACLE)
+        cases = {
+            "Beetle PSX": [("Firmware is missing: scph5501.bin", "builtin"),
+                           ("Firmware found: <system>/scph5501.bin", "staged:scph5501.bin"),
+                           ("Firmware found but has invalid SHA1: <system>/scph5501.bin", "staged:scph5501.bin")],
+            "Beetle PSX HW": [("Firmware is missing: scph5500.bin", "builtin")],
+            "SwanStation": [("[HostInterface] No BIOS image found for NTSC-U/C (US, Canada) region", "builtin"),
+                            ("[HostInterface] Using BIOS 'scph5501.bin': SCPH-5501", "staged:scph5501.bin"),
+                            ("[HostInterface] Falling back to possibly-incompatible image "
+                             "'<system>/scph5500.bin': SCPH-5500", "staged:scph5500.bin")],
+            "PCSX-ReARMed": [('Loaded BIOS "<system>/scph5500.bin".', "staged:scph5500.bin"),
+                             ("No BIOS files found.", "builtin"), ("Using HLE BIOS.", "builtin")],
+            "Flycast": [("[BOOT]: Did not load BIOS, using reios", "builtin"),
+                        ("Loaded <system>/dc/dc_boot.bin as bootrom", "staged:dc/dc_boot.bin")],
+            "PCSX1": [("anything", "unknown")],
+        }
+        for library, lines in cases.items():
+            oracle = core_probe.oracle_for(data, None, library)
+            for text, expected in lines:
+                rep = {"logs": [{"frame": 0, "level": "info", "text": text}]}
+                self.assertEqual(core_probe.bios_used(rep, oracle)[0], expected, (library, text))
+
     def test_the_repository_error_patterns_and_screens(self) -> None:
         data, _ = core_probe.load_oracle(core_probe.DEFAULT_ORACLE)
         saturn = core_probe.oracle_for(data, None, "Beetle Saturn")
@@ -335,7 +379,8 @@ class OracleTests(unittest.TestCase):
         data = yaml.safe_load(core_probe.DEFAULT_ORACLE.read_text(encoding="utf-8"))
         patterns = list(data.get("error_patterns") or ())
         for core in (data.get("cores") or {}).values():
-            patterns += (core.get("error_patterns") or []) + (core.get("bios_patterns") or [])
+            patterns += [p for key in ("error_patterns", "bios_patterns", "fallback_patterns", "load_patterns")
+                         for p in core.get(key) or []]
             for screen in core.get("error_screens") or ():
                 self.assertRegex(screen["sha1"], r"^[0-9a-f]{40}$")
         for pattern in patterns:
@@ -516,8 +561,38 @@ class FakeCoreTests(unittest.TestCase):
         self.assertEqual(record["variants"][3]["system_files"],
                          {"card.bin": hashlib.sha1(b"\x00").hexdigest()})
         self.assertEqual(record["inputs"]["oracle"]["error_patterns"], ["BIOS not found"])
-        self.assertEqual(record["record_version"], 4)
+        self.assertEqual(record["record_version"], 5)
+        self.assertEqual({v["bios_used"] for v in record["variants"]}, {"unknown"})
         self.assert_schema(record)
+
+    def test_recorded_runs_are_judged_again_offline(self) -> None:
+        oracle = self.oracle_file()
+        record_dir = checkout(self.tmp / "rejudge")
+        code, first = self.probe(["run", "--core", str(self.core), "--frames", "4", "--frame-hash-every", "1",
+                                  "--content", str(self.tmp / "game.bin"), "--oracle", str(oracle),
+                                  "--no-trace", "--record", str(record_dir), "--max-load", "1000"])
+        self.assertEqual((code, first["variants"][0]["bios_used"]), (0, "unknown"))
+        # The core's fallback line becomes known: the same runs now name the BIOS.
+        oracle.write_text(oracle.read_text().replace(
+            "    error_patterns: []\n", "    error_patterns: []\n    fallback_patterns:\n"
+            "      - pattern: '^card absent'\n        reason: test\n", 1), encoding="utf-8")
+        argv = ["rejudge", "--record", str(record_dir), "--oracle", str(oracle)]
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(core_probe.main(argv), 0)
+        lines = [json.loads(line) for line in (record_dir / "measurements" / "fake.jsonl").read_text().splitlines()]
+        self.assertEqual(len(lines), 2)
+        again = lines[1]
+        self.assertEqual((again["supersedes"], again["record_version"]), (first["id"], 5))
+        self.assertEqual(again["variants"][0]["bios_used"], "builtin")
+        self.assertEqual(again["variants"][0]["repetitions"][0]["logs"], first["variants"][0]["repetitions"][0]["logs"])
+        self.assertEqual(again["recorded_at"], first["recorded_at"])
+        self.assertIn("judged_at", again)
+        self.assertEqual(measurement_records.check_line(again), [])
+        self.assert_schema(again)
+        # Judged once: a second pass has nothing to add.
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            core_probe.main(argv)
+        self.assertEqual(len((record_dir / "measurements" / "fake.jsonl").read_text().splitlines()), 2)
 
     def test_a_crash_and_a_hang_are_verdicts(self) -> None:
         oracle = self.oracle_file()

@@ -192,15 +192,6 @@ class AnElementBudget(unittest.TestCase):
         self.assertLess(page.elements, validate_site.MAX_PAGE_ELEMENTS)
 
 
-class TestedFilesLeadToTheirCard(unittest.TestCase):
-    def test_a_name_or_alias_finds_the_card(self):
-        files = [{"name": "scph5501.bin", "aliases": ["SCPH-5501.BIN"]}, {"name": "other.bin"}]
-        hrefs = gs._tested_file_hrefs("x", files)
-        self.assertEqual(hrefs["scph5501.bin"], "#file-scph5501-bin")
-        self.assertEqual(hrefs["scph-5501.bin"], "#file-scph5501-bin")
-        self.assertEqual(hrefs["other.bin"], "#file-other-bin")
-
-
 if __name__ == "__main__":
     unittest.main()
 

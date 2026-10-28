@@ -105,11 +105,11 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 			const tr = document.createElement('tr');
 			tr.append(text('td', item.date.slice(0, 10)));
 			const emu = document.createElement('td');
-			emu.append(item.profiled ? link(`${base}emulators/${item.emulator}/#tested`, item.emulator_name) : text('span', item.emulator_name));
+			emu.append(item.profiled ? link(`${base}emulators/${item.emulator}/`, item.emulator_name) : text('span', item.emulator_name));
 			if (item.system_names.length) emu.append(text('small', item.system_names.join(', ')));
 			tr.append(emu);
 			const test = document.createElement('td');
-			test.append(text('strong', item.claim ?? `Benchmark of ${item.content ?? 'the core alone'}`));
+			test.append(text('strong', item.claim ?? `A run of ${item.content ?? 'the core alone'}`));
 			if (item.method) {
 				const details = document.createElement('details');
 				details.append(text('summary', 'Method'), text('p', item.method));

@@ -10,10 +10,14 @@ never committed:
   public/downloads/measurements.sqlite       every record, normalised
   public/downloads/measurements/<emu>.sqlite one database per emulator
 
-Three places read the index: the Tested block of each emulator page, the
-Measurements explorer page and the host table of the methodology page. A
-number is never shown without its method and host beside it. A record links
-its line at the last commit that touched measurements/.
+Three places read the index: the Proof lines of an emulator page (only the
+records a profile's `evidence:` names, or one tied to an issue), the
+Measurements explorer page and the host table of the methodology page. Runs
+are made on demand, to settle a dispute or an issue, to back a correction
+sent to a platform, or to smoke-test packs before a release: there is no
+showcase of every run. A record links its line at the last commit that
+touched measurements/. Benchmarks stay in the records and the SQLite files,
+never on a page.
 """
 
 from __future__ import annotations
@@ -44,6 +48,10 @@ SQLITE_SCHEMA_VERSION = "3"
 # Observables the variants table leaves out: one value per sampled frame.
 BULKY_OBSERVABLES = ("frame_hashes",)
 INDEX_SCHEMA_VERSION = 1
+# What a maintainer saw in an issue's runs, by record subject.
+OBSERVATIONS = Path("tests") / "campaign" / "observations.yml"
+# A Proof line lists this many record links at most, else one link to the file.
+MAX_RECORD_LINKS = 8
 
 
 # --------------------------------------------------------------------------
@@ -63,22 +71,27 @@ def host_summary(host: dict) -> str:
     return ", ".join(part for part in parts if part)
 
 
-def bench_statement(record: dict) -> str:
-    timing = record["timing"]
-    frame, fps = timing["ms_per_frame"], timing["fps"]
-    return (f"median {frame['median']:.3f} ms per frame ({fps['median']:.1f} fps), "
-            f"min {frame['min']:.3f}, max {frame['max']:.3f}, over "
-            f"{record['inputs']['repetitions']} repetitions of {record['inputs']['frames']} frames")
-
-
 def permalink(repo: str, commit: str, path: str, line: int | None = None) -> str:
     return f"{repo}/blob/{commit}/{path}" + (f"#L{line}" if line else "")
 
 
+BOOTS_BUILTIN = "boots on built-in BIOS"
+
+
+def shown_verdict(variant: dict) -> str:
+    """A variant's verdict as the pages say it: a boot on the core's
+    built-in BIOS is named so, never taken for the staged file's."""
+    if variant["verdict"] == "boots" and variant.get("bios_used") == "builtin":
+        return BOOTS_BUILTIN
+    return variant["verdict"]
+
+
 def verdicts_of(record: dict) -> list[dict]:
-    """Each variant's boot verdict, from record version 4 on."""
-    return [{"variant": v["label"], "verdict": v["verdict"],
-             "detail": (v.get("verdict_evidence") or {}).get("detail", "")}
+    """Each variant's boot verdict, from record version 4 on, and the BIOS
+    it ran from version 5 on."""
+    return [{"variant": v["label"], "verdict": shown_verdict(v), "bios_used": v.get("bios_used", "unknown"),
+             "detail": (v.get("verdict_evidence") or {}).get("detail", ""),
+             "staged": sorted(name for name, sha1 in (v.get("system_files") or {}).items() if sha1)}
             for v in record["variants"] if "verdict" in v]
 
 
@@ -93,8 +106,6 @@ def result_of(record: dict) -> tuple[str, str]:
     """
     check = record.get("check") or {}
     result = check.get("result") or {}
-    if record["kind"] == "bench":
-        return "measured", bench_statement(record) if record.get("timing") else ""
     verdicts = verdicts_of(record)
     by_frames = record["kind"] == "run" or check.get("observable") == "frame_hashes"
     if verdicts and by_frames:
@@ -109,8 +120,50 @@ def result_of(record: dict) -> tuple[str, str]:
     return result.get("status") or "ran", result.get("statement") or ""
 
 
+def opened(record: dict) -> str | None:
+    """The staged name a check varied, when strace saw the core open it in
+    every repetition of a variant that staged it."""
+    name = (record.get("check") or {}).get("variable")
+    if not isinstance(name, str):
+        return None
+    for variant in record["variants"]:
+        reps = variant.get("repetitions") or []
+        if (variant.get("system_files") or {}).get(name) and reps and all(
+                any(f.get("path") == name for f in rep.get("files_opened") or ()) for rep in reps):
+            return name
+    return None
+
+
+def load_observations(path: Path) -> dict[str, dict]:
+    """Each record id or subject an observation covers, with its issue
+    number and words."""
+    import yaml  # noqa: PLC0415
+
+    if not path.is_file():
+        return {}
+    out = {}
+    for issue, entries in (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).items():
+        number = ISSUE_SUBJECT.match(f"{issue}-")["number"]
+        for entry in entries:
+            for key in [*entry.get("records", ()), *entry.get("subjects", ())]:
+                out[key] = {"issue": number, "said": entry["said"]}
+    return out
+
+
+def shown_of(record: dict) -> list | None:
+    """What a record showed that a page can state: ["text", words] from
+    its boot verdicts, ["opened", name] for a staged name strace saw the
+    core open, or None."""
+    verdicts = verdicts_of(record)
+    if verdicts:
+        return ["text", proof_result(verdicts)]
+    name = opened(record)
+    return ["opened", name] if name else None
+
+
 def index_item(entry: mr.Stored, runs: int, source: dict, profiles: dict,
-               system_names: dict[str, str]) -> dict:
+               system_names: dict[str, str], ancestry: set[str] | None = None,
+               records: list[dict] | None = None) -> dict:
     record = entry.record
     profile = profiles.get(entry.emulator) or {}
     check = record.get("check") or {}
@@ -146,36 +199,36 @@ def index_item(entry: mr.Stored, runs: int, source: dict, profiles: dict,
         "id": record["id"],
         "runs": runs,
         "record_url": permalink(source["repo"], source["commit"], mr.records_path(entry.emulator), entry.line),
+        "records": records if records is not None else [],
         "sqlite": f"downloads/measurements/{entry.emulator}.sqlite",
-        "host_short": short_host(record["host"]),
-        "setup": setup_of(record),
-        "groups": variant_groups(record),
-        "proves": proves(record["id"], profile),
-        "timing": ({"ms_per_frame": record["timing"]["ms_per_frame"]["median"],
-                    "fps": record["timing"]["fps"]["median"],
-                    "stdev": record["timing"]["ms_per_frame"]["stdev"]}
-                   if record.get("timing") else None),
+        "proves": proves(ancestry or {record["id"]}, profile),
     }
 
 
-def with_title(item: dict) -> dict:
-    return {**item, "title": short_title(item)}
-
-
 def build_index(stored: list[mr.Stored], source: dict | None, profiles: dict,
-                system_names: dict[str, str] | None = None) -> dict:
+                system_names: dict[str, str] | None = None,
+                observations: dict[str, dict] | None = None) -> dict:
     """One item per (emulator, subject): its latest record not superseded."""
     by_subject: dict[tuple[str, str], list[mr.Stored]] = {}
     live_ids = {r["id"] for r in mr.live(s.record for s in stored)}
+    ancestors = lineage(stored)
     for entry in stored:
-        if entry.record["id"] in live_ids:
+        # A benchmark only chooses between variants: it stays in the records.
+        if entry.record["id"] in live_ids and entry.record["kind"] != "bench":
             by_subject.setdefault((entry.emulator, entry.record["subject"]), []).append(entry)
     items = []
     for key in sorted(by_subject):
         entries = by_subject[key]
         latest = max(entries, key=lambda s: (s.record["recorded_at"], s.line))
-        items.append(with_title(index_item(latest, len(entries), source or {}, profiles,
-                                           system_names or {})))
+        profile = profiles.get(key[0]) or {}
+        records = [{"url": permalink((source or {}).get("repo"), (source or {}).get("commit"),
+                                     mr.records_path(s.emulator), s.line),
+                    "proves": proves(ancestors.get(s.record["id"]) or {s.record["id"]}, profile),
+                    "shown": shown_of(s.record),
+                    "observed": (observations or {}).get(s.record["id"]) or (observations or {}).get(key[1])}
+                   for s in sorted(entries, key=lambda s: s.line)]
+        items.append(index_item(latest, len(entries), source or {}, profiles, system_names or {},
+                                ancestors.get(latest.record["id"]), records))
     items.sort(key=lambda item: (item["emulator"], item["date"], item["subject"]))
     return {
         "schema_version": INDEX_SCHEMA_VERSION,
@@ -186,400 +239,6 @@ def build_index(stored: list[mr.Stored], source: dict | None, profiles: dict,
         "count": len(items),
         "items": items,
     }
-
-
-def campaign_summary(root: Path, stored: list[mr.Stored], source: dict | None) -> dict:
-    """The last campaign pass and the findings still waiting for review.
-
-    A finding's history is its lines under one key: the latest line is its
-    state, and only an open or flagged one is listed.
-    """
-    runs = mr.read_campaign(root, mr.CAMPAIGN_RUNS)
-    latest: dict[str, dict] = {}
-    applied = 0
-    for line in mr.read_campaign(root, mr.FINDINGS):
-        latest[line["key"]] = line
-        applied += line["status"] == "applied"
-    where = {s.record["id"]: s for s in stored}
-    links = {}
-    for line in latest.values():
-        for rid in line["evidence"]:
-            found = where.get(rid)
-            if found and source and source.get("commit"):
-                links[rid] = permalink(source["repo"], source["commit"],
-                                       mr.records_path(found.emulator), found.line)
-    open_items = [{**line, "links": [links.get(rid) for rid in line["evidence"]]}
-                  for _, line in sorted(latest.items()) if line["status"] in ("open", "flagged")]
-    return {"last_run": runs[-1] if runs else None, "passes": len(runs), "applied": applied,
-            "open": open_items}
-
-
-def pack_summary(root: Path, source: dict | None) -> list[dict]:
-    """The latest pack probe of each platform, install path, system, core
-    and game, with a link to its line."""
-    latest: dict[tuple, tuple[int, dict]] = {}
-    for number, line in enumerate(mr.read_campaign(root, mr.PACK_PROBES), 1):
-        key = (line["platform"], line["install"], line["system"], line["core"]["file"],
-               line["content"]["label"])
-        latest[key] = (number, line)
-    items = []
-    for key in sorted(latest):
-        number, line = latest[key]
-        url = (permalink(source["repo"], source["commit"], mr.records_path(mr.PACK_PROBES), number)
-               if source and source.get("commit") else None)
-        items.append({
-            "platform": line["platform"], "platform_version": line["platform_version"],
-            "install": line["install"], "system": line["system"], "emulator": line["emulator"],
-            "core": line["core"]["file"].removesuffix("_libretro.so"),
-            "content": line["content"]["label"], "verdict": line["verdict"],
-            "date": line["probed_at"], "opened": len(line["files_opened"]),
-            "findings": len(line["findings"]), "id": line["id"], "record_url": url,
-            "files": [f"{f['path']} ({f['entry'] or 'written by the core'})" for f in line["files_opened"]],
-            "finding_list": [f"{f['kind']} {f['path']}" for f in line["findings"]],
-            "detail": (line.get("verdict_evidence") or {}).get("detail") or line.get("error") or "",
-        })
-    return items
-
-
-def by_platform(index: dict) -> dict[str, list[dict]]:
-    out: dict[str, list[dict]] = {}
-    for item in index.get("packs") or ():
-        out.setdefault(item["platform"], []).append(item)
-    return out
-
-
-INSTALL_WORDS = {"pack": "pack", "installer": "installer"}
-
-
-def _pack_row(item: dict) -> str:
-    link = f"[line]({item['record_url']})" if item["record_url"] else _code(item["id"])
-    cells = [_plain(item["platform"]), _plain(item["system"]), INSTALL_WORDS[item["install"]],
-             _code(item["core"]), _plain(item["content"]), f"`{item['verdict']}`",
-             str(item["findings"]), link]
-    return "| " + " | ".join(cells) + " |"
-
-
-def packs_section(items: list[dict]) -> list[str]:
-    """The Measurements page's table of packs tested the way a user installs
-    them: one row per platform, system, install path, core and game."""
-    if not items:
-        return []
-    columns = ["Platform", "System", "Installed by", "Core", "Game", "Verdict", "Findings", "Record"]
-    return [
-        "## Packs",
-        "",
-        "A game started with the platform's BIOS folder as a user gets it, from the pack or "
-        f"from the installer ([how]({METHOD_PAGE}#packs)). A finding is a file the core looked "
-        "for that the folder lacks or holds under another path.",
-        "",
-        "| " + " | ".join(columns) + " |",
-        "|" + "|".join("---" for _ in columns) + "|",
-        *(_pack_row(item) for item in
-          sorted(items, key=lambda i: (i["platform"], i["system"], i["install"], i["core"], i["content"]))),
-        "",
-    ]
-
-
-def _inert(value: object) -> str:
-    """Run output (a core's log line, a file name it opened) placed in raw
-    HTML as text: every character HTML, MDX or Markdown reads as markup,
-    quotes included, written as a character reference."""
-    return _plain(value).replace('"', "&quot;").replace("'", "&#x27;")
-
-
-def _pack_details(item: dict) -> list[str]:
-    def line(label: str, value: object) -> str:
-        return _sentence_html(label, _inert(value), markup_ready=True)
-
-    lines = [
-        line("Result", item["detail"]),
-        line("Core", f"{item['core']} ({item['emulator']})"),
-        line("Files the core opened", ", ".join(item["files"]) or "none"),
-        line("Findings", ", ".join(item["finding_list"]) or "none"),
-        f'<p><a href="{_attr(item["record_url"])}">Full record</a>.</p>' if item["record_url"] else "",
-    ]
-    return [line for line in lines if line]
-
-
-def pack_tested_section(items: list[dict]) -> list[str]:
-    """The Tested block of a platform page, in the emulator pages' Tested
-    markup: one summary line, then, folded under one line as the emulator
-    pages fold their earlier tests, a row per game, core and install path
-    with its verdict chip and date, the files and findings in its details."""
-    if not items:
-        return []
-    works = sum(1 for i in items if i["verdict"] == "boots")
-    last = max(i["date"][:10] for i in items)
-    summary = (f"{len(items)} game start{'s' if len(items) != 1 else ''} with this BIOS folder as "
-               f"you install it · {works} work · last run {last}.")
-    links = (f'<a href="{markup.site_href(METHOD_PAGE.removesuffix(".md") + "/")}#packs">How</a> · '
-             f'<a href="{markup.site_href(EXPLORER_PAGE.removesuffix(".md") + "/")}">All tests</a>')
-    lines = ["## Tested", "", '<div class="rb-tested">',
-             f'<p class="rb-tested-summary">{html.escape(summary)} {links}</p>',
-             '<details class="rb-tested-earlier">',
-             "<summary>Each start, by system</summary>",
-             '<div class="rb-tested-head" aria-hidden="true"><span>Test</span>'
-             "<span>Result</span><span>Installed by</span><span>Date</span></div>"]
-    for item in sorted(items, key=lambda i: (i["system"], i["content"], i["core"], i["install"])):
-        title = (f"{_inert(item['system'])}, {_inert(short_content(item['content']))} "
-                 f"<small>{_inert(item['core'])}</small>")
-        lines += [
-            '<details class="rb-tested-row">',
-            ("<summary>"
-             f'<span class="rb-tested-test">{title}</span>'
-             f'<span class="rb-tested-result">{_chip({"status": item["verdict"]})}</span>'
-             f'<span class="rb-tested-variants">{INSTALL_WORDS[item["install"]]}</span>'
-             f'<span class="rb-tested-date">{item["date"][:10]}</span></summary>'),
-            '<div class="rb-tested-more">',
-            *_pack_details(item),
-            "</div>",
-            "</details>",
-        ]
-    return [*lines, "</details>", "</div>", ""]
-
-
-# Characters a campaign value could use to leave its place on the page: HTML
-# and MDX syntax ({ } opens an expression), code spans, emphasis and links.
-_UNSAFE = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "{": "&#123;", "}": "&#125;", "`": "&#96;",
-           "[": "&#91;", "]": "&#93;", "*": "&#42;", "_": "&#95;", "\\": "&#92;", "|": "&#124;"}
-
-
-def _plain(value: object) -> str:
-    """Text a run produced (core output, a romfetch error, a profile name),
-    shown as text: every character that is markup on the page is a
-    character reference."""
-    text = " ".join(str(value if value is not None else "").split())
-    return "".join(_UNSAFE.get(char, char) for char in text)
-
-
-def _sentence(value: object) -> str:
-    """A finding's statement as a sentence of the page: capital first."""
-    text = _plain(value)
-    return text[:1].upper() + text[1:]
-
-
-def _code(value: object) -> str:
-    """A value as code that cannot close its element or open an expression."""
-    return f"<code>{_plain(value)}</code>"
-
-
-def _value(value: object) -> str:
-    return _code(json.dumps(value, ensure_ascii=False)) if value is not None else "nothing"
-
-
-def campaign_section(summary: dict | None) -> list[str]:
-    """The campaign's last pass and its open findings, for the explorer page."""
-    if not summary or not summary.get("last_run"):
-        return []
-    last = summary["last_run"]
-    counts = last["counts"]
-    lines = [
-        "## Campaign",
-        "",
-        f"A maintainer starts a pass, on an idle computer, and nothing runs by itself "
-        f"([how]({METHOD_PAGE})). "
-        f"Last pass: {_plain(last['ended_at'][:10])}, {_plain(last['result'])}"
-        + (f" ({_plain(last['detail'])})" if last.get("detail") else "") + ". "
-        f"{int(counts['done'])} tests done, {int(counts['failed'])} failed, {int(counts['pending'])} waiting. "
-        f"{summary['applied']} profile fields were set from a run.",
-        "",
-    ]
-    if last["pending_reasons"]:
-        lines += ["| Waiting for | Tests |", "|-------------|------:|"]
-        lines += [f"| {_plain(reason)} | {int(number)} |"
-                  for reason, number in sorted(last["pending_reasons"].items(), key=lambda kv: (-kv[1], kv[0]))]
-        lines.append("")
-    if last["failed"]:
-        lines += ["Failed tests:", ""]
-        lines += [f"- {_plain(item['emulator'])}, {_code(item['check'])}: {_plain(item['reason'])}"
-                  for item in last["failed"]]
-        lines.append("")
-    lines += ["### Open findings", ""]
-    if not summary["open"]:
-        lines += ["None: every finding was settled by a rule or resolved by a later run.", ""]
-        return lines
-    lines += ["A finding is what a run showed that no rule settles. It waits for someone to "
-              "read the emulator's code.", ""]
-    for item in summary["open"]:
-        records = ", ".join(f"[{_plain(rid)}]({link})" if link else _code(rid)
-                            for rid, link in zip(item["evidence"], item["links"]))
-        lines += [
-            f"- **{_plain(item['emulator'])}**, {_code(item['file'])}, {_code(item['field'])} "
-            f"({_plain(item['status'])}): the profile says {_value(item['profile_says'])}, the run "
-            f"shows {_value(item['run_shows'])}. {_sentence(item['statement'])}. Records: {records}.",
-            "",
-        ]
-    return lines
-
-
-# --------------------------------------------------------------------------
-# Coverage and region results
-# --------------------------------------------------------------------------
-
-CONTENT_FILE = Path("tests") / "campaign" / "content.yml"
-
-
-def coverage(root: Path, stored: list[mr.Stored], profiles: dict | None = None) -> dict:
-    """Per system of the content list: its games, and which emulators ran
-    each one. A record counts for a system only when its emulator's profile
-    names that system: one catalog name can be a PlayStation disc and a
-    Saturn disc. A system no catalog covers comes with the reason and the
-    error romfetch returned."""
-    import yaml  # noqa: PLC0415
-
-    path = root / CONTENT_FILE
-    if not path.is_file():
-        return {"systems": [], "uncovered": []}
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    ran: dict[str, set[str]] = {}
-    for entry in stored:
-        label = ((entry.record.get("inputs") or {}).get("content") or {}).get("label")
-        if label:
-            ran.setdefault(label, set()).add(entry.emulator)
-    systems = []
-    for system, spec in (data.get("systems") or {}).items():
-        games = [{"name": item["name"], "region": item.get("region"),
-                  "emulators": sorted(e for e in ran.get(item["name"], ())
-                                      if profiles is None
-                                      or system in ((profiles.get(e) or {}).get("systems") or ()))}
-                 for item in spec.get("content") or ()]
-        listed = {item["name"] for item in spec.get("content") or ()}
-        # Runs of this system's emulators on games the list does not name.
-        other = sorted({e for label, emulators in ran.items() if label not in listed for e in emulators
-                        if profiles is not None
-                        and system in ((profiles.get(e) or {}).get("systems") or ())})
-        systems.append({"system": system, "games": games, "other_games_by": other,
-                        "tested": any(game["emulators"] for game in games)})
-    uncovered = [{"system": system, "want": item.get("want"), "reason": " ".join(str(item["reason"]).split()),
-                  "romfetch": item.get("romfetch") or {}}
-                 for system, item in (data.get("uncovered") or {}).items()]
-    return {"systems": systems, "uncovered": uncovered}
-
-
-def coverage_section(cov: dict | None, system_names: dict[str, str] | None = None) -> list[str]:
-    """The Coverage block of the explorer page: tested or not, and why not."""
-    if not cov or not (cov.get("systems") or cov.get("uncovered")):
-        return []
-    names = system_names or {}
-    tested = [s for s in cov["systems"] if s["tested"]]
-    lines = [
-        "## Coverage",
-        "",
-        f"Test games come from [`{CONTENT_FILE.as_posix()}`]({REPO}/blob/main/{CONTENT_FILE.as_posix()}), "
-        f"one per region where a BIOS depends on it. {len(tested)} of {len(cov['systems'])} listed "
-        f"systems have a recorded run, and {len(cov['uncovered'])} "
-        f"{'system has' if len(cov['uncovered']) == 1 else 'systems have'} no test game.",
-        "",
-        "| System | Games | Tested by |",
-        "|--------|-------|-----------|",
-    ]
-    # Two ids of one console (sega-megacd, mega-cd) share their list: one row.
-    rows: dict[tuple[str, str], set[str]] = {}
-    others: dict[tuple[str, str], set[str]] = {}
-    for item in cov["systems"]:
-        row = (_plain(names.get(item["system"], item["system"])),
-               ", ".join(_plain(game["name"]) for game in item["games"]))
-        rows.setdefault(row, set()).update(e for game in item["games"] for e in game["emulators"])
-        others.setdefault(row, set()).update(item.get("other_games_by") or ())
-    for (name, games), by in rows.items():
-        if by:
-            status = ", ".join(_plain(e) for e in sorted(by))
-        elif others[(name, games)]:
-            status = ("not yet with these games, other games by "
-                      + ", ".join(_plain(e) for e in sorted(others[(name, games)])))
-        else:
-            status = "not yet: no run recorded"
-        lines.append(f"| {name} | {games} | {status} |")
-    lines.append("")
-    if cov["uncovered"]:
-        lines += ["Systems without a test game:", "",
-                  "| System | Wanted | Why not | romfetch |",
-                  "|--------|--------|---------|----------|"]
-        for item in cov["uncovered"]:
-            code = item["romfetch"].get("code") or "no source"
-            lines.append(f"| {_plain(names.get(item['system'], item['system']))} | {_plain(item['want'])} | "
-                         f"{_plain(item['reason'])} | exit {_plain(item['romfetch'].get('exit'))}, "
-                         f"{_code(code)} |")
-        lines.append("")
-    return lines
-
-
-def region_results(root: Path, stored: list[mr.Stored], source: dict | None) -> list[dict]:
-    """The region outcomes the records hold (region_check.py), each record
-    linked at the commit the explorer links."""
-    import region_check  # noqa: PLC0415
-
-    lines = {s.record["id"]: s for s in stored}
-    results = region_check.collect(root, stored)
-    for result in results:
-        for item in result["variants"].values():
-            found = lines.get(item["record"])
-            item["url"] = (permalink(source["repo"], source["commit"], mr.records_path(found.emulator),
-                                     found.line)
-                           if found and source and source.get("commit") else None)
-    return results
-
-
-def site_region_results(root: Path = ROOT, repo: str = REPO) -> list[dict]:
-    """region_results with the records and commit the explorer uses."""
-    stored = mr.read_records(root)
-    source = {"repo": repo, "commit": records_commit(root) if stored else None}
-    return region_results(root, stored, source)
-
-
-REGION_SUBJECT = re.compile(r"^region-[a-z0-9_]+-[a-z0-9-]+-(full|own|others|pack)$")
-
-VARIANT_WORDS = {"full": "every regional BIOS", "own": "its own region's BIOS only",
-                 "others": "the other regions' BIOS only", "pack": "the region's pack"}
-
-
-REGION_SHORT = {"japan": "Japanese", "north-america": "US", "europe": "European"}
-OUTCOME_WORDS = {True: "boots", False: "does not boot", None: "no verdict"}
-
-
-def core_region_line(results: list[dict]) -> str:
-    """One core's outcome over its region games, in a sentence: each game
-    on its own BIOS, then on the other regions' BIOS."""
-    own = {r["own_boots"] for r in results}
-    others = {r["others_boot"] for r in results}
-    if own == {True} and others == {True}:
-        return "Each region's game boots on its own BIOS and on the other regions' BIOS."
-    if own == {True} and others == {False}:
-        return "Each region's game boots on its own BIOS only."
-    parts = [f"{REGION_SHORT.get(r['region'], r['region'])} game: {OUTCOME_WORDS[r['own_boots']]} "
-             f"on its BIOS, {OUTCOME_WORDS[r['others_boot']]} on the others" for r in results]
-    return ", ".join(parts) + "."
-
-
-def region_section(results: list[dict], level: int = 3) -> list[str]:
-    """What the region runs showed for one system: a line per core, the
-    games and their records in a fold."""
-    if not results:
-        return []
-    lines = ["#" * level + " Region check", "",
-             f"Each game ran with {VARIANT_WORDS['own']}, then with {VARIANT_WORDS['others']} "
-             f"([method](../{METHOD_PAGE})).", ""]
-    by_core: dict[str, list[dict]] = {}
-    for result in results:
-        by_core.setdefault(result["core"], []).append(result)
-    for core, items in by_core.items():
-        lines.append(f"- **{_plain(core)}**: {_plain(core_region_line(items))}")
-    lines.append("")
-    rows = []
-    for result in results:
-        links = ", ".join(_link(item.get("url"), _cell(VARIANT_WORDS[label]))
-                          for label, item in result["variants"].items())
-        names = ", ".join(f"<code>{_cell(name)}</code>" for name in result["selected"])
-        read = (f" It reads {names} with every regional BIOS there "
-                f"({_cell(result['claim'])} against the profile)." if result["selected"] else "")
-        basis = ("" if result["judged_by"] == "verdict"
-                 else " Judged against the run with every regional BIOS until reference frames are recorded.")
-        rows.append(f"<li><strong>{_cell(result['core'])}</strong>, {_cell(result['game'])}: "
-                    f"{_cell(result['sentence'])}{read}{basis} Records: {links}.</li>")
-    # One line: MDX reads an HTML block split over lines as paragraphs.
-    lines += ['<details class="rb-region-runs"><summary>Each game and its records</summary><ul>'
-              + "".join(rows) + "</ul></details>", ""]
-    return lines
 
 
 # --------------------------------------------------------------------------
@@ -803,10 +462,7 @@ def build(public: Path, root: Path = ROOT, emulators_dir: Path = ROOT / "emulato
     stored = mr.read_records(root)
     source = {"repo": repo, "commit": commit or (records_commit(root) if stored else None)}
     profiles = load_profiles(emulators_dir)
-    index = build_index(stored, source, profiles, system_names)
-    index["campaign"] = campaign_summary(root, stored, source)
-    index["coverage"] = coverage(root, stored, profiles)
-    index["packs"] = pack_summary(root, source)
+    index = build_index(stored, source, profiles, system_names, load_observations(root / OBSERVATIONS))
     paths = [public / INDEX_PATH]
     (public / INDEX_PATH).parent.mkdir(parents=True, exist_ok=True)
     write_if_changed(str(public / INDEX_PATH),
@@ -825,18 +481,118 @@ def build(public: Path, root: Path = ROOT, emulators_dir: Path = ROOT / "emulato
 # --------------------------------------------------------------------------
 
 def by_emulator(index: dict) -> dict[str, list[dict]]:
-    """Each emulator's items, with the count of its findings still open."""
-    opened: dict[str, int] = {}
-    for line in (index.get("campaign") or {}).get("open") or ():
-        opened[line["emulator"]] = opened.get(line["emulator"], 0) + 1
+    """Each emulator's items. A pack probe's run proves a pack, not the
+    emulator's page."""
     out: dict[str, list[dict]] = {}
     for item in index.get("items", []):
-        # A pack probe's run is shown on its platform's page, beside the pack.
-        if item["subject"].startswith(mr.PACK_SUBJECT_PREFIX):
-            continue
-        out.setdefault(item["emulator"], []).append(
-            {**item, "open_findings": opened.get(item["emulator"], 0)})
+        if not item["subject"].startswith(mr.PACK_SUBJECT_PREFIX):
+            out.setdefault(item["emulator"], []).append(item)
     return out
+
+
+ISSUE_SUBJECT = re.compile(r"^issue(?P<number>\d+)-")
+
+
+VERDICT_WORDS = {"boots": "boots", "bios_error": "shows a BIOS error", "crash": "crashes",
+                 "hang": "hangs", "unknown": "gives no verdict"}
+
+
+def proof_result(verdicts: list[dict]) -> str:
+    """What a record showed, in words, naming the BIOS each boot ran: a
+    boot on the core's built-in BIOS is never the staged file's. A single
+    run says what was staged, a check names each variant."""
+    def said(verdict: dict) -> str:
+        used = verdict.get("bios_used") or "unknown"
+        if verdict["verdict"] == BOOTS_BUILTIN:
+            return "boots on the core's built-in BIOS"
+        if verdict["verdict"] == "boots" and used.startswith("staged:"):
+            return f"boots on {used.removeprefix('staged:')}"
+        return VERDICT_WORDS.get(verdict["verdict"], verdict["verdict"].replace("_", " "))
+    if len(verdicts) == 1:
+        staged = verdicts[0].get("staged") or []
+        given = " and ".join(staged) if len(staged) < 3 else f"{', '.join(staged[:-1])} and {staged[-1]}"
+        return f"with {given or 'no BIOS'}, it {said(verdicts[0])}"
+    return ". ".join(f"{v['variant']}: {said(v)}" for v in verdicts)
+
+
+def proof_claims(item: dict, record: dict) -> tuple[list[str], list | None]:
+    """The claims one record of an item backs on its emulator's page, and
+    what it showed. An issue observation is the claim and needs no more.
+    No claim when the record shows nothing a page can state."""
+    observed = record.get("observed")
+    if observed:
+        return [f"issue {observed['issue']}: {observed['said']}"], None
+    shown = record.get("shown")
+    if shown is None:
+        return [], None
+    if record.get("proves"):
+        return record["proves"], shown
+    issue = ISSUE_SUBJECT.match(item["subject"])
+    if issue and shown[0] == "text":
+        return [f"issue {issue['number']}"], shown
+    return [], None
+
+
+def _md(value: object) -> str:
+    """Record text placed in a Markdown line: no span, link or tag out of it."""
+    return _cell(value).translate(_MARKDOWN)
+
+
+def _records(urls: list[str]) -> str:
+    """The record links of one statement, escaped and safe targets only."""
+    def place(url: str) -> tuple[str, int]:
+        path, _, line = url.partition("#L")
+        return path, int(line) if line.isdigit() else 0
+    targets = sorted(dict.fromkeys(t for u in urls if (t := _href(u))), key=place)
+    if not targets:
+        return ""
+    if len(targets) == 1:
+        return f" ([record]({targets[0]}))"
+    files = {t.split("#", 1)[0] for t in targets}
+    if len(targets) > MAX_RECORD_LINKS and len(files) == 1:
+        return f" ([{len(targets)} records]({files.pop()}))"
+    return " (records " + ", ".join(f"[{n}]({t})" for n, t in enumerate(targets, 1)) + ")"
+
+
+def proof_line(claim: str, shown: list[tuple[list | None, list[str]]]) -> str:
+    """One line per claim, its records collapsed: the files strace saw
+    opened in one list, each distinct result once with its records."""
+    names: dict[str, list[str]] = {}
+    texts: dict[str, list[str]] = {}
+    bare: list[str] = []
+    for what, urls in shown:
+        if what is None:
+            bare.extend(urls)
+        elif what[0] == "opened":
+            names.setdefault(what[1], []).extend(urls)
+        else:
+            texts.setdefault(what[1], []).extend(urls)
+    parts = []
+    if names:
+        parts.append("the core opened " + ", ".join(_md(n) for n in names)
+                     + _records([u for urls in names.values() for u in urls]))
+    parts.extend(_md(text) + _records(urls) for text, urls in texts.items())
+    if not parts:
+        return f"- {_md(claim)}{_records(bare)}."
+    return f"- {_md(claim)}: " + ". ".join(part[:1].upper() + part[1:] if n else part
+                                          for n, part in enumerate(parts)) + "."
+
+
+def proof_section(items: list[dict]) -> list[str]:
+    """The Proof lines of an emulator page: only the claims of the page a
+    run backs, one line per claim. Every other record stays on the
+    Measurements page."""
+    by_claim: dict[str, list] = {}
+    for item in sorted(items, key=lambda i: i["subject"]):
+        for record in item.get("records") or ():
+            claims, what = proof_claims(item, record)
+            for claim in claims:
+                by_claim.setdefault(claim, []).append((what, [record["url"]]))
+    if not by_claim:
+        return []
+    return ["## Proof", "",
+            f"Real runs that back this page ([how they are made](../../{METHOD_PAGE.removesuffix('.md')}/)):",
+            "", *(proof_line(claim, by_claim[claim]) for claim in sorted(by_claim)), ""]
 
 
 def _text(value: object) -> str:
@@ -851,201 +607,28 @@ def _short(commit: str | None) -> str:
     return f"`{commit[:12]}`" if commit else "unknown"
 
 
-# A verdict or a comparison, as the block says it: words and a chip kind.
-RESULT_WORDS = {
-    "boots": ("works", "success"),
-    "bios_error": ("BIOS error", "danger"),
-    "crash": ("crash", "danger"),
-    "hang": ("hang", "warning"),
-    "unknown": ("unknown", "muted"),
-    "mixed": ("depends on the file", "info"),
-    "same": ("same with every file", "muted"),
-    "differs": ("depends on the file", "info"),
-    "inconclusive": ("inconclusive", "warning"),
-    "no verdict": ("no verdict", "muted"),
-    "ran": ("ran", "muted"),
-}
-# Words a subject slug spells that read as one term.
-TERMS = {"bios": "BIOS", "vcd": "Video CD", "cd": "CD", "jp": "JP", "us": "US", "eu": "EU",
-         "cr2": "CR2", "mpeg": "MPEG", "psx": "PSX", "hle": "HLE", "usa": "USA"}
-# The campaign's own check names, as the block says them.
-CHECK_NAMES = {"files": "full set", "none": "no BIOS", "negative": "wrong files",
-               "references": "reference run", "variants": "copies", "alias": "other name",
-               "path": "other path", "bench": "benchmark", "boot": "boot test", "alone": "file alone"}
-
-
-def _words(text: str) -> list[str]:
-    return re.findall(r"[a-z0-9]+", str(text or "").lower())
-
-
-def short_content(label: str | None) -> str:
-    """A content label cut to the game's name: no source prefix, no
-    edition, region or identity detail."""
-    text = str(label or "").strip()
-    if ":" in text.split("(")[0]:
-        text = text.split(":", 1)[1].strip()
-    for cut in (" - ", " (", ", "):
-        text = text.split(cut, 1)[0]
-    return text.strip()
-
-
-def short_title(item: dict) -> str:
-    """A test's name in a few words: the file it varies, the game, and what
-    the subject adds to them (a build, a region, a check of the campaign)."""
-    thing = Path(str(item.get("variable") or "")).name
-    game = short_content(item.get("content"))
-    known = set(_words(thing)) | set(_words(item.get("content"))) | set(_words(game))
-    known |= set(_words(Path(str((item.get("core") or {}).get("file") or "")).name.split("_libretro")[0]))
-    axis = []
-    for word in _words(item.get("subject")):
-        if word in known or re.fullmatch(r"[0-9a-f]{8}", word):
-            continue
-        issue = re.fullmatch(r"issue(\d+)", word)
-        word = f"issue {issue[1]}" if issue else CHECK_NAMES.get(word, TERMS.get(word, word))
-        if word not in axis:
-            axis.append(word)
-    head = ", ".join(part for part in (thing, game) if part)
-    title = f"{head} ({' '.join(axis)})" if axis and head else head or " ".join(axis)
-    return title or str(item.get("subject") or "")
-
-
-OBSERVABLE_WORDS = {"video_sha1": "video", "frame_hashes": "screens", "audio_sha1": "audio",
-                    "state_sha1": "save state", "frame_sha1": "last frame"}
-
-
-def setup_of(record: dict) -> dict:
-    """What told two runs of one test apart, each as the words a title
-    would use: the campaign check, the core build, the core options, the
-    clock, the number of files tried and what was compared."""
-    build = str(record["core"].get("build_command") or "")
-    patched = re.search(r"\b(patch|edit(?:ed|ing)?)\b", build, re.IGNORECASE)
-    named = re.search(r"\b([A-Z]+[0-9]+)\b", build) if patched else None
-    check = record.get("check") or {}
-    first = (_words(record["subject"]) or [""])[0]
-    options = {}
-    for key, value in sorted(record["inputs"].get("options", {}).items()):
-        options[key] = f"{value} region" if key.endswith("_region") else f"{key.rsplit('_', 1)[-1]} {value}"
-    observable = str(check.get("observable") or "")
-    return {
-        "check": CHECK_NAMES.get(first, ""),
-        "build": (f"{named[1]} patch" if named else "patched build") if patched else "published build",
-        "options": options,
-        "clock": "fixed clock" if "FAKETIME" in record["inputs"].get("env", {}) else "running clock",
-        "files": (f"{len(record['variants'])} file{'s' if len(record['variants']) != 1 else ''}"
-                  if record["kind"] == "check" else ""),
-        "observable": (observable.split(":", 1)[1] if observable.startswith("state:")
-                       else OBSERVABLE_WORDS.get(observable, observable)),
-    }
-
-
-def _features(item: dict) -> dict[str, str]:
-    """A test's setup as named features, the options one by one."""
-    setup = item.get("setup") or {}
-    out = {name: str(setup.get(name) or "") for name in ("build", "clock", "files", "observable")}
-    for key, value in (setup.get("options") or {}).items():
-        out[f"option:{key}"] = value
-    return out
-
-
-def distinct_titles(items: list[dict]) -> dict[str, str]:
-    """A title per item: its game and campaign check, then what sets it
-    apart from the other tests of the same file, game and core.
-
-    A test whose setup is the common one of its group is named by its game.
-    Another adds the features where it leaves the common setup (a patched
-    build, a running clock, another region). Two titles still alike take
-    every feature that varies in the group, then the subject's own words.
-    Nothing is cut.
-    """
-    out: dict[str, str] = {}
-    peers: dict[tuple, list[dict]] = {}
-    for item in items:
-        game = short_content(item.get("content")) or short_title(item)
-        peers.setdefault((item.get("variable") or "", game, item["core"].get("file")), []).append(item)
-    for (_, game, _), group in peers.items():
-        features = [_features(item) for item in group]
-        names = sorted({name for f in features for name in f},
-                       key=lambda n: (n.startswith("option:"), ["build", "clock", "files", "observable"].index(n)
-                                      if not n.startswith("option:") else 0, n))
-        common = {}
-        for name in names:
-            values = [f.get(name, "") for f in features]
-            ranked = sorted(set(values), key=lambda v: -values.count(v))
-            # A tie has no common value: every test names its own.
-            tied = len(ranked) > 1 and values.count(ranked[0]) == values.count(ranked[1])
-            common[name] = None if tied else ranked[0]
-        varying = [n for n in names if len({f.get(n, "") for f in features}) > 1]
-
-        def title(item: dict, own: dict[str, str], every: bool, varying: list[str] = varying,
-                  common: dict[str, str] = common, game: str = game) -> str:
-            words = [(item.get("setup") or {}).get("check", "")]
-            for name in varying:
-                value = own.get(name, "")
-                if every or value != common[name]:
-                    words.append(value or f"no {name.rsplit('_', 1)[-1]}")
-            return ", ".join([game, *[w for w in words if w]])
-
-        for item, own in zip(group, features):
-            out[item["id"]] = title(item, own, every=False)
-        for every in (True, None):
-            seen: dict[str, int] = {}
-            for item in group:
-                seen[out[item["id"]]] = seen.get(out[item["id"]], 0) + 1
-            for item, own in zip(group, features):
-                if seen[out[item["id"]]] > 1:
-                    if every:
-                        out[item["id"]] = title(item, own, every=True)
-                    else:
-                        axis = short_title({**item, "variable": None, "content": None})
-                        out[item["id"]] = f"{out[item['id']]}, {axis}"
-    return out
-
-
-def short_host(host: dict) -> str:
-    """The computer as a reader names it: the CPU model and the OS."""
-    cpu = str(host.get("cpu_model") or "unknown CPU")
-    cpu = re.sub(r"\(R\)|\(TM\)|\bCPU\b|@.*$|^\d+(?:st|nd|rd|th) Gen ", "", cpu)
-    cpu = " ".join(cpu.split())
-    system = str(host.get("os") or "")
-    name = "Linux" if "Linux" in system else system.split("-")[0] or "unknown OS"
-    if "microsoft" in system.lower():
-        name += " (WSL2)"
-    return f"{cpu}, {name}"
-
-
-def variant_groups(record: dict) -> list[dict]:
-    """One entry per variant: the result group it falls in, and whether it
-    staged no file. A run that carries verdicts is grouped by verdict, a
-    comparison by the value its observable took."""
-    check = record.get("check") or {}
-    position: dict[str, int] = {}
-    result: dict[str, str] = {}
-    if all("verdict" in v for v in record["variants"]) and (
-            record["kind"] == "run" or check.get("observable") == "frame_hashes"):
-        for variant in record["variants"]:
-            position.setdefault(variant["verdict"], len(position))
-            result[variant["label"]] = RESULT_WORDS[variant["verdict"]][0]
-        groups = {v["label"]: position[v["verdict"]] for v in record["variants"]}
-    else:
-        groups = {}
-        for number, group in enumerate((check.get("result") or {}).get("groups") or ()):
-            for label in group["variants"]:
-                groups[label] = number
-                result[label] = f"result {chr(ord('A') + number % 26)}"
-    varied = check.get("variable")
-    return [{"variant": v["label"], "group": groups.get(v["label"], 0),
-             "result": result.get(v["label"], ""),
-             "absent": bool(varied) and varied in v["system_files"] and v["system_files"][varied] is None}
-            for v in record["variants"]]
-
-
-def proves(record_id: str, profile: dict) -> list[str]:
-    """The profile fields this record is evidence for, as `field of file`."""
+def proves(record_ids: set[str], profile: dict) -> list[str]:
+    """The profile fields a record is evidence for, as `field of file`. A
+    record judged again stands for the ones it supersedes."""
     out = []
     for entry in profile.get("files") or ():
         for name, ids in sorted((entry.get("evidence") or {}).items()):
-            if record_id in ids:
+            if record_ids & set(ids):
                 out.append(f"{name} of {entry.get('name')}")
+    return out
+
+
+def lineage(stored: list[mr.Stored]) -> dict[str, set[str]]:
+    """Each record id with every id it supersedes, through the chain."""
+    parent = {s.record["id"]: s.record.get("supersedes") for s in stored}
+    out = {}
+    for rid in parent:
+        seen = {rid}
+        node = parent[rid]
+        while node and node not in seen:
+            seen.add(node)
+            node = parent.get(node)
+        out[rid] = seen
     return out
 
 
@@ -1068,6 +651,11 @@ def _cell(value: object) -> str:
     return html.escape(text, quote=True).translate(_BRACES)
 
 
+# The proof line is Markdown: a character that starts a span, a link or
+# an image in a run's output stays a character.
+_MARKDOWN = str.maketrans({c: f"&#{ord(c)};" for c in "`*_[]()~!|\\"})
+
+
 _SAFE_HREF = re.compile(r"^(?:https?://[^\s\"'<>]+|/[^\s\"'<>]*|\.{0,2}/?[\w.~-][^\s\"'<>:]*)$")
 
 
@@ -1076,199 +664,6 @@ def _href(url: object) -> str | None:
     text = str(url or "")
     return _attr(text) if text and _SAFE_HREF.match(text) and not text.lower().startswith(
         ("javascript:", "data:", "vbscript:")) else None
-
-
-def _link(url: object, text: str) -> str:
-    target = _href(url)
-    return f'<a href="{target}">{text}</a>' if target else text
-
-
-def _dots(item: dict) -> str:
-    groups = item.get("groups") or []
-    names = ". ".join(f"{g['variant']}: {g['result']}" for g in groups)
-    dots = "".join(
-        f'<span class="rb-dot rb-dot-{g["group"] % 5}{" rb-dot-empty" if g["absent"] else ""}" '
-        f'title="{_attr(g["variant"] + ": " + g["result"])}"></span>' for g in groups)
-    return (f'<span class="rb-dots" role="img" aria-label="{_attr(f"{len(groups)} variants. {names}")}">'
-            f"{dots}</span>")
-
-
-def _chip(item: dict) -> str:
-    words, kind = RESULT_WORDS.get(item["status"], (item["status"], "muted"))
-    # A wrong-files test claims the core refuses zeros, half the file and
-    # other regions' dumps: when every one boots the claim fails, and
-    # "works" in green read as a pass.
-    if item["status"] == "boots" and str(item.get("subject") or "").startswith("negative-"):
-        words, kind = "accepts wrong files", "info"
-    return f'<span class="rb-badge rb-badge-{kind}">{_cell(words)}</span>'
-
-
-def _sentence_html(label: str, value: object, markup_ready: bool = False) -> str:
-    """One line of the details, or nothing: an empty value is never printed."""
-    text = (str(value or "") if markup_ready else _cell(value)).strip().rstrip(".")
-    return f"<p><strong>{label}:</strong> {text}.</p>" if text else ""
-
-
-def _details(item: dict) -> list[str]:
-    core = item["core"]
-    build = _cell(core["library"]) + (f" at <code>{_cell(core['commit'][:12])}</code>"
-                                      if core.get("commit") else "")
-    reps = f"{item['variants']} variant{'s' if item['variants'] != 1 else ''}, " \
-           f"{item['repetitions']} repetition{'s' if item['repetitions'] != 1 else ''} each"
-    if item["flags"]:
-        reps += f", {item['flags']} flag{'s' if item['flags'] != 1 else ''} raised"
-    runs = "" if item["runs"] == 1 else f", {item['runs']} runs, the latest shown"
-    lines = [
-        _sentence_html("Claim", item.get("claim")),
-        _sentence_html("Result", item.get("statement")),
-        _sentence_html("Method", item.get("method")),
-        _sentence_html("Proves", ", ".join(item.get("proves") or [])),
-        _sentence_html("Ran on", item.get("host_short") or item["host"]),
-        _sentence_html("Core build", build and f"{build}. {reps}", markup_ready=True),
-        f'<p>{_link(item["record_url"], "Full record")}{runs}.</p>',
-    ]
-    return [line for line in lines if line]
-
-
-def tested_counts(items: list[dict]) -> dict:
-    tests = [i for i in items if i["kind"] != "bench"]
-    return {"tests": len(items), "confirmed": sum(1 for i in items if i.get("proves")),
-            "open": max((i.get("open_findings", 0) for i in items), default=0),
-            "benchmarks": len(items) - len(tests),
-            "last": max((i["date"][:10] for i in items), default="")}
-
-
-def core_label(item: dict) -> str:
-    return Path(str(item["core"].get("file") or "")).name.split("_libretro")[0]
-
-
-def _row(item: dict, title: str, page_host: str, main_core: str) -> list[str]:
-    elsewhere = (item.get("host_short") or item["host"]) != page_host
-    title = _cell(title)
-    if core_label(item) != main_core:
-        title += f' <small>{_cell(core_label(item))}</small>'
-    return [
-        '<details class="rb-tested-row">',
-        ("<summary>"
-         f'<span class="rb-tested-test">{title}</span>'
-         f'<span class="rb-tested-result">{_chip(item)}</span>'
-         f'<span class="rb-tested-variants">{_dots(item)}</span>'
-         f'<span class="rb-tested-date">{item["date"][:10]}'
-         + (f' <small>{_attr(item.get("host_short"))}</small>' if elsewhere else "")
-         + "</span></summary>"),
-        '<div class="rb-tested-more">',
-        *_details(item),
-        "</div>",
-        "</details>",
-    ]
-
-
-def by_file(items: list[dict]) -> list[tuple[str, list[dict]]]:
-    """The items under the file each varies, in order of first appearance;
-    the runs that vary none last."""
-    groups: dict[str, list[dict]] = {}
-    for item in items:
-        groups.setdefault(Path(str(item.get("variable") or "")).name, []).append(item)
-    return sorted(groups.items(), key=lambda kv: kv[0] == "")
-
-
-def folded(item: dict) -> bool:
-    """A row the block folds away: a test from before the boot oracle, or a
-    run that recorded reference frames for the oracle, which a reviewer
-    reads and a visitor does not."""
-    return item["status"] == "no verdict" or str(item.get("subject") or "").startswith("references-")
-
-
-def summary_line(items: list[dict], page_host: str) -> str:
-    """N tests, the confirmed and open counts when there are any, the last
-    run and its computer."""
-    counts = tested_counts(items)
-    parts = [f"{counts['tests']} test{'s' if counts['tests'] != 1 else ''}"]
-    if counts["confirmed"]:
-        parts.append(f"{counts['confirmed']} confirmed in the profile")
-    if counts["open"]:
-        parts.append(f"{counts['open']} open finding{'s' if counts['open'] != 1 else ''}")
-    parts.append(f"last run {counts['last']} on {page_host}")
-    return " · ".join(parts) + "."
-
-
-def tested_section(name: str, items: list[dict],
-                   file_hrefs: dict[str, str] | None = None) -> list[str]:
-    """The Tested block of an emulator page, empty when nothing was recorded.
-
-    The answer first: one summary line, then the tests under the file each
-    one varies, a row per test with its result chip, a dot per variant and
-    its date. What proves it (method, claim, computer, core build, record)
-    waits in each row's details. ``file_hrefs`` links a file, by its name
-    folded to lower case, to its card on the page. Tests recorded before the boot oracle fold
-    under one line, and benchmarks get their own table at the end.
-    """
-    if not items:
-        return []
-    hosts = [i.get("host_short") or i["host"] for i in items]
-    page_host = max(sorted(set(hosts)), key=hosts.count)
-    cores = [core_label(i) for i in items]
-    main_core = max(sorted(set(cores)), key=cores.count)
-    titles = distinct_titles(items)
-    links = (f'<a href="{markup.site_href(METHOD_PAGE.removesuffix(".md") + "/")}">How</a> · '
-             f'<a href="{markup.site_href(EXPLORER_PAGE.removesuffix(".md") + "/")}">All tests</a> · '
-             f'<a href="{markup.site_href(f"downloads/measurements/{name}.sqlite")}">SQLite</a>')
-    ordered = sorted(items, key=lambda i: (i["date"], i["subject"], core_label(i)), reverse=True)
-    benches = [i for i in ordered if i["kind"] == "bench"]
-    # The region runs (region_check.py) read as one outcome per game, on the
-    # system page: listed here they would be a row per run.
-    regional = [i for i in ordered if i["kind"] != "bench" and REGION_SUBJECT.match(i["subject"])]
-    ordered = [i for i in ordered if i not in regional]
-    earlier = [i for i in ordered if i["kind"] != "bench" and folded(i)]
-    current = [i for i in ordered if i["kind"] != "bench" and not folded(i)]
-    lines = ["## Tested", "", '<div class="rb-tested">',
-             f'<p class="rb-tested-summary">{_cell(summary_line(items, page_host))} {links}</p>']
-    if current or earlier:
-        lines.append('<div class="rb-tested-head" aria-hidden="true"><span>Test</span>'
-                     "<span>Result</span><span>Variants</span><span>Date</span></div>")
-    for file, group in by_file(current):
-        label = f"<code>{_cell(file)}</code>" if file else "No file varied"
-        href = (file_hrefs or {}).get(file.casefold()) if file else None
-        if href:
-            label = f'<a href="{_attr(href)}">{label}</a>'
-        lines.append(f'<p class="rb-tested-file">{label}</p>')
-        for item in group:
-            lines += _row(item, titles[item["id"]], page_host, main_core)
-    if current:
-        lines.append('<p class="rb-tested-legend"><span class="rb-dot rb-dot-0"></span> A dot per file tried, '
-                     'the same colour for the same result. <span class="rb-dot rb-dot-0 rb-dot-empty">'
-                     "</span> No file staged.</p>")
-    if earlier:
-        old = sum(1 for i in earlier if i["status"] == "no verdict")
-        parts = [f"{old} test{'s' if old != 1 else ''} from before the boot oracle" if old else "",
-                 (f"{len(earlier) - old} reference run{'s' if len(earlier) - old != 1 else ''}"
-                  if len(earlier) - old else "")]
-        lines += ['<details class="rb-tested-earlier">',
-                  f"<summary>{_cell(' and '.join(p for p in parts if p))}</summary>"]
-        for item in earlier:
-            file = Path(str(item.get("variable") or "")).name
-            title = f"{file}, {titles[item['id']]}" if file else titles[item["id"]]
-            lines += _row(item, title, page_host, main_core)
-        lines.append("</details>")
-    if regional:
-        games = len({i["content"] for i in regional})
-        lines.append(f'<p class="rb-tested-file">Region check: {len(regional)} runs of '
-                     f"{games} game{'s' if games != 1 else ''}, read on the system page.</p>")
-    if benches:
-        # One line: MDX reads a table split over lines as paragraphs.
-        table = ['<table class="rb-tested-bench"><thead><tr><th>Benchmark</th><th>ms per frame</th>'
-                 "<th>fps</th><th>stdev</th><th>runs</th></tr></thead><tbody>"]
-        for item in benches:
-            timing = item.get("timing") or {}
-            title = _cell(titles[item["id"]])
-            if core_label(item) != main_core:
-                title += f' <small>{_cell(core_label(item))}</small>'
-            table.append(
-                f'<tr><td>{_link(item["record_url"], title)}</td>'
-                f'<td>{timing.get("ms_per_frame", 0):.3f}</td><td>{timing.get("fps", 0):.1f}</td>'
-                f'<td>{timing.get("stdev", 0):.3f}</td><td>{item["repetitions"]}</td></tr>')
-        lines.append("".join([*table, "</tbody></table>"]))
-    return [*lines, "</div>", ""]
 
 
 def hosts_table(index: dict) -> list[str]:
@@ -1292,7 +687,7 @@ def with_hosts(page: str, index: dict) -> str:
     return page.replace(HOSTS_MARKER, "\n".join(hosts_table(index)).rstrip("\n"))
 
 
-def generate_explorer_page(index: dict, system_names: dict[str, str] | None = None) -> str:
+def generate_explorer_page(index: dict) -> str:
     commit = index.get("commit")
     repo = index.get("repo") or ""
     source = (f"[`measurements/`]({repo}/tree/{commit}/{mr.RECORDS_DIR}) at {_short(commit)}"
@@ -1309,14 +704,13 @@ def generate_explorer_page(index: dict, system_names: dict[str, str] | None = No
             markup.button("Index as JSON", "data/measurements/index.json"),
         ]),
         "",
-        "Each row is the latest record of one test, with its method and the computer it "
-        "ran on. One SQLite file per emulator is linked from its page.",
+        "Each row is the latest record of one test, with its verdict, the BIOS it ran, its "
+        "method and the computer it ran on. Runs are made on demand: to settle a dispute or an "
+        "issue, to back a correction sent to a platform, or to check the packs before a release. "
+        "One SQLite file per emulator sits under `downloads/measurements/`.",
         "",
         "<MeasurementsExplorer />",
         "",
-        *packs_section(index.get("packs") or []),
-        *campaign_section(index.get("campaign")),
-        *coverage_section(index.get("coverage"), system_names),
     ])
 
 

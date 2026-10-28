@@ -2,13 +2,15 @@
 level: reference
 order: 70
 group: Data
-terms: measurement, benchmark, tested, core probe, real conditions, method
+terms: measurement, proof, tested, core probe, real conditions, method
 ---
 
 # How emulators are tested
 
-Some pages say what an emulator does with a file. Where we ran it to check,
-the emulator's page shows a **Tested** block. Every result is on the
+We run an emulator only when a question needs a real answer. That is an
+issue, a fix we send to a project, or a check before a release.
+
+A page that relies on a run says so in a **Proof** line. Every run is on the
 [Measurements](../measurements.md) page.
 
 ## What a test does
@@ -16,23 +18,26 @@ the emulator's page shows a **Tested** block. Every result is on the
 - A script runs the emulator with no window and no sound.
 - It starts a game and runs it for a set time, at least twice.
 - It compares the screens with ones we checked by eye.
-
-## Your BIOS folder { #packs }
-
-We also test the files as you install them, for RetroArch, Batocera and
-RetroBat, then start a game. The setup's page shows the result under **Tested**.
+- It reads the emulator's log to see which BIOS it ran.
 
 ## What a result says
 
 | Result | Meaning |
 |--------|---------|
 | works | the game reached a screen it shows when it works |
+| works on its built-in BIOS | it worked, but the emulator refused the file and ran its own BIOS |
 | BIOS error | the emulator said a BIOS is missing or wrong |
 | crash | the emulator stopped |
 | hang | the screen stayed blank, or the run never ended |
 | unknown | none of these could be shown |
 | no verdict | an older test that only compared screens |
-| ms per frame | a speed test |
+
+## What a result does not prove
+
+- It shows the first minutes of one game, not the whole game.
+- It sees the files the emulator opened on this path, not every path.
+- Some emulators run their own BIOS when yours is refused. The game still works.
+- The app you play in may change settings the test left as they were.
 
 ## How a file is proven
 
@@ -43,27 +48,12 @@ file under the BIOS name: zeros, half the file, or another region's BIOS.
 - **Built-in stand-in**: no BIOS still works.
 - **Checked**: a wrong file is refused.
 
-## When tests run
-
-A maintainer starts a test run. A clear result updates the emulator's page.
-Anything else waits on the [Measurements](../measurements.md) page for someone
-to read the code.
-
-## What a result keeps
-
-Each result names its method, the computer it ran on and the exact build of
-the emulator. Its inputs are kept by fingerprint. A result holds for that
-build and those inputs only.
-
-A speed figure depends on the computer and how busy it was. It is never
-shown without them.
-
 ## Where results are kept
 
 Each result is a full record in the
 [`measurements/`](https://github.com/Abdess/retrobios/tree/main/measurements)
-folder of this project. A record is never changed once added. A new run is
-added beside it, and a correction names the record it replaces.
+folder of this project. It names its method, the computer and the exact build
+of the emulator. A record is never changed once added.
 
 The results so far ran on these computers:
 

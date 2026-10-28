@@ -33,12 +33,42 @@ cores:
       A missing BIOS logs "Firmware is missing" and loads the embedded
       OpenBIOS, a wrong one logs "Firmware found but has invalid SHA1" and is
       loaded anyway (libretro.c:849, 856, 3504-3511 at 7fea57a5).
+    fallback_patterns:
+      # No name of the region's list and no file of its sha1: the region's
+      # setting names the same first file, absent too, and OpenBIOS is mapped.
+      - pattern: '^Firmware is missing: '
+        source_ref: libretro.c:846-851, 3425-3511 and mednafen/settings.c:121-128 at 7fea57a5
+    load_patterns:
+      - pattern: '^Firmware found: (?P<path>.+)$'
+        source_ref: libretro.c:863-864 at 7fea57a5
+      # A file of the wrong sha1 is warned about and loaded all the same.
+      - pattern: '^Firmware found but has invalid SHA1: (?P<path>.+)$'
+        source_ref: libretro.c:853-861 at 7fea57a5
+      - pattern: '^Override firmware found: (?P<path>.+)$'
+        source_ref: libretro.c:758-761 at 7fea57a5
+      - pattern: '^Override firmware found but has invalid SHA1: (?P<path>.+)$'
+        source_ref: libretro.c:748-756 at 7fea57a5
     error_patterns: []
     error_screens:
       - sha1: dfbfc299250c0983f86bbf951efd187441306d92
         shows: the Japanese BIOS main menu, the disc refused (a US disc under a Japanese BIOS)
   "Beetle PSX HW":
     note: The same code as Beetle PSX, built with the hardware renderers.
+    fallback_patterns:
+      # No name of the region's list and no file of its sha1: the region's
+      # setting names the same first file, absent too, and OpenBIOS is mapped.
+      - pattern: '^Firmware is missing: '
+        source_ref: libretro.c:846-851, 3425-3511 and mednafen/settings.c:121-128 at 7fea57a5
+    load_patterns:
+      - pattern: '^Firmware found: (?P<path>.+)$'
+        source_ref: libretro.c:863-864 at 7fea57a5
+      # A file of the wrong sha1 is warned about and loaded all the same.
+      - pattern: '^Firmware found but has invalid SHA1: (?P<path>.+)$'
+        source_ref: libretro.c:853-861 at 7fea57a5
+      - pattern: '^Override firmware found: (?P<path>.+)$'
+        source_ref: libretro.c:758-761 at 7fea57a5
+      - pattern: '^Override firmware found but has invalid SHA1: (?P<path>.+)$'
+        source_ref: libretro.c:748-756 at 7fea57a5
     error_patterns: []
     error_screens:
       - sha1: dfbfc299250c0983f86bbf951efd187441306d92
@@ -47,7 +77,18 @@ cores:
     note: >-
       "No BIOS image found for <region> region" is followed by the built-in
       OpenBIOS (src/core/host_interface.cpp:182, src/core/system.cpp:678-682
-      at 631f0fb3).
+      at 631f0fb3). The file a region option names is loaded without a log
+      line, and an unknown image is dropped for OpenBIOS without one either:
+      those runs name no BIOS.
+    fallback_patterns:
+      - pattern: 'No BIOS image found for .* region'
+        source_ref: src/core/host_interface.cpp:180-184, src/core/system.cpp:678-682 at 631f0fb3
+    load_patterns:
+      - pattern: "Using BIOS '(?P<path>[^']+)'"
+        source_ref: src/core/host_interface.cpp:165-169 at 631f0fb3
+      # The other region's known image, when the console region has none.
+      - pattern: "Falling back to possibly-incompatible image '(?P<path>[^']+)'"
+        source_ref: src/core/host_interface.cpp:190-193 at 631f0fb3
     error_patterns: []
     error_screens:
       - sha1: 167fb7b6527e295b12dca5806a29856f5f31d401
@@ -62,6 +103,15 @@ cores:
     bios_patterns:
       - pattern: '^found (US|EU|JP) BIOS file, crc32 '
         source_ref: frontend/libretro.c:3646-3669 at c8816799
+    fallback_patterns:
+      - pattern: '^No BIOS files found\.'
+        source_ref: frontend/libretro.c:3896-3902 at c8816799
+      - pattern: '^Using HLE BIOS\.'
+        source_ref: frontend/libretro.c:3889-3894 at c8816799
+    load_patterns:
+      # Any region's file, the wrong one before HLE (psxmem.c:310).
+      - pattern: '^Loaded BIOS "(?P<path>[^"]+)"'
+        source_ref: libpcsxcore/psxmem.c:310-328 at c8816799
     error_patterns: []
     error_screens: []
   "Beetle Saturn":
@@ -83,6 +133,18 @@ cores:
     error_screens:
       - sha1: 46329c633ea7d0b63349261e4aab169e4f44d3f6
         shows: the dialog "PCSX2 requires a PlayStation 2 BIOS in order to run"
+  "Flycast":
+    note: >-
+      Dreamcast: without dc_boot.bin (or bios.bin) under dc/ it runs the reios
+      HLE BIOS. Read from the source, not yet seen in a run's log.
+    fallback_patterns:
+      - pattern: 'Did not load BIOS, using reios'
+        source_ref: core/emulator.cpp:614-619 at e88b0ced
+    load_patterns:
+      - pattern: 'Loaded (?P<path>.+) as bootrom'
+        source_ref: core/hw/flashrom/flashrom.cpp:56-64, core/hw/flashrom/nvmem.cpp:298-309 at e88b0ced
+    error_patterns: []
+    error_screens: []
   "PCSX1":
     note: An HLE BIOS stands in when none is found, and the run logs nothing about it.
     error_patterns: []

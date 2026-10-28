@@ -287,6 +287,9 @@ gh release list --json tagName,createdAt \
   | tail -n +2 | while read tag; do gh release delete "$tag" --yes --cleanup-tag; done
 ```
 
+Before a release, since 2026-10-28, a maintainer runs `python scripts/pack_probe.py run
+--platform <name>` on the platforms that get a pack, and reads its findings before cutting.
+
 ## Which platforms get a pack { #which-platforms-get-a-pack }
 
 `release_pack: true` in `platforms/_registry.yml` is the list. `generate_pack.py
