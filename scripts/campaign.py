@@ -27,6 +27,12 @@ as `evidence:`. Any other goes to measurements/findings.jsonl, where the
 site lists it as open. Each pass adds one line to
 measurements/campaign-runs.jsonl.
 
+`review` closes an open finding once a maintainer has read the core's code:
+`applied` writes the fields it names through the same profile editor, with
+the finding's record ids as `evidence:`, and `rejected` keeps the profile.
+The reason, with its file:line, goes on the finding's line, and a rejected
+finding stays closed while the runs keep showing the same thing.
+
 `references` runs the full set once per core and content with its frames
 saved as PNG, and lists the screens that stay on for several samples: the
 candidates a reviewer looks at before writing them into oracle.yml.
@@ -45,6 +51,7 @@ Usage:
     python scripts/campaign.py references --only CORE,... [--system ID]
     python scripts/campaign.py status [--json]
     python scripts/campaign.py findings [--all] [--json]
+    python scripts/campaign.py review KEY --status applied|rejected --reason TEXT [--set FIELD=YAML]
     python scripts/campaign.py gate
     python scripts/campaign.py install-timer [--enable]
 
@@ -1424,6 +1431,12 @@ class Campaign:
                 and previous["run_shows"] == verdict.value and previous["profile_says"] == says \
                 and previous["evidence"] == list(verdict.evidence):
             return
+        # A review that read the code and kept the profile stands while the
+        # runs keep showing the same thing.
+        if previous and previous["status"] == "rejected" and status == "open" \
+                and previous["rule"] == verdict.rule and previous["run_shows"] == verdict.value \
+                and previous["profile_says"] == says:
+            return
         line = mr.seal_line({
             "schema_version": 1, "found_at": now_iso(), "key": key, "emulator": emulator,
             "system": content.system, "file": entry["name"], "field": verdict.field,
@@ -1824,6 +1837,52 @@ def open_findings(root: Path, everything: bool = False) -> list[dict]:
             if everything or line["status"] in ("open", "flagged")]
 
 
+REVIEWED = ("applied", "rejected")
+
+
+def review_finding(root: Path, key: str, status: str, reason: str,
+                   updates: dict[str, object] | None = None, index: int | None = None) -> dict:
+    """Close an open finding after reading the core's code.
+
+    `applied` writes `updates` into the entry the finding names, through the
+    same editor as the rule table, with the finding's record ids added as
+    `evidence:` under its field. An applied finding with no update records a
+    profile changed by hand. `rejected` keeps the profile as it is. Either
+    way a line with the reason is appended to the findings."""
+    if status not in REVIEWED:
+        raise ValueError(f"status {status!r}: one of {', '.join(REVIEWED)}")
+    if not reason.strip():
+        raise ValueError("a review names its reason")
+    latest = {line["key"]: line for line in mr.read_campaign(root, mr.FINDINGS)}
+    finding = latest.get(key)
+    if finding is None:
+        raise ValueError(f"no finding {key}")
+    if finding["status"] not in ("open", "flagged"):
+        raise ValueError(f"{key} is {finding['status']}, not open")
+    if updates and status != "applied":
+        raise ValueError("only an applied review changes the profile")
+    if updates:
+        path = root / "emulators" / f"{finding['emulator']}.yml"
+        entries = yaml.safe_load(path.read_text(encoding="utf-8")).get("files") or []
+        matches = [i for i, entry in enumerate(entries) if entry.get("name") == finding["file"]]
+        if index is not None:
+            matches = [i for i in matches if i == index]
+        if len(matches) != 1:
+            raise ValueError(f"{finding['emulator']}: {len(matches)} entries named {finding['file']}"
+                             + ("" if index is not None else ", pass --index"))
+        entry = entries[matches[0]]
+        verdict = rules.Verdict(finding["rule"], finding["field"], finding["run_shows"],
+                                finding["statement"], tuple(finding["evidence"]))
+        evidence = rules.merge_evidence(entry.get("evidence"), verdict)
+        campaign_profiles.write_fields(path, matches[0], {**updates, "evidence": evidence})
+    body = {key_: value for key_, value in finding.items() if key_ != "id"}
+    line = mr.seal_line({**body, "found_at": now_iso(), "status": status, "reason": reason},
+                        "found_at")
+    with (root / mr.records_path(mr.FINDINGS)).open("a", encoding="utf-8") as handle:
+        handle.write(mr.line_text(line) + "\n")
+    return line
+
+
 # --------------------------------------------------------------------------
 # Command line
 # --------------------------------------------------------------------------
@@ -1866,6 +1925,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     findings_p = sub.add_parser("findings", help="profile claims the runs contradict, open for review")
     findings_p.add_argument("--all", action="store_true", help="applied and resolved too")
     findings_p.add_argument("--json", action="store_true", help="the findings as JSON")
+    review_p = sub.add_parser("review", help="close an open finding after reading the code")
+    review_p.add_argument("key", help="emulator/system/file/field, as `findings` prints it")
+    review_p.add_argument("--status", required=True, choices=REVIEWED)
+    review_p.add_argument("--reason", required=True,
+                          help="what the code does, with its file:line at the profile's pin")
+    review_p.add_argument("--set", action="append", default=[], metavar="FIELD=YAML",
+                          help="with --status applied, a field to write into the entry")
+    review_p.add_argument("--index", type=int, help="the entry's position when several share its name")
     sub.add_parser("gate", help="tests, schemas, verify and pack of the changed profiles")
     timer_p = sub.add_parser("install-timer",
                              help="opt-in: write the autorun units, the campaign job's timer among them")
@@ -1879,6 +1946,21 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "install-timer":
         command = [sys.executable, str(ROOT / "scripts" / "autorun.py"), "install-timers"]
         return subprocess.run(command + (["--enable"] if args.enable else []), check=False).returncode
+    if args.command == "review":
+        updates: dict[str, object] = {}
+        for item in args.set:
+            name, sep, value = item.partition("=")
+            if not sep or not name:
+                parser.error(f"--set {item!r}: FIELD=YAML")
+            updates[name] = yaml.safe_load(value)
+        try:
+            line = review_finding(paths.root, args.key, args.status, args.reason, updates,
+                                  args.index)
+        except (ValueError, campaign_profiles.ProfileEditError) as exc:
+            print(f"campaign: {exc}", file=sys.stderr)
+            return 1
+        print(f"{line['status']} {line['key']} [{line['id']}]")
+        return 0
     if args.command == "findings":
         lines = open_findings(paths.root, args.all)
         if args.json:

@@ -222,6 +222,25 @@ class RuleTable(unittest.TestCase):
         self.assertIsNone(rules.rule_validation(run(rules.UNKNOWN), None, NONE_BOOTS, PRESENT,
                                                 {"name": "b"}))
 
+    def test_a_warned_check_lets_a_wrong_file_run(self) -> None:
+        """Beetle PSX logs a wrong SHA1 and boots the file (libretro.c:853-860),
+        PCSX ReARMed refuses an image without the kernel's first instruction
+        or "PS compatible" (frontend/libretro.c:3646-3651)."""
+        refused = run(rules.BIOS_ERROR)
+        used = run(rules.HANG)
+        warned = {"name": "b", "validation": ["sha1"], "on_mismatch": "warn"}
+        self.assertEqual(rules.rule_validation(used, used, NONE_BOOTS, PRESENT, warned).rule,
+                         "validation_agrees")
+        by_check = {"name": "b", "validation": ["size", "md5"], "on_mismatch": {"md5": "warn"}}
+        self.assertEqual(rules.rule_validation(used, refused, NONE_BOOTS, PRESENT, by_check).rule,
+                         "validation_agrees")
+        self.assertEqual(rules.rule_validation(used, None, NONE_BOOTS, PRESENT,
+                                               {"name": "b", "validation": ["sha1"]}).rule,
+                         "validation_contradicted")
+        signature = {"name": "b", "validation": ["size", "signature"]}
+        self.assertEqual(rules.rule_validation(refused, None, NONE_BOOTS, PRESENT, signature).rule,
+                         "validation_agrees")
+
     def test_path_and_alias(self) -> None:
         self.assertIsNone(rules.rule_path(self.ENTRY, "bios.bin", rules.Opened("bios.bin", self.RID)))
         moved = rules.rule_path(self.ENTRY, "bios.bin", rules.Opened("sys/bios.bin", self.RID))
@@ -899,6 +918,53 @@ class Findings(Workspace):
             schema = json.loads((REPO_ROOT / "schemas" / schema_name).read_text())
             for line in mr.read_campaign(self.root, name):
                 self.assertEqual(list(Draft202012Validator(schema).iter_errors(line)), [], name)
+
+    def contradicted(self) -> rules.Verdict:
+        return rules.rule_validation(rules.Run(rules.HANG, self.RID, "zeros"), None,
+                                     self.none(rules.BOOTS), self.present(),
+                                     {**self.entry(), "validation": ["md5"]})
+
+    def test_a_review_applies_through_the_profile_editor(self) -> None:
+        self.c.settle("fake", self.content, self.core, 0, self.entry(), [self.contradicted()])
+        key = self.lines()[-1]["key"]
+        with self.assertRaises(ValueError):
+            campaign.review_finding(self.root, key, "applied", " ")
+        line = campaign.review_finding(self.root, key, "applied", "the core logs the md5 (x.c:1)",
+                                       {"on_mismatch": "warn"})
+        self.assertEqual((line["status"], line["reason"]), ("applied", "the core logs the md5 (x.c:1)"))
+        entry = self.entry()
+        self.assertEqual(entry["on_mismatch"], "warn")
+        self.assertEqual(entry["evidence"], {"validation": [self.RID]})
+        text = self.profile.read_text()
+        self.assertLess(text.index("validation: [size]"), text.index("on_mismatch"))
+        self.assertEqual(campaign.open_findings(self.root), [])
+        with self.assertRaises(ValueError):
+            campaign.review_finding(self.root, key, "rejected", "again")
+        try:
+            from jsonschema import Draft202012Validator
+        except ImportError:
+            self.skipTest("jsonschema is a tooling dependency")
+        schema = json.loads((REPO_ROOT / "schemas" / "campaign-finding.schema.json").read_text())
+        for found in self.lines():
+            self.assertEqual(list(Draft202012Validator(schema).iter_errors(found)), [])
+
+    def test_a_rejected_finding_stays_closed_on_the_same_run(self) -> None:
+        verdict = self.contradicted()
+        self.c.settle("fake", self.content, self.core, 0, self.entry(), [verdict])
+        key = self.lines()[-1]["key"]
+        with self.assertRaises(ValueError):
+            campaign.review_finding(self.root, key, "rejected", "kept", {"required": False})
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), unittest.mock.patch.object(campaign.Paths, "default",
+                                                                return_value=self.paths):
+            self.assertEqual(campaign.main(["review", key, "--status", "rejected",
+                                            "--reason", "the md5 is checked (x.c:2)"]), 0)
+        before = self.profile.read_text()
+        later = rules.Verdict(verdict.rule, verdict.field, verdict.value, verdict.statement,
+                              ("2026-10-28-000000000000",))
+        self.c.settle("fake", self.content, self.core, 0, self.entry(), [later])
+        self.assertEqual([line["status"] for line in self.lines()], ["open", "rejected"])
+        self.assertEqual(self.profile.read_text(), before)
 
     def test_the_batch_commit_plan(self) -> None:
         verdicts = rules.rule_need(self.none(rules.BOOTS), self.present(), self.entry())
