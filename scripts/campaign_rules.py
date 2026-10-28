@@ -25,8 +25,9 @@ name (zeros of its size, its first half, another region's dump).
   copies of one file that boot and fail         -              queued
 
 "Fails" is bios_error, crash or hang. A wrong file is refused when the
-core reports a BIOS error, or when it boots without the BIOS screens the
-right file shows (it fell back to a built-in BIOS). It is used when it
+core reports a BIOS error, when its log says it ran its built-in BIOS
+(bios_used builtin), or when it boots without the BIOS screens the right
+file shows. It is used when the log names the file it loaded. It is used when it
 turns the run into a hang or a crash that the run without any file does not
 show. Anything else settles nothing. Of validation, the table writes only a
 missing `size`. A contradicted content check goes to review: which hash a
@@ -64,6 +65,7 @@ class Run:
     record_id: str
     label: str
     stages: tuple[str, ...] = ()
+    bios_used: str = "unknown"
 
     @property
     def shows_bios(self) -> bool:
@@ -101,7 +103,8 @@ def run_of(record: dict, label: str) -> Run:
     oracle has none, and reads as unknown."""
     item = variant(record, label)
     evidence = item.get("verdict_evidence") or {}
-    return Run(item.get("verdict", UNKNOWN), record["id"], label, tuple(evidence.get("stages") or ()))
+    return Run(item.get("verdict", UNKNOWN), record["id"], label, tuple(evidence.get("stages") or ()),
+               item.get("bios_used", "unknown"))
 
 
 def ids(*runs: Run) -> tuple[str, ...]:
@@ -138,8 +141,9 @@ def rule_need(none: Run, present: Run, entry: dict, used: bool = True) -> list[V
     if none.verdict == BOOTS and not used:
         return []
     if none.verdict == BOOTS:
+        on = " on its built-in BIOS" if none.bios_used == "builtin" else ""
         out = [Verdict("boots_without_file", "hle_fallback", True,
-                       f"the core boots the content with no BIOS at all, {name} included",
+                       f"the core boots the content{on} with no BIOS at all, {name} included",
                        ids(none), True)]
         if entry.get("required") is True:
             out.append(Verdict(
@@ -167,6 +171,11 @@ def file_use(wrong: Run, none: Run, present: Run) -> str | None:
         return None
     if wrong.verdict == BIOS_ERROR:
         return REFUSED
+    # The log names the BIOS the core ran: that settles it before any screen.
+    if wrong.verdict == BOOTS and wrong.bios_used == "builtin":
+        return REFUSED
+    if wrong.verdict == BOOTS and wrong.bios_used.startswith("staged:"):
+        return USED
     if wrong.verdict == BOOTS:
         if wrong.shows_bios:
             return USED

@@ -565,6 +565,35 @@ class FakeCoreTests(unittest.TestCase):
         self.assertEqual({v["bios_used"] for v in record["variants"]}, {"unknown"})
         self.assert_schema(record)
 
+    def test_recorded_runs_are_judged_again_offline(self) -> None:
+        oracle = self.oracle_file()
+        record_dir = checkout(self.tmp / "rejudge")
+        code, first = self.probe(["run", "--core", str(self.core), "--frames", "4", "--frame-hash-every", "1",
+                                  "--content", str(self.tmp / "game.bin"), "--oracle", str(oracle),
+                                  "--no-trace", "--record", str(record_dir), "--max-load", "1000"])
+        self.assertEqual((code, first["variants"][0]["bios_used"]), (0, "unknown"))
+        # The core's fallback line becomes known: the same runs now name the BIOS.
+        oracle.write_text(oracle.read_text().replace(
+            "    error_patterns: []\n", "    error_patterns: []\n    fallback_patterns:\n"
+            "      - pattern: '^card absent'\n        reason: test\n", 1), encoding="utf-8")
+        argv = ["rejudge", "--record", str(record_dir), "--oracle", str(oracle)]
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(core_probe.main(argv), 0)
+        lines = [json.loads(line) for line in (record_dir / "measurements" / "fake.jsonl").read_text().splitlines()]
+        self.assertEqual(len(lines), 2)
+        again = lines[1]
+        self.assertEqual((again["supersedes"], again["record_version"]), (first["id"], 5))
+        self.assertEqual(again["variants"][0]["bios_used"], "builtin")
+        self.assertEqual(again["variants"][0]["repetitions"][0]["logs"], first["variants"][0]["repetitions"][0]["logs"])
+        self.assertEqual(again["recorded_at"], first["recorded_at"])
+        self.assertIn("judged_at", again)
+        self.assertEqual(measurement_records.check_line(again), [])
+        self.assert_schema(again)
+        # Judged once: a second pass has nothing to add.
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            core_probe.main(argv)
+        self.assertEqual(len((record_dir / "measurements" / "fake.jsonl").read_text().splitlines()), 2)
+
     def test_a_crash_and_a_hang_are_verdicts(self) -> None:
         oracle = self.oracle_file()
         code, record = self.probe(["run", "--core", str(self.core), "--frames", "4",

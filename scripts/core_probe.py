@@ -1110,6 +1110,16 @@ def build_parser() -> argparse.ArgumentParser:
     check.add_argument("--claim", required=True, help="the statement under test")
     check.add_argument("--method", required=True, help="how the run tests it")
     check.add_argument("--repeat", type=int, default=2, help="runs of each variant, each in a fresh process")
+    rejudge = sub.add_parser("rejudge", help="judge recorded runs again against the current oracle, "
+                                               "offline: no core runs")
+    rejudge.add_argument("--record", metavar="DIR", default=str(ROOT),
+                         help="the checkout whose measurements/ are judged again (default: this one)")
+    rejudge.add_argument("--emulator", action="append", default=[],
+                         help="only these emulators' records (default: every one)")
+    rejudge.add_argument("--oracle", default=None, metavar="FILE",
+                         help="the oracle to judge against (default: tests/campaign/oracle.yml)")
+    rejudge.add_argument("--dry-run", action="store_true",
+                         help="print what would be appended, write nothing")
     worker = sub.add_parser("_worker", help="internal: one run in this process, started by the others")
     worker.add_argument("spec", help="JSON file describing the run")
     worker.add_argument("out", help="JSON file the result is written to")
@@ -1582,8 +1592,89 @@ def _ensure(path: Path) -> Path:
     return path
 
 
+def rejudged(record: dict, data: dict, identity: dict | None, now: str) -> dict | None:
+    """The record judged again from its own runs, superseding it, or None
+    when the judgement it carries is the one the oracle gives now.
+
+    Nothing of the runs changes: logs, frames, files and timings are the
+    record's. The verdicts, their evidence, bios_used and inputs.oracle are
+    computed again, and judged_at and judged_by say when and by what.
+    """
+    import copy  # noqa: PLC0415
+
+    # Another probe (standalone_probe, pack_probe) judges with its own rules.
+    if record.get("record_version", 0) < 4 or record["frontend"].get("script") != "scripts/core_probe.py":
+        return None
+    out = copy.deepcopy(record)
+    content_sha1 = ((out["inputs"].get("content") or {}).get("sha1"))
+    for variant in out["variants"]:
+        for rep in variant["repetitions"]:
+            judge_repetition(rep, oracle_for(data, content_sha1, rep.get("library_name")))
+        judge_variant(variant)
+    first = out["variants"][0]["repetitions"][0]
+    out["inputs"]["oracle"] = ({**identity, **oracle_for(data, content_sha1, first.get("library_name"))}
+                               if identity else None)
+    if out.get("check"):
+        out["check"]["result"]["verdicts"] = {v["label"]: v["verdict"] for v in out["variants"]}
+
+    def judgement(item: dict) -> list:
+        return [[v.get("verdict"), v.get("verdict_evidence"), v.get("bios_used"),
+                 [[r.get("verdict"), r.get("verdict_evidence"), r.get("bios_used")] for r in v["repetitions"]]]
+                for v in item["variants"]]
+    if record.get("record_version") == RECORD_VERSION_NOW() and judgement(out) == judgement(record):
+        return None
+    for key in ("id", "migrated_from_version"):
+        out.pop(key, None)
+    out["record_version"] = RECORD_VERSION_NOW()
+    out["supersedes"] = record["id"]
+    out["judged_at"] = now
+    ident = frontend_identity()
+    out["judged_by"] = {"script": ident["script"], "commit": ident["commit"],
+                        "script_sha256": ident["script_sha256"]}
+    return out
+
+
+def RECORD_VERSION_NOW() -> int:  # noqa: N802
+    from measurement_records import RECORD_VERSION  # noqa: PLC0415
+
+    return RECORD_VERSION
+
+
+def rejudge_records(args: argparse.Namespace) -> int:
+    """Append, for each live record whose judgement the oracle now gives
+    otherwise, the record judged again, superseding it."""
+    from measurement_records import line_text, live, read_records, records_path, seal  # noqa: PLC0415
+
+    root = Path(args.record)
+    data, identity = load_oracle(Path(args.oracle) if args.oracle else DEFAULT_ORACLE)
+    now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
+    stored = read_records(root)
+    alive = {r["id"] for r in live(s.record for s in stored)}
+    written = 0
+    for entry in stored:
+        if entry.record["id"] not in alive or (args.emulator and entry.emulator not in args.emulator):
+            continue
+        new = rejudged(entry.record, data, identity, now)
+        if new is None:
+            continue
+        sealed = seal(new)
+        before = {v["label"]: v.get("verdict") for v in entry.record["variants"]}
+        after = {v["label"]: f"{v['verdict']} ({v['bios_used']})" for v in sealed["variants"]}
+        print(json.dumps({"emulator": entry.emulator, "supersedes": entry.record["id"], "id": sealed["id"],
+                          "before": before, "after": after}))
+        written += 1
+        if not args.dry_run:
+            with (root / records_path(entry.emulator)).open("a", encoding="utf-8") as handle:
+                handle.write(line_text(sealed) + "\n")
+    print(f"{written} records judged again" + (" (dry run, nothing written)" if args.dry_run else ""),
+          file=sys.stderr)
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.mode == "rejudge":
+        return rejudge_records(args)
     if args.mode == "_worker":
         spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
         Path(args.out).write_text(json.dumps(run_worker(spec)), encoding="utf-8")

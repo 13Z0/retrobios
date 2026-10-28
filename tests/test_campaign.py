@@ -192,6 +192,20 @@ class RuleTable(unittest.TestCase):
         no_logo = run(rules.BOOTS, stages=("game",))
         self.assertIsNone(rules.file_use(run(rules.BOOTS, stages=("game",)), NONE_BOOTS, no_logo))
 
+    def test_the_bios_the_log_names_settles_the_file_use(self) -> None:
+        present = run(rules.BOOTS, stages=("game",))  # no BIOS screen to compare with
+        fallback = rules.Run(rules.BOOTS, "r", "zeros", ("game",), "builtin")
+        loaded = rules.Run(rules.BOOTS, "r", "other", ("game",), "staged:bios.bin")
+        self.assertEqual(rules.file_use(fallback, NONE_BOOTS, present), rules.REFUSED)
+        self.assertEqual(rules.file_use(loaded, NONE_BOOTS, present), rules.USED)
+        self.assertIsNone(rules.file_use(run(rules.BOOTS, stages=("game",)), NONE_BOOTS, present))
+        record = {"id": "x", "variants": [{"label": "a", "verdict": "boots", "bios_used": "builtin",
+                                           "verdict_evidence": {"rule": "r", "detail": "d"}}]}
+        self.assertEqual(rules.run_of(record, "a").bios_used, "builtin")
+        builtin_none = rules.Run(rules.BOOTS, "n", "none", ("game",), "builtin")
+        (hle,) = rules.rule_need(builtin_none, PRESENT, {"name": "a"})
+        self.assertIn("on its built-in BIOS", hle.statement)
+
     def test_validation_agrees_or_adds_size(self) -> None:
         refused = run(rules.BOOTS, stages=("game",))
         used = run(rules.HANG)
@@ -410,6 +424,15 @@ class StateAndResume(Workspace):
         self.assertTrue(campaign.should_run(done, "a", "e"))
         self.assertTrue(campaign.should_run({**done, "status": "pending"}, "a", "d"))
         self.assertFalse(campaign.should_run({**done, "status": "failed"}, "a", "d"))
+
+    def test_a_record_judged_again_is_read_in_its_place(self) -> None:
+        lines = self.root / mr.records_path("fake")
+        lines.parent.mkdir(parents=True, exist_ok=True)
+        old = {"id": "2026-10-27-aaaaaaaaaaaa", "supersedes": None, "verdict": "old"}
+        new = {"id": "2026-10-28-bbbbbbbbbbbb", "supersedes": old["id"], "verdict": "new"}
+        lines.write_text("\n".join(json.dumps(r) for r in (old, new)) + "\n", encoding="utf-8")
+        self.assertEqual(self.make().read_record("fake", old["id"])["verdict"], "new")
+        self.assertIsNone(self.make().read_record("fake", "2026-10-27-cccccccccccc"))
 
     def test_only_its_own_oracle_entries_make_a_check_run_again(self) -> None:
         key = [hashlib.sha1(b"GAME").hexdigest(), "Fake"]
