@@ -1186,6 +1186,60 @@ can be added. Cemu is an AppImage like the two supported ones, and waits for
 Wii U content, which no catalog romfetch reads holds. Each run takes the host probe lock (`RETROBIOS_PROBE_LOCK`) for itself, its load check included, and frees it when it ends, as `core_probe.py` does. A maintainer starts each run. Nothing runs
 by itself.
 
+### pack_probe.py
+
+Tests what the project promises: a platform's pack, installed the way a user
+installs it, starts that platform's games. A maintainer starts it, nothing
+runs it on a schedule. It takes the host's probe lock
+(`~/.local/state/retrobios/probe.lock`, `RETROBIOS_PROBE_LOCK`) around each
+`core_probe` run and releases it before the next, so other probes run between
+its runs, and tells `core_probe` it holds it (`RETROBIOS_PROBE_LOCK_HELD=1`).
+Never wrap the whole command in `flock`:
+
+```bash
+python scripts/pack_probe.py run --platform retroarch
+python scripts/pack_probe.py run --platform batocera --system sega-saturn --install pack
+python scripts/pack_probe.py plan --platform retrobat   # systems, games and cores, nothing run
+```
+
+`--system`, `--core` and `--install` narrow a run, `--pack` reuses a built
+pack, `--fetch` gets a missing game through romfetch, `--refresh-cores`
+downloads the nightlies again, and `--keep` leaves the laid-out folders in
+`--work-dir` (default `tmp/pack_probe`) after the run.
+
+| Step | What happens |
+|------|--------------|
+| Layout | `generate_pack.py --platform X --offline` builds the pack into `tmp/pack_probe/<platform>/dist` (`--pack` reuses one). `pack`: the archive extracted at the root of the BIOS folder, each file mapped to its member. `installer`: `install.py --platform X --dest <root>/system --save-dir <root>/saves --from-pack <pack> --manifest install/X.json --offline`, each file mapped to the manifest entry that names it (`files:`, `case_variants:`, `data_directories:`). Both by default, `--install` picks one |
+| Games | `tests/campaign/content.yml` and `tests/campaign/pack_content.yml`, same format, read from `.cache/test-content` of the main checkout and checked against their `identity.json`. `--fetch` gets a missing one through romfetch |
+| Cores | `resolve_platform_cores` with the target of the platform (`linux-x86_64` for RetroArch, `x86_64` for Batocera, `windows` for RetroBat), kept when the profile serves the system and its libretro build runs there: not a `standalone_cores` entry, unless `dual_mode_cores` names it. The `.so` is the buildbot's x86_64 Linux nightly, every build the target names, else the one named after the profile, else the first of its `cores:`. Kept in `.cache/pack-probe/cores` with its URL and `Last-Modified` |
+| Staging | `core_probe.py` copies what it stages, and a pack holds gigabytes, so the probe stages what the core can reach: the profile's libretro entries (path or name, and aliases), the platform's list for the system, every file of the folders those sit in, and for a profile with `found_by: content` every root file of a size it declares. A file or folder the core then looks for that the layout holds is staged and the run repeated, up to 6 runs |
+| Run | `core_probe.py run --require-sandbox --record`, the game's frames and frame sampling from its content entry, no core option set. The first run is recorded. When the staging grew, the closed staging runs again, recorded with `--supersedes` the first. Each run holds the probe lock. Before a recorded run, lock held, the probe waits for the 1-minute load to fall to a quarter of the CPUs, up to 30 minutes, then stops with exit 3 |
+
+Each probe is one line of `measurements/pack-probes.jsonl`
+(`pack-probe.schema.json`): the platform and its version, the install path,
+the pack by sha256 and the manifest by sha256 and generation date, the commit
+the pack was built from, the core build, the game, the `core_probe` record
+ids, the verdict and its evidence from the record's first variant (`unknown`
+for a record written before the boot oracle), every file the core opened
+with the pack entry that put it there, and the findings:
+
+| Finding | Meaning |
+|---------|---------|
+| `missing_declared` | the core looked for a file its profile declares, and the folder lacks it |
+| `missing_undeclared` | the same for a name no entry of the profile declares |
+| `elsewhere` | the folder holds a file of that name, compared without case, under another path |
+| `not_staged` | the folder holds it, but the staging did not close within 6 runs |
+| `unlisted` | the core opened a file of the folder that no pack member or manifest entry names |
+
+A name the core tried before it read another name of the same profile entry
+is no finding: BlastEm tries `tmss.md`, then reads `bios_MD.bin`.
+
+The run cannot see two things the platform does: core options a frontend
+sets (Batocera's configgen writes some), and the files the installer puts in
+the save directory, counted in `source.save_dir_files`. The Measurements page
+lists the latest probe of each platform, system, install path, core and
+game, and each platform page shows its own in a **Tested** block.
+
 ### Other tools
 
 | Script | Purpose |

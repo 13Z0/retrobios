@@ -17,6 +17,11 @@ the emulator's page shows a **Tested** block. Every result is on the
 - It starts a game and runs it for a set time, at least twice.
 - It compares the screens with ones we checked by eye.
 
+## Your BIOS folder { #packs }
+
+We also test the files as you install them, for RetroArch, Batocera and
+RetroBat, then start a game. The setup's page shows the result under **Tested**.
+
 ## What a result says
 
 | Result | Meaning |

@@ -214,6 +214,130 @@ def campaign_summary(root: Path, stored: list[mr.Stored], source: dict | None) -
             "open": open_items}
 
 
+def pack_summary(root: Path, source: dict | None) -> list[dict]:
+    """The latest pack probe of each platform, install path, system, core
+    and game, with a link to its line."""
+    latest: dict[tuple, tuple[int, dict]] = {}
+    for number, line in enumerate(mr.read_campaign(root, mr.PACK_PROBES), 1):
+        key = (line["platform"], line["install"], line["system"], line["core"]["file"],
+               line["content"]["label"])
+        latest[key] = (number, line)
+    items = []
+    for key in sorted(latest):
+        number, line = latest[key]
+        url = (permalink(source["repo"], source["commit"], mr.records_path(mr.PACK_PROBES), number)
+               if source and source.get("commit") else None)
+        items.append({
+            "platform": line["platform"], "platform_version": line["platform_version"],
+            "install": line["install"], "system": line["system"], "emulator": line["emulator"],
+            "core": line["core"]["file"].removesuffix("_libretro.so"),
+            "content": line["content"]["label"], "verdict": line["verdict"],
+            "date": line["probed_at"], "opened": len(line["files_opened"]),
+            "findings": len(line["findings"]), "id": line["id"], "record_url": url,
+            "files": [f"{f['path']} ({f['entry'] or 'written by the core'})" for f in line["files_opened"]],
+            "finding_list": [f"{f['kind']} {f['path']}" for f in line["findings"]],
+            "detail": (line.get("verdict_evidence") or {}).get("detail") or line.get("error") or "",
+        })
+    return items
+
+
+def by_platform(index: dict) -> dict[str, list[dict]]:
+    out: dict[str, list[dict]] = {}
+    for item in index.get("packs") or ():
+        out.setdefault(item["platform"], []).append(item)
+    return out
+
+
+INSTALL_WORDS = {"pack": "pack", "installer": "installer"}
+
+
+def _pack_row(item: dict) -> str:
+    link = f"[line]({item['record_url']})" if item["record_url"] else _code(item["id"])
+    cells = [_plain(item["platform"]), _plain(item["system"]), INSTALL_WORDS[item["install"]],
+             _code(item["core"]), _plain(item["content"]), f"`{item['verdict']}`",
+             str(item["findings"]), link]
+    return "| " + " | ".join(cells) + " |"
+
+
+def packs_section(items: list[dict]) -> list[str]:
+    """The Measurements page's table of packs tested the way a user installs
+    them: one row per platform, system, install path, core and game."""
+    if not items:
+        return []
+    columns = ["Platform", "System", "Installed by", "Core", "Game", "Verdict", "Findings", "Record"]
+    return [
+        "## Packs",
+        "",
+        "A game started with the platform's BIOS folder as a user gets it, from the pack or "
+        f"from the installer ([how]({METHOD_PAGE}#packs)). A finding is a file the core looked "
+        "for that the folder lacks or holds under another path.",
+        "",
+        "| " + " | ".join(columns) + " |",
+        "|" + "|".join("---" for _ in columns) + "|",
+        *(_pack_row(item) for item in
+          sorted(items, key=lambda i: (i["platform"], i["system"], i["install"], i["core"], i["content"]))),
+        "",
+    ]
+
+
+def _inert(value: object) -> str:
+    """Run output (a core's log line, a file name it opened) placed in raw
+    HTML as text: every character HTML, MDX or Markdown reads as markup,
+    quotes included, written as a character reference."""
+    return _plain(value).replace('"', "&quot;").replace("'", "&#x27;")
+
+
+def _pack_details(item: dict) -> list[str]:
+    def line(label: str, value: object) -> str:
+        return _sentence_html(label, _inert(value), markup_ready=True)
+
+    lines = [
+        line("Result", item["detail"]),
+        line("Core", f"{item['core']} ({item['emulator']})"),
+        line("Files the core opened", ", ".join(item["files"]) or "none"),
+        line("Findings", ", ".join(item["finding_list"]) or "none"),
+        f'<p><a href="{_attr(item["record_url"])}">Full record</a>.</p>' if item["record_url"] else "",
+    ]
+    return [line for line in lines if line]
+
+
+def pack_tested_section(items: list[dict]) -> list[str]:
+    """The Tested block of a platform page, in the emulator pages' Tested
+    markup: one summary line, then, folded under one line as the emulator
+    pages fold their earlier tests, a row per game, core and install path
+    with its verdict chip and date, the files and findings in its details."""
+    if not items:
+        return []
+    works = sum(1 for i in items if i["verdict"] == "boots")
+    last = max(i["date"][:10] for i in items)
+    summary = (f"{len(items)} game start{'s' if len(items) != 1 else ''} with this BIOS folder as "
+               f"you install it · {works} work · last run {last}.")
+    links = (f'<a href="{markup.site_href(METHOD_PAGE.removesuffix(".md") + "/")}#packs">How</a> · '
+             f'<a href="{markup.site_href(EXPLORER_PAGE.removesuffix(".md") + "/")}">All tests</a>')
+    lines = ["## Tested", "", '<div class="rb-tested">',
+             f'<p class="rb-tested-summary">{html.escape(summary)} {links}</p>',
+             '<details class="rb-tested-earlier">',
+             "<summary>Each start, by system</summary>",
+             '<div class="rb-tested-head" aria-hidden="true"><span>Test</span>'
+             "<span>Result</span><span>Installed by</span><span>Date</span></div>"]
+    for item in sorted(items, key=lambda i: (i["system"], i["content"], i["core"], i["install"])):
+        title = (f"{_inert(item['system'])}, {_inert(short_content(item['content']))} "
+                 f"<small>{_inert(item['core'])}</small>")
+        lines += [
+            '<details class="rb-tested-row">',
+            ("<summary>"
+             f'<span class="rb-tested-test">{title}</span>'
+             f'<span class="rb-tested-result">{_chip({"status": item["verdict"]})}</span>'
+             f'<span class="rb-tested-variants">{INSTALL_WORDS[item["install"]]}</span>'
+             f'<span class="rb-tested-date">{item["date"][:10]}</span></summary>'),
+            '<div class="rb-tested-more">',
+            *_pack_details(item),
+            "</div>",
+            "</details>",
+        ]
+    return [*lines, "</details>", "</div>", ""]
+
+
 # Characters a campaign value could use to leave its place on the page: HTML
 # and MDX syntax ({ } opens an expression), code spans, emphasis and links.
 _UNSAFE = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "{": "&#123;", "}": "&#125;", "`": "&#96;",
@@ -682,6 +806,7 @@ def build(public: Path, root: Path = ROOT, emulators_dir: Path = ROOT / "emulato
     index = build_index(stored, source, profiles, system_names)
     index["campaign"] = campaign_summary(root, stored, source)
     index["coverage"] = coverage(root, stored, profiles)
+    index["packs"] = pack_summary(root, source)
     paths = [public / INDEX_PATH]
     (public / INDEX_PATH).parent.mkdir(parents=True, exist_ok=True)
     write_if_changed(str(public / INDEX_PATH),
@@ -706,6 +831,9 @@ def by_emulator(index: dict) -> dict[str, list[dict]]:
         opened[line["emulator"]] = opened.get(line["emulator"], 0) + 1
     out: dict[str, list[dict]] = {}
     for item in index.get("items", []):
+        # A pack probe's run is shown on its platform's page, beside the pack.
+        if item["subject"].startswith(mr.PACK_SUBJECT_PREFIX):
+            continue
         out.setdefault(item["emulator"], []).append(
             {**item, "open_findings": opened.get(item["emulator"], 0)})
     return out
@@ -1186,6 +1314,7 @@ def generate_explorer_page(index: dict, system_names: dict[str, str] | None = No
         "",
         "<MeasurementsExplorer />",
         "",
+        *packs_section(index.get("packs") or []),
         *campaign_section(index.get("campaign")),
         *coverage_section(index.get("coverage"), system_names),
     ])

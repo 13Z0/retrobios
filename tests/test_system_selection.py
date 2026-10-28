@@ -105,6 +105,7 @@ class AMistypedPlatformIsNamed(unittest.TestCase):
         "diff_truth.py": [],
         "auto_fetch.py": ["--dry-run"],
         "refresh_data_dirs.py": ["--dry-run"],
+        "pack_probe.py": ["plan"],
     }
 
     def test_every_cli_names_the_platform_it_meant(self):

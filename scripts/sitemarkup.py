@@ -75,9 +75,23 @@ def inline_html(text: str) -> str:
             continue
         part = html.escape(part, quote=False)
         part = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", part)
-        part = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", r'<a href="\2">\1</a>', part)
+        part = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", _link, part)
         out.append(part)
     return "".join(out)
+
+
+# A scheme before any slash: javascript:, data:, vbscript: and the like.
+_SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
+
+
+def _link(match: re.Match) -> str:
+    """A Markdown link as an anchor when its target is http(s) or relative,
+    else left as the text it was. The target is already escaped for text,
+    quotes are escaped for the attribute."""
+    label, href = match.group(1), match.group(2)
+    if _SCHEME.match(href) and not re.match(r"^https?://", href, re.IGNORECASE):
+        return match.group(0)
+    return f'<a href="{href.replace(chr(34), "&quot;").replace(chr(39), "&#x27;")}">{label}</a>'
 
 
 def _indented(lines: list[str], pad: str) -> list[str]:
