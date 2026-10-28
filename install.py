@@ -7249,37 +7249,137 @@ def drive_targets(plat: str) -> list[tuple[str, Path]]:
     return sorted(targets, key=lambda target: target[1] not in cards)
 
 
-# The folders a handheld card's games part holds, one per console: the
-# names people type for a system (SYSTEM_SHORT_NAMES) and the ArkOS and
-# AmberELEC roms folders those miss.
-_CONSOLE_FOLDERS = frozenset({*SYSTEM_SHORT_NAMES, "arcade", "atari2600", "atarilynx",
-                              "fbneo", "gamegear", "mame", "mastersystem", "megadrive",
-                              "neogeo", "pcengine", "psp", "segacd", "wonderswan"})
+# What a handheld system writes on the games part a computer mounts, beside
+# its bios folder: a drive holding these is that card, and a data drive or
+# a stick with an emulation library holds none of them (code_audit_22 P2-1).
+# Each set is (system, folders and files that must all be there).
+_GAMES_PART_MARKERS = (
+    # ArkOS and dArkOS mount EASYROMS as /roms. dArkOS daecf488 creates every
+    # folder of game_systems.txt on it (finishing_touches.sh:420-430),
+    # themes (game_systems.txt:108) and launchimages (game_systems.txt:54),
+    # and copies loading.jpg there (finishing_touches.sh:471-472). ArkOS
+    # dedf4278 updates both in place (Update-RG351MP.sh:1003,1443).
+    ("ArkOS", ("themes", "launchimages")),
+    # AmberELEC 5a3882cb fills GAMES at every boot: homebrew/ from its ports
+    # with gamelist.xml (packages/amberelec/sources/autostart.sh:93-94,
+    # 110-113) and gamedata/ for RetroArch, PPSSPP, DOSBox and Hatari
+    # (autostart.sh:123-145).
+    ("AmberELEC", ("gamedata", "homebrew")),
+    # EmuELEC d4c7b2f1 copies its default bezels to EEROMS at every boot
+    # (packages/sx05re/emuelec/bin/emuelec_autostart.sh:78-81).
+    ("EmuELEC", ("bezels/default.cfg",)),
+)
+
+# GetDriveTypeW: DRIVE_FIXED, DRIVE_REMOTE, DRIVE_CDROM and DRIVE_RAMDISK,
+# none of them a card in a reader.
+_NOT_REMOVABLE_TYPES = (3, 4, 5, 6)
+
+
+def _drive_not_removable(mount: Path) -> bool:
+    """Whether the system says mount is a drive no card sits in: a fixed
+    disk, a network drive or a disc on Windows (GetDriveTypeW), a whole
+    partition of a disk the kernel calls fixed elsewhere (_fixed_partition).
+    False where it says nothing."""
+    if os.name == "nt":
+        try:
+            import ctypes  # noqa: PLC0415
+            kind = ctypes.windll.kernel32.GetDriveTypeW(str(mount))  # type: ignore[attr-defined]
+        except (AttributeError, OSError):
+            return False
+        return kind in _NOT_REMOVABLE_TYPES
+    try:
+        text = Path("/proc/self/mountinfo").read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+    return _fixed_partition(mount, text, Path("/sys"))
+
+
+def _fixed_partition(mount: Path, mountinfo: str, sys_root: Path) -> bool:
+    """Whether mountinfo mounts a whole partition at mount whose disk sysfs
+    calls fixed: removable at 0, neither on USB nor an MMC card. False for
+    a folder bound in place, which is no whole drive, and for WSL's
+    /mnt/d, a Windows drive Linux cannot classify."""
+    for line in mountinfo.splitlines():
+        fields = line.split(" ")
+        if len(fields) < 5:
+            continue
+        point = re.sub(r"\\([0-7]{3})", lambda m: chr(int(m.group(1), 8)), fields[4])
+        if point != str(mount):
+            continue
+        # Field 4 is the folder of the filesystem mounted there: "/" for a
+        # whole partition, a folder for a bind mount (proc(5)).
+        device = sys_root / "dev" / "block" / fields[2]
+        if fields[3] != "/" or not _exists(device):
+            return False
+        try:
+            real = device.resolve()
+            disk = real.parent if _exists(real / "partition") else real
+            if "/usb" in real.as_posix() or disk.name.startswith("mmcblk"):
+                return False
+            return (disk / "removable").read_text(encoding="ascii").strip() == "0"
+        except OSError:
+            return False
+    return False
+
+
+def _games_part_system(mount: Path) -> str:
+    """The handheld system whose games part mount is, as the files it
+    writes there say, "" for none (_GAMES_PART_MARKERS)."""
+    if not _is_dir(mount / "bios"):
+        return ""
+    return next((name for name, markers in _GAMES_PART_MARKERS
+                 if all(_exists(mount / marker) for marker in markers)), "")
+
+
+def _unnamed_candidates() -> list[Path]:
+    """The mounted drives no file names, no SHARE either, holding a bios
+    folder: a handheld's card, or any drive someone keeps an emulation
+    library on."""
+    return [mount for mount in _mounted_cards()
+            if card_system(mount) is None and not share_doubt(mount)[0]
+            and _is_dir(mount / "bios")]
 
 
 def unnamed_cards() -> list[Path]:
-    """The mounted drives no file names whose root holds a bios folder and
-    console folders: ArkOS's EASYROMS, AmberELEC's GAMES. Which system runs
-    them cannot be told (their own files are on a part a computer does not
-    open), but they are a handheld's card: "Nothing was found here" over
-    one, and two presses of Enter filled this computer's folder for a
-    RetroArch that was not there (tui_audit_14 P2-3)."""
-    cards = []
-    for mount in _mounted_cards():
-        if (card_system(mount) is not None or share_doubt(mount)[0]
-                or not _is_dir(mount / "bios")):
-            continue
-        if any(name.casefold() in _CONSOLE_FOLDERS and _is_dir(mount / name)
-               for name in _listed(mount)):
-            cards.append(mount)
-    return cards
+    """The mounted drives no file names that are a handheld's games part:
+    ArkOS's EASYROMS, AmberELEC's GAMES, EmuELEC's EEROMS, each told by the
+    folders its system writes there (_GAMES_PART_MARKERS), on a drive the
+    system does not call fixed. Which of the systems that read RetroArch's
+    list runs them cannot be told, but they are a handheld's card:
+    "Nothing was found here" over one, and two presses of Enter filled this
+    computer's folder for a RetroArch that was not there (tui_audit_14
+    P2-3). A bios folder and a console folder were the rule, and a data
+    drive or WSL's D: disk with bios/, snes/ and Music/ took the list
+    (code_audit_22 P2-1)."""
+    return [mount for mount in _unnamed_candidates()
+            if _games_part_system(mount) and not _drive_not_removable(mount)]
+
+
+def unproven_drives() -> list[Path]:
+    """The drives with a bios folder nothing shows to be a handheld's card:
+    offered at the folder question, never its default."""
+    cards = unnamed_cards()
+    return [mount for mount in _unnamed_candidates() if mount not in cards]
+
+
+def unproven_words() -> str:
+    """The plain note on those drives, "" for none."""
+    drives = unproven_drives()
+    if not drives:
+        return ""
+    names = ", ".join(_mount_name(mount) for mount in drives)
+    has, it = ("has", "it") if len(drives) == 1 else ("have", "them")
+    return (f"{names} {has} a bios folder, and nothing on {it} shows a handheld's card: "
+            "listed, not chosen.")
 
 
 def unnamed_card_words(cards: list[Path], tail: str = ".") -> str:
-    """What the first screen and line mode say of those cards."""
+    """What the first screen and line mode say of those cards: one card,
+    its system, two cards, their systems (code_audit_22 P3-2)."""
     names = ", ".join(_mount_name(mount) for mount in cards)
-    what = "A card is" if len(cards) == 1 else "Cards are"
-    return f"{what} in the reader ({names}): choose its system{tail}"
+    if len(cards) == 1:
+        return f"A card is in the reader ({names}): choose its system{tail}"
+    return f"Cards are in the reader ({names}): choose their systems{tail}"
 
 
 def say_unnamed_cards() -> None:
@@ -7351,8 +7451,10 @@ def ask_platform_folder(os_type: str, plat: str, ask: bool = True,
         print(f"  {share_words(plat)}")
     elif cards:
         default = cards[0] / "bios"
-        print(f"  The card in the reader keeps them in its bios folder: "
-              f"{shown_path(default)}.")
+        # Two cards: the one Enter takes is named, "The card" was one of
+        # two (code_audit_22 P3-2).
+        which = "The card in the reader" if len(cards) == 1 else _mount_name(cards[0])
+        print(f"  {which} keeps them in its bios folder: {shown_path(default)}.")
     elif found is not None:
         print(f"  {name} reads its BIOS files from: {shown_path(found)}.")
     elif default is not None:
@@ -7381,6 +7483,9 @@ def ask_platform_folder(os_type: str, plat: str, ask: bool = True,
     left_out = "" if shared else drives_left_out(plat)
     if left_out:
         print(f"  {left_out}")
+    unproven = "" if shared else unproven_words()
+    if unproven:
+        print(f"  {unproven}")
     numbers = "" if not targets else (" or 1" if len(targets) == 1
                                       else f" or 1 to {len(targets)}")
     why = ("" if default is not None or shared
@@ -18012,7 +18117,11 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
         before = [lead, str(state.folder_default)]
         if (state.folder_kind == "usual" and tui_rows(state)
                 and tui_rows(state)[0].value in {mount / "bios" for mount in state.unnamed}):
-            before = ["The card in the reader keeps them in its bios folder, first below. "
+            cards = [mount for mount in state.unnamed
+                     if mount / "bios" == tui_rows(state)[0].value]
+            which = ("The card in the reader" if len(state.unnamed) == 1
+                     else _mount_name(cards[0]))
+            before = [f"{which} keeps them in its bios folder, first below. "
                       f"{lead}", str(state.folder_default)]
     elif state.folder_kind == "closed":
         title = "Which folder?"
@@ -18023,6 +18132,8 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
     if not bound and state.folder_kind != "share":
         left_out = drives_left_out(state.platform)
         before += [left_out] if left_out else []
+        unproven = unproven_words()
+        before += [unproven] if unproven else []
     return (title, _compose(state, width, height, before, tui_rows(state), _status_after(state),
                             pinned=state.refused),
             ("A/Enter Choose", "B/Esc Back", "? Help"))
@@ -20155,10 +20266,17 @@ def run_tui(args: argparse.Namespace) -> int:
             state.now = time.monotonic()
             lines = tui_view(state, cols, rows)
             # A click is read against the frame it was made on.
+            before = state.hits
             state.hits = tui_hits(state, lines)
             # Before the frame: a frame on screen takes clicks as it shows.
             terminal.set_mouse(tui_wants_mouse(state, lines))
             terminal.draw(lines, cols)
+            if before is None or state.hits.shown != before.shown:
+                # A new screen's settle runs from when it is on the screen,
+                # after its layout and its write: the second click of a
+                # double click waited out a slow layout in the input and
+                # acted on the screen it had never seen (code_audit_22 P3-1).
+                state.hits = state.hits._replace(shown=time.monotonic())
             for key in terminal.keys(TUI_FRAME):
                 if key.name == "ctrl-z":
                     # ISIG is off, so Ctrl-Z comes as a key: it stops what

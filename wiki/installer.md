@@ -1181,13 +1181,18 @@ muOS, ArkOS and the others) opens the setup list instead, filtered to the
 setups that read it, RetroArch first: Enter on it asks RetroArch's folder. At
 that question a drive is numbered by the folder its system reads (`ONION:
 BIOS`), a drive nothing names by its `bios` folder (`EASYROMS: bios`), never
-by its root, which no setup reads. A drive no file names that holds a `bios`
-folder and console folders (`nes`, `gba`, `psx`) is a handheld's card whose
-own files sit on a part a computer does not open, ArkOS's `EASYROMS` and
-AmberELEC's `GAMES`: with nothing found here the first screen and line mode
-say `A card is in the reader (EASYROMS): choose its system`, and its `bios`
-folder comes first at the folder question, under Enter, before this
-computer's usual folder. Another system's card or SHARE drive, and a
+by its root, which no setup reads. A handheld's card whose own files sit on a
+part a computer does not open is told by the folders its system writes beside
+`bios` on the games part: `themes` and `launchimages` on ArkOS's `EASYROMS`,
+`gamedata` and `homebrew` on AmberELEC's `GAMES`, `bezels/default.cfg` on
+EmuELEC's `EEROMS`. A disk Windows or Linux calls fixed is never one. With
+nothing found here the first screen and line mode say `A card is in the reader
+(EASYROMS): choose its system` (two cards: `choose their systems`), and its
+`bios` folder comes first at the folder question, under Enter, before this
+computer's usual folder. A drive with a `bios` folder and none of those
+folders, a data drive or a stick, is numbered with a note (`DATA has a bios
+folder, and nothing on it shows a handheld's card: listed, not chosen.`) and
+never taken under Enter. Another system's card or SHARE drive, and a
 drive two systems fit, are left out, and a line names them: each is reached
 through its own setup. A folder typed is read from the current
 one when it is not a full path, and named in full after. `q` quits there too

@@ -6756,6 +6756,21 @@ class AuditSevenScreens(unittest.TestCase):
         self.assertIn("1 wrong copy: backed up, replaced.", view)
 
 
+def games_part(card: Path) -> Path:
+    """An ArkOS EASYROMS (dArkOS game_systems.txt: themes, launchimages
+    with loading.jpg) or an AmberELEC GAMES (autostart.sh: gamedata,
+    homebrew with gamelist.xml), console folders beside them."""
+    marks = (("gamedata/retroarch", "homebrew") if card.name.startswith("GAMES")
+             else ("themes/es-theme-nes-box", "launchimages"))
+    for folder in ("bios", "nes", "gba", "psx", *marks):
+        (card / folder).mkdir(parents=True)
+    if card.name.startswith("GAMES"):
+        (card / "homebrew" / "gamelist.xml").write_text("<gameList/>\n")
+    else:
+        (card / "launchimages" / "loading.jpg").write_bytes(b"\xff\xd8")
+    return card
+
+
 class _Decided(Exception):
     """Raised where line mode has chosen its platforms and folders."""
 
@@ -12248,12 +12263,10 @@ class AuditTwentyOneAndFourteen(unittest.TestCase):
         self.assertIn("About 0 files, 0 B, for 1 of 3 systems, 3 need the internet", text)
 
     def easyroms(self, name: str = "EASYROMS") -> Path:
-        """An ArkOS games part as a computer mounts it: bios/ and console
-        folders, no file naming the system."""
-        card = self.root / "media" / name
-        for folder in ("bios", "nes", "gba", "psx"):
-            (card / folder).mkdir(parents=True)
-        return card
+        """A handheld's games part as a computer mounts it, with the folders
+        its system writes there (install._GAMES_PART_MARKERS): ArkOS's
+        EASYROMS, AmberELEC's GAMES."""
+        return games_part(self.root / "media" / name)
 
     def test_an_arkos_card_is_found_and_comes_first(self):
         """tui_audit_14 P2-3: an EASYROMS partition mounted, "Nothing was
@@ -12555,6 +12568,236 @@ class AuditTwentyOneAndFourteen(unittest.TestCase):
         self.assertIn(f"1) EASYROMS: bios (card or drive) ({card / 'bios'})", text)
         self.assertIn("Enter for the card's bios folder", asked[-2])
         self.assertIn(f"BIOS folder: {card / 'bios'}", text)
+
+
+
+class AuditTwentyTwoAndFifteen(unittest.TestCase):
+    """code_audit_22 and tui_audit_15: a drive is a handheld's card only by
+    the files its system writes, one settle from the frame shown, one
+    vocabulary and one count per run, and the focus after an action."""
+
+    setUp = LineModeAndScreenDecideAlike.setUp
+    line_run = LineModeAndScreenDecideAlike.line_run
+    listing = LineModeAndScreenDecideAlike.listing
+    entry = staticmethod(LineModeAndScreenDecideAlike.entry)
+    receive = staticmethod(AuditTwentyAndThirteen.receive)
+    game_manifest = AuditTwentyAndThirteen.game_manifest
+    game_events = AuditTwentyAndThirteen.game_events
+    game_plan = AuditTwentyAndThirteen.game_plan
+    game_listing = AuditTwentyOneAndFourteen.game_listing
+    screen = staticmethod(AuditTwentyOneAndFourteen.screen)
+
+    def drive(self, name: str, folders: tuple) -> Path:
+        root = self.root / "media" / name
+        for folder in folders:
+            (root / folder).mkdir(parents=True)
+        return root
+
+    def first_screen(self, mounts: list) -> install.TuiState:
+        with mock.patch.object(install, "_mounted_cards", return_value=mounts), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()), \
+                mock.patch.object(install, "detect_platforms", return_value=[]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.object(install.Path, "home", return_value=self.root / "home"):
+            state, _effects = install.tui_start(_args(), "linux")
+        return state
+
+    def folder_screen(self, mounts: list) -> tuple[install.TuiState, str, list]:
+        """RetroArch chosen on the first screen: (state, Which folder? at
+        80x40, its rows)."""
+        state = self.first_screen(mounts)
+        with mock.patch.object(install, "_mounted_cards", return_value=mounts), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()):
+            install.tui_update(state, Key("enter"))
+            self.assertEqual(state.screen, "folder")
+            return state, self.screen(state, 80, 40), install.tui_rows(state)
+
+    def test_a_data_drive_or_a_stick_is_no_card(self):
+        """code_audit_22 P2-1: a data drive holding bios/, snes/ and Music/
+        was "a card in the reader", and three presses of Enter put the list
+        on it. A stick with bios/ alone is no card either: both are listed,
+        never under Enter, and a plain line says why."""
+        data = self.drive("DATA", ("bios", "snes", "Music"))
+        stick = self.drive("STICK", ("bios",))
+        mounts = [data, stick]
+        with mock.patch.object(install, "_mounted_cards", return_value=mounts), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()):
+            self.assertEqual(install.unnamed_cards(), [])
+        state = self.first_screen(mounts)
+        self.assertEqual(state.unnamed, [])
+        self.assertIn("Nothing was found here", self.screen(state))
+        state, text, rows = self.folder_screen(mounts)
+        self.assertNotIn(rows[0].value, (data / "bios", stick / "bios"))
+        self.assertIn("DATA, STICK have a bios folder, and nothing on them shows a "
+                      "handheld's card: listed, not chosen.", text)
+        self.assertIn(data / "bios", [row.value for row in rows])
+        text, asked = self.line_run(_args(manifest=self.game_listing(), dry_run=True,
+                                          declared_only=False), ["1", ""], mounts=mounts)
+        self.assertNotIn("in the reader", text)
+        self.assertIn("DATA, STICK have a bios folder, and nothing on them shows a "
+                      "handheld's card: listed, not chosen.", text)
+        self.assertIn("Enter for the default above", asked[-2])
+        self.assertNotIn(f"BIOS folder: {data / 'bios'}", text)
+
+    def test_the_layouts_handhelds_write_are_cards(self):
+        """ArkOS's EASYROMS, AmberELEC's GAMES and EmuELEC's EEROMS, each
+        with the folders its own image writes there."""
+        arkos = games_part(self.root / "media" / "EASYROMS")
+        amber = games_part(self.root / "media" / "GAMES")
+        emuelec = self.drive("EEROMS", ("bios", "nes", "bezels"))
+        (emuelec / "bezels" / "default.cfg").write_text("")
+        mounts = [arkos, amber, emuelec]
+        with mock.patch.object(install, "_mounted_cards", return_value=mounts), \
+                mock.patch.object(install, "_mount_points", return_value=frozenset()):
+            self.assertEqual(install.unnamed_cards(), mounts)
+            self.assertEqual([install._games_part_system(mount) for mount in mounts],
+                             ["ArkOS", "AmberELEC", "EmuELEC"])
+            # One of these the system calls fixed is a disk, not a card.
+            with mock.patch.object(install, "_drive_not_removable", return_value=True):
+                self.assertEqual(install.unnamed_cards(), [])
+
+    def test_a_card_beside_a_data_drive_comes_first(self):
+        """code_audit_22 P2-1: the ArkOS card and the data drive mounted,
+        the data drive sorted first and took Enter. The card comes first in
+        both modes, the drive listed after it with its note."""
+        data = self.drive("DATA", ("bios", "snes", "Music"))
+        card = games_part(self.root / "media" / "EASYROMS")
+        mounts = [data, card]
+        state = self.first_screen(mounts)
+        self.assertEqual(state.unnamed, [card])
+        self.assertIn("A card is in the reader (EASYROMS): choose its system", self.screen(state))
+        state, text, rows = self.folder_screen(mounts)
+        self.assertEqual(rows[0].value, card / "bios")
+        self.assertIn("DATA has a bios folder, and nothing on it shows a handheld's card", text)
+        text, asked = self.line_run(_args(manifest=self.game_listing(), dry_run=True,
+                                          declared_only=False), ["1", ""], mounts=mounts)
+        self.assertIn("A card is in the reader (EASYROMS): choose its system.", text)
+        self.assertIn(f"The card in the reader keeps them in its bios folder: {card / 'bios'}.",
+                      text)
+        self.assertIn(f"1) EASYROMS: bios (card or drive) ({card / 'bios'})", text)
+        self.assertIn("DATA has a bios folder, and nothing on it shows a handheld's card", text)
+        self.assertIn(f"BIOS folder: {card / 'bios'}", text)
+
+    def test_two_cards_are_spoken_of_in_the_plural(self):
+        """code_audit_22 P3-2: "Cards are in the reader (DATA, EASYROMS):
+        choose its system", then "The card in the reader" of one of two."""
+        arkos = games_part(self.root / "media" / "EASYROMS")
+        amber = games_part(self.root / "media" / "GAMES")
+        mounts = [arkos, amber]
+        state = self.first_screen(mounts)
+        self.assertIn("Cards are in the reader (EASYROMS, GAMES): choose their systems",
+                      self.screen(state))
+        state, text, rows = self.folder_screen(mounts)
+        self.assertIn("EASYROMS keeps them in its bios folder, first below.", text)
+        text, asked = self.line_run(_args(manifest=self.game_listing(), dry_run=True,
+                                          declared_only=False), ["1", ""], mounts=mounts)
+        self.assertIn("Cards are in the reader (EASYROMS, GAMES): choose their systems.", text)
+        self.assertIn(f"EASYROMS keeps them in its bios folder: {arkos / 'bios'}.", text)
+        self.assertNotIn("The card in the reader", text)
+
+    def test_a_fixed_partition_is_told_from_a_card(self):
+        """code_audit_22 P2-1: every mount under /media and /mnt, and on
+        Windows every drive letter, was a card. A whole partition of a disk
+        sysfs calls fixed is not, a USB or MMC one is, a folder bound in
+        place says nothing, and Windows answers by GetDriveTypeW."""
+        sys_root = self.root / "sys"
+        devices = sys_root / "devices"
+        for disk, part, removable in (("pci0/nvme0n1", "nvme0n1p2", "0"),
+                                      ("pci0/usb2/2-1/sdb", "sdb1", "0"),
+                                      ("mmc0/mmcblk0", "mmcblk0p1", "0"),
+                                      ("pci0/sdc", "sdc1", "1")):
+            (devices / disk / part).mkdir(parents=True)
+            (devices / disk / part / "partition").write_text("1\n")
+            (devices / disk / "removable").write_text(f"{removable}\n")
+        block = sys_root / "dev" / "block"
+        block.mkdir(parents=True)
+        for number, target in (("259:2", "pci0/nvme0n1/nvme0n1p2"),
+                               ("8:17", "pci0/usb2/2-1/sdb/sdb1"),
+                               ("179:1", "mmc0/mmcblk0/mmcblk0p1"),
+                               ("8:33", "pci0/sdc/sdc1")):
+            (block / number).symlink_to(devices / target)
+        mountinfo = "\n".join([
+            "40 1 259:2 / /media/me/DATA rw - ext4 /dev/nvme0n1p2 rw",
+            "41 1 8:17 / /media/me/EASYROMS rw - vfat /dev/sdb1 rw",
+            "42 1 179:1 / /media/me/GAMES rw - exfat /dev/mmcblk0p1 rw",
+            "43 1 8:33 / /media/me/STICK rw - vfat /dev/sdc1 rw",
+            "44 1 259:2 /home/me/cards/X /media/me/BOUND rw - ext4 /dev/nvme0n1p2 rw",
+            "45 1 0:74 / /mnt/d rw - 9p D:\\134 rw"])
+        told = {name: install._fixed_partition(Path(point), mountinfo, sys_root)
+                for name, point in (("DATA", "/media/me/DATA"), ("USB", "/media/me/EASYROMS"),
+                                    ("MMC", "/media/me/GAMES"), ("STICK", "/media/me/STICK"),
+                                    ("BOUND", "/media/me/BOUND"), ("WSL", "/mnt/d"),
+                                    ("unmounted", "/media/me/NONE"))}
+        self.assertEqual(told, {"DATA": True, "USB": False, "MMC": False, "STICK": False,
+                                "BOUND": False, "WSL": False, "unmounted": False})
+        for kind, fixed in ((2, False), (3, True), (4, True)):
+            kernel = types.SimpleNamespace(GetDriveTypeW=lambda root, kind=kind: kind)
+            fake = types.SimpleNamespace(windll=types.SimpleNamespace(kernel32=kernel))
+            with mock.patch.object(install.os, "name", "nt"), \
+                    mock.patch.dict(sys.modules, {"ctypes": fake}):
+                self.assertEqual(install._drive_not_removable(PureWindowsPath("D:\\")), fixed)
+
+
+# install.py whose tui_view takes SLOW seconds on the first frame of each
+# screen, as a slower device takes to lay one out (code_audit_22 P3-1).
+SLOW_VIEW = """
+import os, sys, time
+sys.argv[0] = {install!r}
+sys.path.insert(0, {repo!r})
+import install
+slow = float(os.environ["SLOW"])
+real, seen = install.tui_view, [None]
+def view(state, cols, rows):
+    key = (state.screen, len(state.stack))
+    if key != seen[0]:
+        seen[0] = key
+        time.sleep(slow)
+    return real(state, cols, rows)
+install.tui_view = view
+sys.exit(install.main())
+"""
+
+
+@unittest.skipUnless(pyte and pty and hasattr(pty, "fork"),
+                     "screen tests need pyte (pip install pyte==0.8.2) and a pty")
+class TheSettleRunsFromTheFrameShown(unittest.TestCase):
+    """code_audit_22 P3-1: the settle was stamped before the layout, so on
+    a slow one the second click of a double click on Options' Back reached
+    the plan's Quit."""
+
+    repo = EndToEnd.repo
+    bar_entry = TapsOnAPtySeeFirst.bar_entry
+
+    def test_a_double_click_on_back_stays_on_the_plan_after_a_slow_layout(self):
+        repo = self.repo()
+        wrapper = repo.root / "slowview.py"
+        wrapper.write_text(SLOW_VIEW.format(install=str(REPO_ROOT / "install.py"),
+                                            repo=str(REPO_ROOT)))
+        env = {**self.env, "SLOW": "0.5"}
+        term = Pty([], env, 80, 24, program=[sys.executable, str(wrapper)])
+        self.addCleanup(lambda: term.status is None and os.kill(term.pid, 9))
+        term.wait("Where do you play?")
+        term.send("\r")
+        term.wait("> Install")
+        term.settle()
+        term.send("o")
+        term.wait("RetroBIOS: Options")
+        term.settle()
+        time.sleep(1.0)
+        col, line = self.bar_entry(term, "Back")
+        report = sgr(col + 1, line + 1) + sgr(col + 1, line + 1, release=True)
+        os.write(term.fd, report.encode())
+        time.sleep(0.2)
+        os.write(term.fd, report.encode())
+        time.sleep(1.0)
+        screen = term.settle(0.6)
+        self.assertNotIn("Quit?", screen)
+        self.assertIn("RetroBIOS: RetroArch", screen.splitlines()[0])
+        self.assertEqual(repo.installed(), [])
+        term.send("q")
+        if "Quit?" in term.settle():
+            term.send("\r")
+        term.close()
 
 
 if __name__ == "__main__":
