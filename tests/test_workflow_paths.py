@@ -143,6 +143,9 @@ class ThePullRequestBuildsTheSite(unittest.TestCase):
         suite = next(i for i, run in enumerate(runs) if "unittest discover" in run)
         self.assertLess(generate, suite)
         self.assertEqual(steps[suite].get("if"), "${{ !cancelled() }}")
+        # A failed data fetch skipped the generator, and all 228 site tests
+        # then failed under it: the generator runs whatever came before.
+        self.assertEqual(steps[generate].get("if"), "${{ !cancelled() }}")
 
     def test_every_site_input_triggers_validation(self):
         deploy = self._workflow("deploy-site.yml")

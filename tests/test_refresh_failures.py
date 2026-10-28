@@ -15,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 from unittest import mock
 
@@ -213,6 +214,50 @@ class TheVersionIsReadBeforeTheDownload(unittest.TestCase):
                 mock.patch.object(rdd, "_download_and_extract_zip", download):
             self.assertTrue(rdd._refresh_entry("sys", entry, True, False, str(versions)))
         self.assertEqual(json.loads(versions.read_text())["sys"]["sha"], "build-1")
+
+
+class ABadResponseIsTriedAgain(unittest.TestCase):
+    """The buildbot once served something that was not ScummVM.zip. CI
+    failed the whole data step on it, and the next download was fine."""
+
+    def setUp(self) -> None:
+        import refresh_data_dirs as rdd
+
+        self.rdd = rdd
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        self.versions = str(root / "versions.json")
+        self.entry = {"source_type": "zip", "source_url": "https://example.invalid/S.zip",
+                      "local_cache": str(root / "cache")}
+        self.waits: list[int] = []
+
+    def run_with(self, outcomes: list) -> bool | None:
+        calls = iter(outcomes)
+
+        def download(*_args, **_kwargs):
+            outcome = next(calls)
+            if isinstance(outcome, Exception):
+                raise outcome
+            return outcome
+
+        with mock.patch.object(self.rdd, "_get_remote_etag", lambda _url: "tag"), \
+                mock.patch.object(self.rdd, "_download_and_extract_zip", download), \
+                mock.patch.object(self.rdd.time, "sleep", self.waits.append):
+            return self.rdd._refresh_entry("s", self.entry, True, False, self.versions)
+
+    def test_a_bad_archive_then_a_good_one_refreshes(self):
+        self.assertTrue(self.run_with([zipfile.BadZipFile("File is not a zip file"), 12]))
+        self.assertEqual(self.waits, [self.rdd.DOWNLOAD_RETRY_WAITS[0]])
+
+    def test_a_source_bad_on_every_try_fails_after_them(self):
+        bad = zipfile.BadZipFile("File is not a zip file")
+        tries = len(self.rdd.DOWNLOAD_RETRY_WAITS) + 1
+        self.assertIsNone(self.run_with([bad] * tries))
+        self.assertEqual(self.waits, list(self.rdd.DOWNLOAD_RETRY_WAITS))
+
+    def test_an_empty_archive_is_not_tried_again(self):
+        self.assertIsNone(self.run_with([self.rdd.NothingExtractedError("nothing")]))
+        self.assertEqual(self.waits, [])
 
 
 class AKeyMustServeThePlatform(unittest.TestCase):

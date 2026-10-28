@@ -20,6 +20,7 @@ import os
 import shutil
 import tarfile
 import tempfile
+import time
 import urllib.error
 import urllib.request
 import zipfile
@@ -40,6 +41,11 @@ VERSIONS_FILE = "data/.versions.json"
 USER_AGENT = "retrobios/1.0"
 REQUEST_TIMEOUT = 30
 DOWNLOAD_TIMEOUT = 300
+# A mirror sometimes answers with a page that is not the archive: the
+# buildbot's ScummVM.zip failed CI once as "File is not a zip file" and
+# downloaded fine minutes later. Seconds to wait before each retry.
+DOWNLOAD_RETRY_WAITS = (5, 20)
+_TRANSIENT = (urllib.error.URLError, OSError, tarfile.TarError, zipfile.BadZipFile, EOFError)
 
 
 def load_registry(registry_path: str = DEFAULT_REGISTRY) -> dict[str, dict]:
@@ -492,26 +498,29 @@ def _refresh_entry(
         else:
             remote_tag = get_remote_sha(entry["source_url"], version)
 
-    try:
+    def fetch() -> int:
         if source_type == "zip":
-            strip = entry.get("strip_components", 0)
-            file_count = _download_and_extract_zip(
-                source_url, local_cache, exclude, strip
+            return _download_and_extract_zip(
+                source_url, local_cache, exclude, entry.get("strip_components", 0)
             )
-        else:
-            source_path = entry["source_path"].format(version=version)
-            file_count = _download_and_extract(
-                source_url, source_path, local_cache, exclude
-            )
-    except (
-        urllib.error.URLError,
-        OSError,
-        tarfile.TarError,
-        zipfile.BadZipFile,
-        NothingExtractedError,
-    ) as exc:
-        log.warning("[%s] download failed: %s", key, exc)
-        return None
+        source_path = entry["source_path"].format(version=version)
+        return _download_and_extract(source_url, source_path, local_cache, exclude)
+
+    # An archive that reads but holds nothing under the path is the same on
+    # every try: only a failed or unreadable download is tried again.
+    for attempt, wait in enumerate((*DOWNLOAD_RETRY_WAITS, None), start=1):
+        try:
+            file_count = fetch()
+            break
+        except NothingExtractedError as exc:
+            log.warning("[%s] download failed: %s", key, exc)
+            return None
+        except _TRANSIENT as exc:
+            if wait is None:
+                log.warning("[%s] download failed after %d tries: %s", key, attempt, exc)
+                return None
+            log.warning("[%s] download failed (%s), trying again in %d s", key, exc, wait)
+            time.sleep(wait)
 
     _record_version(key, {"sha": remote_tag or "", "version": version}, versions_path)
 

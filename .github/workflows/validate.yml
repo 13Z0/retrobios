@@ -276,8 +276,11 @@ jobs:
 
       # The pages are gitignored, and the tests that read them fail
       # in CI without it. The suite runs whatever this step returned, so a
-      # generator that stops still leaves every other test reporting.
+      # generator that stops still leaves every other test reporting. It runs
+      # after a failed data fetch too: one bad mirror stays red on its own
+      # step instead of skipping the site and failing 228 site tests with it.
       - name: Generate the site
+        if: ${{ !cancelled() }}
         run: python scripts/generate_site.py
 
       - name: Run test suite
