@@ -388,18 +388,22 @@ names `~/Emulation/saves/retroarch/saves`. RetroPie, ROCKNIX, AmberELEC and
 EmuELEC keep saves beside each game, and RomM keeps them in the browser: their
 lists record these files as omitted.
 
-A RetroArch dry run into an empty folder printed this on 2026-10-27:
+<!-- generated: dry-run -->
+
+A RetroArch dry run into an empty folder, with the list of 2026-10-27, printed this:
 
 ```
 Fetching file index for retroarch...
   106 files read from RetroArch's save directory go to a folder per core under /home/me/.config/retroarch/saves
   10994 files (6.7 GB)
     3269 BIOS files (4.1 GB), 5089 game data files (2.5 GB) and 2636 data files (38.5 MB).
+    Game data: files a game or a game engine reads, of no use to the other cores. Data files: the files an emulator reads from a data folder of its own, such as Dolphin's Sys and PPSSPP's assets.
   Not installable: 37 files (1 required, not found: 37).
 
 Checking existing files...
   0 in place, 10994 missing, 0 wrong copies
 ```
+<!-- /generated: dry-run -->
 
 The second line divides the first, and every later count of the run (the
 menu, the plan, `--dry-run`, the result) is taken from the same list.
@@ -413,9 +417,12 @@ the installer can fetch them.
 
 ## Reading a run { #reading-a-run }
 
+<!-- generated: run-date -->
+
 Each line a first install prints, and what it means. The run below is a
-Batocera install into an empty folder, from the list as published on
-2026-10-21. The figures change with each release.
+Batocera install into an empty folder, from the list of 2026-10-27.
+The figures change with each release.
+<!-- /generated: run-date -->
 
 ### Before the run
 
@@ -431,77 +438,87 @@ command never writes one.
 
 ### The first lines
 
-```
-RetroBIOS 8c0e9c762d2f
+<!-- generated: run-first-lines -->
 
+```
 Looking for setups here...
   Found Batocera at /userdata/bios
 ```
+<!-- /generated: run-first-lines -->
 
-The code after RetroBIOS identifies the installer: it is the start of the
-SHA-256 the command checked before running it. The path is the folder it will
-write to.
+A line above them, `RetroBIOS` and a code, identifies the installer: the
+code is the start of the SHA-256 the command checked before running it. The
+path is the folder it will write to.
 
 ### The file index and the download
 
 Two phases follow. The first reads what is already in the folder. It takes a
 few minutes on a memory card, because every file is hashed:
 
+<!-- generated: run-index -->
+
 ```
 Fetching file index for batocera...
-  14481 files (9.1 GB)
-  Not installable: 399 files (79 required, not found: 399).
+  23 files read from Batocera's save directory go to a folder per system under /userdata/saves
+  14723 files (9.2 GB)
+    3179 BIOS files (4.4 GB) and 11544 game data files (4.8 GB).
+    Game data: files a game or a game engine reads, of no use to the other cores.
+  Not installable: 425 files (79 required, not found: 425).
 
 Checking existing files...
-  0 in place, 14481 missing, 0 wrong copies
+  0 in place, 14723 missing, 0 wrong copies
 ```
+<!-- /generated: run-index -->
 
 `Not installable` counts the files of the list that the collection does not
 hold. They are named at the end of the run.
 
 On a first install nothing is in place. On a later run the line counts what
 is already there, and only the rest is downloaded. A download of 1 GB or more
-is confirmed first (`Download 9.1 GB to /userdata/bios? [Y/n]`).
+is confirmed first, the size and the folder in the question.
 
 The second phase downloads what is missing, one line per file:
 
+<!-- generated: run-download -->
+
 ```
-Downloading 14481 files (9.1 GB)...
+Downloading 14723 files (9.2 GB)...
   Press Ctrl+C to stop. Running the same command again carries on from here.
-  [1/14481] 3do_arcade_saot.bin ok
-  [2/14481] 3dobios.zip ok
+  [1/14723] panafz1.bin ok
+  [2/14723] panafz10.bin ok
 ```
+<!-- /generated: run-download -->
 
 Ctrl+C is safe at any point. Files already installed stay, and running the
 command again picks up where it stopped.
 
 ### The end of the run
 
+<!-- generated: run-end -->
+
 ```
-Done. 14481 files installed.
+Done. 14723 files installed.
+  Installed: 3179 BIOS files and 11544 game data files.
 BIOS folder: /userdata/bios
-399 files were not installed: the collection does not hold them, or its copy fails their check.
-  Needed to start an emulator (79 files):
-    dark-forces (theforceengine): DARK.GOB, SOUNDS.GOB, SPRITES.GOB, TEXTURES.GOB
-    dark-forces-ii (openjkdf2): openjkdf2/episode/JK1.gob, openjkdf2/episode/JK1CTF.gob, openjkdf2/episode/JK1MP.gob, openjkdf2/resource/Res1hi.gob, openjkdf2/resource/Res2.gob
-    diablo (devilutionx): devilutionx/diabdat.mpq
-    doom3 (dhewm3): base/pak000.pk4, base/pak002.pk4, base/pak003.pk4, base/pak004.pk4
-    droidworks (openjkdf2): dwCD.GOB, dwHD.GOB, dwMin.GOB, dwStream.GOB
-    fallout (fallout1-ce): fallout1-ce/critter.dat, fallout1-ce/master.dat
-    fallout2 (fallout2-ce): fallout2-ce/critter.dat, fallout2-ce/master.dat
-    fury (fury): fury.grp
-    ... and 9 more systems (--check --verbose lists them all)
-  Each emulator's page says what these files are: https://abdess.github.io/retrobios/emulators/
+425 files were not installed: the collection does not hold them, or its copy fails their check.
+  Not available here: DARK.GOB, DARKWAR.RTL, DARKWAR.WAD and 76 more, game data their games read. Copy them from your own copy of the game into /userdata/bios/, /userdata/bios/Source/, /userdata/bios/base/ and 10 more folders.
+  Game data: files a game or a game engine reads, of no use to the other cores.
 To check this later, run the same command with --check.
 ```
+<!-- /generated: run-end -->
 
 When most of a download of 100 MB or more comes from one system, or from
 one core of a single system, the end of the run says so and what narrowing
-would save, once that saving is over half:
+would save, once that saving is over half.
+
+<!-- generated: bulk-hint -->
+
+RetroArch with `--system sony-playstation`, from the list of 2026-10-27:
 
 ```
-  mame pulls 336.5 MB of this 349.0 MB download for 3do. --core opera keeps 12.5 MB of it and saves 336.5 MB (96%).
+  duckstation pulls 316.5 MB of this 329.0 MB download for sony-playstation. --core pcsx1 keeps 11.0 MB of it and saves 318.0 MB (96%).
 ```
+<!-- /generated: bulk-hint -->
 
 `--dry-run` prints the same line under its plan.
 
@@ -515,23 +532,26 @@ The word `Done` and the BIOS folder are the confirmation. Any other ending
 was left undone, and the run says which case it was.
 
 The lines between `BIOS folder:` and the `--check` hint name the files of the
-list that the collection does not hold. `Needed to start an emulator` gives,
-for each system, the emulators that read it and the files they cannot start
-without. On the run above, all 79 belong to games (Dark Forces, Diablo, Doom 3,
-Tomb Raider and the others): the engine reads them from a copy of the game
-itself. The other 320 are optional, and the emulators reading them start
-without them.
+list that the collection does not hold. `Not available here` names the game
+data an engine reads from a copy of the game itself (Dark Forces, Diablo, Doom
+3), and the folders to copy them into. `Needed to start an emulator` gives,
+for each system, the emulators that read it and the other files they cannot
+start without. The rest are optional, counted in the first line only: the
+emulators reading them start without them.
 
 ### A later check
 
 The same command with `--check` reads the folder and writes nothing:
 
+<!-- generated: run-check -->
+
 ```
 Checking existing files...
-  14481 in place, 0 missing, 0 wrong copies
+  14723 in place, 0 missing, 0 wrong copies
 
   Everything is in place.
 ```
+<!-- /generated: run-check -->
 
 The files the collection does not hold are listed after it again, as long as
 they are absent from the folder. A number before `wrong copies` means a file is

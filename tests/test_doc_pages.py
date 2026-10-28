@@ -78,28 +78,71 @@ class TestSkeletonReadsTheResultShape(unittest.TestCase):
             self.assertIn(key.value, result)
 
 
+def _generated(text: str, name: str) -> str:
+    """The body scripts/generate_installer_doc.py writes between the markers."""
+    return re.search(rf"(?s)<!-- generated: {name} -->\n(.*?)<!-- /generated: {name} -->",
+                     text).group(1)
+
+
 class InstallerOutputExample(unittest.TestCase):
     """The page showed a run with no `Not installable:` line while the
     RetroArch manifest left eleven entries out, and a count that the menu
-    example below it no longer shared."""
+    example below it no longer shared. Its run samples were then typed by
+    hand and compared here, so a new list left the page stale and this test
+    red until someone retyped them: scripts/generate_installer_doc.py now
+    prints each one with install.py from the committed list."""
 
-    def test_run_and_menu_show_one_dated_run_of_the_manifest(self):
+    def test_the_samples_are_the_ones_the_installer_prints(self):
+        import generate_installer_doc
+
+        page = _page("installer.md")
+        self.assertEqual(generate_installer_doc.render(page), page,
+                         "run python scripts/generate_installer_doc.py")
+        for name in ("dry-run", "run-date", "run-index", "run-download", "run-end", "run-check"):
+            with self.subTest(sample=name):
+                self.assertIn(f"<!-- generated: {name} -->", page)
+
+    def test_a_retyped_count_fails_the_check(self):
+        import generate_installer_doc
+
+        page = _page("installer.md")
+        for name in ("dry-run", "run-end", "bulk-hint"):
+            with self.subTest(sample=name):
+                body = _generated(page, name)
+                edited = re.sub(r"\d+", lambda m: str(int(m.group(0)) + 1), body, count=1)
+                stale = page.replace(body, edited)
+                self.assertNotEqual(stale, page)
+                self.assertEqual(generate_installer_doc.render(stale), page)
+
+    def test_a_sample_is_dated_by_its_list_never_by_the_day_it_ran(self):
+        import generate_installer_doc
+
+        page = _page("installer.md")
+        for name, platform in (("dry-run", "retroarch"), ("run-date", "batocera")):
+            with self.subTest(sample=name):
+                listed = (ROOT / "install" / f"{platform}.json").read_text(encoding="utf-8")
+                date = json.loads(listed)["generated"][:10]
+                self.assertIn(f"the list of {date}", _generated(page, name))
+        self.assertNotIn(str(ROOT), page)
+        home = f"{generate_installer_doc.SHOWN_HOME}/.config/retroarch"
+        self.assertIn(home, _generated(page, "dry-run"))
+
+    def test_run_and_menu_show_one_run_of_the_manifest(self):
         import install
 
         text = _page("installer.md")
-        intro, run = re.search(r"(?s)\n([^\n]*)\n\n```\n(Fetching file index.*?)```", text).groups()
-        self.assertRegex(intro, r"\d{4}-\d{2}-\d{2}", "an output example says when it was taken")
+        run = _generated(text, "dry-run")
         manifest = json.loads((ROOT / "install" / "retroarch.json").read_text(encoding="utf-8"))
         omitted = re.search(r"Not installable: \d+ files? \(\d+ required, (.*)\)\.", run)
-        if manifest.get("omitted_files"):
-            self.assertIsNotNone(omitted, "the manifest omits files and the run shows no line for it")
+        self.assertEqual(omitted is not None, bool(manifest.get("omitted_files")))
         if omitted:
             for part in omitted.group(1).split(", "):
                 self.assertIn(part.rsplit(":", 1)[0], install.OMISSION_REASONS.values())
         count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", run).groups()
         self.assertIn(f"0 in place, {count} missing", run)
         self.assertSplitAddsUp(run, count, size)
-        menu = re.search(r"RetroArch: (\d+) files, ([\d.]+ [KMG]B)[.,]([^`]*)", text)
+        menu = re.search(r"RetroArch: (\d+) files, ([\d.]+ [KMG]B)[.,]([^`]*)",
+                         _generated(text, "line-menu"))
         self.assertEqual(menu.groups()[:2], (count, size))
         self.assertSplitAddsUp(menu.group(3), count, size)
         games = re.search(r"g\) Game data: kept \((\d+) files, ([\d.]+ [KMG]B)\)",
@@ -108,25 +151,6 @@ class InstallerOutputExample(unittest.TestCase):
         split = re.search(r"(\d+) BIOS files \(([\d.]+ [KMG]B)\)(?:,| and) (\d+) game data "
                           r"files \(([\d.]+ [KMG]B)\)", menu.group(3))
         self.assertEqual(games.groups(), split.groups()[2:])
-
-    def test_the_samples_say_what_the_installer_prints_for_the_list(self):
-        """tui_audit_15 P3-15: both samples said 6.6 GB where the same list
-        prints 6.7 GB, the size updated by hand from its rounded parts. The
-        head is the installer's own tally of the list, its second spellings
-        and data files in it, as a run on Linux counts them."""
-        import install
-
-        text = _page("installer.md")
-        manifest = json.loads((ROOT / "install" / "retroarch.json").read_text(encoding="utf-8"))
-        counts = install.tally([*manifest["files"], *(manifest.get("case_variants") or [])])
-        trees = manifest.get("data_directories") or []
-        data = sum(len(tree["files"]) for tree in trees)
-        data_bytes = sum(meta["size"] for tree in trees for meta in tree["files"].values())
-        total = f"{counts.files + data} files"
-        size = install.format_size(counts.size + data_bytes)
-        parts = install.parts_words(counts, data, data_bytes, 0)
-        self.assertIn(f"\n  {total} ({size})\n    {parts}.\n", text)
-        self.assertIn(f"\nRetroArch: {total}, {size}.\n  {parts}.\n", text)
 
     def assertSplitAddsUp(self, text: str, count: str, size: str) -> None:
         """The run counted 8069 files where its menu counted 3259 BIOS files
@@ -749,14 +773,11 @@ class FirstInstallWalkthrough(unittest.TestCase):
         self.assertIn("reaches 1 GB", section)
         self.assertNotRegex(section.replace("reaches 1 GB", ""), r"\d+(\.\d+)? ?[KMG]B\b")
 
-    def test_the_run_is_dated_and_consistent_with_the_manifest(self):
+    def test_the_run_is_one_run_of_the_manifest(self):
+        """The counts are printed by the generator, so they are not retyped
+        here: what is checked is that the five samples are one run."""
         import install
 
-        self.assertRegex(_section(self.run, "Reading a run { #reading-a-run }"),
-                         r"published on\s+\d{4}-\d{2}-\d{2}")
-        step3 = _section(self.run, "The file index and the download")
-        step4 = _section(self.run, "The end of the run")
-        step5 = _section(self.run, "A later check")
         # First install names the three endings the full screen shows as
         # its title, and no count: a figure from one setup read as the size
         # of every install.
@@ -765,25 +786,28 @@ class FirstInstallWalkthrough(unittest.TestCase):
             with self.subTest(ending=ending):
                 self.assertIn(f"**{ending}**", _section(self.text, "5. Read the result"))
                 self.assertIn(f'title = "{ending}"', source)
-        self.assertNotRegex(self.text, r"Done\. \d+ files")
+        self.assertNotRegex(self.text, r"\d+ (in place|missing|files installed)")
+        self.assertIn(f"  {install.EVERYTHING_IN_PLACE}", self.text)
+        step3 = _generated(self.run, "run-index")
         count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", step3).groups()
         self.assertIn(f"0 in place, {count} missing", step3)
-        self.assertIn(f"Downloading {count} files ({size})", step3)
+        self.assertIn(f"Downloading {count} files ({size})", _generated(self.run, "run-download"))
+        step4 = _generated(self.run, "run-end")
         self.assertIn(f"Done. {count} files installed", step4)
-        self.assertIn(f"{count} in place, 0 missing", step5)
+        self.assertIn(f"{count} in place, 0 missing", _generated(self.run, "run-check"))
         manifest = json.loads((ROOT / "install" / "batocera.json").read_text(encoding="utf-8"))
-        omitted = re.search(r"Not installable: (\d+) files \((\d+) required", step3)
-        if manifest.get("omitted_files"):
-            self.assertIsNotNone(omitted, "the manifest omits files and the run shows no line for it")
-        if omitted:
-            total, required = map(int, omitted.groups())
-            first, needed = install._omission_lines(
-                total, [{"required": True, "dest": str(i)} for i in range(required)]
-            )[:2]
-            self.assertIn(first, step4)
-            self.assertIn(needed.split(":")[0], step4)
-            self.assertIn(f"all {required} belong", step4)
-            self.assertIn(f"other {total - required} are optional", step4)
+        omitted = manifest.get("omitted_files") or []
+        self.assertEqual("Not installable:" in step3, bool(omitted))
+        # The prose under the end of the run names both lines a required
+        # omission can take, whichever this list prints.
+        section = _section(self.run, "The end of the run")
+        for words in ("Not available here", "Needed to start an emulator"):
+            self.assertIn(f"`{words}`", section)
+        needed = [entry for entry in omitted if entry.get("required")]
+        if any(entry.get("category") == install.GAME_DATA for entry in needed):
+            self.assertIn("Not available here:", step4)
+        if any(entry.get("category") != install.GAME_DATA for entry in needed):
+            self.assertIn("Needed to start an emulator", step4)
 
     def test_nothing_found_reads_like_the_installer(self):
         # The one-liner hands the terminal to the installer, which opens the

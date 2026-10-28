@@ -126,7 +126,7 @@ curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --check
 All good:
 
 ```
-  109 in place, 0 missing, 0 wrong copies
+  Everything is in place.
 ```
 
 ## Undo
