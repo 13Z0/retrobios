@@ -102,12 +102,10 @@ class WhatTheAppShipsIsNoFileToGet(unittest.TestCase):
         section = self.page[self.page.index("## Required"):self.page.index("## Optional")]
         self.assertNotIn("Roboto-Regular.ttf", section)
 
-    def test_the_collection_counts_go_under_the_table(self):
+    def test_the_collection_counts_go_under_the_summary(self):
         held = self.page.index("<p><small>In this collection:")
-        table = self.page.index("| File |")
-        self.assertLess(table, held)
         self.assertLess(held, self.page.index("## Required"))
-        self.assertNotIn("in repo", self.page[self.page.index("## Files"):table])
+        self.assertNotIn("in repo", self.page[self.page.index("## Files"):held])
 
     def test_the_folder_is_the_apps_own(self):
         self.assertIn("| BIOS directory | `bios/`, inside the app's own data folder |", self.page)
@@ -115,9 +113,8 @@ class WhatTheAppShipsIsNoFileToGet(unittest.TestCase):
 
 class TheSummaryTableFitsItsContent(unittest.TestCase):
     def test_an_empty_region_column_goes(self):
-        page = _page("aethersx2")
-        table = next(line for line in page.splitlines() if line.startswith("| File |"))
-        self.assertNotIn("Region", table)
+        rows = gs._summary_table(_files(3, md5="ab" * 16), [0, 1, 2], lambda _i, s: s)
+        self.assertNotIn("Region", rows[0])
 
     def test_a_constant_required_column_goes(self):
         rows = gs._summary_table(_files(3, required=True), [0, 1, 2], lambda _i, s: s)
@@ -138,14 +135,15 @@ class TheSummaryTableFitsItsContent(unittest.TestCase):
 
 
 class LongPagesFold(unittest.TestCase):
-    def test_optional_cards_fold_below_the_table(self):
-        files = _files(gs.EMULATOR_SUMMARY_MIN) + [{"name": "req.bin", "required": True}]
+    def test_each_entry_is_listed_once_as_a_row(self):
+        files = _files(gs.EMULATOR_TABLE_MIN) + [{"name": "req.bin", "required": True}]
         page = _page("x", {"type": "standalone", "files": files})
+        self.assertNotIn("| File |", page)
+        self.assertNotIn(f"<summary>{gs.EMULATOR_TABLE_MIN} files</summary>", page)
+        self.assertEqual(page.count('<h3 id="file-'), len(files))
         required = page[page.index("## Required"):page.index("## Optional")]
-        self.assertNotIn("<details", required)
-        optional = page[page.index("## Optional"):]
-        self.assertTrue(optional.split("\n", 3)[2].startswith("<details class=\"rb-details"))
-        self.assertIn(f"<summary>{gs.EMULATOR_SUMMARY_MIN} files</summary>", optional)
+        self.assertEqual(required.count('<h3 id="file-'), 1)
+        self.assertIn('class="rb-entries"', required)
 
     def test_a_few_cards_stay_open(self):
         page = _page("x", {"type": "standalone", "files": _files(2)})

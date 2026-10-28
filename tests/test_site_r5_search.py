@@ -293,13 +293,17 @@ class _Head(HTMLParser):
         self._ld: list[str] | None = None
         self._label: list[str] | None = None
         self._tabs = False
+        # A summary in the page body (a file row) is no sidebar group.
+        self._main = False
 
     def handle_starttag(self, tag: str, attrs: list) -> None:
         a = dict(attrs)
         if tag == "script" and a.get("type") == "application/ld+json":
             self._ld = []
-        if tag == "summary":
+        if tag == "summary" and self._main:
             self._label = []
+        if tag == "nav" and a.get("aria-label") == "Main":
+            self._main = True
         if tag == "nav" and a.get("aria-label") == "Sections":
             self._tabs = True
         elif self._tabs and tag == "a" and a.get("aria-current"):
@@ -308,6 +312,7 @@ class _Head(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag == "nav":
             self._tabs = False
+            self._main = False
         if tag == "script" and self._ld is not None:
             self.ld.append(json.loads("".join(self._ld)))
             self._ld = None

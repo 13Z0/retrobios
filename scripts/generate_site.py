@@ -9205,10 +9205,6 @@ CARD_SECTIONS = (("required", "Required"), ("optional", "Optional"), ("game_data
                  ("with_app", "Comes with the app"))
 _SECTION_RANK = {key: rank for rank, (key, _title) in enumerate(CARD_SECTIONS)}
 
-# Below this many cards the page is one screen of them, and a table above
-# would repeat it.
-EMULATOR_SUMMARY_MIN = 6
-
 
 def _card_section(f: dict) -> str:
     if comes_with_app(f):
@@ -9236,11 +9232,12 @@ def emulator_parts(name: str, files: list) -> list[tuple[str, list[int]]]:
             for index, start in enumerate(range(0, len(files), size))]
 
 
-# From this many entries an unsplit emulator page lists them as one table,
-# each row opening to its card (siteentries.py), in place of a summary
-# table above the cards: GroovyMAME's 171 cards read 14,400 words open.
-# A split emulator's card pages always do.
-EMULATOR_TABLE_MIN = 150
+# From this many entries an emulator page lists them as one table, each
+# row opening to its card (siteentries.py). Below it the page is one
+# screen of open cards. A summary table above folded cards listed every
+# file twice: PCSX-ReARMed's seven, once in the table and once in a closed
+# "7 files" block. A split emulator's card pages always use the table.
+EMULATOR_TABLE_MIN = 6
 ENTRY_HEADS = ["File", "Contents", "Status", "Hash"]
 # The end of the badge _file_badges writes for an entry of each section.
 _SECTION_BADGE = {"required": ">required</span>", "optional": ">optional</span>",
@@ -9283,22 +9280,14 @@ def _entries_table(files: list[dict], group: list[int], rows: list[siteentries.R
                                    searched=frozenset({"Status"}))
 
 
-def _sectioned(files: list, indexes: list[int], render: Callable[[list[int]], list[str]],
-               fold: bool = False) -> list[str]:
-    """Each section's heading, then ``render`` of its entries among ``indexes``.
-
-    ``fold``: every section after Required in one closed block, for a page
-    whose table above already lists each entry.
-    """
+def _sectioned(files: list, indexes: list[int],
+               render: Callable[[list[int]], list[str]]) -> list[str]:
+    """Each section's heading, then ``render`` of its entries among ``indexes``."""
     lines: list[str] = []
     for key, title in CARD_SECTIONS:
         group = [i for i in indexes if _card_section(files[i]) == key]
-        if not group:
-            continue
-        body = render(group)
-        if fold and key != "required":
-            body = markup.details("note", _count(len(group), "file"), body)
-        lines.extend([f"## {title}", "", *body])
+        if group:
+            lines.extend([f"## {title}", "", *render(group)])
     return lines
 
 
@@ -9724,20 +9713,9 @@ def emulator_pages(
             lines.extend(_sectioned(files, _display_order(files),
                                     lambda group: _entries_table(files, group, rows)))
         elif not parts:
-            order = _display_order(files)
-            indexed = len(files) >= EMULATOR_SUMMARY_MIN
-            if indexed:
-                lines.extend(search_excluded(_summary_table(
-                    files, order, lambda i, shown: f"[{_code(shown)}](#{anchors[i]})",
-                    len(systems or []) > 1)))
-                lines.append("")
             lines.extend(held)
-            # Below the table, which indexes them, the cards past the
-            # required ones fold: DuckStation's page was 59 phone screens,
-            # 102 optional cards after its three BIOS.
-            lines.extend(_sectioned(
-                files, order, lambda group: [line for i in group for line in cards[i]],
-                fold=indexed))
+            lines.extend(_sectioned(files, _display_order(files),
+                                    lambda group: [line for i in group for line in cards[i]]))
         else:
             lines.extend(_card_index(emu_name, files, anchors, aliases, parts,
                                      len(systems or []) > 1))

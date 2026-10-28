@@ -119,7 +119,7 @@ class ASplitEmulatorListsItsCardsAsRows(unittest.TestCase):
 
 class ALongEmulatorPageIsOneTable(unittest.TestCase):
     def test_rows_replace_the_index_and_the_cards(self):
-        files = ([_archive(i) for i in range(gs.EMULATOR_TABLE_MIN - 10)]
+        files = ([_archive(i) for i in range(gs.EMULATOR_TABLE_MIN)]
                  + [{"name": f"opt{i}.bin", "md5": f"{i:032x}"} for i in range(10)])
         page = gs.generate_emulator_page(
             "long", {"emulator": "Long", "type": "standalone", "files": files}, EMPTY_DB, None, set())

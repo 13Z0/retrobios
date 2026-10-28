@@ -118,22 +118,20 @@ class RequiredFilesComeFirst(unittest.TestCase):
         page = _page("duckstation", _profile("duckstation"))
         self.assertGreater(len(re.findall(r"^## ", page, re.M)), 2)
 
-    def test_a_summary_table_above_the_cards(self):
-        files = _files(gs.EMULATOR_SUMMARY_MIN - 1) + [
+    def test_rows_carry_region_and_hash(self):
+        files = _files(gs.EMULATOR_TABLE_MIN - 1) + [
             {"name": "req.bin", "required": True, "region": ["japan"], "md5": "ab" * 16}]
         page = _page("x", {"type": "standalone", "files": files})
-        self.assertIn("| File | Region | Required | Hash |", page)
-        row = next(line for line in page.splitlines() if "req.bin" in line and "| yes |" in line)
-        self.assertIn("(#file-req-bin", row)
-        self.assertIn("| Japan |", row)
-        self.assertIn(f'MD5\u00a0<code title="{"ab" * 16}">{"ab" * 6}</code>', row)
-        # The required row is the first one.
-        table = page.index("| File | Region | Required | Hash |")
-        self.assertLess(page.index("req.bin", table), page.index("f000.bin", table))
+        required = page[page.index("## Required"):page.index("## Optional")]
+        self.assertIn('id="file-req-bin', required)
+        self.assertIn("Region: Japan", required)
+        self.assertIn(f'MD5\u00a0<code title="{"ab" * 16}">{"ab" * 6}</code>', required)
+        self.assertNotIn("f000.bin", required)
 
     def test_no_table_for_a_few_cards(self):
         page = _page("x", {"type": "standalone", "files": _files(2)})
-        self.assertNotIn("| File | Region | Required | Hash |", page)
+        self.assertNotIn('class="rb-entries"', page)
+        self.assertIn('class="rb-file-entry"', page)
 
     def test_a_split_page_puts_required_on_the_first_part(self):
         count = gs.EMULATOR_CARDS_PER_PAGE * 2

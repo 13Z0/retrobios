@@ -134,14 +134,15 @@ class PartsKnowWhereTheySit(unittest.TestCase):
 class ARequiredFileSaysForWhichSystem(unittest.TestCase):
     def test_melonds_dsi_files(self):
         page = _pages("melonds")["melonds"]
-        card = page[page.index('id="file-dsi-nand-bin"'):]
-        card = card[:card.index("</h3>")]
-        self.assertIn(">required for Nintendo DSi</span>", card)
+        row = page[page.index('id="file-dsi-nand-bin"'):]
+        row = row[:row.index("</tr>")]
+        self.assertIn(">required for Nintendo DSi</span>", row)
         self.assertNotIn(">required</span>", page)
 
     def test_one_system_says_required(self):
+        # The section heading says it: the rows under it repeat nothing.
         page = _pages("aethersx2")["aethersx2"]
-        self.assertIn(">required</span>", page)
+        self.assertIn("## Required", page)
         self.assertNotIn("required for", page)
 
 
