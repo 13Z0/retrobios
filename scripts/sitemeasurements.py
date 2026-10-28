@@ -48,6 +48,10 @@ SQLITE_SCHEMA_VERSION = "3"
 # Observables the variants table leaves out: one value per sampled frame.
 BULKY_OBSERVABLES = ("frame_hashes",)
 INDEX_SCHEMA_VERSION = 1
+# What a maintainer saw in an issue's runs, by record subject.
+OBSERVATIONS = Path("tests") / "campaign" / "observations.yml"
+# A Proof line lists this many record links at most, else one link to the file.
+MAX_RECORD_LINKS = 8
 
 
 # --------------------------------------------------------------------------
@@ -86,7 +90,8 @@ def verdicts_of(record: dict) -> list[dict]:
     """Each variant's boot verdict, from record version 4 on, and the BIOS
     it ran from version 5 on."""
     return [{"variant": v["label"], "verdict": shown_verdict(v), "bios_used": v.get("bios_used", "unknown"),
-             "detail": (v.get("verdict_evidence") or {}).get("detail", "")}
+             "detail": (v.get("verdict_evidence") or {}).get("detail", ""),
+             "staged": sorted(name for name, sha1 in (v.get("system_files") or {}).items() if sha1)}
             for v in record["variants"] if "verdict" in v]
 
 
@@ -115,8 +120,50 @@ def result_of(record: dict) -> tuple[str, str]:
     return result.get("status") or "ran", result.get("statement") or ""
 
 
+def opened(record: dict) -> str | None:
+    """The staged name a check varied, when strace saw the core open it in
+    every repetition of a variant that staged it."""
+    name = (record.get("check") or {}).get("variable")
+    if not isinstance(name, str):
+        return None
+    for variant in record["variants"]:
+        reps = variant.get("repetitions") or []
+        if (variant.get("system_files") or {}).get(name) and reps and all(
+                any(f.get("path") == name for f in rep.get("files_opened") or ()) for rep in reps):
+            return name
+    return None
+
+
+def load_observations(path: Path) -> dict[str, dict]:
+    """Each record id or subject an observation covers, with its issue
+    number and words."""
+    import yaml  # noqa: PLC0415
+
+    if not path.is_file():
+        return {}
+    out = {}
+    for issue, entries in (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).items():
+        number = ISSUE_SUBJECT.match(f"{issue}-")["number"]
+        for entry in entries:
+            for key in [*entry.get("records", ()), *entry.get("subjects", ())]:
+                out[key] = {"issue": number, "said": entry["said"]}
+    return out
+
+
+def shown_of(record: dict) -> list | None:
+    """What a record showed that a page can state: ["text", words] from
+    its boot verdicts, ["opened", name] for a staged name strace saw the
+    core open, or None."""
+    verdicts = verdicts_of(record)
+    if verdicts:
+        return ["text", proof_result(verdicts)]
+    name = opened(record)
+    return ["opened", name] if name else None
+
+
 def index_item(entry: mr.Stored, runs: int, source: dict, profiles: dict,
-               system_names: dict[str, str], ancestry: set[str] | None = None) -> dict:
+               system_names: dict[str, str], ancestry: set[str] | None = None,
+               records: list[dict] | None = None) -> dict:
     record = entry.record
     profile = profiles.get(entry.emulator) or {}
     check = record.get("check") or {}
@@ -152,13 +199,15 @@ def index_item(entry: mr.Stored, runs: int, source: dict, profiles: dict,
         "id": record["id"],
         "runs": runs,
         "record_url": permalink(source["repo"], source["commit"], mr.records_path(entry.emulator), entry.line),
+        "records": records if records is not None else [],
         "sqlite": f"downloads/measurements/{entry.emulator}.sqlite",
         "proves": proves(ancestry or {record["id"]}, profile),
     }
 
 
 def build_index(stored: list[mr.Stored], source: dict | None, profiles: dict,
-                system_names: dict[str, str] | None = None) -> dict:
+                system_names: dict[str, str] | None = None,
+                observations: dict[str, dict] | None = None) -> dict:
     """One item per (emulator, subject): its latest record not superseded."""
     by_subject: dict[tuple[str, str], list[mr.Stored]] = {}
     live_ids = {r["id"] for r in mr.live(s.record for s in stored)}
@@ -171,8 +220,15 @@ def build_index(stored: list[mr.Stored], source: dict | None, profiles: dict,
     for key in sorted(by_subject):
         entries = by_subject[key]
         latest = max(entries, key=lambda s: (s.record["recorded_at"], s.line))
+        profile = profiles.get(key[0]) or {}
+        records = [{"url": permalink((source or {}).get("repo"), (source or {}).get("commit"),
+                                     mr.records_path(s.emulator), s.line),
+                    "proves": proves(ancestors.get(s.record["id"]) or {s.record["id"]}, profile),
+                    "shown": shown_of(s.record),
+                    "observed": (observations or {}).get(s.record["id"]) or (observations or {}).get(key[1])}
+                   for s in sorted(entries, key=lambda s: s.line)]
         items.append(index_item(latest, len(entries), source or {}, profiles, system_names or {},
-                                ancestors.get(latest.record["id"])))
+                                ancestors.get(latest.record["id"]), records))
     items.sort(key=lambda item: (item["emulator"], item["date"], item["subject"]))
     return {
         "schema_version": INDEX_SCHEMA_VERSION,
@@ -184,10 +240,6 @@ def build_index(stored: list[mr.Stored], source: dict | None, profiles: dict,
         "items": items,
     }
 
-
-# --------------------------------------------------------------------------
-# Coverage and region results
-# --------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------
 # SQLite
@@ -410,7 +462,7 @@ def build(public: Path, root: Path = ROOT, emulators_dir: Path = ROOT / "emulato
     stored = mr.read_records(root)
     source = {"repo": repo, "commit": commit or (records_commit(root) if stored else None)}
     profiles = load_profiles(emulators_dir)
-    index = build_index(stored, source, profiles, system_names)
+    index = build_index(stored, source, profiles, system_names, load_observations(root / OBSERVATIONS))
     paths = [public / INDEX_PATH]
     (public / INDEX_PATH).parent.mkdir(parents=True, exist_ok=True)
     write_if_changed(str(public / INDEX_PATH),
@@ -441,47 +493,106 @@ def by_emulator(index: dict) -> dict[str, list[dict]]:
 ISSUE_SUBJECT = re.compile(r"^issue(?P<number>\d+)-")
 
 
-def proof_result(item: dict) -> str:
+VERDICT_WORDS = {"boots": "boots", "bios_error": "shows a BIOS error", "crash": "crashes",
+                 "hang": "hangs", "unknown": "gives no verdict"}
+
+
+def proof_result(verdicts: list[dict]) -> str:
     """What a record showed, in words, naming the BIOS each boot ran: a
-    boot on the core's built-in BIOS is never the staged file's."""
+    boot on the core's built-in BIOS is never the staged file's. A single
+    run says what was staged, a check names each variant."""
     def said(verdict: dict) -> str:
         used = verdict.get("bios_used") or "unknown"
         if verdict["verdict"] == BOOTS_BUILTIN:
             return "boots on the core's built-in BIOS"
         if verdict["verdict"] == "boots" and used.startswith("staged:"):
             return f"boots on {used.removeprefix('staged:')}"
-        return verdict["verdict"].replace("_", " ")
-    verdicts = item.get("verdicts") or []
+        return VERDICT_WORDS.get(verdict["verdict"], verdict["verdict"].replace("_", " "))
     if len(verdicts) == 1:
-        return said(verdicts[0])
-    if verdicts:
-        return ". ".join(f"{v['variant']}: {said(v)}" for v in verdicts)
-    claim = item.get("claim") or f"a run of {item.get('content') or item['subject']}"
-    return f"{claim.rstrip('.')}, recorded before the boot oracle"
+        staged = verdicts[0].get("staged") or []
+        given = " and ".join(staged) if len(staged) < 3 else f"{', '.join(staged[:-1])} and {staged[-1]}"
+        return f"with {given or 'no BIOS'}, it {said(verdicts[0])}"
+    return ". ".join(f"{v['variant']}: {said(v)}" for v in verdicts)
 
 
-def proof_line(item: dict) -> str | None:
-    """One line for a record a page relies on, or None: a profile field its
-    `evidence:` names the record for, or an issue the record answers."""
+def proof_claims(item: dict, record: dict) -> tuple[list[str], list | None]:
+    """The claims one record of an item backs on its emulator's page, and
+    what it showed. An issue observation is the claim and needs no more.
+    No claim when the record shows nothing a page can state."""
+    observed = record.get("observed")
+    if observed:
+        return [f"issue {observed['issue']}: {observed['said']}"], None
+    shown = record.get("shown")
+    if shown is None:
+        return [], None
+    if record.get("proves"):
+        return record["proves"], shown
     issue = ISSUE_SUBJECT.match(item["subject"])
-    if not item.get("proves") and not issue:
-        return None
-    what = ", ".join(item.get("proves") or ()) or f"issue {issue['number']}"
-    text = f"{_cell(what)}: {_cell(proof_result(item))}".translate(_MARKDOWN)
-    target = _href(item.get("record_url"))
-    return f"- {text}" + (f" ([record]({target}))" if target else "") + "."
+    if issue and shown[0] == "text":
+        return [f"issue {issue['number']}"], shown
+    return [], None
+
+
+def _md(value: object) -> str:
+    """Record text placed in a Markdown line: no span, link or tag out of it."""
+    return _cell(value).translate(_MARKDOWN)
+
+
+def _records(urls: list[str]) -> str:
+    """The record links of one statement, escaped and safe targets only."""
+    def place(url: str) -> tuple[str, int]:
+        path, _, line = url.partition("#L")
+        return path, int(line) if line.isdigit() else 0
+    targets = sorted(dict.fromkeys(t for u in urls if (t := _href(u))), key=place)
+    if not targets:
+        return ""
+    if len(targets) == 1:
+        return f" ([record]({targets[0]}))"
+    files = {t.split("#", 1)[0] for t in targets}
+    if len(targets) > MAX_RECORD_LINKS and len(files) == 1:
+        return f" ([{len(targets)} records]({files.pop()}))"
+    return " (records " + ", ".join(f"[{n}]({t})" for n, t in enumerate(targets, 1)) + ")"
+
+
+def proof_line(claim: str, shown: list[tuple[list | None, list[str]]]) -> str:
+    """One line per claim, its records collapsed: the files strace saw
+    opened in one list, each distinct result once with its records."""
+    names: dict[str, list[str]] = {}
+    texts: dict[str, list[str]] = {}
+    bare: list[str] = []
+    for what, urls in shown:
+        if what is None:
+            bare.extend(urls)
+        elif what[0] == "opened":
+            names.setdefault(what[1], []).extend(urls)
+        else:
+            texts.setdefault(what[1], []).extend(urls)
+    parts = []
+    if names:
+        parts.append("the core opened " + ", ".join(_md(n) for n in names)
+                     + _records([u for urls in names.values() for u in urls]))
+    parts.extend(_md(text) + _records(urls) for text, urls in texts.items())
+    if not parts:
+        return f"- {_md(claim)}{_records(bare)}."
+    return f"- {_md(claim)}: " + ". ".join(part[:1].upper() + part[1:] if n else part
+                                          for n, part in enumerate(parts)) + "."
 
 
 def proof_section(items: list[dict]) -> list[str]:
-    """The Proof lines of an emulator page: only the runs a claim of the
-    page rests on, one line each. Every other record stays on the
+    """The Proof lines of an emulator page: only the claims of the page a
+    run backs, one line per claim. Every other record stays on the
     Measurements page."""
-    lines = sorted({line for item in items if (line := proof_line(item))})
-    if not lines:
+    by_claim: dict[str, list] = {}
+    for item in sorted(items, key=lambda i: i["subject"]):
+        for record in item.get("records") or ():
+            claims, what = proof_claims(item, record)
+            for claim in claims:
+                by_claim.setdefault(claim, []).append((what, [record["url"]]))
+    if not by_claim:
         return []
     return ["## Proof", "",
             f"Real runs that back this page ([how they are made](../../{METHOD_PAGE.removesuffix('.md')}/)):",
-            "", *lines, ""]
+            "", *(proof_line(claim, by_claim[claim]) for claim in sorted(by_claim)), ""]
 
 
 def _text(value: object) -> str:

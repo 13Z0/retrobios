@@ -246,18 +246,20 @@ class SitePages(unittest.TestCase):
         import sitemeasurements as sm
 
         stored = mr.read_records(ROOT)
-        index = sm.build_index(stored, {"repo": sm.REPO, "commit": "0" * 40}, sm.load_profiles(ROOT / "emulators"))
+        index = sm.build_index(stored, {"repo": sm.REPO, "commit": "0" * 40}, sm.load_profiles(ROOT / "emulators"),
+                               None, sm.load_observations(ROOT / sm.OBSERVATIONS))
         items = sm.by_emulator(index).get("beetle_psx") or []
         if not items:
             self.skipTest("no beetle_psx record")
         text = "\n".join(sm.proof_section(items))
         self.assertNotIn("Region check", text)
         lines = [line for line in text.splitlines() if line.startswith("- ")]
-        self.assertEqual(len(lines), sum(1 for i in items if i["proves"]))
         required = [line for line in lines if line.startswith("- required of scph55")]
         self.assertEqual(len(required), 3)
         for line in required:
-            self.assertIn("boots on the core&#x27;s built-in BIOS", line)
+            # The run staged only the other regions' files and booted OpenBIOS.
+            self.assertIn("it boots on the core&#x27;s built-in BIOS", line)
+            self.assertIn(", it boots", line)
 
 
 if __name__ == "__main__":

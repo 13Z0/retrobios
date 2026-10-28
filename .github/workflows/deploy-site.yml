@@ -73,8 +73,8 @@ on:
       - "release.json"
       - "derivable.json"
       - "measurements/**"
-      # The coverage table and the region results read the test game list.
-      - "tests/campaign/content.yml"
+      # The Proof lines of the emulator pages read what an issue's runs showed.
+      - "tests/campaign/observations.yml"
       # The Starlight project: config, components, styles, lockfile. Its
       # generated folders are gitignored and never trigger anything.
       - "website/**"

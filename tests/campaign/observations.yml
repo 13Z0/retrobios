@@ -1,0 +1,20 @@
+# What a maintainer saw in the runs an issue points at. The records keep
+# frame and audio hashes, which say a run is the same as another, never what
+# it showed: the sentence comes from watching the run. An entry names the
+# records it was seen in (`records:`), or every record of a subject when the
+# sentence is about all of them (`subjects:`). A run of an issue with no
+# entry here and no boot verdict reaches no page.
+# Read by scripts/sitemeasurements.py for the Proof lines of emulator pages.
+issue85:
+  - said: the Lunar opening movie plays with sound
+    records: [2026-10-27-f17b2280e1af]
+  - said: Video CD play, pause, stop and play again work
+    records: [2026-10-27-a84574cf24a1, 2026-10-27-119c8e80edb5]
+  - said: next and previous track work on a three-track Video CD
+    records: [2026-10-27-51a78500620f]
+  - said: the 704x480 menu still of Super Gamer No. 5 shows
+    records: [2026-10-27-a9557cfd13d7]
+  # tests/test_measurements.py checks this one against the records: video
+  # and audio hashes equal across both core commits, card off and on.
+  - said: video and audio identical with and without the patch, card off and on, on 20 discs
+    subjects: [issue85-regression-card-off, issue85-regression-card-on]

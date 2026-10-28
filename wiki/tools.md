@@ -848,7 +848,7 @@ Runs a libretro core with no window, no sound and no input device, and
 reports what it did. It is the test in real conditions behind a claim about
 a core: which files it opens, what it shows, which BIOS it ran.
 
-These probes run on demand only, for three cases: to settle a dispute or an issue, to back a correction sent to a platform, and to check the packs before a release. They are never run as a campaign over every emulator, and the site keeps no showcase of their runs: an emulator page shows a run only when a profile's `evidence:` names it or it answers an issue (`issue<N>-` subjects), as one **Proof** line naming the BIOS the core ran. Every record stays in `measurements/` and on the Measurements page. Benchmarks (`bench`) stay in the records and the SQLite files and
+These probes run on demand only, for three cases: to settle a dispute or an issue, to back a correction sent to a platform, and to check the packs before a release. They are never run as a campaign over every emulator, and the site keeps no showcase of their runs: an emulator page shows a run only when a profile's `evidence:` names it or it answers an issue (`issue<N>-` subjects). Its **Proof** section has one line per claim, every record of that claim linked on it, and says what the runs showed: the BIOS the core ran, or the file strace saw it open. What an issue's run showed comes from `tests/campaign/observations.yml`, written by whoever watched it, and a run with nothing to state stays off the page. Every record stays in `measurements/` and on the Measurements page. Benchmarks (`bench`) stay in the records and the SQLite files and
 only choose between variants: no page shows a time per frame.
 
 ```bash
