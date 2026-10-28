@@ -550,17 +550,18 @@ OUTCOME_WORDS = {True: "boots", False: "does not boot", None: "no verdict"}
 
 
 def others_words(result: dict) -> str:
-    """What the run with only the other regions' files did, never calling a
-    boot the other region's BIOS unless the core's log names that file."""
+    """What the run with only the other regions' files did, in a few words,
+    never calling a boot the other region's BIOS unless the core's log
+    names that file."""
     boots = result.get("others_boot")
     if boots is not True:
-        return f"{OUTCOME_WORDS[boots]} with only the others"
+        return OUTCOME_WORDS[boots]
     used = result.get("others_on")
     if used == "builtin":
-        return "boots on its built-in BIOS with only the others, which were refused"
+        return "built-in BIOS, files refused"
     if used and used.startswith("staged:"):
-        return f"boots on {used.removeprefix('staged:')} with only the others"
-    return "boots with only the others, on a BIOS its log does not name"
+        return f"boots on {used.removeprefix('staged:')}"
+    return "boots, BIOS not named"
 
 
 def core_region_line(results: list[dict]) -> str:
@@ -568,15 +569,16 @@ def core_region_line(results: list[dict]) -> str:
     on its own BIOS, then with only the other regions' files."""
     own = {r["own_boots"] for r in results}
     others = {r["others_boot"] for r in results}
-    builtin = {r.get("others_on") for r in results} == {"builtin"}
-    if own == {True} and others == {True} and builtin:
-        return ("Each region's game boots on its own BIOS. With only the other regions' files it "
-                "boots on its built-in BIOS: those files were refused.")
+    used = {r.get("others_on") or "unknown" for r in results}
+    if own == {True} and others == {True} and used == {"builtin"}:
+        return "Each region's game boots on its own BIOS, and on its built-in BIOS with the others' files refused."
+    if own == {True} and others == {True} and all(u.startswith("staged:") for u in used):
+        return "Each region's game boots on its own BIOS, and on another region's file the log names."
     if own == {True} and others == {False}:
         return "Each region's game boots on its own BIOS only."
-    parts = [f"{REGION_SHORT.get(r['region'], r['region'])} game: {OUTCOME_WORDS[r['own_boots']]} "
-             f"on its BIOS, {others_words(r)}" for r in results]
-    return ", ".join(parts) + "."
+    parts = [f"{REGION_SHORT.get(r['region'], r['region'])}: {OUTCOME_WORDS[r['own_boots']]}, "
+             f"with the others {others_words(r)}" for r in results]
+    return ". ".join(parts) + "."
 
 
 def region_section(results: list[dict], level: int = 3) -> list[str]:

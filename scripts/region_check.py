@@ -209,13 +209,11 @@ def sentence(game_region: str, result: dict) -> str:
         return first + ", the other regions' BIOS do not."
     used = result.get("others_on")
     if used == BUILTIN:
-        return (first + ". With only the other regions' files it boots on its built-in BIOS, "
-                        "the other regions' files were refused.")
+        return first + ", and on its built-in BIOS with the others' files refused."
     name = staged_name(used)
     if name:
         return first + f", and so does {name}, another region's BIOS."
-    return (first + ". With only the other regions' files staged it boots too, on a BIOS "
-                    "its log does not name.")
+    return first + ", and with the others' files on a BIOS its log does not name."
 
 
 # --------------------------------------------------------------------------

@@ -148,8 +148,8 @@ class Outcome(unittest.TestCase):
         result = rc.outcome(records, self.ENTRIES, "europe")
         # The log names no BIOS: the boot is not said to be the other region's.
         self.assertEqual(rc.sentence("europe", result),
-                         "The European BIOS boots the European game. With only the other regions' files "
-                         "staged it boots too, on a BIOS its log does not name.")
+                         "The European BIOS boots the European game, and with the others' files on a "
+                         "BIOS its log does not name.")
         records["others"] = record("x", ["scph5501.bin"], ["scph5501.bin"], [[0, "a"]], "boots",
                                    bios_used="staged:scph5501.bin")
         self.assertEqual(rc.sentence("europe", rc.outcome(records, self.ENTRIES, "europe")),
@@ -167,8 +167,8 @@ class Outcome(unittest.TestCase):
                                     [[0, "a"]], "boots", bios_used="builtin")}
         result = rc.outcome(records, self.ENTRIES, "north-america")
         text = rc.sentence("north-america", result)
-        self.assertEqual(text, "The US BIOS boots the US game. With only the other regions' files it "
-                               "boots on its built-in BIOS, the other regions' files were refused.")
+        self.assertEqual(text, "The US BIOS boots the US game, and on its built-in BIOS with the "
+                               "others' files refused.")
         self.assertNotIn("so do the other regions", text)
         import sitemeasurements as sm
         line = sm.core_region_line([result])
