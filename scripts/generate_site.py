@@ -4329,6 +4329,8 @@ def generate_platform_page(
     no_list = not cov["total"] and registry.get(name, {}).get("native_list") == "none"
     if name in GUIDES:
         lines += _platform_guide(name, display, cov, registry, no_list)
+    # Before the reference: the links below it are read under that heading.
+    lines.extend(sitemeasurements.pack_tested_section(_PACK_ITEMS.get(name, [])))
 
     lines += [
         "## Reference: every file by system { #reference-every-file-by-system }",
@@ -9109,6 +9111,8 @@ _MEASUREMENT_ITEMS: dict[str, list[dict]] = {}
 # (manufacturer slug, console) -> the region outcomes of its systems
 # (region_check.py), shown under the console on its system page.
 _REGION_RESULTS: dict[tuple[str, str], list[dict]] = {}
+# Pack probes by platform key, for the Tested block of a platform page.
+_PACK_ITEMS: dict[str, list[dict]] = {}
 # The emulator pages that list each data directory, by ref.
 _DATA_READERS: dict[str, list[tuple[str, str]]] = {}
 
@@ -11882,6 +11886,8 @@ def _generate(args: argparse.Namespace) -> None:
         _record(path)
     _MEASUREMENT_ITEMS.clear()
     _MEASUREMENT_ITEMS.update(sitemeasurements.by_emulator(measured.index))
+    _PACK_ITEMS.clear()
+    _PACK_ITEMS.update(sitemeasurements.by_platform(measured.index))
     print(f"  {measured.index['records']} records, {measured.index['count']} tests")
     write_if_changed(str(docs / sitemeasurements.EXPLORER_PAGE),
                      sitemeasurements.generate_explorer_page(

@@ -84,13 +84,17 @@ def records_path(emulator: str) -> str:
 
 
 # The campaign's own files beside the records: append-only like them, one
-# line per finding or per pass, each line hashed to its id. No profile takes
-# these names (tests/test_campaign.py checks it).
+# line per finding, per pass or per pack probe, each line hashed to its id.
+# No profile takes these names (tests/test_campaign.py checks it).
 FINDINGS = "findings"
 CAMPAIGN_RUNS = "campaign-runs"
+PACK_PROBES = "pack-probes"
+# The subject of every core_probe record a pack probe writes.
+PACK_SUBJECT_PREFIX = "pack-"
 CAMPAIGN_FILES = {
     FINDINGS: ("found_at", "campaign-finding.schema.json"),
     CAMPAIGN_RUNS: ("started_at", "campaign-run.schema.json"),
+    PACK_PROBES: ("probed_at", "pack-probe.schema.json"),
 }
 
 

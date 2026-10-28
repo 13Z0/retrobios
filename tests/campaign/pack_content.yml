@@ -1,0 +1,32 @@
+# Test content of the pack probe (scripts/pack_probe.py), beside the
+# campaign's own list (content.yml), in the same format and read the same way.
+# A game here starts a system whose cores need a BIOS from the pack.
+
+systems:
+  sega-saturn:
+    romfetch: saturn
+    content:
+      - name: "Lunar - Silver Star Story Complete (Japan)"
+        catalog: redump
+        reason: >-
+          A Japanese disc. Every Saturn core needs a BIOS image to start a disc,
+          so the run shows whether the BIOS the pack put in the folder is one
+          the core reads, under the name it looks for.
+        region: japan
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+        pinned: true
+  sega-mega-cd:
+    romfetch: segacd
+    content:
+      - name: "After Burner III (USA)"
+        catalog: redump
+        reason: >-
+          A US disc. A Mega CD core runs the console's boot ROM before the disc,
+          and the BIOS it reads for a US disc is the Sega CD one.
+        region: north-america
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+        pinned: true

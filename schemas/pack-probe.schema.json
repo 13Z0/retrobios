@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://abdess.github.io/retrobios/api/v1/schemas/pack-probe.schema.json",
+  "title": "RetroBIOS pack probe",
+  "description": "One line of measurements/pack-probes.jsonl: one run of scripts/pack_probe.py, a game started by a libretro core with its system directory taken from a platform's BIOS folder as a user installs it, the pack extracted or install.py run on a scratch root. The core_probe records the line names are in measurements/<emulator>.jsonl. Lines are appended, never rewritten.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "probed_at", "platform", "platform_version", "target", "install",
+               "source", "system", "platform_system", "emulator", "core", "content", "records", "rounds",
+               "staged", "verdict", "verdict_evidence", "files_opened", "findings", "error"],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}-[0-9a-f]{12}$" },
+    "sha1": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "pack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "sha256", "size", "members"],
+      "properties": {
+        "file": { "type": "string" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "size": { "type": "integer", "minimum": 0 },
+        "members": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    }
+  },
+  "properties": {
+    "schema_version": { "const": 1 },
+    "id": { "$ref": "#/$defs/id" },
+    "probed_at": { "type": "string", "format": "date-time" },
+    "platform": { "type": "string", "description": "Key of platforms/_registry.yml." },
+    "platform_version": { "type": "string" },
+    "target": { "type": ["string", "null"], "description": "Hardware target the cores were chosen for." },
+    "install": {
+      "enum": ["pack", "installer"],
+      "description": "pack: the platform's pack extracted at the root of the BIOS folder. installer: install.py --dest on the folder, from that pack and the published manifest, offline."
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pack", "manifest", "repo_commit"],
+      "properties": {
+        "pack": { "$ref": "#/$defs/pack" },
+        "manifest": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["path", "sha256", "generated", "pack_files"],
+          "properties": {
+            "path": { "type": "string" },
+            "sha256": { "$ref": "#/$defs/sha256" },
+            "generated": { "type": ["string", "null"] },
+            "pack_files": { "type": ["integer", "null"] }
+          }
+        },
+        "save_dir_files": {
+          "type": "integer", "minimum": 0,
+          "description": "Files the installer put in the save directory, which the core's run does not see."
+        },
+        "installer_summary": { "type": "string" },
+        "repo_commit": { "type": ["string", "null"], "description": "Commit of the checkout the pack was built from." }
+      }
+    },
+    "system": { "type": "string" },
+    "platform_system": { "type": ["string", "null"], "description": "The platform's own id of the system." },
+    "emulator": { "type": "string", "description": "Profile key, the file under measurements/ the records are in." },
+    "core": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "sha256", "artifact", "last_modified"],
+      "properties": {
+        "file": { "type": "string" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "artifact": { "type": "string" },
+        "last_modified": { "type": ["string", "null"] }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "catalog", "region"],
+      "properties": {
+        "label": { "type": "string" },
+        "catalog": { "type": "string" },
+        "region": { "type": ["string", "null"] }
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/id" },
+      "description": "core_probe records of this probe, first run first. A second one ran with the closed staging and supersedes the first."
+    },
+    "rounds": { "type": "integer", "minimum": 1, "description": "Runs until the core asked for nothing more the layout holds." },
+    "staged": { "type": "integer", "minimum": 0, "description": "Files of the layout staged for the last run." },
+    "verdict": { "enum": ["boots", "bios_error", "crash", "hang", "unknown"] },
+    "verdict_evidence": { "type": ["object", "null"] },
+    "files_opened": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "entry", "sha1", "created"],
+        "properties": {
+          "path": { "type": "string", "description": "Path under the system directory." },
+          "entry": { "type": ["string", "null"], "description": "The pack member, or the manifest entry, that put the file there." },
+          "sha1": { "anyOf": [{ "$ref": "#/$defs/sha1" }, { "type": "null" }] },
+          "created": { "type": "boolean", "description": "Written by the core, not taken from the layout." }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "path", "declared_by", "paths"],
+        "properties": {
+          "kind": {
+            "enum": ["missing_declared", "missing_undeclared", "elsewhere", "not_staged", "unlisted"],
+            "description": "missing_declared: the core looked for a file its profile declares, the layout lacks it. missing_undeclared: the same for a file no entry of the profile names. elsewhere: the layout holds a file of that name under another path. not_staged: the layout holds it but the staging never closed. unlisted: the core opened a file of the layout that no pack or manifest entry names."
+          },
+          "path": { "type": "string" },
+          "declared_by": { "type": "array", "items": { "type": "string" } },
+          "paths": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "error": { "type": ["string", "null"], "description": "Why no record was written, when core_probe failed." }
+  }
+}
