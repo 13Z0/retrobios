@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-27T10:27:58Z",
+  "generated_at": "2026-10-28T08:22:38Z",
   "total_files": 19916,
   "total_size": 16892318346,
   "bios_dir": "bios",
@@ -279566,6 +279566,24 @@
         "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
       ],
       "SCPH-7003.bin": [
+        "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
+      ],
+      "SCPH5501.BIN": [
+        "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
+      ],
+      "SCPH-5501.BIN": [
+        "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
+      ],
+      "SCPH5503.BIN": [
+        "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
+      ],
+      "SCPH-5503.BIN": [
+        "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
+      ],
+      "SCPH7003.BIN": [
+        "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
+      ],
+      "SCPH-7003.BIN": [
         "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
       ],
       "PSX_3.0(A).bin": [
