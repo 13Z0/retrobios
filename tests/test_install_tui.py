@@ -771,7 +771,8 @@ class PlanWarnings(unittest.TestCase):
         self.assertIn("You cannot write to this folder: choose another one.", text)
         # sudo changes the home folder: the advice names this one.
         self.assertIn("Or run it as root, this folder named: sudo python3 install.py "
-                      f"--platform retroarch --dest {SYSTEM_DIR}", " ".join(text.split()))
+                      f"--platform retroarch --dest {SYSTEM_DIR}",
+                      " ".join(text.replace(" \\", "").split()))
         rows = install.tui_rows(state)
         self.assertEqual([row.action for row in rows[:2]], ["folder", "install"])
         self.assertEqual(state.focus.get("plan", 0), 0)
@@ -3737,8 +3738,9 @@ class AuditFive(unittest.TestCase):
         saves = {"files": 1, "folder": str(HOME / ".config" / "retroarch" / "saves" / "<core>")}
         lines = install._saves_lines(state, saves)
         # In words: "saves/<core>" read as a folder named <core>.
+        # The folder at the BIOS folder's indent (tui_audit_14 P3-9).
         self.assertEqual(lines, ["1 file read from RetroArch's save directory goes to a "
-                                 "folder per core under:", "~/.config/retroarch/saves"])
+                                 "folder per core under:", "  ~/.config/retroarch/saves"])
 
     def test_the_shared_note_is_one_line(self):
         state = self.long_list()
@@ -7578,7 +7580,7 @@ class LineModeAndScreenDecideAlike(_LineModeFindings, _OutsideTextFindings,
         self.assertIn("g) Game data: kept (3 files, 120 B): leave it out", text)
         self.assertIn("  4 files (123 B)\n    1 BIOS file (3 B) and 3 game data files (120 B).",
                       text)
-        self.assertIn("0/4 present", text)
+        self.assertIn("0 in place, 4 missing, 0 wrong copies", text)
         self.assertIn("4 files (123 B)", text[text.index("Checking existing files"):])
 
     def test_g_counts_the_systems_chosen_and_leaves_out_what_it_said(self):
@@ -9966,8 +9968,12 @@ class TheAndroidResultReadsWhole(unittest.TestCase):
                 lines = [str(line).strip() for line in self.result(cols)]
                 words = [word for line in lines for word in line.split()]
                 self.assertIn("--restore", words)
-                # The command keeps it whole, to be copied as one word.
-                self.assertIn(full, words)
+                # The command keeps it whole where its line holds it, cut to
+                # its last folders and said so where not (tui_audit_14 P3-8).
+                if cols >= 60:
+                    self.assertIn(full, words)
+                else:
+                    self.assertIn(install.TUI_SHORTENED, lines)
                 # Prose breaks it after a separator only, never inside a name
                 # (tui_audit_13 P3-3): glued again, it is whole.
                 self.assertIn(full, re.sub(r"/ ", "/", " ".join(lines)))
@@ -9979,8 +9985,11 @@ class TheAndroidResultReadsWhole(unittest.TestCase):
         state.stack.append("result")
         pieces = install._text_lines([command], 38, whole=True)
         joined = [str(piece).strip() for piece in pieces if piece.style != "cont"]
-        self.assertIn(install.BOOTSTRAP_URL, joined)
-        self.assertIn("'/storage/emulated/0/a b/20261027-223524'", joined)
+        # The address never cut, the option with its value, each line but
+        # the last ending with the shell's continuation.
+        self.assertIn(f"{install.BOOTSTRAP_URL} \\", joined)
+        self.assertTrue(any(line.startswith("--restore '") for line in joined), joined)
+        self.assertTrue(all(len(str(piece)) <= 38 for piece in pieces), pieces)
 
     def test_a_long_line_folds_in_the_terminal(self):
         terminal = install._TuiTerminal.__new__(install._TuiTerminal)
@@ -10854,10 +10863,12 @@ class AuditNineteenAndTwelve(_CardFixtures, unittest.TestCase):
         width = len(path) + 1
         lines = install._wrap(f"BIOS folder: {path}", width, whole="text")
         self.assertEqual(lines, ["BIOS folder:", path])
-        command = install._wrap(f"  python3 install.py --dest {path}", width + 1,
+        # A command keeps the option with its value, the path whole where
+        # the line holds them (tui_audit_14 P3-8).
+        command = install._wrap(f"  python3 install.py --dest {path}", width + 10,
                                 whole="command")
-        self.assertIn(f"  {path}", command)
-        self.assertTrue(all(len(line) <= width + 1 for line in command), command)
+        self.assertIn(f"    --dest {path}", command)
+        self.assertTrue(all(len(line) <= width + 10 for line in command), command)
 
     def test_the_result_spells_each_folder_one_way(self):
         """tui_audit_12 P3-7: the save folder as ~/ beside full paths."""
@@ -10865,7 +10876,7 @@ class AuditNineteenAndTwelve(_CardFixtures, unittest.TestCase):
         state.done_saves = {"event": "saves", "files": 2,
                             "folder": "/home/user/.config/retroarch/saves/<core>"}
         _title, lines = install.tui_outcome(state)
-        self.assertIn("/home/user/.config/retroarch/saves", lines)
+        self.assertIn("/home/user/.config/retroarch/saves", [line.strip() for line in lines])
         self.assertFalse(any(line.startswith("~") for line in lines))
 
     def test_minui_names_the_folder_of_its_plan(self):
@@ -11506,7 +11517,11 @@ class AuditTwentyAndThirteen(unittest.TestCase):
                     while pieces[-1].endswith("/") and lines[at + len(pieces)]:
                         pieces.append(lines[at + len(pieces)])
                     spelled.append(pieces)
-                    self.assertNotIn("...", " ".join(lines))
+                    # A command's path may be cut to fit, said so: a folder
+                    # in prose never is.
+                    self.assertNotIn("...", " ".join(
+                        line for line in lines if install.tui_command(state)[:10] not in line
+                        and not line.startswith("--")))
                     self.assertTrue(all(len(piece) <= cols - 2 for piece in pieces), pieces)
                 self.assertEqual(spelled[0], spelled[1])
                 self.assertEqual("".join(spelled[0]), f"BIOS folder: {dest}")
@@ -11516,9 +11531,9 @@ class AuditTwentyAndThirteen(unittest.TestCase):
         under an indent of 6."""
         path = "/home/moi/retroarch_system/tmp/tui_audit13/pack/MinUI_2025-11_BIOS_Pack.zip"
         self.assertEqual(len(path), 75)
-        lines = install._wrap(f"    python3 install.py --from-pack {path}", 78,
+        lines = install._wrap(f"    python3 install.py --from-pack {path}", 95,
                               whole="command")
-        self.assertIn(path, lines)
+        self.assertIn(f"      --from-pack {path}", lines)
 
     def test_the_definition_is_said_once_and_never_spliced(self):
         """tui_audit_13 P3-5."""
@@ -12345,6 +12360,162 @@ class AuditTwentyOneAndFourteen(unittest.TestCase):
             state.code = 2
             _title, lines = install.tui_outcome(state)
         self.assertIn("7 data files not installed: not in RetroArch_BIOS_Pack.zip.", lines)
+
+    def test_a_command_at_40_columns_breaks_between_shell_words(self):
+        """tui_audit_14 P3-8: the terminal folded commands inside a word,
+        "--platform" ended a line with its value on the next."""
+        words = ["--platform", "retroarch", "--dest", "/a/b/c/system", "--manifest",
+                 "/home/moi/x.json", "--system", "nintendo-gba"]
+        text = "printf '%s\\n' " + " ".join(words)
+        with mock.patch.dict(os.environ, {"RETROBIOS_BOOTSTRAP": "sh"}):
+            lines = install._wrap(text, 38, whole="command")
+        self.assertGreater(len(lines), 1)
+        self.assertTrue(all(install.cell_width(line) <= 38 for line in lines), lines)
+        self.assertTrue(all(line.endswith(" \\") for line in lines[:-1]), lines)
+        for line in lines:
+            # An option never ends a line without its value.
+            self.assertFalse(line.removesuffix(" \\").rstrip().endswith(
+                ("--platform", "--dest", "--manifest", "--system")), lines)
+        # The shell reads the lines as the command: the same words.
+        proc = subprocess.run(["sh", "-c", "\n".join(lines)], capture_output=True, text=True,
+                              check=True)
+        self.assertEqual(proc.stdout.split(), words)
+        # A path wider than a line keeps its last folders, said so, and the
+        # address of the one-liner is never cut.
+        state = _installed_state(Path("/home/moi/retroarch_system/tmp/tui_audit14/sb/a/b/bios"))
+        state.summary["kept"] = [{"folder": "/home/moi/retroarch_system/tmp/tui_audit14/sb/"
+                                            "retrobios-backup/2026", "files": 1, "bytes": 1}]
+        with mock.patch.dict(os.environ, {"RETROBIOS_BOOTSTRAP": "sh"}):
+            screen = [str(line) for line in install.tui_view(state, 40, 40)]
+        self.assertTrue(all(install.cell_width(line) <= 40 for line in screen), screen)
+        self.assertIn(install.TUI_SHORTENED, " ".join(screen))
+        self.assertIn(install.BOOTSTRAP_URL, " ".join(screen))
+        state.exit_code = 0
+        farewell = "\n".join(install.tui_farewell(state))
+        self.assertIn("/home/moi/retroarch_system/tmp/tui_audit14/sb/a/b/bios", farewell)
+
+    def test_a_folder_on_its_own_line_has_one_indent(self):
+        """tui_audit_14 P3-9: the save folder at the label's indent, the
+        BIOS folder under it, a path's last piece without its indent."""
+        state = checked_state()
+        state.dest = Path("/home/moi/retroarch_system/tmp/tui_audit14/sb/esmiyoo/home/"
+                          ".config/retroarch/system")
+        state.saves = {"files": 1, "folder": "/home/moi/retroarch_system/tmp/tui_audit14/"
+                                             "sb/and2/storage/RetroArch/saves/<core>"}
+        for cols in (40, 80):
+            with self.subTest(cols=cols):
+                lines = [str(line) for line in install.tui_view(state, cols, 40)]
+                folder = next(i for i, line in enumerate(lines) if "BIOS folder:" in line)
+                under = next(i for i, line in enumerate(lines) if "under:" in line)
+                for at in (folder, under):
+                    pieces = []
+                    for line in lines[at + 1:]:
+                        if not line.strip() or "/" not in line or " " in line.strip():
+                            break
+                        pieces.append(line)
+                    indents = {len(piece) - len(piece.lstrip()) for piece in pieces}
+                    self.assertLessEqual(len(indents), 1, pieces)
+                    if pieces:
+                        self.assertEqual(indents, {3}, pieces)
+
+    def test_no_shift_where_there_is_no_shift_key(self):
+        """tui_audit_14 P3-3: "Shift and a drag" on Android."""
+        for os_type, said in (("linux", True), ("android", False)):
+            with self.subTest(os_type=os_type):
+                state = _installed_state(SYSTEM_DIR)
+                state.os_type, state.mouse = os_type, True
+                _title, lines = install.tui_outcome(state)
+                self.assertEqual(any("Shift" in line for line in lines), said)
+                self.assertIn(install.TUI_RESULT_AGAIN, lines[-1])
+                state.help = True
+                text = " ".join(install.tui_view(state, 80, 24))
+                self.assertEqual("Shift+drag" in text, said)
+
+    def test_the_40x12_setup_never_ends_mid_sentence(self):
+        """tui_audit_14 P3-5."""
+        state = fresh_state()
+        state.notes = [install.TUI_ESDE_NOTE]
+        text = [str(line).strip() for line in install.tui_view(state, 40, 12)]
+        self.assertIn(install.TUI_ESDE_SHORT, text)
+        self.assertFalse(any(line.startswith("ES-DE found") for line in text), text)
+        text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+        self.assertIn(install.TUI_ESDE_NOTE, text)
+
+    def test_the_40x12_plan_keeps_its_folder_and_version_note(self):
+        """tui_audit_14 P3-6: the plan named ~/.var/app/ as the folder, and
+        the version note was absent."""
+        state = checked_state()
+        state.dest = HOME / ".var/app/org.libretro.RetroArch/config/retroarch/system"
+        state.version = "This list was built for RetroBat 8.3.1, this machine runs 8.2.0.1."
+        lines = [str(line).strip() for line in install.tui_view(state, 40, 12)]
+        joined = "".join(line for line in lines if line.endswith("/") or "system" in line)
+        self.assertIn("~/.var/app/org.libretro.RetroArch/config/retroarch/system", joined)
+        self.assertIn(state.version, " ".join(" ".join(lines).split()))
+        self.assertTrue(any(re.fullmatch(r"1-\d+ of \d+", line) for line in lines), lines)
+        self.assertIn("> Install", lines)
+
+    def test_one_count_said_once_in_both_modes(self):
+        """tui_audit_14 P3-10: "22 files installed." over "22 files copied
+        from packx.", and line mode's Location, wrong hash and zero count."""
+        state = _installed_state(SYSTEM_DIR)
+        state.summary["installed"] = 5
+        state.finished = [(f"f{n}.bin", True, "") for n in range(5)]
+        state.local_dests = {f"f{n}.bin": ("/media/packx", "") for n in range(5)}
+        _title, lines = install.tui_outcome(state)
+        self.assertEqual(lines[0], "5 files copied from packx.")
+        self.assertNotIn("5 files installed.", lines)
+        files = [self.entry("gba_bios.bin", b"gba", ["nintendo-gba"])]
+        listing = self.listing("retroarch", files)
+        proc = install_run("--platform", "retroarch", "--manifest", str(listing),
+                           "--dest", str(self.here), "--check", "--offline")
+        self.assertIn("0 in place, 1 missing, 0 wrong copies", proc.stdout)
+        self.assertNotIn("present (", proc.stdout)
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertNotIn('say(f"Location', source)
+        self.assertNotIn("already up to date.\")\n", source.split("\nDone.", 1)[-1][:300])
+
+    def test_quit_names_stay_once(self):
+        """tui_audit_14 P3-11: "A/Enter Stay  B/Esc Stay"."""
+        state = fresh_state()
+        state.stack.append("quit")
+        state.focus["quit"] = 1
+        self.assertEqual(str(install.tui_view(state, 80, 24)[-1]).count("Stay"), 1)
+
+    def test_the_yes_stop_example_keeps_yes(self):
+        """tui_audit_14 P3-12: a script copying the example stopped at a
+        question."""
+        files = [self.entry("gba_bios.bin", b"gba", ["nintendo-gba"])]
+        listing = self.listing("retroarch", files)
+        proc = install_run("--yes", "--manifest", str(listing), "--offline",
+                           env={"HOME": str(self.root / "home"), "RETROBIOS_OS": "linux"})
+        example = next(line for line in proc.stderr.splitlines()
+                       if "--platform retroarch --dest" in line)
+        self.assertIn(" --yes", example)
+
+    def test_the_systems_question_fits_the_terminal(self):
+        """code_audit_21 P3-9: 53 of 66 rows wider than 80 columns."""
+        rows = [(f"system-{n}", [{"dest": f"{n}.bin", "size": 10 ** n}]) for n in range(6)]
+        labels = {"system-0": "Sega Dreamcast-based arcade boards, each "
+                              "them  sega-dreamcast-arcade",
+                  **{f"system-{n}": f"Short {n}" for n in range(1, 6)}}
+        with mock.patch.object(install.shutil, "get_terminal_size",
+                               return_value=os.terminal_size((80, 24))), \
+                mock.patch.object(install, "_ask", return_value=""), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            install._pick("Systems:", rows, labels=labels)
+        printed = out.getvalue().splitlines()
+        self.assertTrue(all(install.cell_width(line) <= 80 for line in printed), printed)
+        # The long label on its own line, its size under it in the column.
+        at = next(i for i, line in enumerate(printed) if "sega-dreamcast-arcade" in line)
+        self.assertNotIn("B", printed[at].split("arcade", 1)[1])
+        sizes = {line.index("1 file") for line in printed[at + 1:] if "1 file" in line}
+        self.assertEqual(len(sizes), 1, printed)
+
+    def test_the_save_dir_sentence_is_written_once(self):
+        """code_audit_21 P3-10."""
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertEqual(source.count('"Name it with --save-dir next time."'), 1)
+        self.assertEqual(source.count("args.declared_only or len(files) + game_data_cut"), 1)
 
     def test_a_missing_folder_does_not_exist_yet_on_every_row(self):
         """code_audit_21 P3-7: line mode said "(created)" of folders nobody

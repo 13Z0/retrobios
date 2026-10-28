@@ -28,13 +28,13 @@ curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --check
 Read the count line:
 
 ```
-  1/109 present (0 verified, 1 wrong hash)
+  0 in place, 108 missing, 1 wrong copy
 ```
 
-- **`wrong hash`**: another region or model, or damaged.
-- **Fewer present than the total**: files are missing.
+- **`wrong copy`**: another region or model, or damaged.
+- **A number before `missing`**: files are missing.
 - **A line under a file**, like `still zipped`, says the fix.
-- **`0 wrong hash`, all present**: go to step 3.
+- **`0 missing, 0 wrong copies`**: go to step 3.
 
 ## 2. Fix the files
 

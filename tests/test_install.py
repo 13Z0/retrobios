@@ -3550,7 +3550,7 @@ class ARefusedStandaloneCopyIsNamed(unittest.TestCase):
             install._report_outcome([bios], 0, 1, failed, 0, False, failures=failures)
         text = out.getvalue()
         self.assertIn(str(target / "scph5501.bin"), text)
-        self.assertIn(str(target), text.split("Location")[1])
+        self.assertIn(str(target), text.split("BIOS folder")[-1])
         self.assertIn("cannot write there", text)
 
 
@@ -4534,7 +4534,7 @@ class ANetworkFailureNamesTheNetwork(unittest.TestCase):
         self.assertEqual(raised.exception.code, 2)
         text = out.getvalue()
         self.assertIn("HTTPS_PROXY", text)
-        self.assertIn("Destination: /bios", text)
+        self.assertIn("BIOS folder: /bios", text)
         self.assertNotIn("being written to", text)
 
 
@@ -5225,7 +5225,7 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
              "interrupted": False},
             {"event": "end", "code": 1},
         ])
-        self.assertIn("2/4 present (1 verified, 1 wrong hash)", proc.stderr)
+        self.assertIn("1 in place, 2 missing, 1 wrong copy", proc.stderr)
         self.assertFalse((self.bios / "c.bin").exists())
 
     def test_an_install_run(self):

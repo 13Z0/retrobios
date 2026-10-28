@@ -7,6 +7,6 @@
  The files it replaced are kept in
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
- To put them back: python3 install.py
+ To put them back: python3 install.py \
  1-8 of 16
  A Exit  ^v Scroll

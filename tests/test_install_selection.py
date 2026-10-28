@@ -1459,7 +1459,7 @@ class ThePlatformsOwnListAlone(unittest.TestCase):
             with self.subTest(mode=mode), FakeRepository() as repo:
                 proc = repo.run("--declared-only", mode)
                 self.assertIn("5 to 3 files", proc.stdout, proc.stderr)
-                self.assertIn("0/3 present", proc.stdout)
+                self.assertIn("0 in place, 3 missing", proc.stdout)
                 self.assertEqual(repo.installed(), [])
 
     def test_it_composes_with_the_other_narrowings(self):

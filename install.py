@@ -5999,7 +5999,7 @@ def _report_outcome(
     kept = _kept_lines() + ([
         f"{_plural(len(unplaced), 'file')} read from "
         f"{unplaced[0].get('frontend') or 'the frontend'}'s save directory left out: "
-        "its place is not known. Name it with --save-dir next time."] if unplaced else [])
+        f"its place is not known. {LINE_SAVE_REMEDY}"] if unplaced else [])
     kept += list(notes or [])
     if interrupted:
         say(f"\nStopped. {_plural(downloaded, 'file')} installed.")
@@ -6068,7 +6068,7 @@ def _report_outcome(
         # Under the files it is about: after the save-directory line, "They"
         # read as that one file.
         say(f"  {remedy}")
-        say(f"Location: {_locations(paths)}")
+        say(f"BIOS folder: {_locations(paths)}")
         for line in kept + advice:
             say(line)
         sys.exit(1 if downloaded else 2)
@@ -6079,9 +6079,12 @@ def _report_outcome(
                             for _d, r in failures):
             # The folder was never the problem: naming it as the place being
             # written to sent people looking at their disk.
-            say(f"Destination: {_locations(paths)}")
+            say(f"BIOS folder: {_locations(paths)}")
+        elif _retry_words(failures):
+            # Nothing was written: every file is one the pack lacks.
+            say(f"BIOS folder: {_locations(paths)}")
         else:
-            say(f"Location that was being written to: {_locations(paths)}")
+            say(f"BIOS folder that was being written to: {_locations(paths)}")
         for line in kept + advice:
             say(line)
         say(_retry_words(failures) or "Run the same command again once that is resolved. "
@@ -6095,7 +6098,7 @@ def _report_outcome(
             say(f"  {sources}")
         if installed_kinds:
             say(installed_kinds)
-        say(f"Location: {_locations(paths)}")
+        say(f"BIOS folder: {_locations(paths)}")
         for line in kept + advice:
             say(line)
         retry = _retry_words(failures)
@@ -6105,13 +6108,14 @@ def _report_outcome(
             say("Run the same command again to retry only those.")
         sys.exit(1)
 
-    say(f"\nDone. {_plural(downloaded, 'file')} installed, "
-        f"{_plural(up_to_date, 'file')} already up to date.")
+    # No zero count: "0 files already up to date" said nothing.
+    say(f"\nDone. {_plural(downloaded, 'file')} installed"
+        + (f", {_plural(up_to_date, 'file')} already up to date." if up_to_date else "."))
     if sources:
         say(f"  {sources}")
     if installed_kinds:
         say(installed_kinds)
-    say(f"Location: {_locations(paths)}")
+    say(f"BIOS folder: {_locations(paths)}")
     for line in kept:
         say(line)
     if omitted > len(unplaced):
@@ -7653,11 +7657,20 @@ def _pick(
     print(f"\n{title}")
     width = len(str(len(rows)))
     shown = {name: screen_text((labels or {}).get(name, name)) for name, _files in rows}
-    # The sizes in one column, whatever the longest label: cut at 40, the
-    # longer names pushed theirs right (tui_audit_13 P3-13).
-    name_width = max(cell_width(label) for label in shown.values())
-    for index, (name, files) in enumerate(rows, 1):
-        print(f"  {index:>{width}}) {_pad(shown[name], name_width)}  {sizer(files)}")
+    sizes = {name: sizer(files) for name, files in rows}
+    # The sizes in one column, as wide as the terminal leaves the names: the
+    # longest label set it for every row, and 53 of 66 rows were folded at
+    # 80 columns (code_audit_21 P3-9). A longer label takes its own line.
+    lead = 2 + width + 2
+    room = (shutil.get_terminal_size((80, 24)).columns - 1 - lead - 2
+            - max(cell_width(size) for size in sizes.values()))
+    name_width = min(max(cell_width(label) for label in shown.values()), max(16, room))
+    for index, (name, _files) in enumerate(rows, 1):
+        if cell_width(shown[name]) > name_width:
+            print(f"  {index:>{width}}) {shown[name]}")
+            print(f"{' ' * (lead + name_width)}  {sizes[name]}")
+            continue
+        print(f"  {index:>{width}}) {_pad(shown[name], name_width)}  {sizes[name]}")
     if note:
         print(f"\n{note}")
     hint = "order of preference, e.g. 2,1" if ordered else "e.g. 1,3-5"
@@ -12259,9 +12272,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             hint = Invocation()
             hint.os_type, hint.options = os_type, _INVOCATION.options
             example = _default_dest(os_type, args.platform)
+            # The run's own way of answering, kept: a script copying the
+            # example stopped at a question (tui_audit_14 P3-12).
+            answered = "".join(f" {flag}" for flag, on in (
+                ("--yes", args.yes), ("--no-input", args.no_input)) if on)
             print("  Name its folder with --dest, for example:\n    "
                   + hint.command(args.platform, example if example is not None
-                                 else "<its BIOS folder>"), file=sys.stderr)
+                                 else "<its BIOS folder>") + answered, file=sys.stderr)
             sys.exit(1)
         elif args.platform in PORTABLE_ONLY:
             # A portable emulator reads the folder beside its executable:
@@ -12805,10 +12822,17 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             files, bios_path, jobs=args.jobs, term=term
         )
         present = len(up_to_date) + len(mismatched)
-        print(
-            f"  {present}/{run_counts.files} present "
-            f"({len(up_to_date)} verified, {len(mismatched)} wrong hash)"
-        )
+        # The screen's words: "0/22 present (0 verified, 0 wrong hash)"
+        # beside its "0 in place, 22 missing, 0 wrong copies" (tui_audit_14
+        # P3-10). The data files the head counts are among them, as the
+        # screen counts them (tui_audit_14 P3-7).
+        wrong = len(mismatched)
+        trees_missing = sum(len(data_directory_state(entry, bios_path)[1])
+                            for entry in data_dirs)
+        trees_held = head_data - trees_missing
+        print(f"  {len(up_to_date) + trees_held} in place, "
+              f"{run_counts.files - present + trees_missing} missing, "
+              f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
 
         # A partial copy left by an interrupted run is useless once the file
         # is in place: it goes.
@@ -13587,6 +13611,94 @@ def _glued_words(text: str) -> list[str]:
 _SHELL_WORD = re.compile(r"""(?:'[^']*'|"[^"]*"|[^\s'"]+|['"])+""")
 
 
+def _path_tail(text: str, width: int) -> str:
+    """A path cut to its last folders that fit after ".../", as a person
+    reads it on a narrow screen (".../retroarch/system"), a word that is no
+    path cut in its middle."""
+    if cell_width(text) <= width:
+        return text
+    separator = "\\" if "\\" in text and "/" not in text else "/"
+    parts = text.rstrip(separator).split(separator)
+    tail = ""
+    for part in reversed(parts):
+        longer = f"{part}{separator}{tail}" if tail else part
+        if cell_width(f"...{separator}{longer}") > width:
+            break
+        tail = longer
+    return f"...{separator}{tail}" if tail else middle(text, width)
+
+
+def _command_groups(text: str) -> list[str]:
+    """A command's shell words as they stay together on a line: a long
+    option with its value. "--platform" ended a line, its value on the next
+    (tui_audit_14 P3-8)."""
+    groups: list[str] = []
+    for word in _SHELL_WORD.findall(text):
+        last = groups[-1] if groups else ""
+        if (last.startswith("--") and len(last) > 2 and " " not in last and "=" not in last
+                and not word.startswith("-") and word != "|"):
+            groups[-1] = f"{last} {word}"
+        else:
+            groups.append(word)
+    return groups
+
+
+def _continuation() -> str:
+    """The character that ends a line of a command the shell reads on: a
+    backtick in PowerShell, a backslash in sh."""
+    return "`" if os.environ.get("RETROBIOS_BOOTSTRAP") == "ps1" or os.name == "nt" else "\\"
+
+
+def _command_wrap(text: str, width: int, indent: str = "  ") -> list[str]:
+    """A command too wide for width, broken between its shell words, each
+    line but the last ending with the continuation the shell accepts, so a
+    copy of the lines runs as the command does. A line one group wide that
+    fits only without the indent loses it. A path still wider keeps its
+    last folders (_path_tail), said by TUI_SHORTENED: folded by the
+    terminal, it read as broken inside a word (tui_audit_14 P3-8). A web
+    address is never cut."""
+    lead = text[:len(text) - len(text.lstrip(" "))]
+    tail = " " + _continuation()
+    groups = _command_groups(text)
+    lines: list[str] = []
+    line = ""
+
+    def close(done: str, last: bool) -> str:
+        end = "" if last else tail
+        prefix = lead + indent if lines else lead
+        for fewer in (lead, ""):
+            if cell_width(prefix + done + end) > width >= cell_width(fewer + done + end):
+                prefix = fewer
+        return prefix + done + end
+
+    for number, group in enumerate(groups):
+        end = 0 if number == len(groups) - 1 else len(tail)
+        room = width - cell_width(lead + indent) - end
+        # A group is an option and its value: split at the first space, a
+        # quoted value keeping its own.
+        option, _space, value = (group.partition(" ") if group.startswith("--") and " " in group
+                                 else ("", "", group))
+        if cell_width(group) > room and "://" not in value and _is_path_word(value.strip("'\"")):
+            keep = cell_width(option) + 1 if option else 0
+            quote = value[0] if value[:1] in "'\"" and value[-1:] == value[:1] else ""
+            bare = value[1:-1] if quote else value
+            group = (f"{option} " if option else "") + quote + _path_tail(
+                bare, max(8, room - keep - 2 * len(quote))) + quote
+        prefix = lead + indent if lines else lead
+        longer = f"{line} {group}" if line else group
+        if not line or cell_width(prefix + longer + (tail if end else "")) <= width:
+            line = longer
+            continue
+        lines.append(close(line, False))
+        line = group
+    lines.append(close(line, True))
+    return lines
+
+
+# Said under a command a path of which was cut to fit (_command_wrap).
+TUI_SHORTENED = "Shortened to fit this window."
+
+
 def _wrap(text: str, width: int, indent: str = "  ", whole: str = "") -> list[str]:
     """Lines of at most width cells, the ones after the first indented.
 
@@ -13597,10 +13709,12 @@ def _wrap(text: str, width: int, indent: str = "  ", whole: str = "") -> list[st
     and a backup folder's dated name fell on a line of its own."""
     if cell_width(text) <= width:
         return [text]
+    if whole == "command":
+        return _command_wrap(text, width, indent)
     lead = text[:len(text) - len(text.lstrip(" "))]
     lines: list[str] = []
     line = ""
-    words = (_SHELL_WORD.findall(text) if whole == "command" else _glued_words(text))
+    words = _glued_words(text)
 
     def close(done: str) -> str:
         # A line one word wide that fits without the indent loses it: one
@@ -13636,8 +13750,12 @@ def _wrap(text: str, width: int, indent: str = "  ", whole: str = "") -> list[st
             # The rest of a word broken at a slash joins it without a space:
             # a path was drawn "retroarch/ system", and copied wrong.
             longer = f"{line}{'' if index else ' '}{piece}" if line else piece
+            # A path's pieces keep the indent, which they are cut to fit:
+            # joined past it, the last piece of a folder lost its indent
+            # (tui_audit_14 P3-9).
             if not line or cell_width(prefix + longer) <= width or (
-                    lines and " " not in longer and cell_width(lead + longer) <= width):
+                    lines and " " not in longer and cell_width(lead + longer) <= width
+                    and not _is_path_word(word)):
                 line = longer
             else:
                 lines.append(close(line))
@@ -17294,7 +17412,16 @@ def _text_lines(items: list, width: int, whole: bool = False) -> list[TuiLine]:
         command = style == "command" or getattr(item, "command", False)
         kind = "command" if command else "text" if whole else ""
         folder = str(item).lstrip(" ").startswith(_FOLDER_LABEL)
-        for number, piece in enumerate(_wrap(str(item), width, whole=kind)):
+        # A folder on its own line wraps at its own indent.
+        pieces = _wrap(str(item), width, "" if style == "path" and str(item).startswith("  ")
+                       else "  ", whole=kind)
+        if command and "..." in "".join(pieces) and "..." not in str(item):
+            # Its path cut to fit: said under it, never as part of it.
+            pieces.append(TUI_SHORTENED)
+        for number, piece in enumerate(pieces):
+            if piece is TUI_SHORTENED:
+                lines.append(_styled(fit(piece, width), "dim"))
+                continue
             if cell_width(piece) <= width:
                 # The rest of a BIOS folder's line keeps its weight.
                 line = _styled(fit(piece, width), "folder" if folder and number
@@ -17395,8 +17522,15 @@ def _compose(
         budget -= len(top)
         gap = [_styled("")] if top and row_lines and budget > 0 else []
         budget -= len(gap)
-        tail = _text_lines(list(after), width)
-        bottom = ([_styled("")] + tail)[:budget] if tail and budget > 1 else []
+        # Whole items only: cut to the room left, a note ended in the
+        # middle of its sentence at 40x12 (tui_audit_14 P3-5).
+        tail: list[TuiLine] = []
+        for item in after:
+            lines = _text_lines([item], width)
+            if 1 + len(tail) + len(lines) > budget:
+                break
+            tail += lines
+        bottom = [_styled(""), *tail] if tail else []
         body = top + gap + row_lines + bottom
     body += [_styled("")] * (room - len(body))
     return body + footer_lines
@@ -17755,9 +17889,11 @@ def _saves_lines(state: TuiState, saves: dict | None, whole: bool = False) -> li
     words, folder = save_where_words(saves["folder"])
     # The folder alone is cut in the middle: cut with the sentence, it
     # lost "directory goes to" even at 80 columns.
+    # The folder on its own line at the BIOS folder's indent: at the
+    # label's, the two folders of a plan sat at two (tui_audit_14 P3-9).
     return [f"{_plural(count, 'file')} read from {name}'s save directory "
             f"{'goes' if count == 1 else 'go'} to{' ' + words if words else ''}:",
-            shown_path(folder) if whole else _short_path(Path(folder), state.home)]
+            "  " + (shown_path(folder) if whole else _short_path(Path(folder), state.home))]
 
 
 def _unplaced_lines(summary: dict | None, state: TuiState,
@@ -17773,6 +17909,13 @@ def _unplaced_lines(summary: dict | None, state: TuiState,
             f"its place is not known. {remedy or TUI_SAVE_REMEDY}"]
 
 
+# Said when ES-DE is found, and in fewer words where the long form would
+# give way: at 40x12 it ended in the middle of its sentence (tui_audit_14
+# P3-5).
+TUI_ESDE_NOTE = "ES-DE found: its BIOS files go to each emulator, not to ES-DE itself."
+TUI_ESDE_SHORT = "ES-DE: files go to each emulator."
+
+
 def _view_setup(state: TuiState, width: int, height: int) -> tuple:
     rows = tui_rows(state)
     focus = rows[min(state.focus.get("setup", 0), len(rows) - 1)]
@@ -17782,10 +17925,15 @@ def _view_setup(state: TuiState, width: int, height: int) -> tuple:
               else "A drive here could be either of these:" if state.doubts
               else "Nothing was found here."]
     status = [state.status] if state.status else []
-    return ("Where do you play?",
-            _compose(state, width, height, before, rows, after + status + state.notes,
-                     pinned=state.refused),
-            ("A/Enter Continue", "B/Esc Quit", "? Help"))
+    body = _compose(state, width, height, before, rows, after + status + state.notes,
+                    pinned=state.refused)
+    if TUI_ESDE_NOTE in state.notes and not any(
+            str(line).strip().startswith("ES-DE found") for line in body):
+        # The note gave way whole: its short form, where it fits.
+        notes = [TUI_ESDE_SHORT if note == TUI_ESDE_NOTE else note for note in state.notes]
+        body = _compose(state, width, height, before, rows, after + status + notes,
+                        pinned=state.refused)
+    return ("Where do you play?", body, ("A/Enter Continue", "B/Esc Quit", "? Help"))
 
 
 def _view_platforms(state: TuiState, width: int, height: int) -> tuple:
@@ -18102,7 +18250,8 @@ def _view_plan(state: TuiState, width: int, height: int) -> tuple:
     # one way on the plan and another on the result (tui_audit_13 P3-3).
     lines = [piece for line in lines for piece in (
         [_styled(part, "folder" if index and str(line).startswith(_FOLDER_LABEL)
-                 else "") for index, part in enumerate(_wrap(str(line), width))]
+                 else "") for index, part in enumerate(_wrap(
+                     str(line), width, "" if str(line).startswith("  ") else "  "))]
         if getattr(line, "style", "") == "path" and cell_width(str(line)) > width
         else [line])]
     rows = tui_rows(state)
@@ -18127,8 +18276,36 @@ def _view_plan(state: TuiState, width: int, height: int) -> tuple:
     system = detected_os(state.platform, state.dest) if state.dest is not None else ""
     name = display_name(state.platform, state.manifest)
     return (f"{system} ({name} files)" if system and system != name else name,
-            _compose(state, width, height, lines, rows),
+            _plan_body(state, width, height, lines, rows),
             ("A/Enter Install", "B/Esc Back", "Y/o Options", "? Help"))
+
+
+def _plan_body(state: TuiState, width: int, height: int, lines: list,
+               rows: list[TuiRow]) -> list[TuiLine]:
+    """The plan's text and rows. Where both do not fit, the headline, the
+    whole BIOS folder and the version note stay and the rows scroll under
+    them: at 40x12 the plan named ~/.var/app/ as the folder, and dropped the
+    note that the list is for another version (tui_audit_14 P3-6)."""
+    body = _compose(state, width, height, lines, rows)
+    at = next((index for index, line in enumerate(lines)
+               if str(line).startswith(_FOLDER_LABEL.rstrip())), None)
+    kept = list(lines[:1])
+    if at is not None:
+        # The folder line and the rest of the folder wrapped after it.
+        end = at + 1
+        while end < len(lines) and getattr(lines[end], "style", "") == "folder":
+            end += 1
+        kept += lines[at:end]
+    kept += [line for line in lines if state.version and str(line) == state.version]
+    top = _text_lines(kept, width)
+    drawn = [str(line).strip() for line in body]
+    # Three lines at least for the rows: two of them and where the list is,
+    # the blank line above them given up first.
+    if (all(str(line).strip() in drawn for line in top)
+            or len(top) + min(len(rows), 3) > height):
+        return body
+    gap = [_styled("")] if len(top) + 1 + min(len(rows), 3) <= height else []
+    return top + gap + _compose(state, width, height - len(top) - len(gap), [], rows)
 
 
 def _plan_data(state: TuiState, check: dict) -> tuple[int, int | None]:
@@ -18598,6 +18775,11 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
         # twice, the remedy between them (tui_audit_11 P3-18).
         lines[0] = sources
         sources = ""
+    elif title == "Done" and sources and "," not in sources and not summary.get("kept"):
+        # Every file from one place: "22 files installed." over "22 files
+        # copied from packx." said one count twice (tui_audit_14 P3-10).
+        lines[0] = sources + head[head.index(".") + 1:]
+        sources = ""
     if sources:
         lines.append(sources)
     if left:
@@ -18697,13 +18879,16 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     if state.mouse and typed:
         # A drag over the command selected nothing: the terminal sends the
         # press as a report. Said where it is read (tui_audit_13 P3-10).
-        lines.append(_styled(TUI_RESULT_COPY, "dim"))
+        lines.append(_styled(TUI_RESULT_AGAIN if state.os_type == "android"
+                             else TUI_RESULT_COPY, "dim"))
     return title, lines
 
 
 # How to copy from the result, under its command while the mouse is on.
-TUI_RESULT_COPY = ("Shift and a drag select text. All of this is shown again in the "
-                   "terminal after Exit.")
+# Termux has no Shift key under a finger: there the second sentence alone
+# (tui_audit_14 P3-3).
+TUI_RESULT_AGAIN = "All of this is shown again in the terminal after Exit."
+TUI_RESULT_COPY = f"Shift and a drag select text. {TUI_RESULT_AGAIN}"
 
 
 def _one_kind(state: TuiState, installed: int) -> bool:
@@ -18877,6 +19062,7 @@ def _tap_help(state: TuiState) -> list[tuple[str, str]]:
     if state.screen in _PAGERS and not tui_rows(state):
         return [("Tap", "A bottom line entry presses its key"),
                 *([("Shift+drag", "Select text to copy")] if state.screen == "result"
+                  and state.os_type != "android" and state.pad not in TUI_PAD_ROUTES
                   else [])]
     # Said at every size, 40x12 included: Install below waits for a second
     # tap, and the help is where a reader looks when nothing happened.
@@ -19256,8 +19442,7 @@ def tui_start(
                          for folder, why in _DETECTION_REFUSED]
         unsaid = {refused_words(*refused) for refused in _DETECTION_REFUSED}
         if "esde" in frontends:
-            state.notes.append("ES-DE found: its BIOS files go to each emulator, "
-                               "not to ES-DE itself.")
+            state.notes.append(TUI_ESDE_NOTE)
         state.notes += [line.strip() for line in captured.getvalue().splitlines()
                         if line.strip() and line.strip() not in unsaid]
     if plat and args.dest is not None:
@@ -19774,7 +19959,7 @@ LINE_SAVE_REMEDY = "Name it with --save-dir next time."
 def _terminal_words(lines: list[str]) -> list[str]:
     """The result's lines as the terminal prints them after the screen."""
     return [line.replace(TUI_SAVE_REMEDY, LINE_SAVE_REMEDY) for line in lines
-            if line != TUI_RESULT_COPY]
+            if line not in (TUI_RESULT_COPY, TUI_RESULT_AGAIN)]
 
 
 def tui_quit_chosen(state: TuiState) -> bool:

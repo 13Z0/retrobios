@@ -9,7 +9,7 @@
 
  BIOS folder:
    /home/user/.config/retroarch/system
- ES-DE found: its BIOS files go to each
+ ES-DE: files go to each emulator.
  Enter Continue  Esc Quit  ? Help
 === setup 40x15
  RetroBIOS: Where do you play?
@@ -759,11 +759,11 @@
 
  The same choice without questions:
 
- python3 install.py --platform
-   retroarch --dest
-   /home/user/.config/retroarch/system
+ python3 install.py \
+   --platform retroarch \
+   --dest .../retroarch/system \
    --system nintendo-gba
-
+ Shortened to fit this window.
 
 
  Enter Back
@@ -772,11 +772,11 @@
 
  The same choice without questions:
 
- python3 install.py --platform
-   retroarch --dest
-   /home/user/.config/retroarch/system
+ python3 install.py \
+   --platform retroarch \
+   --dest .../retroarch/system \
    --system nintendo-gba
-
+ Shortened to fit this window.
 
 
 
@@ -788,8 +788,8 @@
 
  The same choice without questions:
 
- python3 install.py --platform retroarch --dest
-   /home/user/.config/retroarch/system --system nintendo-gba
+ python3 install.py --platform retroarch \
+   --dest /home/user/.config/retroarch/system --system nintendo-gba
 
 
 
@@ -926,7 +926,7 @@
  The files it replaced are kept in
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
- To put them back: python3 install.py
+ To put them back: python3 install.py \
  1-8 of 16
  Enter Exit  ^v Scroll
 === result 40x15
@@ -939,10 +939,10 @@
  The files it replaced are kept in
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
- To put them back: python3 install.py
-   --restore
-   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
-
+ To put them back: python3 install.py \
+   --restore .../2026-10-23_1200
+ Shortened to fit this window.
+ Same choice without questions:
  1-11 of 16
  Enter Exit  ^v Scroll
 === result 80x24
@@ -953,11 +953,11 @@
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
    /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
- To put them back: python3 install.py --restore
-   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+ To put them back: python3 install.py \
+   --restore /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
  Same choice without questions:
-   python3 install.py --platform retroarch --dest
-     /home/user/.config/retroarch/system
+   python3 install.py --platform retroarch \
+     --dest /home/user/.config/retroarch/system
  Details: /tmp/retrobios-x/install.log
 
 

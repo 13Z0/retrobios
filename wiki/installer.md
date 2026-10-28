@@ -218,9 +218,15 @@ installer with a signal (SIGTERM), which stops it the same way. Either way the
 result says how many files were installed, and it stays printed in the terminal
 once the screen closes, with the command that repeats the run. A run that failed
 keeps its log and names it, and every other run leaves nothing behind. A path
-or a command on the result is never split inside a word: one longer than the
-window takes a line of its own, which the terminal folds, and a command breaks
-only between its arguments. Every path a run names is spelled the way its BIOS
+on the result is never split inside a word: one longer than the window takes
+a line of its own, which the terminal folds. A command breaks only between its
+arguments, an option kept with its value, each line but the last ending with
+the continuation its shell reads (a backslash in sh, a backtick in PowerShell), so
+the lines copied run as one command. Where an option and its path do not fit
+on one line, the path keeps its last folders after `.../`, the line under it
+says it was shortened, and the terminal shows it whole after the screen
+closes. On Android and on a handheld route the result does not mention Shift,
+which neither has. Every path a run names is spelled the way its BIOS
 folder was named, the backup folder and the save directory included
 (`/sdcard/RetroArch` on Android, not the `/storage/emulated/0` it links to).
 
@@ -385,12 +391,12 @@ A RetroArch dry run into an empty folder printed this on 2026-10-27:
 ```
 Fetching file index for retroarch...
   106 files read from RetroArch's save directory go to a folder per core under /home/me/.config/retroarch/saves
-  8358 files (6.6 GB)
-    3269 BIOS files (4.1 GB) and 5089 game data files (2.5 GB).
+  10994 files (6.6 GB)
+    3269 BIOS files (4.1 GB), 5089 game data files (2.5 GB) and 2636 data files (38.5 MB).
   Not installable: 37 files (1 required, not found: 37).
 
 Checking existing files...
-  0/8358 present (0 verified, 0 wrong hash)
+  0 in place, 10994 missing, 0 wrong copies
 ```
 
 The second line divides the first, and every later count of the run (the
@@ -445,13 +451,13 @@ Fetching file index for batocera...
   Not installable: 399 files (79 required, not found: 399).
 
 Checking existing files...
-  0/14481 present (0 verified, 0 wrong hash)
+  0 in place, 14481 missing, 0 wrong copies
 ```
 
 `Not installable` counts the files of the list that the collection does not
 hold. They are named at the end of the run.
 
-On a first install the present count is zero. On a later run it counts what
+On a first install nothing is in place. On a later run the line counts what
 is already there, and only the rest is downloaded. A download of 1 GB or more
 is confirmed first (`Download 9.1 GB to /userdata/bios? [Y/n]`).
 
@@ -470,8 +476,8 @@ command again picks up where it stopped.
 ### The end of the run
 
 ```
-Done. 14481 files installed, 0 files already up to date.
-Location: /userdata/bios
+Done. 14481 files installed.
+BIOS folder: /userdata/bios
 399 files were not installed: the collection does not hold them, or its copy fails their check.
   Needed to start an emulator (79 files):
     dark-forces (theforceengine): DARK.GOB, SOUNDS.GOB, SPRITES.GOB, TEXTURES.GOB
@@ -502,11 +508,11 @@ When some files came from this machine rather than the network, a line under
 the wrong place in the BIOS folder, 4 downloaded.`). See
 [Copy from an old card](#copy-from-an-old-card).
 
-The word `Done` and a location are the confirmation. Any other ending
+The word `Done` and the BIOS folder are the confirmation. Any other ending
 (`Stopped`, `Finished with errors`, `Nothing was installed`) means something
 was left undone, and the run says which case it was.
 
-The lines between `Location:` and the `--check` hint name the files of the
+The lines between `BIOS folder:` and the `--check` hint name the files of the
 list that the collection does not hold. `Needed to start an emulator` gives,
 for each system, the emulators that read it and the files they cannot start
 without. On the run above, all 79 belong to games (Dark Forces, Diablo, Doom 3,
@@ -520,14 +526,14 @@ The same command with `--check` reads the folder and writes nothing:
 
 ```
 Checking existing files...
-  14481/14481 present (14481 verified, 0 wrong hash)
+  14481 in place, 0 missing, 0 wrong copies
 
   All files up to date.
 ```
 
 The files the collection does not hold are listed after it again, as long as
-they are absent from the folder. A number before `wrong hash` means a file is
-present with contents the platform does not accept. Running the install again
+they are absent from the folder. A number before `wrong copies` means a file is
+in place with contents the platform does not accept. Running the install again
 replaces it and keeps the old one, see
 [Files you already had](#files-you-already-had).
 
@@ -671,7 +677,7 @@ downloaded as usual, or taken from the pack with `--from-pack`. Several
 file came from:
 
 ```
-Done. 44 files installed, 0 files already up to date.
+Done. 44 files installed.
   38 files copied from E:\, 4 downloaded, 2 still missing.
 ```
 
@@ -697,7 +703,7 @@ same choice comes as questions after detection. A RetroArch run with `--plain`
 printed this on 2026-10-28, `g` then pressed:
 
 ```
-RetroArch: 8358 files, 6.6 GB, and 2636 data files (38.5 MB).
+RetroArch: 10994 files, 6.6 GB.
   3269 BIOS files (4.1 GB), 5089 game data files (2.5 GB) and 2636 data files (38.5 MB).
   Game data: files a game or a game engine reads, of no use to the other cores. Data files: the files an emulator reads from a data folder of its own, such as Dolphin's Sys and PPSSPP's assets.
   BIOS folder: /home/me/.config/retroarch/system
@@ -710,7 +716,7 @@ RetroArch: 8358 files, 6.6 GB, and 2636 data files (38.5 MB).
 >
   Counted again for your choices. Nothing is written before Enter.
 
-RetroArch: 3269 files, 4.1 GB, and 2636 data files (38.5 MB).
+RetroArch: 5905 files, 4.1 GB.
   3269 BIOS files (4.1 GB) and 2636 data files (38.5 MB). 5089 game data files left out.
 ```
 
@@ -1175,7 +1181,13 @@ muOS, ArkOS and the others) opens the setup list instead, filtered to the
 setups that read it, RetroArch first: Enter on it asks RetroArch's folder. At
 that question a drive is numbered by the folder its system reads (`ONION:
 BIOS`), a drive nothing names by its `bios` folder (`EASYROMS: bios`), never
-by its root, which no setup reads. Another system's card or SHARE drive, and a
+by its root, which no setup reads. A drive no file names that holds a `bios`
+folder and console folders (`nes`, `gba`, `psx`) is a handheld's card whose
+own files sit on a part a computer does not open, ArkOS's `EASYROMS` and
+AmberELEC's `GAMES`: with nothing found here the first screen and line mode
+say `A card is in the reader (EASYROMS): choose its system`, and its `bios`
+folder comes first at the folder question, under Enter, before this
+computer's usual folder. Another system's card or SHARE drive, and a
 drive two systems fit, are left out, and a line names them: each is reached
 through its own setup. A folder typed is read from the current
 one when it is not a full path, and named in full after. `q` quits there too

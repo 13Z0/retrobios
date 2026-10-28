@@ -9,7 +9,7 @@
 
  BIOS folder:
    /home/user/.config/retroarch/system
- ES-DE found: its BIOS files go to each
+ ES-DE: files go to each emulator.
  A Continue  B Quit
 === setup 40x15
  RetroBIOS: Where do you play?
@@ -755,8 +755,8 @@
 
  The same choice without questions:
 
- python3 install.py --platform retroarch --dest
-   /home/user/.config/retroarch/system --system nintendo-gba
+ python3 install.py --platform retroarch \
+   --dest /home/user/.config/retroarch/system --system nintendo-gba
 
 
 

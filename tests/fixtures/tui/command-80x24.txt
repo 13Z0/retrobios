@@ -2,8 +2,8 @@
 
  The same choice without questions:
 
- python3 install.py --platform retroarch --dest
-   /home/user/.config/retroarch/system --system nintendo-gba
+ python3 install.py --platform retroarch \
+   --dest /home/user/.config/retroarch/system --system nintendo-gba
 
 
 
