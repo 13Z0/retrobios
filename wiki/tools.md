@@ -920,6 +920,35 @@ it keeps the console's BIOS: it adds the `bios` stage for a core that hides
 the BIOS screens by default (PCSX-ReARMed). Frames that differ from another run never make a
 boot.
 
+**The BIOS a run used.** Beetle PSX, SwanStation, PCSX-ReARMed and Flycast run
+a built-in BIOS (OpenBIOS, HLE, reios) when they refuse or miss the file they
+want, and the game boots. Each repetition and variant therefore names the BIOS
+it ran in `bios_used` (record version 5), read from the core's log:
+
+| `bios_used` | When |
+|-------------|------|
+| `staged:<dest>` | a load pattern of the core names the file (Beetle `Firmware found: ...`, PCSX-ReARMed `Loaded BIOS "..."`, SwanStation `Using BIOS '...'`) |
+| `builtin` | a fallback pattern says the core ran its own BIOS (Beetle `Firmware is missing`, PCSX-ReARMed `No BIOS files found.`, SwanStation `No BIOS image found for ... region`, Flycast `Did not load BIOS, using reios`) |
+| `unknown` | the log says neither. A file the core opened is no proof: Beetle hashes every file of the folder before it decides |
+
+The last such line of the log decides, and every pattern carries the
+`source_ref` it was read from. A boot on `builtin` reads "boots on its built-in
+BIOS" on every page, and a boot is said to be another region's BIOS only when
+`bios_used` names that file.
+
+`core_probe.py rejudge` judges recorded runs again with the oracle as it stands,
+offline: no core runs. For each live record of `core_probe` (another probe's
+records are left to it) whose verdicts or `bios_used` come out otherwise, it
+appends the same runs judged again, which `supersedes` the record and carries
+`judged_at` and `judged_by` beside the unchanged `recorded_at`. `--emulator`
+narrows it, `--dry-run` prints what would be appended. The campaign reads a
+superseded record as its successor.
+
+```bash
+python scripts/core_probe.py rejudge --dry-run
+python scripts/core_probe.py rejudge --emulator beetle_psx
+```
+
 | Option | Effect |
 |--------|--------|
 | `--system-file DEST=SRC` | copy SRC into a staged system directory as DEST |

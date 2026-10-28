@@ -27,6 +27,7 @@ RetroBat, then start a game. The setup's page shows the result under **Tested**.
 | Result | Meaning |
 |--------|---------|
 | works | the game reached a screen it shows when it works |
+| works on its built-in BIOS | it worked, but the emulator refused the file and ran its own BIOS |
 | BIOS error | the emulator said a BIOS is missing or wrong |
 | crash | the emulator stopped |
 | hang | the screen stayed blank, or the run never ended |
