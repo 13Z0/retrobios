@@ -401,7 +401,7 @@ Fetching file index for retroarch...
   10994 files (6.7 GB)
     3269 BIOS files (4.1 GB), 5089 game data files (2.5 GB) and 2636 data files (38.5 MB).
     Game data: files a game or a game engine reads, of no use to the other cores. Data files: the files an emulator reads from a data folder of its own, such as Dolphin's Sys and PPSSPP's assets.
-  Not installable: 37 files (1 required, not found: 37).
+  Not installable: 37 files are not in the collection, 1 of them required.
 
 Checking existing files...
   0 in place, 10994 missing, 0 wrong copies
@@ -466,7 +466,7 @@ Fetching file index for batocera...
   14723 files (9.2 GB)
     3179 BIOS files (4.4 GB) and 11544 game data files (4.8 GB).
     Game data: files a game or a game engine reads, of no use to the other cores.
-  Not installable: 425 files (79 required, not found: 425).
+  Not installable: 425 files are not in the collection, 79 of them required.
 
 Checking existing files...
   0 in place, 14723 missing, 0 wrong copies
