@@ -234,15 +234,17 @@ class CheckNamesWhyAFileIsRefused(Scratch):
         self.complete("scph5501.bin", "pcsx/extra.bin")
         out = self.check()
         here = self.dest.resolve()
-        self.assertIn(f"opened at {here / 'scph5501.bin'} by beetle_psx, pcsx_rearmed", out)
-        self.assertIn(f"opened at {here / 'pcsx' / 'extra.bin'} by beetle_psx, pcsx_rearmed",
+        self.assertIn(f"read by beetle_psx, pcsx_rearmed at {here / 'scph5501.bin'}", out)
+        self.assertIn(f"read by beetle_psx, pcsx_rearmed at {here / 'pcsx' / 'extra.bin'}",
                       out)
+        # Never "opened" of a file that is not there (tui_audit_16 P3-12).
+        self.assertNotIn("opened at", out)
 
     def test_a_complete_folder_says_nothing_more(self):
         self.complete()
         proc = self.run_installer("--check", "--manifest", str(self.list))
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-        self.assertNotIn("opened at", proc.stdout)
+        self.assertNotIn("read by", proc.stdout)
 
 
 class ArchivesInTheBiosFolder(Scratch):
@@ -845,7 +847,7 @@ class OfflineLeavesFilesMissing(Scratch):
         proc = self.run_installer("--offline", "--manifest", str(self.list), "--no-input")
         # Its files are missing, as the BIOS files --offline leaves out are,
         # with or without questions.
-        self.assertIn("bluemsx: 0 already in place, 1 need the internet (--offline)",
+        self.assertIn("bluemsx: 0 already in place, 1 needs the internet (--offline)",
                       proc.stdout)
         self.assertNotIn("could not read", proc.stderr)
         self.assertNotIn("no longer in the source", proc.stdout)

@@ -148,7 +148,7 @@ class CopyFromAnOldCard(FromFolder):
         proc = self.install()
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
         self.assertEqual(self.installed(), {"scph5500.bin": JP, "pcsx/extra.bin": EXTRA})
-        self.assertIn(f"2 files copied from {self.old}, 2 still missing.", proc.stdout)
+        self.assertIn(f"2 files copied from {self.old}, 2 failed.", proc.stdout)
 
     def test_a_link_out_of_the_folder_is_not_followed(self):
         outside = self.root / "elsewhere"
@@ -196,7 +196,7 @@ class CopyFromAnOldCard(FromFolder):
             (repo.root / "bios" / "mgba_extra.bin").unlink()
             proc = repo.run("--from", str(old), "--no-input")
             self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-            self.assertIn(f"2 files copied from {old}, 2 downloaded, 1 still missing.",
+            self.assertIn(f"2 files copied from {old}, 2 downloaded, 1 failed.",
                           proc.stdout)
             self.assertEqual(sorted(repo.installed()), sorted(
                 name for name in payloads if name != "mgba/extra.bin"))

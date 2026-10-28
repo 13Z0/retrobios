@@ -210,7 +210,9 @@ in the names of what is held. On a computer it names the keys (`Enter Install`,
 launcher (`A Install`, `B Back`, see `RETROBIOS_PAD` below), and `?` shows
 both the buttons and the keys. Where neither is known, in SteamOS game mode or
 on a console no launcher named, it gives both spellings (`A/Enter`, `B/Esc`),
-and a narrow screen shortens them to `A`, `B` and `X`. On the
+and a narrow screen shortens them to `A`, `B` and `X`. In Termux on Android,
+with no launcher named, a narrow screen keeps the keys (`Enter`, `Esc`) instead,
+a phone having an Enter key and no A button. On the
 regions screen, Left and Right move the region under the cursor up and down the
 order of preference. During the download, a stop waits for the files in
 progress, and a second one stops at once. Select+Start on a handheld ends the
@@ -267,7 +269,8 @@ says why.
 A mouse or a touch screen works too, beside the keys and buttons, in a
 terminal that reports clicks: those of Linux, macOS, WSL and Termux. A click
 or a tap on a box (a system, a core, a region) ticks or unticks it, as Space
-does. On any other row it moves the cursor there, and a second one on that
+does. On any other row it moves the cursor there and adds `click or tap
+again` to the row and the bottom line, and a second one on that
 row does what Enter does: one row of a terminal is far smaller than a finger,
 and the row a screen opens on (**Install** on Confirm) is never chosen by one
 tap. The entries of the bottom line press their key, **Exit** on the result
@@ -732,6 +735,7 @@ RetroArch: 10994 files, 6.7 GB.
   3269 BIOS files (4.1 GB), 5089 game data files (2.5 GB) and 2636 data files (38.5 MB).
   Game data: files a game or a game engine reads, of no use to the other cores. Data files: the files an emulator reads from a data folder of its own, such as Dolphin's Sys and PPSSPP's assets.
   BIOS folder: /home/me/.config/retroarch/system
+  Not available here: jazz2/Source/Anims.j2a (Jazz Jackrabbit 2), game data its game reads. Copy it from your own copy of the game into /home/me/.config/retroarch/system/jazz2/Source/.
   Enter) install everything
   c) choose systems, cores and regions
   f) copy from a folder or an old card
@@ -786,7 +790,11 @@ answer is not asked.
   chosen too, as `generate_pack.py --system` does.
 - **Cores.** The platform's own BIOS list for the chosen systems is always
   kept. This narrows only the extra files each emulator core loads beyond it.
-  Asked only when the chosen systems have such files.
+  Asked only when the chosen systems have such files. Every core is kept
+  until numbers name some, and the head then says how many of how many
+  (`1 of 2 cores`). The full screen's **Cores** opens with every core
+  ticked, as Choose systems does: untick the ones you do not use, **All**
+  and **None** tick or untick them all.
 - **Regions.** Asked only when a chosen system has one BIOS per region. The
   numbers give an order of preference: `2,1` keeps the second region where a
   file for it exists, and the first one elsewhere.
@@ -1048,6 +1056,8 @@ gives for the device, below the card's root instead of its mount point:
 | `.tmp_update/onionVersion/version.txt` | Onion | `BIOS`, RetroArch's list |
 | `.allium/` | Allium | `BIOS`, RetroArch's list |
 | `Koriki/version.txt` | Koriki | `BIOS`, RetroArch's list |
+| `gamedata/`, `homebrew/` beside `bios/`, on a drive that is not a fixed disk | AmberELEC | `bios`, AmberELEC's list |
+| `bezels/default.cfg` beside `bios/`, on a drive that is not a fixed disk | EmuELEC | `bios`, EmuELEC's list |
 | `system/batocera.conf` holding `system.hostname=BATOCERA` or no hostname line, and no KNULLI file above | Batocera SHARE drive | `bios`, Batocera's list |
 | `system/recalbox.conf` | Recalbox SHARE drive | `bios`, Recalbox's list |
 | `system/batocera.conf` with any other hostname, and no KNULLI file above, or the files of two SHARE drives | named by neither: the run says which systems it could be | the folder of the system named with `--platform` |
@@ -1186,9 +1196,10 @@ folder inside another system's card (ROCKNIX's `roms/bios` named for KNULLI).
 A card whose own files name it is that card whatever its name: an Onion card
 mounted as `BIOS` gets `BIOS/BIOS`. One without the system's own files is
 refused for the MinUI family, Onion, muOS, spruceOS, CrossMix-OS, Allium and
-Koriki. KNULLI and ROCKNIX fill their card when they first start, and no file
-on the card names ArkOS, dArkOS, JELOS, KOLOS, UnofficialOS, ArchR, RetroOZ,
-plumOS, MiyooCFW, AmberELEC, EmuELEC or the Anbernic firmware: such a folder
+Koriki. KNULLI, ROCKNIX, AmberELEC and EmuELEC fill their card when they first
+start (AmberELEC's `gamedata` and `homebrew`, EmuELEC's `bezels/default.cfg`),
+and no file on the card names ArkOS, dArkOS, JELOS, KOLOS, UnofficialOS, ArchR,
+RetroOZ, plumOS, MiyooCFW or the Anbernic firmware: such a folder
 gets the system's folder below it, and a note says so, kept on **Create the
 folder?** and the plan. No to creating its folders asks for the card again.
 Under WSL a drive letter (`D:`, `D:\`) is that Windows drive, typed or given
@@ -1217,16 +1228,20 @@ that question a drive is numbered by the folder its system reads (`ONION:
 BIOS`), a drive nothing names by its `bios` folder (`EASYROMS: bios`), never
 by its root, which no setup reads. A handheld's card whose own files sit on a
 part a computer does not open is told by the folders its system writes beside
-`bios` on the games part: `themes` and `launchimages` on ArkOS's `EASYROMS`,
-`gamedata` and `homebrew` on AmberELEC's `GAMES`, `bezels/default.cfg` on
-EmuELEC's `EEROMS`. A disk Windows or Linux calls fixed is never one. With
-nothing found here the first screen and line mode say `A card is in the reader
-(EASYROMS): choose its system` (two cards: `choose their systems`), and its
-`bios` folder comes first at the folder question, under Enter, before this
-computer's usual folder. A drive with a `bios` folder and none of those
-folders, a data drive or a stick, is numbered with a note (`DATA has a bios
-folder, and nothing on it shows a handheld's card: listed, not chosen.`) and
-never taken under Enter. Another system's card or SHARE drive, and a
+`bios` on the games part: `bgmusic` or `launchimages` on ArkOS's `EASYROMS`
+(every ArkOS card has one of them from its first images, `themes` only since
+an update a full card skipped), `gamedata` and `homebrew` on AmberELEC's
+`GAMES`, `bezels/default.cfg` on EmuELEC's `EEROMS`. A disk Windows or Linux
+calls fixed is never one. AmberELEC's and EmuELEC's card is found as theirs
+(`AmberELEC SD card (GAMES)` under **Found on this machine**), in both modes
+and on their own setup's card question, and gets their list. An ArkOS card
+reads RetroArch's list: with nothing found here the first screen and line mode
+say `A card is in the reader (EASYROMS): choose its system` (two cards: `choose
+their systems`), and its `bios` folder comes first at the folder question,
+under Enter, before this computer's usual folder. A drive with a `bios` folder
+and none of those folders, a data drive or a stick, is numbered with a note
+(`DATA has a bios folder but no folder a handheld system writes. Pick it below
+if your files go there.`) and never taken under Enter. Another system's card or SHARE drive, and a
 drive two systems fit, are left out, and a line names them: each is reached
 through its own setup. A folder typed is read from the current
 one when it is not a full path, and named in full after. `q` quits there too

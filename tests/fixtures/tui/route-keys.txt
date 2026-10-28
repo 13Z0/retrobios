@@ -598,11 +598,11 @@
  Tick the regions to keep, best first.
    Where a system has one BIOS per
    region, the best one found is
-   installed.
+   installed. With none ticked, every
+   region's BIOS is kept.
 
  > [1] North America
    [ ] Japan
-
 
  Enter Tick  Esc Done  <> Order  ? Help
 === regions 40x15
@@ -611,11 +611,11 @@
  Tick the regions to keep, best first.
    Where a system has one BIOS per
    region, the best one found is
-   installed.
+   installed. With none ticked, every
+   region's BIOS is kept.
 
  > [1] North America
    [ ] Japan
-
 
 
 
@@ -625,11 +625,11 @@
  RetroBIOS: Preferred regions
 
  Tick the regions to keep, best first. Where a system has one BIOS per region,
-   the best one found is installed.
+   the best one found is installed. With none ticked, every region's BIOS is
+   kept.
 
  > [1] North America
    [ ] Japan
-
 
 
 
@@ -649,38 +649,41 @@
 === cores 40x12
  RetroBIOS: Cores
 
- Tick the cores you use. With none
-   ticked, every core's files are kept.
-
- > Filter (/ to type)
+ Every core ticked keeps every core's
+   files. Untick the cores you do not
+   use: the platform's own files are
+   always kept.
+ > All
+   None
+   Filter (/ to type)
    [ ] mesen
    [x] pcsx_rearmed
-
-
-
- Enter Filter  Esc Back  Space Tick
+ Enter Tick all  Esc Back  Space Tick
 === cores 40x15
  RetroBIOS: Cores
 
- Tick the cores you use. With none
-   ticked, every core's files are kept.
+ Every core ticked keeps every core's
+   files. Untick the cores you do not
+   use: the platform's own files are
+   always kept.
 
- > Filter (/ to type)
+ > All
+   None
+   Filter (/ to type)
    [ ] mesen
    [x] pcsx_rearmed
 
 
-
-
-
-
- Enter Filter  Esc Back  Space Tick
+ Enter Tick all  Esc Back  Space Tick
 === cores 80x24
  RetroBIOS: Cores
 
- Tick the cores you use. With none ticked, every core's files are kept.
+ Every core ticked keeps every core's files. Untick the cores you do not use:
+   the platform's own files are always kept.
 
- > Filter (/ to type)
+ > All
+   None
+   Filter (/ to type)
    [ ] mesen
    [x] pcsx_rearmed
 
@@ -696,10 +699,7 @@
 
 
 
-
-
-
- Enter Filter  Esc Back  Space Tick  ? Help
+ Enter Tick all  Esc Back  Space Tick  ? Help
 === preview 40x12
  RetroBIOS: Preview
 

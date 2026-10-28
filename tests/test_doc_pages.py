@@ -133,11 +133,14 @@ class InstallerOutputExample(unittest.TestCase):
         text = _page("installer.md")
         run = _generated(text, "dry-run")
         manifest = json.loads((ROOT / "install" / "retroarch.json").read_text(encoding="utf-8"))
-        omitted = re.search(r"Not installable: \d+ files? \(\d+ required, (.*)\)\.", run)
+        # The line as the installer writes it (not_installable_words), or
+        # its earlier "(1 required, not found: 37)" form.
+        omitted = re.search(r"Not installable: \d+ files? (?:\(\d+ required, (.*)\)\.|(?:is|are) "
+                            r"not in the collection|.*Why: (.*)\.)", run)
         self.assertEqual(omitted is not None, bool(manifest.get("omitted_files")))
-        if omitted:
-            for part in omitted.group(1).split(", "):
-                self.assertIn(part.rsplit(":", 1)[0], install.OMISSION_REASONS.values())
+        if omitted and (omitted.group(1) or omitted.group(2)):
+            for part in (omitted.group(1) or omitted.group(2)).split(", "):
+                self.assertIn(re.split(r":| \(", part)[0], install.OMISSION_REASONS.values())
         count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", run).groups()
         self.assertIn(f"0 in place, {count} missing", run)
         self.assertSplitAddsUp(run, count, size)

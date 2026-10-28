@@ -177,8 +177,13 @@ def _marker(rule: _install._OsRule) -> str:
         path, pattern = rule.values
         line = re.sub(r"\\s\*\$$", "", re.sub(r"^(\^|\\A)", "", pattern)).replace("\\", "")
         return f"`{path}` holding the line `{line}`"
-    return ", ".join(f"`{value}`" if PurePosixPath(value).suffix else f"`{value}/`"
-                     for value in rule.values)
+    named = ", ".join(f"`{value}`" if PurePosixPath(value).suffix else f"`{value}/`"
+                      for value in rule.values)
+    if rule.method == "games_part":
+        # Told on the games part beside its bios folder, on a drive the
+        # system does not call fixed (install.games_part).
+        return f"{named} beside `bios/`, on a drive that is not a fixed disk"
+    return named
 
 
 def _list_words(plat: str) -> str:
@@ -189,7 +194,8 @@ def _list_words(plat: str) -> str:
 def card_marker_rows() -> list[list[str]]:
     """The files that name a card or a SHARE drive, in the order they are
     read: install.py's card rules, then its SHARE drive files."""
-    rows = [[_marker(rule), rule.name, f"`{rule.bios}`, {_list_words(rule.manifest)}"]
+    rows = [[_marker(rule), rule.name,
+             f"`{rule.bios or 'bios'}`, {_list_words(rule.manifest)}"]
             for rule in _install._card_rules()]
     hostname = "system.hostname=BATOCERA"
     for plat, marker in _install._SHARE_DRIVES:

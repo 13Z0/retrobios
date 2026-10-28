@@ -302,11 +302,11 @@
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Preferred regions^[[0m
 
  Tick the regions to keep, best first. Where a system has one BIOS per region,
-   the best one found is installed.
+   the best one found is installed. With none ticked, every region's BIOS is
+   kept.
  
 ^[[0;7;35m > [1] North America^[[0m
    [ ] Japan
- 
  
  
  
@@ -326,9 +326,12 @@
 === cores
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Cores^[[0m
 
- Tick the cores you use. With none ticked, every core's files are kept.
+ Every core ticked keeps every core's files. Untick the cores you do not use:
+   the platform's own files are always kept.
  
-^[[0;7;35m > Filter (/ to type)^[[0m
+^[[0;7;35m > All^[[0m
+   None
+   Filter (/ to type)
    [ ] mesen
    [x] pcsx_rearmed
  
@@ -344,10 +347,7 @@
  
  
  
- 
- 
- 
- ^[[0;1;35mA/Enter^[[0m Filter  ^[[0;2mB/Esc^[[0m Back  ^[[0;2mX/Space^[[0m Tick  ^[[0;2m?^[[0m Help
+ ^[[0;1;35mA/Enter^[[0m Tick all  ^[[0;2mB/Esc^[[0m Back  ^[[0;2mX/Space^[[0m Tick  ^[[0;2m?^[[0m Help
 === preview
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Preview^[[0m
 

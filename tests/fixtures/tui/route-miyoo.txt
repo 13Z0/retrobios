@@ -652,11 +652,11 @@
  Tick the regions to keep, best first.
    Where a system has one BIOS per
    region, the best one found is
-   installed.
+   installed. With none ticked, every
+   region's BIOS is kept.
 
  > [1] North America
    [ ] Japan
-
 
  A Tick  R2 Done  <> Order
 === regions 40x15
@@ -665,11 +665,11 @@
  Tick the regions to keep, best first.
    Where a system has one BIOS per
    region, the best one found is
-   installed.
+   installed. With none ticked, every
+   region's BIOS is kept.
 
  > [1] North America
    [ ] Japan
-
 
 
 
@@ -679,11 +679,11 @@
  RetroBIOS: Preferred regions
 
  Tick the regions to keep, best first. Where a system has one BIOS per region,
-   the best one found is installed.
+   the best one found is installed. With none ticked, every region's BIOS is
+   kept.
 
  > [1] North America
    [ ] Japan
-
 
 
 
@@ -703,38 +703,41 @@
 === cores 40x12
  RetroBIOS: Cores
 
- Tick the cores you use. With none
-   ticked, every core's files are kept.
-
- > Filter (with a keyboard)
+ Every core ticked keeps every core's
+   files. Untick the cores you do not
+   use: the platform's own files are
+   always kept.
+ > All
+   None
+   Filter (with a keyboard)
    [ ] mesen
    [x] pcsx_rearmed
-
-
-
- A Filter  R2 Back
+ A Tick all  R2 Back
 === cores 40x15
  RetroBIOS: Cores
 
- Tick the cores you use. With none
-   ticked, every core's files are kept.
+ Every core ticked keeps every core's
+   files. Untick the cores you do not
+   use: the platform's own files are
+   always kept.
 
- > Filter (with a keyboard)
+ > All
+   None
+   Filter (with a keyboard)
    [ ] mesen
    [x] pcsx_rearmed
 
 
-
-
-
-
- A Filter  R2 Back
+ A Tick all  R2 Back
 === cores 80x24
  RetroBIOS: Cores
 
- Tick the cores you use. With none ticked, every core's files are kept.
+ Every core ticked keeps every core's files. Untick the cores you do not use:
+   the platform's own files are always kept.
 
- > Filter (with a keyboard)
+ > All
+   None
+   Filter (with a keyboard)
    [ ] mesen
    [x] pcsx_rearmed
 
@@ -750,10 +753,7 @@
 
 
 
-
-
-
- A Filter  R2 Back
+ A Tick all  R2 Back
 === preview 80x24
  RetroBIOS: Preview
 
