@@ -273,7 +273,9 @@ and the row a screen opens on (**Install** on Confirm) is never chosen by one
 tap. The entries of the bottom line press their key, **Exit** on the result
 too. One that writes files with no screen after it to look first, **Install**
 on the plan and **Put it on the card**, takes two taps: the first adds
-`click or tap again` to it in the accent colour, the second presses it.
+`click or tap again` to it in the accent colour (`tap again` where the line
+has no room), the second presses it. A first tap on the row it acts on arms
+it the same way, on the row and on the bottom line.
 **Install** on Confirm, which is that look, Quit, Continue and Close take one,
 so installing or quitting never takes more than two. A row of
 Preferred regions stays where it is when it is ticked, its number giving the
@@ -281,8 +283,8 @@ order, which the list shows sorted the next time it opens. The line that says
 which rows are in view shows the next page, and the wheel scrolls a list or a
 text without moving the cursor unless it would leave the screen. Nothing
 happens until the button or the finger comes up, and only where it went down,
-on the screen drawn when it went down. A new screen takes no press for its
-first 400 ms: a double click is two presses at most 400 ms (GNOME) to 500 ms
+on the screen drawn when it went down. A new screen takes no press for the
+first 400 ms after it is on the screen, however long it took to lay out: a double click is two presses at most 400 ms (GNOME) to 500 ms
 (Windows, macOS) apart and the new screen is drawn on the first release, so
 the second tap of a double tap that changes the screen does nothing on the
 new one, and a tap made later acts. The right and middle buttons
@@ -391,7 +393,7 @@ A RetroArch dry run into an empty folder printed this on 2026-10-27:
 ```
 Fetching file index for retroarch...
   106 files read from RetroArch's save directory go to a folder per core under /home/me/.config/retroarch/saves
-  10994 files (6.6 GB)
+  10994 files (6.7 GB)
     3269 BIOS files (4.1 GB), 5089 game data files (2.5 GB) and 2636 data files (38.5 MB).
   Not installable: 37 files (1 required, not found: 37).
 
@@ -528,7 +530,7 @@ The same command with `--check` reads the folder and writes nothing:
 Checking existing files...
   14481 in place, 0 missing, 0 wrong copies
 
-  All files up to date.
+  Everything is in place.
 ```
 
 The files the collection does not hold are listed after it again, as long as
@@ -544,7 +546,7 @@ core opens it:
 
 ```
   3 files to download:
-    wrong hash: scph5501.bin
+    wrong copy: scph5501.bin
       another region: the contents of scph5500.bin (japan)
       opened at /home/me/.config/retroarch/system/scph5501.bin by beetle_psx, pcsx_rearmed
     missing: gba_bios.bin
@@ -703,7 +705,7 @@ same choice comes as questions after detection. A RetroArch run with `--plain`
 printed this on 2026-10-28, `g` then pressed:
 
 ```
-RetroArch: 10994 files, 6.6 GB.
+RetroArch: 10994 files, 6.7 GB.
   3269 BIOS files (4.1 GB), 5089 game data files (2.5 GB) and 2636 data files (38.5 MB).
   Game data: files a game or a game engine reads, of no use to the other cores. Data files: the files an emulator reads from a data folder of its own, such as Dolphin's Sys and PPSSPP's assets.
   BIOS folder: /home/me/.config/retroarch/system
@@ -908,8 +910,8 @@ what the options name, everything by default.
 <!-- /generated: options -->
 
 `--check` reads the same file list, hashes the destination and exits, with
-code 1 when a file is missing or does not match and 0 when every one does. Files
-with a wrong hash are listed first and in full, then the missing ones whose
+code 1 when a file is missing or does not match and 0 when every one does. Wrong
+copies are listed first and in full, then the missing ones whose
 reason it found, then the first ten other missing ones (`--verbose` lists them
 all). See [Why a file is refused](#why-a-file-is-refused). `--dry-run` counts the data trees in its total. Without
 it, a file already present with the expected hash is left untouched, and one
@@ -1613,7 +1615,7 @@ fields, the installer refuses to narrow rather than install everything.
 
 | Code | Meaning |
 |------|---------|
-| `0` | everything asked for is installed or already up to date |
+| `0` | everything asked for is installed or already in place |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed or were left out by `--offline` while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, a `--dest` that is not the card of the system named (another system's card, a folder inside one, a drive with none of its files where its card always has them, or a folder that does not exist), `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), or `--offline` left every file out, the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup`. Also a quit chosen before the install, as `gh` ends a cancelled prompt: `q` at a question, `q` or **Quit** on the full screen, which then keeps `RetroBIOS: quit. Nothing was installed.`, and the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`). No code but `0` closes a Windows Terminal tab started on the installer itself, so such a tab stays open on a quit |
 | `130` | stopped with Ctrl+C, or with Ctrl+C or Ctrl+D at a question, the terminal keeping `RetroBIOS: stopped. Nothing was installed.` before an install. Run the same command again to carry on |

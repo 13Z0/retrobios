@@ -109,6 +109,25 @@ class InstallerOutputExample(unittest.TestCase):
                           r"files \(([\d.]+ [KMG]B)\)", menu.group(3))
         self.assertEqual(games.groups(), split.groups()[2:])
 
+    def test_the_samples_say_what_the_installer_prints_for_the_list(self):
+        """tui_audit_15 P3-15: both samples said 6.6 GB where the same list
+        prints 6.7 GB, the size updated by hand from its rounded parts. The
+        head is the installer's own tally of the list, its second spellings
+        and data files in it, as a run on Linux counts them."""
+        import install
+
+        text = _page("installer.md")
+        manifest = json.loads((ROOT / "install" / "retroarch.json").read_text(encoding="utf-8"))
+        counts = install.tally([*manifest["files"], *(manifest.get("case_variants") or [])])
+        trees = manifest.get("data_directories") or []
+        data = sum(len(tree["files"]) for tree in trees)
+        data_bytes = sum(meta["size"] for tree in trees for meta in tree["files"].values())
+        total = f"{counts.files + data} files"
+        size = install.format_size(counts.size + data_bytes)
+        parts = install.parts_words(counts, data, data_bytes, 0)
+        self.assertIn(f"\n  {total} ({size})\n    {parts}.\n", text)
+        self.assertIn(f"\nRetroArch: {total}, {size}.\n  {parts}.\n", text)
+
     def assertSplitAddsUp(self, text: str, count: str, size: str) -> None:
         """The run counted 8069 files where its menu counted 3259 BIOS files
         and 5089 game data files: the parts add up to the total they divide,

@@ -391,7 +391,7 @@ class ReviewCases(unittest.TestCase):
         out = buf.getvalue()
         self.assertNotIn("Done.", out)
         self.assertIn("12 files not downloaded", out)
-        self.assertIn("3 files already up to date", out)
+        self.assertIn("3 files already in place", out)
 
     def test_quiet_refuses_modes_it_would_silence(self):
         for mode in ("--check", "--dry-run", "--list-platforms", "--list-systems"):
@@ -547,7 +547,7 @@ class AFolderThisUserCannotEnter(unittest.TestCase):
                 os.chmod(locked, 0o755)
         self.assertNotIn("Traceback", proc.stderr)
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertIn("wrong hash: pcsx/extra.bin", proc.stdout)
+        self.assertIn("wrong copy: pcsx/extra.bin", proc.stdout)
         self.assertIn("could not be read (Permission denied)", proc.stdout)
         self.assertIn("missing: scph5501.bin", proc.stdout)
 
@@ -937,7 +937,7 @@ class TheEndOfARunPaintsItsStatusWords(unittest.TestCase):
                   ("failure", "1 file failed"), ("failure", "failed:"))),
                 ((2, 1, 0, 0, False), {},
                  (("success", "Done"), ("success", "2 files installed"),
-                  ("success", "1 file already up to date"))),
+                  ("success", "1 file already in place"))),
                 ((1, 0, 0, 0, False), {"offline": 2},
                  (("warning", "Finished with files missing"), ("warning", "2 not fetched")))):
             with self.subTest(counts=counts):
