@@ -20,7 +20,7 @@ terms: ios, iphone, ipad
 
 <!-- os-tabs -->
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --dry-run
+curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --dry-run
 ```
 
 ## Do I need every file of a console?
@@ -83,7 +83,7 @@ with the card in drive `E:`, run:
 
 <!-- os-tabs windows: --platform retroarch --dest E:\retroarch\cores\system -->
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
+curl -fsSL https://abdess.github.io/retrobios/i \
   | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system
 ```
 

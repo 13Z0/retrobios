@@ -18,6 +18,7 @@ from pathlib import Path
 
 import sitemarkup as markup
 from safeparse import require_yaml
+from sitebootstrap import PS1_NAME, SH_NAME
 
 PLATFORMS_DIR = Path(__file__).resolve().parent.parent / "platforms"
 GUIDES_FILE = PLATFORMS_DIR / "_guides.yml"
@@ -380,6 +381,9 @@ def load_guides(path: Path = GUIDES_FILE, registry: dict | None = None) -> dict:
 
 _LOADED = load_guides()
 INSTALL_BASE: str = _LOADED["install_base"]
+# The bootstraps the site serves (sitebootstrap.py writes them).
+INSTALL_SH: str = f"{INSTALL_BASE}/{SH_NAME}"
+INSTALL_PS1: str = f"{INSTALL_BASE}/{PS1_NAME}"
 DEVICE_GROUPS: dict[str, tuple[str, str]] = _LOADED["device_groups"]
 GROUP_ANCHORS: dict[str, str] = _LOADED["group_anchors"]
 ALSO_RUNS: dict[str, tuple[tuple[str, str, str, str, str], ...]] = _LOADED["also_runs"]
@@ -435,10 +439,10 @@ def install_command(shell: str, args: str = "") -> str:
     takes none.
     """
     if shell == "sh":
-        return f"curl -fsSL {INSTALL_BASE}/install.sh | sh" + (f" -s -- {args}" if args else "")
+        return f"curl -fsSL {INSTALL_SH} | sh" + (f" -s -- {args}" if args else "")
     if args:
-        return f"&([scriptblock]::Create((irm {INSTALL_BASE}/install.ps1))) {args}"
-    return f"irm {INSTALL_BASE}/install.ps1 | iex"
+        return f"&([scriptblock]::Create((irm {INSTALL_PS1}))) {args}"
+    return f"irm {INSTALL_PS1} | iex"
 
 
 # The title over each command block, by the shell it is written for.

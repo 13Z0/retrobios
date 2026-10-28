@@ -28,9 +28,9 @@ from common import (
     load_platform_registry,
     write_text_atomic,
 )
+from siteguides import install_command
 
 REPO = "Abdess/retrobios"
-RAW = f"https://raw.githubusercontent.com/{REPO}/main"
 SITE = "https://abdess.github.io/retrobios/"
 
 
@@ -112,12 +112,12 @@ def render(record: dict, platforms_dir: str, whats_new: str) -> str:
         "",
         "**Linux, macOS, Steam Deck**",
         "```sh",
-        f"curl -fsSL {RAW}/install.sh | sh",
+        install_command("sh"),
         "```",
         "",
         "**Windows (PowerShell)**",
         "```powershell",
-        f"irm {RAW}/install.ps1 | iex",
+        install_command("powershell"),
         "```",
         "",
         "### Download a pack",

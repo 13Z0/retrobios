@@ -29,11 +29,38 @@ Each links to its row in the [Options](#options) table.
 
 ```bash
 # Linux / macOS / Steam Deck
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+curl -fsSL https://abdess.github.io/retrobios/i | sh
 ```
 
 ```powershell
 # Windows
+irm https://abdess.github.io/retrobios/i.ps1 | iex
+```
+
+Typed by hand, the address works without `https://`:
+
+```bash
+curl -fL abdess.github.io/retrobios/i | sh
+```
+
+```powershell
+irm abdess.github.io/retrobios/i.ps1 | iex
+```
+
+The `https://` form is safer, because without it the first request goes out
+in clear text and the redirect it gets back could be replaced on the way.
+
+`i` and `i.ps1` are `install.sh` and `install.ps1` as of the commit the site
+was built from, set to download `install.py` from that same commit. The
+fingerprint they check and the installer they fetch never come from two
+different versions. If the site is down, the repository serves the same
+bootstraps:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+```
+
+```powershell
 irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
 ```
 
@@ -68,7 +95,7 @@ What `RETROBIOS_REF` does not pin is listed under
 The shell bootstrap forwards everything after `-s --`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
+curl -fsSL https://abdess.github.io/retrobios/i \
   | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system
 ```
 
@@ -84,7 +111,7 @@ rejected with `A positional parameter cannot be found`. Building a script block
 from the text and calling it passes the arguments through:
 
 ```powershell
-&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) `
+&([scriptblock]::Create((irm https://abdess.github.io/retrobios/i.ps1))) `
   --platform retroarch --dest D:\bios
 ```
 
@@ -1258,7 +1285,7 @@ Running `termux-setup-storage` once is what makes the shared one reachable:
 ```bash
 pkg install python
 termux-setup-storage
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+curl -fsSL https://abdess.github.io/retrobios/i | sh
 ```
 
 `EXTERNAL_STORAGE` overrides the storage root for a device that mounts it
@@ -1735,12 +1762,12 @@ The installer finds a platform from the config files it knows. When it finds
 none, name the platform and its BIOS folder:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest ~/.config/retroarch/system
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform batocera --dest /userdata/bios
+curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --platform retroarch --dest ~/.config/retroarch/system
+curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --platform batocera --dest /userdata/bios
 ```
 
 ```powershell
-&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) `
+&([scriptblock]::Create((irm https://abdess.github.io/retrobios/i.ps1))) `
   --platform retroarch --dest C:\RetroArch-Win64\system
 ```
 

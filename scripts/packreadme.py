@@ -5,10 +5,7 @@ goes, and which ones the user has to rename."""
 
 from __future__ import annotations
 
-from siteguides import INSTALL_BASE, pack_manual
-
-INSTALL_SH = f"{INSTALL_BASE}/install.sh"
-INSTALL_PS1 = f"{INSTALL_BASE}/install.ps1"
+from siteguides import INSTALL_PS1, INSTALL_SH, pack_manual
 
 def _detect_systems(detect: list[dict]) -> list[str]:
     """The operating systems the registry's detection rules cover, in order."""

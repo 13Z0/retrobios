@@ -19,7 +19,8 @@
 # The registry keeps what tools read (device_group, extract_to, install);
 # this file keeps what people read.
 
-install_base: https://raw.githubusercontent.com/Abdess/retrobios/main
+# The site serving the one-line bootstraps (scripts/sitebootstrap.py).
+install_base: https://abdess.github.io/retrobios
 
 # Is it safe: shown on the home page and under every command on a guide page.
 # Where it writes follows install.py: the BIOS folder, the frontend's save

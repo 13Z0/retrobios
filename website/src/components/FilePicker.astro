@@ -68,7 +68,7 @@ const packs = Object.fromEntries(
 
 	type Release = { tag: string; packs: Record<string, { files: number; size: number }> };
 
-	const INSTALL = 'curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s --';
+	const INSTALL = 'curl -fsSL https://abdess.github.io/retrobios/i | sh -s --';
 	const MAX_ROWS = 500;
 	// A word that holds a hyphen (--platform, nintendo-64dd) never breaks
 	// inside: the same rule as the command blocks (ec-unbroken-tokens.mjs).

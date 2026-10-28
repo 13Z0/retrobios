@@ -321,7 +321,7 @@ class EveryPlatformHasAPermanentPage(unittest.TestCase):
                                 f"/releases/download/{record['tag']}/{asset}", page)
                     elif name not in RELEASED:
                         self.assertNotIn("_BIOS_Pack", page)
-                        self.assertIn(f"install.sh | sh -s -- --platform {name}", page)
+                        self.assertIn(f"/i | sh -s -- --platform {name}", page)
                         self.assertIn("No ZIP for ", page)
 
     def test_the_generator_writes_and_sweeps_them(self):

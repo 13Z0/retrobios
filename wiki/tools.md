@@ -1320,10 +1320,10 @@ Cross-platform BIOS installer for end users:
 python install.py
 
 # One-line automatic install (Linux/macOS)
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+curl -fsSL https://abdess.github.io/retrobios/i | sh
 
 # One-line automatic install (Windows PowerShell)
-irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
+irm https://abdess.github.io/retrobios/i.ps1 | iex
 ```
 
 `install.py` auto-detects the user's platform by checking config files,

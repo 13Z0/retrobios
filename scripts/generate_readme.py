@@ -35,6 +35,7 @@ from common import (
     write_if_changed,
 )
 import release_record
+from siteguides import install_command
 from verify import verify_platform
 
 
@@ -557,21 +558,21 @@ def generate_readme(db: dict, platforms_dir: str, db_path: str = "database.json"
         "",
         "```bash",
         "# Linux / macOS / Steam Deck",
-        "curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh",
+        install_command("sh"),
         "",
         "# Windows (PowerShell)",
-        "irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex",
+        install_command("powershell"),
         "",
         "# Android (Termux, after pkg install python and termux-setup-storage)",
-        "curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh",
+        install_command("sh"),
         "",
         "# SD card mounted on a PC: a muOS, KNULLI, ROCKNIX, Onion, spruceOS or MinUI card",
         "# is found by itself. For another card, --dest is its BIOS folder",
         "# (RetroArch on Switch: retroarch/cores/system, on Android: RetroArch/system)",
-        "curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system",
+        install_command("sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system"),
         "",
         "# Options in PowerShell: anything after | iex goes to iex, so the script runs as a block",
-        "&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) --check",
+        install_command("powershell", "--check"),
         "```",
         "",
         "The script opens a full-screen installer, driven with the arrow keys and Enter, or with a"

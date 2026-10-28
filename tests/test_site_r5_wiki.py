@@ -22,7 +22,7 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import sitediagrams  # noqa: E402
-from siteguides import INSTALL_BASE  # noqa: E402
+from siteguides import INSTALL_SH  # noqa: E402
 from tests import sitepages  # noqa: E402
 
 WIKI = REPO_ROOT / "wiki"
@@ -113,7 +113,7 @@ class OsTabsTakeOptionsPerSystem(unittest.TestCase):
     """The marker gives any tab its own options, and refuses words it cannot read."""
 
     PAGE = ("<!-- os-tabs windows: --dest E:\\x macos: --dest /m steamdeck: --dest /d -->\n"
-            f"```sh\ncurl -fsSL {INSTALL_BASE}/install.sh | sh -s -- --dest /l\n```\n")
+            f"```sh\ncurl -fsSL {INSTALL_SH} | sh -s -- --dest /l\n```\n")
 
     def test_each_named_tab_uses_its_own(self):
         parts = re.split(r'<TabItem label="([^"]+)">', sitediagrams.expand_commands(self.PAGE))

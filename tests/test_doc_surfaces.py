@@ -267,7 +267,7 @@ class EndUsersCheckTheirOwnFolder(unittest.TestCase):
     def test_the_download_page_gives_the_one_liner_check(self):
         page = _which_pack()
         self.assertNotIn("from a checkout", page)
-        self.assertIn("install.sh | sh -s -- --check", page)
+        self.assertIn("/i | sh -s -- --check", page)
 
     def test_the_readme_does_not_call_verify_a_check_of_your_bios(self):
         self.assertNotIn("Verify your BIOS collection", _read("README.md"))

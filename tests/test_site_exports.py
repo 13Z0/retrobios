@@ -902,8 +902,8 @@ class AnEmulatorPageOffersItsInstall(unittest.TestCase):
 
         profile = yaml.safe_load((ROOT / "emulators" / "pcem.yml").read_text(encoding="utf-8"))
         text = "\n".join(_install_block("pcem", profile))
-        self.assertIn("install.sh | sh -s -- --emulator pcem", text)
-        self.assertIn("install.ps1))) --emulator pcem", text)
+        self.assertIn("/i | sh -s -- --emulator pcem", text)
+        self.assertIn("/i.ps1))) --emulator pcem", text)
         self.assertEqual(_install_block("x", {"type": "alias"}), [])
 
     def test_the_installer_takes_the_option(self):
@@ -969,7 +969,7 @@ class TheOneLinerIsWhereUsersLand(unittest.TestCase):
 
         page = generate_site.generate_which_pack()
         self.assertIn("Android (Termux", page)
-        self.assertIn("install.ps1))) --check", page)
+        self.assertIn("/i.ps1))) --check", page)
         self.assertIn("--platform retroarch --dest", page)
 
     def test_platform_and_system_pages(self):
@@ -979,14 +979,14 @@ class TheOneLinerIsWhereUsersLand(unittest.TestCase):
         cov = {"platform": "Batocera", "mode": "md5", "present": 0, "total": 0,
                "verified": 0, "missing": 0, "details": [], "config": {"systems": {}}}
         page = generate_site.generate_platform_page("batocera", cov)
-        self.assertIn("install.sh | sh -s -- --platform batocera", page)
+        self.assertIn("/i | sh -s -- --platform batocera", page)
         # Batocera runs the command on the device itself, so its page opens on
         # the computer route. A platform detected on Windows gets the
         # PowerShell form, and its command comes before the ZIP.
         cov = dict(cov, platform="RetroArch", mode="existence")
         page = generate_site.generate_platform_page("retroarch", cov)
-        self.assertIn("install.ps1))) --platform retroarch", page)
-        self.assertIn("install.sh | sh -s -- --platform retroarch", page)
+        self.assertIn("/i.ps1))) --platform retroarch", page)
+        self.assertIn("/i | sh -s -- --platform retroarch", page)
         self.assertLess(page.index("--platform retroarch"), page.index("rb-button"))
 
         entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3,

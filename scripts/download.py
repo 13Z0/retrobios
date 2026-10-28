@@ -89,8 +89,7 @@ class Pack:
 # are served file by file by the installer.
 NO_PACK_HINT = (
     "A setup without a pack is served by the installer:\n"
-    "  curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh"
-    " | sh -s -- --platform <name>"
+    "  curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --platform <name>"
 )
 
 

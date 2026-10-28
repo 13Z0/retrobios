@@ -404,6 +404,7 @@ def _check_get_pages(
     """
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import release_record  # noqa: PLC0415
+    from siteguides import INSTALL_SH  # noqa: PLC0415
     from common import list_registered_platforms, list_release_pack_platforms  # noqa: PLC0415
 
     if not (platforms_dir / "_registry.yml").is_file():
@@ -428,7 +429,7 @@ def _check_get_pages(
             packs = [a for a in assets if "_BIOS_Pack" in a]
             if packs:
                 issues.append(f"{rel}: links a pack for a setup without one: {packs[0]}")
-            if "install.sh" not in (site / rel).read_text(encoding="utf-8"):
+            if f"{INSTALL_SH} | sh" not in (site / rel).read_text(encoding="utf-8"):
                 issues.append(f"{rel}: gives no install command")
     return issues
 

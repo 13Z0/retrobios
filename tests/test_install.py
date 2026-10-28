@@ -1911,7 +1911,7 @@ class TestManualPlatformPrompt(unittest.TestCase):
         with unittest.mock.patch.dict(os.environ, {"RETROBIOS_BOOTSTRAP": "ps1"}):
             hint = "\n".join(install._manual_usage_hint("windows"))
         self.assertIn("--platform retroarch --dest", hint)
-        self.assertIn("install.ps1", hint)
+        self.assertIn("/i.ps1", hint)
 
 
 class TestSteamRetroarchDetection(unittest.TestCase):
@@ -3983,7 +3983,7 @@ class HintsGiveTheUsersOwnCommandBack(unittest.TestCase):
     def test_the_shell_one_liner_is_rebuilt(self):
         with unittest.mock.patch.dict(os.environ, {"RETROBIOS_BOOTSTRAP": "sh"}):
             hint = "\n".join(install._manual_usage_hint("linux"))
-        self.assertIn("install.sh | sh -s -- --platform retroarch", hint)
+        self.assertIn("/i | sh -s -- --platform retroarch", hint)
         self.assertNotIn("python3 install.py", hint)
         self.assertIn(install.INSTALLER_PAGE, hint)
 
@@ -4028,7 +4028,7 @@ class HintsGiveTheUsersOwnCommandBack(unittest.TestCase):
                                            False, "retroarch")
         self.assertNotIn("sudo", advice)
         self.assertIn("administrator", advice)
-        self.assertIn("install.ps1", advice)
+        self.assertIn("/i.ps1", advice)
         self.assertIn("--system atari-lynx", advice)
 
     def test_a_full_drive_keeps_the_platform(self):
@@ -4070,7 +4070,7 @@ class HintsGiveTheUsersOwnCommandBack(unittest.TestCase):
         proc = _install_run(env, "--help")
         self.assertEqual(proc.returncode, 0)
         self.assertIn("examples:", proc.stdout)
-        self.assertIn("install.sh | sh -s -- --platform batocera --dest", proc.stdout)
+        self.assertIn("/i | sh -s -- --platform batocera --dest", proc.stdout)
         self.assertIn(install.INSTALLER_PAGE, proc.stdout)
 
 
