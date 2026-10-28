@@ -846,7 +846,10 @@ python scripts/sync_release_assets.py --apply
 
 Runs a libretro core with no window, no sound and no input device, and
 reports what it did. It is the test in real conditions behind a claim about
-a core: which files it opens, what it shows, how fast it runs.
+a core: which files it opens, what it shows, which BIOS it ran.
+
+These probes run on demand only, for three cases: to settle a dispute or an issue, to back a correction sent to a platform, and to check the packs before a release. They are never run as a campaign over every emulator, and the site keeps no showcase of their runs: an emulator page shows a run only when a profile's `evidence:` names it or it answers an issue (`issue<N>-` subjects), as one **Proof** line naming the BIOS the core ran. Every record stays in `measurements/` and on the Measurements page. Benchmarks (`bench`) stay in the records and the SQLite files and
+only choose between variants: no page shows a time per frame.
 
 ```bash
 # one run, printed as JSON
@@ -1025,9 +1028,11 @@ sorted and nothing reads the clock, so two builds give the same bytes.
 
 ### campaign.py
 
-Runs the real-condition campaign with nobody watching: for each emulator
-profile in scope it gets the core and the test content, runs `core_probe.py`,
-applies what the runs prove and queues the rest. It is a thin layer over
+Runs a batch of `core_probe.py` checks for the profiles a question names
+(`--only`, `--system`): it gets the core and the test content, runs the
+checks, applies what the runs prove and queues the rest. A maintainer runs it
+on demand, for one of the three cases of `core_probe.py`, never over every
+profile as a standing campaign. It is a thin layer over
 `core_probe.py`, the libretro buildbot and romfetch. RetroArch's
 `--max-frames` and libretro.py were the other candidates: neither traces the
 files a core opens nor writes a record.
@@ -1161,10 +1166,12 @@ claim: `confirmed` when its `region:` holds the game's region, `contradicted`
 when it does not, `ambiguous` when the core opened its own region's file and the others too (PCSX-ReARMed opens all three), `unread` when it opened none of them. Each variant's
 result is the oracle verdict of its record. While the oracle has no reference
 frame for a game, a variant counts as booting when it samples the same frames
-as the `full` run, and the outcome says it was judged that way. Other frames give no verdict: the US disc reaches its game on the Japanese and European BIOS through another licence screen. The system
-pages show each outcome as a sentence ("the Japanese BIOS boots the Japanese
-game, the other regions' BIOS do not") with links to the four records. A
-maintainer starts each run. Each core_probe run takes the host probe lock for itself and frees it before the next, so do not wrap the command in `flock`. Nothing runs by itself.
+as the `full` run, and the outcome says it was judged that way. Other frames give no verdict: the US disc reaches its game on the Japanese and European BIOS through another licence screen. A boot
+counts as another region's BIOS only when `bios_used` names that file: Beetle
+PSX and SwanStation boot their built-in OpenBIOS with only the other regions'
+files, which they refused. `report` prints the outcomes as JSON, and no page
+shows them: a profile's `region:` cites a record in its `evidence:` when one
+settles it. A maintainer starts each run, on demand. Each core_probe run takes the host probe lock for itself and frees it before the next, so do not wrap the command in `flock`. Nothing runs by itself.
 
 ### standalone_probe.py
 
@@ -1173,7 +1180,9 @@ Runs a platform's standalone emulator on a game and records it like
 record schema (`frontend.script` names this script). No existing harness
 traces the files a standalone emulator opens or writes a record, so this is
 a thin layer over the emulator's own batch mode, Xvfb and core_probe's
-sandbox, oracle and record functions, imported and not copied.
+sandbox, oracle and record functions, imported and not copied. Like
+`core_probe.py`, it runs on demand only: for an issue or a dispute, to back a
+correction sent to a platform, or to check the packs before a release.
 
 ```bash
 python scripts/standalone_probe.py resolve duckstation   # the asset EmuDeck's installer picks
@@ -1218,8 +1227,8 @@ by itself.
 ### pack_probe.py
 
 Tests what the project promises: a platform's pack, installed the way a user
-installs it, starts that platform's games. A maintainer starts it, nothing
-runs it on a schedule. It takes the host's probe lock
+installs it, starts that platform's games. A maintainer starts it before a
+release, or to answer an issue about a pack, nothing runs it on a schedule. It takes the host's probe lock
 (`~/.local/state/retrobios/probe.lock`, `RETROBIOS_PROBE_LOCK`) around each
 `core_probe` run and releases it before the next, so other probes run between
 its runs, and tells `core_probe` it holds it (`RETROBIOS_PROBE_LOCK_HELD=1`).
@@ -1265,9 +1274,9 @@ is no finding: BlastEm tries `tmss.md`, then reads `bios_MD.bin`.
 
 The run cannot see two things the platform does: core options a frontend
 sets (Batocera's configgen writes some), and the files the installer puts in
-the save directory, counted in `source.save_dir_files`. The Measurements page
-lists the latest probe of each platform, system, install path, core and
-game, and each platform page shows its own in a **Tested** block.
+the save directory, counted in `source.save_dir_files`. A maintainer runs it
+before a release (wiki/release-process.md). Its lines stay in
+`measurements/pack-probes.jsonl`, and no page shows a table of them.
 
 ### Other tools
 
