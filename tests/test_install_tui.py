@@ -11009,6 +11009,8 @@ class AuditNineteenAndTwelve(_CardFixtures, unittest.TestCase):
         self.assertNotIn("A quit chosen", last)
 
 
+@unittest.skipUnless(pyte and pty and hasattr(pty, "fork"),
+                     "the pty runs need pyte and a pty")
 class TapsOnAPty(unittest.TestCase):
     """tui_audit_12 P1-1 and P3-9 on the real install.py --tui."""
 
