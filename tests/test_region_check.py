@@ -27,9 +27,10 @@ PROFILE = {
 
 
 def record(rid: str, staged: list[str], opened: list[str], hashes: list, verdict: str = "unknown",
-           loaded: bool = True) -> dict:
+           loaded: bool = True, bios_used: str = "unknown") -> dict:
     return {"id": rid, "variants": [{
-        "label": "default", "verdict": verdict, "system_files": {name: "0" * 40 for name in staged},
+        "label": "default", "verdict": verdict, "bios_used": bios_used,
+        "system_files": {name: "0" * 40 for name in staged},
         "repetitions": [{"loaded": loaded, "files_opened": [{"path": p} for p in opened],
                          "observables": {"frame_hashes": hashes}}]}]}
 
@@ -145,8 +146,34 @@ class Outcome(unittest.TestCase):
                    "own": record("o", ["scph5502.bin"], [], [[0, "a"]], "boots"),
                    "others": record("x", ["scph5501.bin"], ["scph5501.bin"], [[0, "a"]], "boots")}
         result = rc.outcome(records, self.ENTRIES, "europe")
+        # The log names no BIOS: the boot is not said to be the other region's.
         self.assertEqual(rc.sentence("europe", result),
-                         "The European BIOS boots the European game, and so do the other regions' BIOS.")
+                         "The European BIOS boots the European game. With only the other regions' files "
+                         "staged it boots too, on a BIOS its log does not name.")
+        records["others"] = record("x", ["scph5501.bin"], ["scph5501.bin"], [[0, "a"]], "boots",
+                                   bios_used="staged:scph5501.bin")
+        self.assertEqual(rc.sentence("europe", rc.outcome(records, self.ENTRIES, "europe")),
+                         "The European BIOS boots the European game, and so does scph5501.bin, "
+                         "another region's BIOS.")
+
+    def test_a_boot_on_the_built_in_bios_is_never_another_regions(self) -> None:
+        """Beetle PSX logs "Firmware is missing" and maps OpenBIOS: the other
+        regions' files were opened, hashed and refused."""
+        records = {"full": record("f", self.ALL, self.ALL, [[0, "a"]], "boots",
+                                  bios_used="staged:scph5501.bin"),
+                   "own": record("o", ["scph5501.bin"], ["scph5501.bin"], [[0, "a"]], "boots",
+                                 bios_used="staged:scph5501.bin"),
+                   "others": record("x", ["scph5500.bin", "scph5502.bin"], ["scph5500.bin", "scph5502.bin"],
+                                    [[0, "a"]], "boots", bios_used="builtin")}
+        result = rc.outcome(records, self.ENTRIES, "north-america")
+        text = rc.sentence("north-america", result)
+        self.assertEqual(text, "The US BIOS boots the US game. With only the other regions' files it "
+                               "boots on its built-in BIOS, the other regions' files were refused.")
+        self.assertNotIn("so do the other regions", text)
+        import sitemeasurements as sm
+        line = sm.core_region_line([result])
+        self.assertIn("built-in BIOS", line)
+        self.assertNotIn("on the other regions' BIOS", line)
 
     def test_no_own_run(self) -> None:
         self.assertEqual(rc.sentence("japan", rc.outcome({}, self.ENTRIES, "japan")),

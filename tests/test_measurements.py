@@ -252,6 +252,29 @@ class ReadAndIndex(Workspace):
         self.assertEqual([(g["variant"], g["result"], g["group"]) for g in groups],
                          [("v0", "works", 0), ("v1", "hang", 1)])
 
+    def test_a_boot_on_the_built_in_bios_is_named_so(self) -> None:
+        import core_probe  # noqa: PLC0415
+
+        record = full_record("alpha", "region-x-game-others", "2026-10-28T10:00:00+00:00",
+                             kind="run", observable="frame_hashes")
+        oracle = {"references": [{"sha1": "1" * 40, "stage": "game", "shows": "the title"}],
+                  "error_patterns": [], "error_screens": [], "bios_patterns": [],
+                  "fallback_patterns": [r"^Firmware is missing: "], "load_patterns": []}
+        for variant in record["variants"]:
+            for rep in variant["repetitions"]:
+                rep["logs"] = [{"frame": 0, "level": "info", "text": "Firmware is missing: scph5501.bin"}]
+                core_probe.judge_repetition(rep, oracle)
+            core_probe.judge_variant(variant)
+        self.assertEqual(record["variants"][0]["bios_used"], "builtin")
+        status, statement = sm.result_of(record)
+        self.assertEqual(status, sm.BOOTS_BUILTIN)
+        self.assertIn("built-in BIOS", statement)
+        item = {**SitePages.ITEM, "host_short": "h", "kind": "run", "status": status, "statement": statement,
+                "groups": sm.variant_groups(record), "verdicts": sm.verdicts_of(record)}
+        text = "\n".join(sm.tested_section("alpha", [item]))
+        self.assertIn("works on its built-in BIOS", text)
+        self.assertNotIn("other region", text)
+
     def test_links_name_the_last_commit_that_touched_the_records(self) -> None:
         first = self.repository()
         (self.tree / "other.txt").write_text("x")

@@ -144,7 +144,8 @@ def outcome(records: dict[str, dict], entries: list[dict], region: str) -> dict:
             continue
         loaded = all(rep.get("loaded") for v in record["variants"] for rep in v["repetitions"])
         item = {"record": record["id"], "verdict": verdict(record), "loaded": loaded,
-                "staged": sorted(record["variants"][0]["system_files"])}
+                "staged": sorted(record["variants"][0]["system_files"]),
+                "bios_used": record["variants"][0].get("bios_used", "unknown")}
         if full and label != "full":
             item["as_full"] = loaded and frames(record) == frames(full)
         results[label] = item
@@ -173,22 +174,48 @@ def outcome(records: dict[str, dict], entries: list[dict], region: str) -> dict:
         "own_boots": boots("own"),
         "others_boot": boots("others"),
         "pack_boots": boots("pack"),
+        # The BIOS each ran, from its log: a boot is not the staged file's
+        # until the log names it (core_probe.bios_used).
+        "own_on": (results.get("own") or {}).get("bios_used", "unknown"),
+        "others_on": (results.get("others") or {}).get("bios_used", "unknown"),
         "judged_by": "verdict" if full_verdict not in (None, "unknown") else "full_run_frames",
     }
 
 
+BUILTIN = "builtin"
+
+
+def staged_name(used: str | None) -> str | None:
+    """The file a bios_used names, or None."""
+    return used.removeprefix("staged:") if used and used.startswith("staged:") else None
+
+
 def sentence(game_region: str, result: dict) -> str:
-    """The outcome in words, for the site."""
+    """The outcome in words, for the site. A boot is said to be another
+    region's BIOS only when the core's log names that file: a core that
+    refuses the staged files and runs its own BIOS (OpenBIOS, HLE) boots
+    too, on that built-in BIOS."""
     word = REGION_WORDS.get(game_region, game_region)
     own, others = result.get("own_boots"), result.get("others_boot")
     if own is None:
         return f"The {word} game has no run with its own BIOS yet."
-    first = f"The {word} BIOS {'boots' if own else 'does not boot'} the {word} game"
+    if own and result.get("own_on") == BUILTIN:
+        first = f"The {word} game boots on the core's built-in BIOS, its own BIOS file was refused"
+    else:
+        first = f"The {word} BIOS {'boots' if own else 'does not boot'} the {word} game"
     if others is None:
         return first + ". The other regions' BIOS have no verdict yet."
-    if others:
-        return first + ", and so do the other regions' BIOS."
-    return first + ", the other regions' BIOS do not."
+    if not others:
+        return first + ", the other regions' BIOS do not."
+    used = result.get("others_on")
+    if used == BUILTIN:
+        return (first + ". With only the other regions' files it boots on its built-in BIOS, "
+                        "the other regions' files were refused.")
+    name = staged_name(used)
+    if name:
+        return first + f", and so does {name}, another region's BIOS."
+    return (first + ". With only the other regions' files staged it boots too, on a BIOS "
+                    "its log does not name.")
 
 
 # --------------------------------------------------------------------------

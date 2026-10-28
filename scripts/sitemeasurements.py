@@ -75,9 +75,21 @@ def permalink(repo: str, commit: str, path: str, line: int | None = None) -> str
     return f"{repo}/blob/{commit}/{path}" + (f"#L{line}" if line else "")
 
 
+BOOTS_BUILTIN = "boots on built-in BIOS"
+
+
+def shown_verdict(variant: dict) -> str:
+    """A variant's verdict as the pages say it: a boot on the core's
+    built-in BIOS is named so, never taken for the staged file's."""
+    if variant["verdict"] == "boots" and variant.get("bios_used") == "builtin":
+        return BOOTS_BUILTIN
+    return variant["verdict"]
+
+
 def verdicts_of(record: dict) -> list[dict]:
-    """Each variant's boot verdict, from record version 4 on."""
-    return [{"variant": v["label"], "verdict": v["verdict"],
+    """Each variant's boot verdict, from record version 4 on, and the BIOS
+    it ran from version 5 on."""
+    return [{"variant": v["label"], "verdict": shown_verdict(v), "bios_used": v.get("bios_used", "unknown"),
              "detail": (v.get("verdict_evidence") or {}).get("detail", "")}
             for v in record["variants"] if "verdict" in v]
 
@@ -537,17 +549,33 @@ REGION_SHORT = {"japan": "Japanese", "north-america": "US", "europe": "European"
 OUTCOME_WORDS = {True: "boots", False: "does not boot", None: "no verdict"}
 
 
+def others_words(result: dict) -> str:
+    """What the run with only the other regions' files did, never calling a
+    boot the other region's BIOS unless the core's log names that file."""
+    boots = result.get("others_boot")
+    if boots is not True:
+        return f"{OUTCOME_WORDS[boots]} with only the others"
+    used = result.get("others_on")
+    if used == "builtin":
+        return "boots on its built-in BIOS with only the others, which were refused"
+    if used and used.startswith("staged:"):
+        return f"boots on {used.removeprefix('staged:')} with only the others"
+    return "boots with only the others, on a BIOS its log does not name"
+
+
 def core_region_line(results: list[dict]) -> str:
     """One core's outcome over its region games, in a sentence: each game
-    on its own BIOS, then on the other regions' BIOS."""
+    on its own BIOS, then with only the other regions' files."""
     own = {r["own_boots"] for r in results}
     others = {r["others_boot"] for r in results}
-    if own == {True} and others == {True}:
-        return "Each region's game boots on its own BIOS and on the other regions' BIOS."
+    builtin = {r.get("others_on") for r in results} == {"builtin"}
+    if own == {True} and others == {True} and builtin:
+        return ("Each region's game boots on its own BIOS. With only the other regions' files it "
+                "boots on its built-in BIOS: those files were refused.")
     if own == {True} and others == {False}:
         return "Each region's game boots on its own BIOS only."
     parts = [f"{REGION_SHORT.get(r['region'], r['region'])} game: {OUTCOME_WORDS[r['own_boots']]} "
-             f"on its BIOS, {OUTCOME_WORDS[r['others_boot']]} on the others" for r in results]
+             f"on its BIOS, {others_words(r)}" for r in results]
     return ", ".join(parts) + "."
 
 
@@ -854,6 +882,7 @@ def _short(commit: str | None) -> str:
 # A verdict or a comparison, as the block says it: words and a chip kind.
 RESULT_WORDS = {
     "boots": ("works", "success"),
+    BOOTS_BUILTIN: ("works on its built-in BIOS", "success"),
     "bios_error": ("BIOS error", "danger"),
     "crash": ("crash", "danger"),
     "hang": ("hang", "warning"),
@@ -1023,9 +1052,9 @@ def variant_groups(record: dict) -> list[dict]:
     if all("verdict" in v for v in record["variants"]) and (
             record["kind"] == "run" or check.get("observable") == "frame_hashes"):
         for variant in record["variants"]:
-            position.setdefault(variant["verdict"], len(position))
-            result[variant["label"]] = RESULT_WORDS[variant["verdict"]][0]
-        groups = {v["label"]: position[v["verdict"]] for v in record["variants"]}
+            position.setdefault(shown_verdict(variant), len(position))
+            result[variant["label"]] = RESULT_WORDS[shown_verdict(variant)][0]
+        groups = {v["label"]: position[shown_verdict(v)] for v in record["variants"]}
     else:
         groups = {}
         for number, group in enumerate((check.get("result") or {}).get("groups") or ()):
