@@ -560,3 +560,55 @@ content:
           - sha1: 003685f698160f1cc79ca0bc00091f30ccb681db
             stage: game
             shows: Rez asking to format the unformatted memory card in slot 1
+  - name: "Lunar - Silver Star Story (Japan)"
+    catalog: redump
+    sha1: aee4e96d37132c53c6405c68e11787a6bc75c972
+    references:
+      "Beetle Saturn":
+        recorded_from: 2026-10-28-90ae07f141fe
+        frames:
+          - sha1: 5edec5180d1c04dc0ead1e5fbbc7d6d53cc23fdb
+            stage: bios
+            shows: the SEGA SATURN logo of the Japanese BIOS v1.01
+          - sha1: dcd45679fcd31a423d0e54690e89b52f417d8728
+            stage: bios
+            shows: SEGA, produced by or under license from Sega Enterprises
+          - sha1: ae83d3e3ba167fb1c2e59175faf042e4e483b1cd
+            stage: game
+            shows: the Kadokawa Shoten logo
+          - sha1: 55c544650f06ff9f4a165ea06ac6e534ab0a00a1
+            stage: game
+            shows: the Game Arts logo on white
+          - sha1: 78865212bfe9d9a946f1ec4985092ccec6d01b67
+            stage: game
+            shows: the JAM logo on white
+          - sha1: af869e868d94e8b4c551be5570ade580f5c15ce6
+            stage: game
+            shows: the Lunar Silver Star Story title over the planet
+          - sha1: cb64c728de69873915f0bbb3f95ce06dbe305d10
+            stage: game
+            shows: the Lunar Silver Star Story title over the planet
+      "Yabause":
+        recorded_from: 2026-10-28-5d299098fb23
+        frames:
+          - sha1: 1f1ddd5e434a82b54be476ac95b6bfe7925a92b5
+            stage: bios
+            shows: the SEGA SATURN logo of the Japanese BIOS v1.00
+          - sha1: 1bdd0d3a315fc85bf0ac2e74be512ccf711ee9aa
+            stage: bios
+            shows: SEGA, produced by or under license from Sega Enterprises
+          - sha1: af1cac6b29a68a9dab27bd8ee26c7e543f39cd03
+            stage: game
+            shows: the Kadokawa Shoten logo
+          - sha1: fa94920ad89884eeb11286f982b19e0b93a622af
+            stage: game
+            shows: the Game Arts logo on white
+          - sha1: 25df8806f67e4cc34d4e5584600218b2131c930c
+            stage: game
+            shows: the JAM logo on white
+          - sha1: 3077677e616d76f56330c57701e0e6f0e87b5a17
+            stage: game
+            shows: the Lunar Silver Star Story title over the planet
+          - sha1: e49f6dbd8bc19f53383699c622c43595a3816538
+            stage: game
+            shows: the Lunar Silver Star Story title over the planet

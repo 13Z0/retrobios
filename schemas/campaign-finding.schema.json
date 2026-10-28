@@ -25,8 +25,13 @@
     "file": { "type": "string", "minLength": 1 },
     "field": { "type": "string", "minLength": 1 },
     "status": {
-      "enum": ["applied", "open", "flagged", "resolved"],
-      "description": "applied: the rule table settled the field and the profile was changed. open: no rule settles it, it waits for review. flagged: a declared file the runs never opened. resolved: a later run found the profile in agreement."
+      "enum": ["applied", "open", "flagged", "resolved", "rejected"],
+      "description": "applied: the rule table, or a review of the code, settled the field and the profile was changed. open: no rule settles it, it waits for review. flagged: a declared file the runs never opened. resolved: a later run found the profile in agreement. rejected: a review of the code kept the profile as it is."
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Written by a review (campaign.py review): what the code does, with its file:line."
     },
     "rule": { "type": "string", "minLength": 1 },
     "profile_says": {},

@@ -32,6 +32,18 @@ notes: |
   ROM cartridge loading, SH1 ROM (CD Block LLE), and MPEG card ROM are
   standalone-only features disabled in the libretro port.
 
+  The CD block answers every MPEG card authentication as passed
+  (yabause/src/cs2.c:3172-3212) but decodes no MPEG stream: MPEG Get Interrupt
+  always reports 0 (yabause/src/cs2.c:2870-2884), and the port passes no MPEG
+  ROM (yabause/src/libretro/libretro.c:1118). A disc that needs the Movie Card,
+  such as Lunar - Silver Star Story Complete (Japan), passes its check under a
+  real BIOS and stops on a black screen after the publisher logos. The Japanese
+  v1.00 and v1.01 images give the same frames, so the BIOS is not the cause
+  (record 2026-10-28-32cdefcdb231). Under the HLE BIOS the disc prints that it
+  needs the Twin Operator Movie Card or a Hi-Saturn. The edition without the
+  card, Lunar - Silver Star Story (Japan), reaches its title on the same v1.00
+  image (record 2026-10-28-9270d1928be7).
+
   BIOS loading: retro_load_game() at yabause/src/libretro/libretro.c:1035-1049.
   Core load: LoadBios() at yabause/src/memory.c:1260-1263, T123Load() at yabause/src/memory.h:196-265.
 

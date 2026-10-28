@@ -6,12 +6,17 @@ systems:
   sega-saturn:
     romfetch: saturn
     content:
-      - name: "Lunar - Silver Star Story Complete (Japan)"
+      - name: "Lunar - Silver Star Story (Japan)"
         catalog: redump
         reason: >-
           A Japanese disc. Every Saturn core needs a BIOS image to start a disc,
           so the run shows whether the BIOS the pack put in the folder is one
-          the core reads, under the name it looks for.
+          the core reads, under the name it looks for. It reaches its title on
+          Beetle Saturn and Yabause with the RetroArch pack's BIOS (records
+          2026-10-28-6b5b55d3480f, 2026-10-28-9270d1928be7). The Complete
+          edition is not used: it needs the MPEG card, which a core without
+          MPEG decoding never gets past (Yabause stops on a black screen after
+          the logos).
         region: japan
         load: cue
         frames: 3600

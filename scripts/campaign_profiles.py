@@ -24,6 +24,8 @@ ANCHORS = {
     "path": ("name",),
     "aliases": ("path", "name"),
     "validation": ("sha1", "md5", "crc32", "size", "name"),
+    "on_mismatch": ("validation", "sha1", "md5", "crc32", "size", "name"),
+    "found_by": ("path", "name"),
 }
 
 

@@ -29,7 +29,9 @@ core reports a BIOS error, when its log says it ran its built-in BIOS
 (bios_used builtin), or when it boots without the BIOS screens the right
 file shows. It is used when the log names the file it loaded. It is used when it
 turns the run into a hang or a crash that the run without any file does not
-show. Anything else settles nothing. Of validation, the table writes only a
+show. Anything else settles nothing. A check the entry declares with
+`on_mismatch: warn` is one the code only logs: a wrong file that runs
+agrees with it. Of validation, the table writes only a
 missing `size`. A contradicted content check goes to review: which hash a
 core computes is read in its code.
 
@@ -49,7 +51,7 @@ UNKNOWN = "unknown"
 FAILS = (BIOS_ERROR, CRASH, HANG)
 REFUSED = "refused"
 USED = "used"
-CONTENT_CHECKS = ("md5", "sha1", "sha256", "crc32", "adler32")
+CONTENT_CHECKS = ("md5", "sha1", "sha256", "crc32", "adler32", "signature")
 
 # A field an entry leaves out reads as this value.
 FIELD_DEFAULTS: dict[str, object] = {"hle_fallback": False, "path": None, "aliases": [],
@@ -194,6 +196,17 @@ def declared_checks(entry: dict) -> tuple[set[str], bool]:
     return {str(v) for v in value}, True
 
 
+def warned_checks(entry: dict, checks: set[str]) -> set[str]:
+    """The declared checks whose failure the code only logs (`on_mismatch:
+    warn`, for all of them or check by check): a wrong file still runs."""
+    level = entry.get("on_mismatch")
+    if level == "warn":
+        return set(checks)
+    if isinstance(level, dict):
+        return {check for check, value in level.items() if value == "warn"} & checks
+    return set()
+
+
 def rule_validation(zeros: Run | None, half: Run | None, none: Run, present: Run,
                     entry: dict) -> Verdict | None:
     """Same-size and short wrong files against the right one: validation."""
@@ -208,19 +221,20 @@ def rule_validation(zeros: Run | None, half: Run | None, none: Run, present: Run
     if content is None and size is None:
         return None
     declared, editable = declared_checks(entry)
+    enforced = declared - warned_checks(entry, declared)
     evidence = ids(*(run for run in (none, present, zeros, half) if run))
     said = sorted(declared)
     shown = []
     problems = []
     if content is not None:
         shown.append("checks the content" if content else "does not check the content")
-        if content != bool(declared & set(CONTENT_CHECKS)):
+        if content != bool(enforced & set(CONTENT_CHECKS)):
             problems.append("a same-size file of zeros is " + ("refused" if content else "run")
                             + f", the profile declares validation {said}")
     missing_size = size is True and "size" not in declared
     if size is not None:
         shown.append("checks the size" if size else "does not check the size")
-        if size is False and "size" in declared:
+        if size is False and "size" in enforced:
             problems.append(f"the first half of {name} is run, the profile declares a size check")
     statement = f"the core {' and '.join(shown)} of {name}"
     # What the runs show, for a finding beside what the profile says.
