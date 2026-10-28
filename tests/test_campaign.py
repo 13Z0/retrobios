@@ -1170,10 +1170,13 @@ class FakeCorePasses(Workspace):
             c.host.run = timed
             passes.append(c)
         threads = [threading.Thread(target=c.run, args=(set(), None)) for c in passes]
+        cwd = Path.cwd()
         for thread in threads:
             thread.start()
         for thread in threads:
             thread.join()
+        # Each pass moved into its own root and back: the process ends where it began.
+        self.assertEqual(Path.cwd(), cwd)
         ends = {name: sorted(end for _, end in runs) for name, runs in spans.items()}
         self.assertGreater(len(ends["a"]), 2)
         self.assertGreater(len(ends["b"]), 2)

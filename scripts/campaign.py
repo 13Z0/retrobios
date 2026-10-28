@@ -69,6 +69,7 @@ import stat
 import subprocess
 import sys
 import tarfile
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -454,15 +455,22 @@ def copy_regular(src: Path, dest: Path) -> None:
             shutil.copyfileobj(handle, out)
 
 
+# The working directory belongs to the process. Two passes in threads that
+# each saved and restored it could leave the process in the other's root,
+# then in a folder deleted with its workspace.
+_CWD_LOCK = threading.Lock()
+
+
 @contextlib.contextmanager
 def working_directory(path: Path) -> Iterator[None]:
-    """contextlib.chdir, which Python 3.9 lacks."""
-    before = Path.cwd()
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(before)
+    """contextlib.chdir, which Python 3.9 lacks, one thread at a time."""
+    with _CWD_LOCK:
+        before = Path.cwd()
+        os.chdir(path)
+        try:
+            yield
+        finally:
+            os.chdir(before)
 
 
 @contextlib.contextmanager
