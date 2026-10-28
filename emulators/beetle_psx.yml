@@ -46,8 +46,9 @@ files:
     mode: both
     source_ref: "libretro.c:768-776, 3425-3511"
     aliases: ["SCPH5500.bin", "SCPH-5500.bin"]
+    note: "Without it the core logs 'Firmware is missing' and maps its built-in OpenBIOS (libretro.c:846-851, 3425-3511): the runs cited for required booted on OpenBIOS, the other regions' files refused."
     evidence:
-      required: ["2026-10-27-55dd1e4943c4"]
+      required: ["2026-10-27-f490b031a811"]
 
   - name: "scph5903.bin"
     description: "SCPH-5903 (System ROM Version 2.2 12/04/95 J), Video CD daughterboard"
@@ -72,7 +73,7 @@ files:
     md5: "490f666e1afb15b7362b406ed1cea246"
     validation: [sha1]
     mode: both
-    note: "Picked for REGION_NA: a SYSTEM.CNF serial whose third letter is U (SCUS, SLUS), a licence string naming America, and content whose region cannot be read while the region option stays on auto (libretro.c:2436-2438, 2279, 2330-2335, 3252-3266, 4517)."
+    note: "Picked for REGION_NA: a SYSTEM.CNF serial whose third letter is U (SCUS, SLUS), a licence string naming America, and content whose region cannot be read while the region option stays on auto (libretro.c:2436-2438, 2279, 2330-2335, 3252-3266, 4517). Without it the core logs 'Firmware is missing' and maps its built-in OpenBIOS (libretro.c:846-851, 3425-3511): the runs cited for required booted on OpenBIOS, the other regions' files refused."
     source_ref: "libretro.c:787-805, 3425-3511"
     aliases:
       - "SCPH5501.bin"
@@ -92,7 +93,7 @@ files:
     evidence:
       aliases: ["2026-10-27-48269ae11777", "2026-10-27-ba941702c6c2", "2026-10-27-fc95254312c0", "2026-10-27-5a191f2b540b", "2026-10-27-12ba45024f8c", "2026-10-27-a7c1a301bdb0"]
       hle_fallback: ["2026-10-27-6e97b657aca7", "2026-10-27-699ca140a270", "2026-10-27-ec1ab64f96d3", "2026-10-27-47c3dcceed98", "2026-10-27-607274136f7b", "2026-10-27-ae6d4db96e73"]
-      required: ["2026-10-27-13be0e68b799"]
+      required: ["2026-10-27-9a154590b873"]
 
   # -- Region: Europe (REGION_EU) --
 
@@ -113,8 +114,9 @@ files:
       - "scph5552.bin"
       - "SCPH5552.bin"
       - "SCPH-5552.bin"
+    note: "Without it the core logs 'Firmware is missing' and maps its built-in OpenBIOS (libretro.c:846-851, 3425-3511): the runs cited for required booted on OpenBIOS, the other regions' files refused."
     evidence:
-      required: ["2026-10-27-33780d47efdf"]
+      required: ["2026-10-27-579e46ca7c6f"]
 
   # -- Override BIOS (region-free alternatives) --
 

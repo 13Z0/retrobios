@@ -232,10 +232,13 @@ class RequiredFromTheRegionRuns(unittest.TestCase):
                 self.assertTrue(ids)
                 for rid in ids:
                     record = records[rid]
-                    self.assertEqual(record["record_version"], 4)
+                    self.assertEqual(record["record_version"], 5)
                     variant = record["variants"][0]
                     self.assertNotIn(entry["name"], variant["system_files"])
                     self.assertEqual(variant["verdict"], "boots")
+                    # The boot was on OpenBIOS, never on another region's file.
+                    self.assertEqual(variant["bios_used"], "builtin")
+                    self.assertIn("OpenBIOS", entry["note"])
                     self.assertIn("game", variant["verdict_evidence"].get("stages", []))
 
 
