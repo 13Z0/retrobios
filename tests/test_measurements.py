@@ -331,6 +331,24 @@ class ReadAndIndex(Workspace):
         self.assertTrue(any("measurements/beta.jsonl:1" in e and "kind" in e for e in errors), errors)
         self.assertIsNotNone(Draft202012Validator)
 
+    def test_a_version_5_record_names_the_bios_it_ran(self) -> None:
+        try:
+            from jsonschema import Draft202012Validator
+        except ImportError:
+            self.skipTest("jsonschema is not installed")
+        schema = json.loads((REPO_ROOT / "schemas" / "core-probe-record.schema.json").read_text())
+        record = mr.seal({**full_record("alpha", "card", "2026-10-28T10:00:00+00:00"), "record_version": 5})
+        errors = [e.message for e in Draft202012Validator(schema).iter_errors(record)]
+        self.assertIn("'bios_used' is a required property", errors)
+        for variant in record["variants"]:
+            variant["bios_used"] = "builtin"
+            for rep in variant["repetitions"]:
+                rep["bios_used"] = "staged:card.bin"
+        self.assertEqual([e.message for e in Draft202012Validator(schema).iter_errors(record)
+                          if "bios_used" in e.message], [])
+        record["variants"][0]["bios_used"] = "the other region's"
+        self.assertTrue(list(Draft202012Validator(schema).iter_errors(record)))
+
     def test_a_version_4_record_needs_its_verdicts(self) -> None:
         try:
             from jsonschema import Draft202012Validator  # noqa: F401

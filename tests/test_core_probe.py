@@ -218,6 +218,27 @@ class OracleTests(unittest.TestCase):
         self.assertEqual((verdict, evidence["stages"]), ("boots", ["bios", "game"]))
         self.assertEqual(core_probe.judge(self.rep(frames((0, self.TITLE))), oracle)[1]["stages"], ["game"])
 
+    def test_the_bios_used_comes_from_the_log(self) -> None:
+        oracle = {**self.ORACLE, "fallback_patterns": [r"^Firmware is missing: "],
+                  "load_patterns": [r"^Firmware found: (?P<path>.+)$"]}
+        cases = [
+            (["Searching for firmware checksum: 0555", "Firmware is missing: scph5501.bin"], "builtin"),
+            (["Firmware found: <system>/scph5501.bin", "Firmware SHA1: 0555"], "staged:scph5501.bin"),
+            # A file tried, then the fallback: the last line decides.
+            (["Firmware found: <system>/a.bin", "Firmware is missing: b.bin"], "builtin"),
+            (["nothing about the BIOS"], "unknown"),
+        ]
+        for logs, expected in cases:
+            self.assertEqual(core_probe.bios_used(self.rep([], logs=logs), oracle)[0], expected, logs)
+        rep = self.rep(frames((10, self.TITLE)), logs=["Firmware is missing: scph5501.bin"])
+        core_probe.judge_repetition(rep, oracle)
+        self.assertEqual((rep["verdict"], rep["bios_used"]), ("boots", "builtin"))
+        self.assertTrue(rep["verdict_evidence"]["detail"].endswith("on the core's built-in BIOS"))
+        self.assertEqual(rep["verdict_evidence"]["bios_log"], "Firmware is missing: scph5501.bin")
+        variant = {"repetitions": [rep, {**rep, "bios_used": "staged:a.bin"}]}
+        core_probe.judge_variant(variant)
+        self.assertEqual(variant["bios_used"], "unknown")
+
     def test_the_bios_screens_alone_are_not_a_boot(self) -> None:
         # A console that shows its logo and then refuses the disc never reached the game.
         verdict, evidence = core_probe.judge(
@@ -516,7 +537,8 @@ class FakeCoreTests(unittest.TestCase):
         self.assertEqual(record["variants"][3]["system_files"],
                          {"card.bin": hashlib.sha1(b"\x00").hexdigest()})
         self.assertEqual(record["inputs"]["oracle"]["error_patterns"], ["BIOS not found"])
-        self.assertEqual(record["record_version"], 4)
+        self.assertEqual(record["record_version"], 5)
+        self.assertEqual({v["bios_used"] for v in record["variants"]}, {"unknown"})
         self.assert_schema(record)
 
     def test_a_crash_and_a_hang_are_verdicts(self) -> None:

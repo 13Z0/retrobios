@@ -27,9 +27,10 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 
-RECORD_VERSION = 4
+RECORD_VERSION = 5
 # 3: before the boot oracle. 4: every repetition and variant carries a verdict.
-RECORD_VERSIONS = (3, 4)
+# 5: and the BIOS the core ran.
+RECORD_VERSIONS = (3, 4, 5)
 RECORDS_DIR = "measurements"
 ID_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}-[0-9a-f]{12}$")
 SLUG_PATTERN = re.compile(r"^[a-z0-9]+(?:[-_][a-z0-9]+)*$")

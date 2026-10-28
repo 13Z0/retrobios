@@ -1007,7 +1007,7 @@ def run_variant(args: argparse.Namespace, base: dict[str, Path], variant: Varian
             state_out.parent.mkdir(parents=True, exist_ok=True)
         rep = run_once(args, system_dir, scratch, state_out, png_dir)
         oracle = oracle_for(args.oracle_data, args.content_sha1, rep.get("library_name"))
-        rep["verdict"], rep["verdict_evidence"] = judge(rep, oracle)
+        judge_repetition(rep, oracle)
         if rep.get("exit"):
             flags.append(f"repetition {index}: {rep['verdict_evidence']['detail']}")
         if not rep.get("loaded"):
@@ -1023,15 +1023,14 @@ def run_variant(args: argparse.Namespace, base: dict[str, Path], variant: Varian
         if rep.get("observables") != reference:
             differing = sorted(k for k in (reference or {}) if (rep.get("observables") or {}).get(k) != reference[k])
             flags.append(f"repetition {index} disagrees with repetition 0 on {', '.join(differing)}")
-    verdict, evidence = variant_verdict(reps)
-    return {
+    out = {
         "label": variant.label,
         "system_files": {dest: sha for dest, sha in sorted(staged.items())},
         "repetitions": reps,
         "flags": flags,
-        "verdict": verdict,
-        "verdict_evidence": evidence,
     }
+    judge_variant(out)
+    return out
 
 
 # --------------------------------------------------------------------------
@@ -1274,7 +1273,9 @@ def oracle_for(data: dict, content_sha1: str | None, library_name: str | None) -
     screens = [{"sha1": s["sha1"], "shows": s["shows"]} for s in core.get("error_screens") or ()]
     loaded = [p["pattern"] for p in core.get("bios_patterns") or ()]
     return {"references": references, "error_patterns": patterns, "error_screens": screens,
-            "bios_patterns": loaded}
+            "bios_patterns": loaded,
+            "fallback_patterns": [p["pattern"] for p in core.get("fallback_patterns") or ()],
+            "load_patterns": [p["pattern"] for p in core.get("load_patterns") or ()]}
 
 
 def sampled(rep: dict) -> list[tuple[int, str]]:
@@ -1355,6 +1356,52 @@ def _without_the_game(rep: dict, oracle: dict, frames: list[tuple[int, str]]) ->
                                                       "and no error screen"}
 
 
+BUILTIN = "builtin"
+SYSTEM_PLACE = "<system>/"
+
+
+def bios_used(rep: dict, oracle: dict) -> tuple[str, str | None]:
+    """Which BIOS the core ran, from its log, and the line that says so.
+
+    `staged:<dest>` when a load pattern names the file under the system
+    directory, `builtin` when a fallback pattern says the core went to its
+    own BIOS (OpenBIOS, HLE), `unknown` otherwise. The last such line wins:
+    a core that tries a file and then falls back logs both, in that order.
+    A file the core opened is no proof: Beetle PSX hashes every file of the
+    folder before it decides.
+    """
+    found: tuple[str, str | None] = ("unknown", None)
+    for line in rep.get("logs") or ():
+        text = line["text"]
+        if any(re.search(pattern, text) for pattern in oracle.get("fallback_patterns") or ()):
+            found = (BUILTIN, text)
+        for pattern in oracle.get("load_patterns") or ():
+            match = re.search(pattern, text)
+            path = match.groupdict().get("path") if match else None
+            if path:
+                found = (f"staged:{path.removeprefix(SYSTEM_PLACE)}", text)
+    return found
+
+
+def judge_repetition(rep: dict, oracle: dict) -> None:
+    """The verdict, its evidence and the BIOS used, written into the repetition."""
+    verdict, evidence = judge(rep, oracle)
+    used, line = bios_used(rep, oracle)
+    if line:
+        evidence["bios_log"] = line
+    if verdict == BOOTS and used == BUILTIN:
+        evidence["detail"] += ", on the core's built-in BIOS"
+    rep["verdict"], rep["verdict_evidence"], rep["bios_used"] = verdict, evidence, used
+
+
+def judge_variant(variant: dict) -> None:
+    """The variant's verdict and BIOS: what every repetition agrees on."""
+    reps = variant["repetitions"]
+    variant["verdict"], variant["verdict_evidence"] = variant_verdict(reps)
+    used = {rep.get("bios_used", "unknown") for rep in reps}
+    variant["bios_used"] = used.pop() if len(used) == 1 else "unknown"
+
+
 def variant_verdict(reps: Sequence[dict]) -> tuple[str, dict]:
     """The verdict all repetitions agree on, else unknown."""
     verdicts = [rep["verdict"] for rep in reps]
@@ -1363,7 +1410,7 @@ def variant_verdict(reps: Sequence[dict]) -> tuple[str, dict]:
         evidence = {"rule": "repetitions_agree",
                     "detail": f"{len(reps)} of {len(reps)} repetitions: {first['detail']}",
                     "repetitions": verdicts}
-        for key in ("frame", "sha1", "stages", "pattern", "log", "exit_status", "signal"):
+        for key in ("frame", "sha1", "stages", "pattern", "log", "exit_status", "signal", "bios_log"):
             if key in first:
                 evidence[key] = first[key]
         return verdicts[0], evidence
