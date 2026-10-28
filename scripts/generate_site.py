@@ -4329,6 +4329,8 @@ def generate_platform_page(
     no_list = not cov["total"] and registry.get(name, {}).get("native_list") == "none"
     if name in GUIDES:
         lines += _platform_guide(name, display, cov, registry, no_list)
+    # Before the reference: the links below it are read under that heading.
+    lines.extend(sitemeasurements.pack_tested_section(_PACK_ITEMS.get(name, [])))
 
     lines += [
         "## Reference: every file by system { #reference-every-file-by-system }",
@@ -4408,7 +4410,6 @@ def generate_platform_page(
         lines.extend(["", *_platform_install_block(name, display, on_card)])
         lines.extend(["", _pack_buttons(name, f"Download {display} Pack", display=display)])
     lines.append("")
-    lines.extend(sitemeasurements.pack_tested_section(_PACK_ITEMS.get(name, [])))
 
     # The declaration behind each detail, by system and name in declaration
     # order: keyed by name alone, the last of MiSTer's 23 boot.rom gave its
