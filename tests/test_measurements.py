@@ -541,7 +541,7 @@ class SitePages(unittest.TestCase):
         strip = text.split('class="rb-dots"', 1)[1].split("</span></span>", 1)[0]
         self.assertEqual(re.findall(r'rb-dot rb-dot-(\d)( rb-dot-empty)?"', strip),
                          [("0", ""), ("1", ""), ("0", " rb-dot-empty")])
-        self.assertIn('aria-label="3 variants. v0: result A; v1: result B; v2: result A"', text)
+        self.assertIn('aria-label="3 variants. v0: result A. v1: result B. v2: result A"', text)
 
     def test_the_details_hold_the_method_and_the_host(self) -> None:
         text = "\n".join(sm.tested_section("beetle_saturn", [self.item(runs=1)]))
