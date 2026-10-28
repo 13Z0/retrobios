@@ -33,8 +33,8 @@ files:
     size: 524288
     required: false
     hle_fallback: true
-    validation: [size]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[0])"
+    validation: ["size", "signature"]
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[0]), source frontend/libretro.c:3604-3680 (try_use_bios)"
     note: "Preferred JP BIOS, searched first by exact filename."
 
   # -- Region: North America (PSX_REGION_US = 0) --
@@ -45,11 +45,12 @@ files:
     size: 524288
     required: false
     hle_fallback: true
-    validation: [size]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[1])"
+    validation: ["size", "signature"]
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[1]), source frontend/libretro.c:3604-3680 (try_use_bios)"
     note: "Preferred US BIOS, searched first by exact filename. The US slot is the detector's default: a disc takes it for both America licence strings and for any licence that is neither \"Inc.\" (JP) nor \"Euro pe\" (EU), and content without a disc boots it too (libpcsxcore/misc.c:422-453, frontend/libretro.c:2167-2171)."
     evidence:
       hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
+      validation: ["2026-10-27-1d4eb1daebe5", "2026-10-27-b43c5feca378"]
 
   # -- Region: Europe (PSX_REGION_EU = 2) --
 
@@ -59,8 +60,8 @@ files:
     size: 524288
     required: false
     hle_fallback: true
-    validation: [size]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[2])"
+    validation: ["size", "signature"]
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[2]), source frontend/libretro.c:3604-3680 (try_use_bios)"
     note: "Preferred EU BIOS, searched first by exact filename."
 
   # -- Fallback BIOS filenames (searched in order after scph550x) --
@@ -71,8 +72,8 @@ files:
     size: 524288
     required: false
     hle_fallback: true
-    validation: [size]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[3]), source frontend/libretro.c:3654-3669 (try_use_bios region guess)"
+    validation: ["size", "signature"]
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[3]), source frontend/libretro.c:3604-3680 (try_use_bios, region guess at 3654-3669)"
     note: "The core reads the region out of the image: bytes 0x7ff51 are ' J' in this dump, so it takes the JP slot (' E' takes EU, anything else US), one image per slot, first found kept. The disc licence picks the slot at boot (Config.Bios[Config.PsxRegion]), and a US or EU disc only reaches this file when its own slot is empty. Must be 512 KB."
 
   - name: "scph101.bin"
@@ -81,11 +82,12 @@ files:
     size: 524288
     required: false
     hle_fallback: true
-    validation: [size]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[4])"
+    validation: ["size", "signature"]
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[4]), source frontend/libretro.c:3604-3680 (try_use_bios)"
     note: "PSone slim model."
     evidence:
       hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
+      validation: ["2026-10-27-1d4eb1daebe5", "2026-10-27-f681ea946c3d"]
 
   - name: "scph7001.bin"
     description: "SCPH-7001 (v4.1 12-16-97 A)"
@@ -93,10 +95,11 @@ files:
     size: 524288
     required: false
     hle_fallback: true
-    validation: [size]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[5])"
+    validation: ["size", "signature"]
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[5]), source frontend/libretro.c:3604-3680 (try_use_bios)"
     evidence:
       hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
+      validation: ["2026-10-27-1d4eb1daebe5", "2026-10-27-1a14651aeda0"]
 
   - name: "scph1001.bin"
     description: "SCPH-1001 (v2.2 12-04-95 A)"
@@ -104,11 +107,12 @@ files:
     size: 524288
     required: false
     hle_fallback: true
-    validation: [size]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[6])"
+    validation: ["size", "signature"]
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[6]), source frontend/libretro.c:3604-3680 (try_use_bios)"
     note: "Original US model. Last in the explicit filename search list."
     evidence:
       hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
+      validation: ["2026-10-27-1d4eb1daebe5", "2026-10-27-ba3e1259ac73"]
 
   # -- Dynamic scan fallback --
   # After exhausting listed_bios[], the core calls find_any_bios() which scans
