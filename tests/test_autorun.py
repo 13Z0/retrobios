@@ -819,6 +819,10 @@ class BiosIntegrity(Scratch):
         self.repo = self.tmp / "repo"
         self.repo.mkdir()
         run_git(self.repo, "init", "--quiet", "-b", "main")
+        # A flip on disk leaves the ctime alone, the rewrite that stands for
+        # it here does not: git sees it whenever it lands a second after
+        # the commit, so slow runs read the flip as a working change.
+        run_git(self.repo, "config", "core.trustctime", "false")
         files = {
             "bios/Aristocrat/aristmk6.zip": bytes(range(256)) * 4,
             "bios/Sony/scph5501.bin": b"\x55" * 512,
