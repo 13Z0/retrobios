@@ -538,8 +538,10 @@ class SitePages(unittest.TestCase):
         self.assertLessEqual(set(observations), known, set(observations) - known)
 
     def test_the_issue_85_comparison_holds_in_the_records(self) -> None:
-        """Video and audio equal on each disc across both core commits, card
-        off and on: the sentence the Proof line gives."""
+        """Video and audio equal on each disc across every core commit run,
+        card off and on: the sentence the Proof line gives. The base and the
+        patched build are both there, and reruns on a later upstream base may
+        add commits without changing the claim."""
         said = sm.load_observations(REPO_ROOT / sm.OBSERVATIONS)["issue85-regression-card-on"]["said"]
         self.assertIn("20 discs", said)
         runs: dict[str, list[dict]] = {}
@@ -551,7 +553,8 @@ class SitePages(unittest.TestCase):
         self.assertEqual(len(runs), 20)
         for disc, records in runs.items():
             with self.subTest(disc=disc):
-                self.assertEqual(len({r["core"]["commit"] for r in records}), 2)
+                commits = {r["core"]["commit"][:7] for r in records}
+                self.assertLessEqual({"2ce77e2", "41d7596"}, commits)
                 self.assertEqual({r["subject"] for r in records},
                                  {"issue85-regression-card-off", "issue85-regression-card-on"})
                 seen = {(rep["observables"]["video_sha1"], rep["observables"]["audio_sha1"])
