@@ -197,7 +197,7 @@
  
  
  
- ^[[0;1;35mCtrl-C^[[0m Quit  ^[[0;2mB/Esc^[[0m Quit
+ ^[[0;1;35mB/Esc^[[0m Quit  ^[[0;2mCtrl-C^[[0m Quit
 === plan
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: RetroArch^[[0m
 

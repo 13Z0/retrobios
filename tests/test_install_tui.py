@@ -381,6 +381,16 @@ def checked_state(facts: dict | None = None) -> install.TuiState:
     return state
 
 
+class HoldingPack:
+    """A pack given to the run that holds every file asked of it."""
+
+    name = "RetroArch_BIOS_Pack.zip"
+
+    @staticmethod
+    def find(entry: dict) -> tuple:
+        return (None, entry)
+
+
 def press(state: install.TuiState, *pressed) -> list:
     effects = []
     for key in pressed:
@@ -496,7 +506,10 @@ class Flow(unittest.TestCase):
         self.assertEqual(state.regions, ["japan", "north-america"])
         press(state, "left")
         self.assertEqual(state.regions, ["north-america", "japan"])
-        self.assertEqual(state.focus["regions"], 0)
+        # The rank moves, the row stays where it is, under the focus.
+        self.assertEqual(state.focus["regions"], 1)
+        self.assertEqual([row.label for row in install.tui_rows(state)],
+                         ["[2] Japan", "[1] North America"])
         press(state, "shift-down")
         self.assertEqual(state.regions, ["japan", "north-america"])
         press(state, "esc", "down", "enter", "down", "right", "down", "down", "right", "right")
@@ -1113,8 +1126,12 @@ class Views(unittest.TestCase):
         for name, state in golden_states().items():
             with self.subTest(screen=name):
                 hint = install.tui_view(state, 40, 15)[-1].strip()
+                # Checking has no A: Back comes first, Quit never in the
+                # cell the screen before had Continue in.
                 self.assertTrue(hint.startswith(("A/Enter", "A ", "Enter", "Ctrl-C", "Any key",
-                                                 "B/Esc Stop", "B Stop")), hint)
+                                                 "B/Esc Stop", "B Stop")
+                                                + (("B ",) if name == "checking" else ())),
+                                hint)
 
     def test_focus_is_marked_without_colour(self):
         lines = install.tui_view(fresh_state(), 80, 24)
@@ -2416,7 +2433,7 @@ class AuditRoundThree(unittest.TestCase):
         """With --from-pack and no Wi-Fi, the plan said "to download", which
         on a handheld with no network read as a failure on its way."""
         state = checked_state()
-        with mock.patch.object(install.LOCAL, "pack", object()):
+        with mock.patch.object(install.LOCAL, "pack", HoldingPack()):
             headline = str(install.tui_view(state, 80, 24)[0])
             plan = "\n".join(str(line) for line in install.tui_view(state, 80, 24))
             state.summary = {"installed": 3, "failed": [], "up_to_date": 0}
@@ -2494,9 +2511,13 @@ class AuditRoundThree(unittest.TestCase):
                 state.found = [found("scph5500.bin", zipped)]
                 state.cols, state.rows = cols, rows
                 lines = [line.strip() for line in install.tui_view(state, cols, rows)]
-                folder = next(line for line in lines if line.startswith("BIOS folder: "))
-                self.assertTrue(folder.endswith("retroarch/system"), folder)
-                self.assertIn("...", folder)
+                at = next(index for index, line in enumerate(lines)
+                          if line.startswith("BIOS folder: "))
+                # Whole, broken after a separator: cut in its middle at 40
+                # columns, it was spelled one way on the plan and another on
+                # the result (tui_audit_13 P3-3).
+                self.assertEqual(lines[at] + lines[at + 1], "BIOS folder: /home/someone/with/"
+                                 "a/long/path/.config/retroarch/system")
                 self.assertIn("1 found in PSX BIOS.zip,", " ".join(lines))
                 self.assertNotIn("/home/me/a/long", " ".join(lines))
 
@@ -5635,8 +5656,11 @@ class GameDataIsNoFirmwareAlarm(unittest.TestCase):
         self.assertNotIn("Anims.j2a", lines[0])
         # The folder it goes in, and what game data is (the Android run of
         # 2026-10-27 said neither).
-        self.assertIn("Not available here, game data: files a game or a game engine reads",
-                      lines[1])
+        # The names first, the kind in a word, the definition on its own
+        # line of the plan (tui_audit_13 P3-5).
+        self.assertIn("Not available here: jazz2/Source/Anims.j2a (Jazz Jackrabbit 2), game "
+                      "data its game reads. Copy it", lines[1])
+        self.assertNotIn("files a game or a game engine reads", lines[1])
         self.assertIn(f"into {SYSTEM_DIR / 'jazz2' / 'Source'}{os.sep}", lines[1])
         self.assertIn("Anims.j2a (Jazz Jackrabbit 2)", lines[1])
 
@@ -6191,8 +6215,10 @@ class AuditSix(unittest.TestCase):
             state.found = []
             state.check = dict(state.check, data_missing=2636, data_bytes=40 * 1024 * 1024)
             text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
-        self.assertIn("4 files and 2636 data files (40.0 MB) need the internet, which "
-                      "--offline does not use", text)
+        # One count of files, the kinds apart under the folder (tui_audit_13
+        # P3-6): "4 files and 2636 data files" read as two kinds of one.
+        self.assertIn("2640 files need the internet, which --offline does not use", text)
+        self.assertIn("2636 data files (40.0 MB).", text)
 
     def test_the_error_row_and_the_bar_agree(self):
         """tui_audit_6 P3-9.3: "Choose another setup or folder" over
@@ -7557,11 +7583,17 @@ class LineModeAndScreenDecideAlike(_LineModeFindings, _OutsideTextFindings,
         self.assertIn("RetroArch: 1 file, 3 B, for 1 of 2 systems.", after)
         # No game data among the systems chosen: nothing for g to leave out.
         self.assertNotIn("g) Game data", after)
-        text, _asked = self.line_run(_args(**args), ["c", "1", "g", ""])
+        text, _asked = self.line_run(_args(**args), ["c", "1", "g", "", "g", ""])
         after = text[text.index("Counted again"):]
         self.assertIn("g) Game data: kept (3 files, 120 B): leave it out", after)
-        last = after[after.rindex("Counted again"):]
-        self.assertIn("g) Game data: left out (3 files, 120 B): keep it", last)
+        # doom holds only game data: Enter is refused, as the screen offers
+        # no Install for it (tui_audit_13 P3-11), and g puts it back.
+        self.assertIn("g) Game data: left out (3 files, 120 B): keep it", after)
+        self.assertIn("doom holds only game data: nothing is left to install.", after)
+        self.assertNotIn("All files up to date", text)
+        self.assertIn("RetroArch: 3 files, 120 B, for 1 of 2 systems.",
+                      after[after.rindex("Counted again"):])
+        text, _asked = self.line_run(_args(**args), ["g", ""])
         self.assertIn("4 game data files left out (--no-game-data), 1 of them not "
                       "installable", text)
 
@@ -9922,13 +9954,19 @@ class TheAndroidResultReadsWhole(unittest.TestCase):
         return install.tui_view(state, cols, 40)
 
     def test_a_path_or_a_command_is_never_split_inside_a_word(self):
+        full = "/sdcard/RetroArch/retrobios-backup/20261027-223524"
         for cols in (40, 50, 80):
             with self.subTest(cols=cols):
                 lines = [str(line).strip() for line in self.result(cols)]
-                self.assertIn("/sdcard/RetroArch/retrobios-backup/20261027-223524", lines)
                 words = [word for line in lines for word in line.split()]
                 self.assertIn("--restore", words)
-                self.assertTrue(all(not word.endswith("/") for word in words), words)
+                # The command keeps it whole, to be copied as one word.
+                self.assertIn(full, words)
+                # Prose breaks it after a separator only, never inside a name
+                # (tui_audit_13 P3-3): glued again, it is whole.
+                self.assertIn(full, re.sub(r"/ ", "/", " ".join(lines)))
+                self.assertFalse(any(line.endswith(("retrobios-ba", "20261027-"))
+                                     for line in lines), lines)
         state = _installed_state(Path("/sdcard/RetroArch/system"))
         command = install._styled("curl -fsSL https://raw.githubusercontent.com/Abdess/"
                                   "retrobios/main/install.sh | sh -s -- --restore "
@@ -9958,7 +9996,12 @@ class TheAndroidResultReadsWhole(unittest.TestCase):
         lines = install._omission_lines(1, [entry], bios)
         said = " ".join(lines)
         self.assertIn(f"into {bios / 'jazz2' / 'Source'}{os.sep}", said)
+        # Defined on its own line, never spliced into the sentence naming
+        # the file (tui_audit_13 P3-5).
         self.assertIn("files a game or a game engine reads", said)
+        self.assertEqual([line for line in lines if "game engine reads" in line],
+                         ["  Game data: files a game or a game engine reads, of no use to "
+                          "the other cores."])
         self.assertNotIn("Needed to start an emulator", said)
 
 
@@ -10184,6 +10227,17 @@ class MouseOnEveryScreen(unittest.TestCase):
                             label = str(lines[line])[first:end].split(" ", 1)[0]
                             self.assertIn(label, install._BAR_CLICKS)
                             effects = tap(state, first, line)
+                            if install._bar_commits(base, target[1]):
+                                # Install, Quit and Continue into Confirm: the
+                                # first tap arms the entry, drawn so, the
+                                # second on the same entry presses it.
+                                self.assertEqual(effects, [])
+                                self.assertEqual(state.stack, base.stack)
+                                again = drawn(state, cols, rows)
+                                self.assertIn("tap again", str(again[-1]))
+                                at = next(first for row, first, _end, mark in state.hits.targets
+                                          if mark == target)
+                                effects = tap(state, at, line)
                             self.assertEqual(effects, install.tui_update(keyed, target[1]))
                             self.assertEqual((state.stack, state.help),
                                              (keyed.stack, keyed.help))
@@ -10645,6 +10699,7 @@ class AuditNineteenAndTwelve(_CardFixtures, unittest.TestCase):
              "systems": ["sony-playstation"], "cores": None} for index in range(50)]
         for left in (False, True):
             state.no_game_data = left
+            state.checked_dests |= {f"game/{index}.dat" for index in range(50)}
             row = next(row for row in install.tui_rows(state) if row.action == "gamedata")
             line = str(install._row_line(row, False, 38))
             word = "left out" if left else "kept"
@@ -11065,6 +11120,768 @@ class TapsOnAPty(unittest.TestCase):
         self.assertEqual(term.close(), 0)
         self.assertIn("Same choice without questions:", term.after())
         self.assertGreater(term.raw.rfind(b"\x1b[?1000l"), mark)
+
+
+class AuditTwentyAndThirteen(unittest.TestCase):
+    """code_audit_20 and tui_audit_13: one choice for the run, taps that
+    never commit what was not seen, and the words that fit."""
+
+    setUp = LineModeAndScreenDecideAlike.setUp
+    line_run = LineModeAndScreenDecideAlike.line_run
+    listing = LineModeAndScreenDecideAlike.listing
+    entry = staticmethod(LineModeAndScreenDecideAlike.entry)
+
+    @staticmethod
+    def receive(state: install.TuiState, events: list, facts: dict | None = None) -> None:
+        """A check's events, then its end."""
+        for event in events:
+            install.tui_receive(state, ("event", state.run_id, event))
+        with mock.patch.object(install, "_tui_folder_facts", return_value=facts or {
+                "free": 50 * 1024 ** 3, "writable": True, "cores": []}):
+            install.tui_receive(state, ("ended", state.run_id, 1, []))
+
+    def game_manifest(self) -> dict:
+        """Three systems, each with one BIOS file and one game data file."""
+        files = []
+        for system in ("nintendo-ds", "sega-dreamcast", "sony-playstation"):
+            files += [{"dest": f"{system}.bin", "size": 100, "systems": [system],
+                       "cores": None},
+                      {"dest": f"{system}/game.dat", "size": 1000, "systems": [system],
+                       "cores": None, "category": install.GAME_DATA}]
+        # Dreamcast holds only game data.
+        files = [entry for entry in files if entry["dest"] != "sega-dreamcast.bin"]
+        return {"manifest_version": 2, "platform": "retroarch", "categorized": True,
+                "files": files}
+
+    def game_events(self, manifest: dict, left_out: bool = False,
+                    only: tuple = ()) -> list:
+        """The events of a check over manifest, game data left out or not,
+        the files of only those systems when given (--emulator)."""
+        kept = [entry for entry in manifest["files"]
+                if not only or entry["systems"][0] in only]
+        files = [entry for entry in kept
+                 if not (left_out and entry.get("category") == install.GAME_DATA)]
+        events = [{"event": "file", "platform": "retroarch", "dest": entry["dest"],
+                   "systems": entry["systems"], "size": entry["size"], "state": "missing"}
+                  for entry in files]
+        systems = sorted({entry["systems"][0] for entry in files})
+        events += [{"event": "system", "platform": "retroarch", "system": system,
+                    "name": system, "files": 1, "present": 0, "missing": 1, "wrong_hash": 0,
+                    "bytes_needed": 100} for system in systems]
+        games = [entry["dest"] for entry in kept if entry.get("category") == install.GAME_DATA]
+        events.append({"event": "summary", "mode": "check", "installed": 0, "up_to_date": 0,
+                       "pending": len(files), "failed": [], "skipped": [],
+                       "left_out": [{"category": install.GAME_DATA, "label": "game data",
+                                     "files": len(games), "dests": games}]
+                       if left_out else [], "kept": [], "interrupted": False})
+        events.append({"event": "check", "platform": "retroarch", "name": "RetroArch",
+                       "bios_dir": str(SYSTEM_DIR), "files": len(files), "present": 0,
+                       "missing": len(files), "wrong_hash": 0,
+                       "bytes_needed": sum(entry["size"] for entry in files),
+                       "data_missing": 0, "not_installable": 0})
+        return events
+
+    def game_plan(self, only: tuple = ()) -> install.TuiState:
+        state = fresh_state()
+        state.stack = ["setup"]
+        manifest = self.game_manifest()
+        with mock.patch.object(install.Path, "exists", return_value=True):
+            install.tui_update(state, Key("enter"))
+        install.tui_receive(state, ("manifest", "retroarch", manifest))
+        self.receive(state, self.game_events(manifest, only=only))
+        return state
+
+    # Root cause 2: one choice for the whole run.
+
+    def test_the_game_data_row_keeps_the_systems_ticked(self):
+        """tui_audit_13 P1-1: the plan's game data row set the ticks back to
+        every system, and the install wrote all of them."""
+        state = self.game_plan()
+        state.ticked = {"nintendo-ds"}
+        rows = install.tui_rows(state)
+        state.focus["plan"] = next(index for index, row in enumerate(rows)
+                                   if row.action == "gamedata")
+        self.assertEqual(install.tui_update(state, Key("enter")), [("run", "check")])
+        self.receive(state, self.game_events(self.game_manifest(), left_out=True))
+        self.assertEqual(state.ticked, {"nintendo-ds"})
+        self.assertIn(("--system", "nintendo-ds"), install.tui_flags(state))
+        self.assertIn(("--no-game-data", None), install.tui_flags(state))
+
+    def test_every_check_of_the_same_list_keeps_the_choice(self):
+        """Root cause of tui_audit_13 P1-1: a folder to copy from added, the
+        save folder chosen or Check again set the ticks back to every system
+        too, as the game data row did."""
+        for how in ("from", "savedir", "recheck"):
+            with self.subTest(how=how):
+                state = self.game_plan()
+                state.ticked = {"nintendo-ds"}
+                if how == "from":
+                    state.browse_for, state.browse_dir = "from", self.root
+                    state.stack.append("browse")
+                    install._activate(state, install.TuiRow("use", "Use this folder"))
+                elif how == "savedir":
+                    state.browse_for, state.browse_dir = "save", self.root
+                    state.stack.append("browse")
+                    install._activate(state, install.TuiRow("use", "Use this folder"))
+                else:
+                    install._activate(state, install.TuiRow("recheck", "Check again"))
+                self.assertEqual(state.screen, "checking")
+                self.receive(state, self.game_events(self.game_manifest()))
+                self.assertEqual(state.ticked, {"nintendo-ds"})
+
+    def test_a_choice_the_toggle_empties_says_so_and_offers_choose_systems(self):
+        """tui_audit_13 P1-1: Dreamcast alone, game data left out: the plan
+        promised the whole list and Install refused."""
+        state = self.game_plan()
+        state.ticked = {"sega-dreamcast"}
+        rows = install.tui_rows(state)
+        state.focus["plan"] = next(index for index, row in enumerate(rows)
+                                   if row.action == "gamedata")
+        install.tui_update(state, Key("enter"))
+        self.receive(state, self.game_events(self.game_manifest(), left_out=True))
+        text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+        self.assertIn("sega-dreamcast holds only game data: nothing is left to install.", text)
+        actions = [row.action for row in install.tui_rows(state)]
+        self.assertNotIn("install", actions)
+        self.assertEqual(actions[0], "systems")
+        # Kept again, the same system comes back.
+        state.focus["plan"] = actions.index("gamedata")
+        install.tui_update(state, Key("enter"))
+        self.receive(state, self.game_events(self.game_manifest()))
+        self.assertEqual(state.ticked, {"sega-dreamcast"})
+
+    def test_the_row_counts_the_list_the_check_read(self):
+        """code_audit_20 P2-1: under --emulator the row counted the game
+        data of every system, line mode's g the emulator's alone."""
+        state = self.game_plan(only=("nintendo-ds",))
+        row = next(row for row in install.tui_rows(state) if row.action == "gamedata")
+        self.assertEqual(row.right, "1 file, 1000 B")
+        # Line mode, the same list narrowed as --emulator narrows it.
+        manifest = self.game_manifest()
+        listing = self.listing("retroarch", [
+            self.entry(entry["dest"], b"x" * entry["size"], entry["systems"],
+                       **({"category": entry["category"]} if "category" in entry else {}))
+            for entry in manifest["files"] if entry["systems"] == ["nintendo-ds"]],
+            categorized=True)
+        text, _asked = self.line_run(_args(manifest=listing, dest=self.here,
+                                           declared_only=False, dry_run=True), [""])
+        self.assertIn("g) Game data: kept (1 file, 1000 B)", text)
+
+    def test_line_mode_names_the_game_data_of_the_systems_chosen(self):
+        """tui_audit_13 P2-3: --system with --no-game-data named the game
+        data of the whole list."""
+        files = [self.entry("gba_bios.bin", b"gba", ["nintendo-gba"]),
+                 self.entry("doom/doom1.wad", b"wad" * 10, ["doom"], category="game_data")]
+        listing = self.listing("retroarch", files, categorized=True)
+        text, _asked = self.line_run(_args(manifest=listing, dest=self.here,
+                                           declared_only=False, dry_run=True, no_input=True,
+                                           system=["nintendo-gba"], no_game_data=True), [])
+        self.assertNotIn("doom1.wad", text)
+        self.assertNotIn("game data file left out", text)
+        text, _asked = self.line_run(_args(manifest=listing, dest=self.here,
+                                           declared_only=False, dry_run=True, no_input=True,
+                                           system=["doom"], no_game_data=True), [])
+        # The choice holds no file: said, never "All files up to date", nor
+        # "unknown system" for a system the list names.
+        self.assertIn("doom holds only game data: nothing is left to install.", text)
+        self.assertNotIn("All files up to date", text)
+        self.assertNotIn("unknown system", text)
+
+    def test_the_run_head_counts_three_kinds_and_defines_them(self):
+        """code_audit_20 P3-5: a run without the menu split two kinds beside
+        the plan's three, from a second counting function."""
+        self.assertFalse(hasattr(install, "split_words"))
+        files = [self.entry("gba_bios.bin", b"gba", ["nintendo-gba"]),
+                 self.entry("doom/doom1.wad", b"wad" * 10, ["doom"], category="game_data")]
+        listing = self.listing("retroarch", files, categorized=True)
+        text, _asked = self.line_run(_args(manifest=listing, dest=self.here,
+                                           declared_only=False, dry_run=True, no_input=True),
+                                     [])
+        head = text[:text.index("Checking existing files")]
+        self.assertIn("1 BIOS file (3 B) and 1 game data file (30 B).", head)
+        self.assertIn("Game data: files a game or a game engine reads", head)
+
+    def test_the_cores_of_the_systems_chosen_come_first(self):
+        """tui_audit_13 P3-12: with --system sony-playstation, Cores opened
+        on every core of the list."""
+        state = checked_state()
+        state.cli_systems = ["sony-playstation"]
+        state.stack.append("cores")
+        values = [row.value for row in install.tui_rows(state) if row.action == "core"]
+        self.assertEqual(values, ["pcsx_rearmed"])
+        rows = install.tui_rows(state)
+        self.assertEqual(rows[-1].label, "Cores of the other systems: 1")
+        state.focus["cores"] = len(rows) - 1
+        install.tui_update(state, Key("enter"))
+        self.assertEqual([row.value for row in install.tui_rows(state)
+                          if row.action == "core"], ["mesen", "pcsx_rearmed"])
+
+    def test_line_mode_counts_the_systems_that_hold_a_file(self):
+        """tui_audit_13 P3-11: "2 of 8" in line mode, "1 of 8" on the screen."""
+        files = [self.entry("ds.bin", b"ds", ["nintendo-ds"]),
+                 self.entry("dc/game.dat", b"dc", ["sega-dreamcast"], category="game_data"),
+                 self.entry("psx.bin", b"psx", ["sony-playstation"])]
+        listing = self.listing("retroarch", files, categorized=True,
+                               system_titles={"nintendo-ds": "Nintendo DS",
+                                              "sega-dreamcast": "Sega Dreamcast",
+                                              "sony-playstation": "Sony PlayStation"})
+        text, _asked = self.line_run(_args(manifest=listing, dest=self.here,
+                                           declared_only=False, dry_run=True),
+                                     ["c", "1,2", "g"])
+        last = text[text.rindex("Counted again"):]
+        self.assertIn("for 1 of 2 systems.", last)
+        # The screen, the same choice: DS and Dreamcast ticked, game data
+        # left out on the plan.
+        state = self.game_plan()
+        state.ticked = {"nintendo-ds", "sega-dreamcast"}
+        rows = install.tui_rows(state)
+        state.focus["plan"] = next(index for index, row in enumerate(rows)
+                                   if row.action == "gamedata")
+        install.tui_update(state, Key("enter"))
+        self.receive(state, self.game_events(self.game_manifest(), left_out=True))
+        self.assertIn("for 1 of 2 systems", str(install.tui_view(state, 80, 24)[2]))
+
+    # Root cause 3: copies and packs.
+
+    def test_confirm_counts_the_copies_a_folder_holds(self):
+        """code_audit_20 P2-2: Confirm called the files packx holds
+        downloads, offline and online."""
+        state = checked_state()
+        state.found = [found(event["dest"], "/media/old") for event in FILES]
+        state.stack.append("confirm")
+        state.dry, state.dry_files = dict(CHECK), list(FILES)
+        for env in ({install.OFFLINE_VARIABLE: install.OFFLINE_FLAG_VALUE}, {}):
+            with self.subTest(offline=bool(env)), mock.patch.dict(os.environ, env):
+                text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+                self.assertIn("4 found in old, nothing to download", text)
+                self.assertNotIn("need the internet", text)
+                self.assertNotIn("to download,", text)
+
+    def test_an_old_card_holding_every_file_in_place_is_not_called_empty(self):
+        """tui_audit_13 P3-4: "packx holds none of these files" when all 22
+        were in place."""
+        state = checked_state()
+        state.check = {**CHECK, "present": 5, "missing": 0, "wrong_hash": 0,
+                       "bytes_needed": 0}
+        state.files = []
+        state.from_folders = [Path("/media/packx")]
+        text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+        self.assertIn("Nothing to copy from packx: every file is in place.", text)
+        self.assertNotIn("holds none of these files", text)
+
+    def test_the_plan_says_what_the_pack_lacks_before_a_size(self):
+        """tui_audit_13 P3-8: "8358 files to install from the pack, 6.6 GB"
+        from a pack that held none of them."""
+        state = checked_state()
+
+        class Lacking:
+            name = "RetroArch_BIOS_Pack.zip"
+
+            @staticmethod
+            def find(entry: dict) -> tuple | None:
+                return (None, entry) if entry["dest"] == "gba_bios.bin" else None
+
+        with mock.patch.object(install.LOCAL, "pack", Lacking()):
+            text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+            self.assertIn("1 file to install from the pack, 16.0 KB", text)
+            self.assertIn("3 of these 4 files are not in RetroArch_BIOS_Pack.zip", text)
+            Lacking.find = staticmethod(lambda entry: None)
+            text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+            self.assertIn("RetroArch_BIOS_Pack.zip holds none of these 4 files", text)
+            self.assertNotIn("install", [row.action for row in install.tui_rows(state)])
+
+    def test_a_failed_pack_install_leaves_no_folder_behind(self):
+        """tui_audit_13 P3-8: 405 empty folders and a saves folder."""
+        pack_dir = self.root / "downloads"
+        pack_dir.mkdir()
+        pack = pack_dir / "RetroArch_BIOS_Pack.zip"
+        with zipfile.ZipFile(pack, "w") as archive:
+            archive.writestr("manifest.json", json.dumps({"files": []}))
+        files = [self.entry(f"deep/folder{n}/file.bin", b"x", ["nintendo-gba"])
+                 for n in range(3)]
+        listing = self.listing("retroarch", files)
+        dest = self.root / "new" / "system"
+        dest.parent.mkdir()
+        text, _asked = self.line_run(_args(manifest=listing, from_pack=[pack], dest=dest,
+                                           declared_only=False, yes=True, no_input=True), [])
+        self.assertIn("RetroArch_BIOS_Pack.zip holds none of these 3 files", text)
+        self.assertFalse(dest.exists(), list(dest.rglob("*")) if dest.exists() else [])
+
+    # Root cause 4: Choose another folder.
+
+    def test_choose_another_folder_opens_the_folder_screen(self):
+        """code_audit_20 P2-3: with --dest the create screen is alone on the
+        stack, and Choose another folder asked Quit?."""
+        state = fresh_state()
+        state.platform, state.dest = "retroarch", self.root / "missing" / "bios"
+        state.stack = ["create"]
+        state.facts = {"nearest": self.root, "risky": False}
+        state.focus["create"] = 1
+        install.tui_update(state, Key("enter"))
+        self.assertEqual(state.screen, "folder")
+        self.assertEqual(install.tui_view(state, 80, 24)[0].strip(),
+                         "RetroBIOS: Which folder?")
+
+    # Root cause 5: text that fits.
+
+    def test_the_version_note_stays_on_the_40x12_plan_and_in_every_farewell(self):
+        """tui_audit_13 P3-1."""
+        note = "This list was built for RetroBat 8.3.1, this machine runs 8.2.0.1."
+        state = checked_state()
+        state.version = note
+        state.files = []
+        state.check = {**CHECK, "present": 5, "missing": 0, "wrong_hash": 0,
+                       "bytes_needed": 0}
+        text = " ".join(" ".join(install.tui_view(state, 40, 12)).split())
+        self.assertIn(note, text)
+        state.exit_code = 0
+        self.assertIn(note, install.tui_farewell(state))
+        state.exit_code, state.quit_asked = install.QUIT_CODE, True
+        self.assertIn(note, install.tui_farewell(state))
+
+    def test_the_help_defines_game_data_at_40_columns(self):
+        """tui_audit_13 P3-2: the row was a choice nothing explained on the
+        Miyoo's screen."""
+        state = _game_state()
+        state.mouse = True
+        state.help = True
+        for rows in (12, 15):
+            with self.subTest(rows=rows):
+                text = " ".join(" ".join(install.tui_view(state, 40, rows)).split())
+                self.assertIn("Game data: files a game or a game engine reads", text)
+
+    def test_the_40_column_bar_keeps_help_and_the_help_its_tap_line(self):
+        """code_audit_20 P3-1."""
+        state = checked_state()
+        state.mouse = True
+        state.stack.append("systems")
+        state.focus["systems"] = 1
+        bar = str(install.tui_view(state, 40, 12)[-1])
+        self.assertIn("? Help", bar)
+        state.help = True
+        text = " ".join(" ".join(install.tui_view(state, 40, 12)).split())
+        self.assertIn("Tap Tick or untick a row, as Space", text)
+
+    def test_one_spelling_of_a_folder_on_the_plan_and_the_result(self):
+        """tui_audit_13 P3-3: "/home...i_audit13/rb/bios" on the plan, the
+        same folder whole and folded inside a name on the result."""
+        dest = Path("/home/moi/retroarch_system/tmp/tui_audit13/rb/bios")
+        for cols in (40, 80):
+            with self.subTest(cols=cols):
+                plan = checked_state()
+                plan.dest = dest
+                result = _installed_state(dest)
+                spelled = []
+                for state in (plan, result):
+                    lines = [str(line).strip() for line in install.tui_view(state, cols, 24)]
+                    at = next(i for i, line in enumerate(lines)
+                              if line.startswith("BIOS folder:"))
+                    pieces = [lines[at]]
+                    while pieces[-1].endswith("/") and lines[at + len(pieces)]:
+                        pieces.append(lines[at + len(pieces)])
+                    spelled.append(pieces)
+                    self.assertNotIn("...", " ".join(lines))
+                    self.assertTrue(all(len(piece) <= cols - 2 for piece in pieces), pieces)
+                self.assertEqual(spelled[0], spelled[1])
+                self.assertEqual("".join(spelled[0]), f"BIOS folder: {dest}")
+
+    def test_a_long_path_fits_without_its_indent(self):
+        """tui_audit_13 P3-3: a pack path of 75 cells folded at 80 columns
+        under an indent of 6."""
+        path = "/home/moi/retroarch_system/tmp/tui_audit13/pack/MinUI_2025-11_BIOS_Pack.zip"
+        self.assertEqual(len(path), 75)
+        lines = install._wrap(f"    python3 install.py --from-pack {path}", 78,
+                              whole="command")
+        self.assertIn(path, lines)
+
+    def test_the_definition_is_said_once_and_never_spliced(self):
+        """tui_audit_13 P3-5."""
+        state = checked_state()
+        state.systems = []
+        state.manifest = {**MANIFEST, "categorized": True, "omitted_files": [
+            {"dest": "jazz2/Source/Anims.j2a", "system": "jazz-jackrabbit-2",
+             "required": True, "category": "game_data"}]}
+        state.check = {**CHECK, "not_installable": 1}
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertEqual(text.count("files a game or a game engine reads"), 1, text)
+        self.assertIn("Not available here: jazz2/Source/Anims.j2a (Jazz Jackrabbit 2), game "
+                      "data its game reads.", text)
+
+    def test_the_headline_counts_every_file_once(self):
+        """tui_audit_13 P3-6: "8358 files and 2636 data files", and the
+        definition dropped at 80 columns."""
+        state = _game_state()
+        state.check = {**state.check, "data_missing": 7, "data_bytes": 2048}
+        lines = [str(line).strip() for line in install.tui_view(state, 80, 24)]
+        text = " ".join(" ".join(lines).split())
+        self.assertIn("11 files to download, 1.0 MB", text)
+        self.assertNotIn("and 7 data files", lines[2])
+        self.assertIn("Data files: the files an emulator reads", text)
+
+    def test_the_save_line_never_ends_on_its_colon(self):
+        """tui_audit_13 P3-7: "...goes to a folder per core under:" with no
+        folder at 60x20."""
+        state = _game_state()
+        state.saves = {"event": "saves", "files": 1,
+                       "folder": "/home/user/.config/retroarch/saves/<core>"}
+        shown = 0
+        for rows in range(12, 30):
+            with self.subTest(rows=rows):
+                lines = [str(line).strip() for line in install.tui_view(state, 60, rows)]
+                for index, line in enumerate(lines):
+                    if line.endswith("under:"):
+                        shown += 1
+                        self.assertTrue(lines[index + 1].startswith("~/"), lines)
+        self.assertGreater(shown, 0)
+
+    def test_the_result_says_how_to_copy_and_counts_one_kind_once(self):
+        """tui_audit_13 P3-10 and P3-14."""
+        state = _installed_state(SYSTEM_DIR)
+        state.manifest = {**MANIFEST, "categorized": True}
+        state.mouse = True
+        state.finished = [(event["dest"], True, "") for event in FILES]
+        state.summary = {**state.summary, "installed": 4}
+        _title, lines = install.tui_outcome(state)
+        self.assertEqual(lines[0], "4 BIOS files installed.")
+        self.assertFalse(any(line.startswith("Installed:") for line in lines), lines)
+        self.assertEqual(lines[-1], install.TUI_RESULT_COPY)
+        self.assertNotIn(install.TUI_RESULT_COPY, install.tui_farewell(state))
+        state.help = True
+        self.assertIn("Shift+drag", " ".join(install.tui_view(state, 80, 24)))
+
+    def test_the_old_card_result_splits_what_is_missing(self):
+        """tui_audit_13 P3-14: "16 still missing" where 6 were game data."""
+        state = _game_state()
+        state.from_folders = [Path("/media/OLD")]
+        state.local_dests = {"gba_bios.bin": ("/media/OLD", "")}
+        state.finished = [("gba_bios.bin", True, "")]
+        state.download = {"files": 4}
+        state.stack, state.run = ["result"], "install"
+        state.summary = {"event": "summary", "mode": "install", "installed": 1,
+                         "up_to_date": 0, "pending": 3, "failed": [], "skipped": [],
+                         "left_out": [], "kept": [], "interrupted": False}
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE:
+                                          install.OFFLINE_FLAG_VALUE}):
+            _title, lines = install.tui_outcome(state)
+        self.assertIn("Still missing: 2 BIOS files and 1 game data file.", lines)
+
+    # Root cause 6: every other word.
+
+    def test_drives_are_named_once_under_wsl_and_windows(self):
+        """code_audit_20 P3-3: "D:: bios" and "D:\\: bios"."""
+        with mock.patch.dict(install._WSL, {"active": True}):
+            mount = Path(install._WSL["root"]) / "d"
+            self.assertEqual(install._drive_folder(mount, "bios"), "D:\\bios")
+        windows = PureWindowsPath("D:\\")
+        with mock.patch.object(install, "_mount_name", return_value="D:\\"), \
+                mock.patch.object(install, "shown_path", side_effect=str):
+            self.assertEqual(install._drive_folder(windows, "bios"), "D:\\bios")
+        stick = Path("/media/moi/USBSTICK")
+        self.assertEqual(install._drive_folder(stick, "bios"), "USBSTICK: bios")
+
+    def test_the_linux_side_is_named_by_its_side(self):
+        """code_audit_20 P3-3, tui_audit_13 P3-9."""
+        self.assertEqual(install.side_name("wsl", "retroarch"), "Linux RetroArch")
+        self.assertEqual(install.side_name("linux", "retroarch"), "RetroArch")
+        state = fresh_state()
+        state.os_type, state.platform = "wsl", "retroarch"
+        state.stack = ["setup", "folder"]
+        state.folder_default, state.folder_kind = SYSTEM_DIR, "usual"
+        with mock.patch.object(install, "_mounted_cards", return_value=[]), \
+                mock.patch.object(install, "_is_dir", return_value=False):
+            text = "\n".join(install.tui_view(state, 100, 30))
+        self.assertIn("Linux RetroArch usually reads its BIOS files from:", text)
+        self.assertIn("(does not exist yet)", text)
+
+    def test_a_folder_created_where_no_setup_is_says_so(self):
+        """tui_audit_13 P3-9: "system is created in C:\\RetroArch-Win64, where
+        RetroArch reads it" with no RetroArch there."""
+        state = fresh_state()
+        missing = self.root / "RetroArch-Win64" / "system"
+        with mock.patch.object(install, "_start_check", return_value=[]):
+            install._choose(state, "retroarch", missing, proposed=True)
+        self.assertIn("a folder that does not exist yet", state.card_note)
+        self.assertNotIn("reads it", state.card_note)
+        here = self.root / "pc" / "bios"
+        with mock.patch.object(install, "_start_check", return_value=[]):
+            install._choose(state, "retroarch", here, proposed=True)
+        self.assertIn("where RetroArch reads it", state.card_note)
+
+    def test_the_needed_list_counts_one_more_system_in_words(self):
+        """tui_audit_13 P3-13, on the list of files an emulator needs too."""
+        entries = [{"dest": f"s{n}.bin", "system": f"system-{n}", "required": True}
+                   for n in range(9)]
+        said = " ".join(install._needed_lines(entries, "Needed"))
+        self.assertIn("... and 1 more system (--check --verbose lists them all)", said)
+
+    def test_the_farewell_names_the_option_not_the_screen(self):
+        """code_audit_20 P3-4."""
+        state = _installed_state(SYSTEM_DIR)
+        state.summary = {**state.summary, "skipped": [
+            {"reason": "no_save_directory", "label": "", "files": 1, "required": False}]}
+        farewell = " ".join(install.tui_farewell(state))
+        self.assertIn("Name it with --save-dir next time.", farewell)
+        self.assertNotIn("Options", farewell)
+
+    def test_more_systems_is_counted_in_words(self):
+        """tui_audit_13 P3-13: "... and 1 more systems"."""
+        entries = [{"dest": f"s{n}.bin", "size": 10, "systems": [f"system-{n:02d}"]}
+                   for n in range(install.PLAN_LARGEST_SYSTEMS + 1)]
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            install._print_plan(entries, SYSTEM_DIR, install.Terminal(io.StringIO()))
+        self.assertIn("... and 1 more system:", out.getvalue())
+
+    def test_the_systems_question_aligns_and_explains_after_the_list(self):
+        """tui_audit_13 P3-13."""
+        rows = [("mattel-intellivision", []), ("nec-pc-engine", []),
+                (install.OTHER_SYSTEMS, [])]
+        labels = {"mattel-intellivision": "Mattel Intellivision  mattel-intellivision",
+                  "nec-pc-engine": "NEC PC Engine  nec-pc-engine",
+                  install.OTHER_SYSTEMS: install.OTHER_TITLE + "  " + "x" * 10}
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), \
+                mock.patch.object(install, "_ask", return_value=""):
+            install._pick("Systems:", rows, labels=labels, note="A note.",
+                          sizer=lambda files: "1 file")
+        lines = out.getvalue().splitlines()
+        listed = [line for line in lines if line.endswith("1 file")]
+        self.assertEqual(len({line.index("1 file") for line in listed}), 1, listed)
+        self.assertGreater(lines.index("A note."), lines.index(listed[-1]))
+
+    def test_the_yes_stop_says_one_thing_with_a_list_or_without(self):
+        """tui_audit_13 P3-13, code_audit_20 P3-6: "the file list" said of a
+        pack, and two wordings for one stop."""
+        pack = self.root / "RetroArch_BIOS_Pack.zip"
+        with zipfile.ZipFile(pack, "w") as archive:
+            archive.writestr("manifest.json", json.dumps({"files": []}))
+        env = {"HOME": str(self.root / "home"), "XDG_CONFIG_HOME": str(self.root / "cfg"),
+               "RETROBIOS_OS": "linux"}
+        said = install_run("--from-pack", str(pack), "--yes", env=env)
+        self.assertEqual(said.returncode, 1, said.stdout + said.stderr)
+        self.assertIn("No supported platform detected: RetroArch was not found here, and "
+                      "the pack does not say where it goes.", said.stderr)
+        alone = install_run("--yes", env=env)
+        self.assertIn("No supported platform detected", alone.stdout + alone.stderr)
+        hint = install._manual_usage_hint("linux")
+        self.assertTrue(hint[0].startswith("  Name the setup with --platform and its folder "
+                                           "with --dest"), hint)
+        page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        self.assertIn("every run without questions stops before reading it", page)
+        self.assertIn("none stops it too, with `reason` `not_found`", page)
+        self.assertIn("So is a platform named by a file list or a pack", page)
+
+
+class TapsSeenBeforeTheyAct(unittest.TestCase):
+    """code_audit_20 P3-2 and tui_audit_13 P2-1, P2-2: a tap acts on the
+    frame it was made on, and never commits on one tap."""
+
+    def test_a_release_on_a_later_frame_does_nothing(self):
+        state = checked_state()
+        state.mouse = True
+        lines = drawn(state, 80, 24)
+        row = next(i for i, line in enumerate(lines)
+                   if getattr(line, "mark", None) and line.mark[0] == "row"
+                   and line.mark[2][0] == "systems")
+        install.tui_update(state, install.TuiMouse(0, 5, row + 1))
+        # The screen changes under the finger before it comes up.
+        state.stack.append("options")
+        drawn(state, 80, 24)
+        state.stack.pop()
+        drawn(state, 80, 24)
+        effects = install.tui_update(state, install.TuiMouse(0, 5, row + 1, True))
+        self.assertEqual(effects, [])
+        self.assertIsNone(state.tapped)
+
+    def test_the_bar_install_arms_then_presses(self):
+        state = checked_state()
+        state.mouse = True
+        lines = drawn(state, 80, 24)
+        bar = len(lines) - 1
+        self.assertEqual(tap(state, 3, bar), [])
+        self.assertEqual(state.screen, "plan")
+        armed = drawn(state, 80, 24)
+        self.assertIn("A/Enter Install: tap again", str(armed[-1]))
+        self.assertEqual(tap(state, 3, bar), [("run", "install")])
+
+    def test_a_tapped_quit_quits_with_the_quit_code(self):
+        state = checked_state()
+        state.mouse = True
+        state.stack.append("checking")
+        state.running, state.run = True, "check"
+        lines = drawn(state, 80, 24)
+        self.assertFalse(str(lines[-1]).strip().startswith("Ctrl-C"))
+        at = str(lines[-1]).index("Ctrl-C")
+        tap(state, at, len(lines) - 1)
+        self.assertIsNone(state.exit_code)
+        drawn(state, 80, 24)
+        at = str(install.tui_view(state, 80, 24)[-1]).index("Ctrl-C")
+        tap(state, at, len(lines) - 1)
+        self.assertEqual(state.exit_code, install.QUIT_CODE)
+
+    def test_two_taps_on_a_region_leave_it_unticked_where_it_was(self):
+        state = checked_state()
+        state.mouse = True
+        install.tui_update(state, Key("char", "o"))
+        install.tui_update(state, Key("enter"))
+        self.assertEqual(state.screen, "regions")
+        lines = drawn(state, 80, 24)
+        before = [row.value for row in install.tui_rows(state)]
+        row = next(i for i, line in enumerate(lines)
+                   if getattr(line, "mark", None) and line.mark[0] == "row"
+                   and line.mark[2][1] == "north-america")
+        tap(state, 5, row)
+        drawn(state, 80, 24)
+        self.assertEqual(state.regions, ["north-america"])
+        self.assertEqual([row.value for row in install.tui_rows(state)], before)
+        tap(state, 5, row)
+        self.assertEqual(state.regions, [])
+        bar = str(drawn(state, 80, 24)[-1])
+        self.assertIn("A/Enter/tap Tick", bar)
+        state.help = True
+        self.assertIn("as A", " ".join(install.tui_view(state, 80, 24)))
+
+
+@unittest.skipUnless(pyte and pty and hasattr(pty, "fork"),
+                     "screen tests need pyte (pip install pyte==0.8.2) and a pty")
+class TapsOnAPtySeeFirst(unittest.TestCase):
+    """tui_audit_13 P1-1, P2-1, P2-2 on the real install.py --tui."""
+
+    repo = EndToEnd.repo
+    start = EndToEnd.start
+    line_of = staticmethod(MouseOnAPty.line_of)
+    click = MouseOnAPty.click
+
+    def bar_entry(self, term: Pty, word: str) -> tuple[int, int]:
+        line = len(term.screen.display) - 1
+        return term.screen.display[line].index(word), line
+
+    def test_one_tap_on_the_bar_install_installs_nothing(self):
+        repo = self.repo()
+        term = self.start()
+        term.wait("Where do you play?")
+        term.send("\r")
+        term.wait("> Install")
+        term.settle()
+        self.click(term, *self.bar_entry(term, "Install"))
+        self.assertIn("tap again", term.settle().splitlines()[-1])
+        self.assertEqual(repo.installed(), [])
+        self.click(term, *self.bar_entry(term, "Install"))
+        term.wait("files installed")
+        term.send("q")
+        term.close()
+
+    def test_a_double_tap_on_continue_neither_quits_nor_installs(self):
+        repo = self.repo()
+        term = self.start()
+        term.wait("Where do you play?")
+        term.settle()
+        col, line = self.bar_entry(term, "Continue")
+        report = sgr(col + 1, line + 1) + sgr(col + 1, line + 1, release=True)
+        term.send(report + report)
+        term.settle()
+        term.send(report)
+        term.settle(0.6)
+        self.assertIsNone(os.waitpid(term.pid, os.WNOHANG)[0] or None)
+        self.assertEqual(repo.installed(), [])
+        term.send("q")
+        if "Quit?" in term.settle():
+            term.send("\r")
+        self.assertIn(term.close(), (install.QUIT_CODE, 0))
+
+    def test_continue_then_install_in_one_cell_stops_on_confirm(self):
+        repo = self.repo()
+        term = self.start()
+        term.wait("Where do you play?")
+        term.send("\r")
+        term.wait("> Install")
+        row = self.line_of(term, "Choose systems")
+        self.click(term, 20, row)
+        term.settle()
+        self.click(term, 20, row)
+        term.wait("RetroBIOS: Choose systems")
+        row = self.line_of(term, "sony-playstation")
+        self.click(term, 20, row)
+        term.settle()
+        col, line = self.bar_entry(term, "Continue")
+        report = sgr(col + 1, line + 1) + sgr(col + 1, line + 1, release=True)
+        # A double tap: the first arms Continue, the second opens Confirm.
+        term.send(report + report)
+        term.wait("Counted again for your choices")
+        term.settle()
+        self.assertEqual(repo.installed(), [])
+        # Install in the same cell: one tap arms it, nothing is written.
+        term.send(report)
+        screen = term.settle(0.6)
+        self.assertIn("RetroBIOS: Confirm", screen)
+        self.assertIn("Install: tap again", screen.splitlines()[-1])
+        self.assertEqual(repo.installed(), [])
+        term.send("q")
+        term.close()
+
+    def test_the_game_data_row_keeps_the_ticks_to_the_install(self):
+        from test_install_tui import GameDataRepository  # noqa: PLC0415
+
+        repo = self.repo(GameDataRepository)
+        term = self.start()
+        term.wait("Where do you play?")
+        term.send("\r")
+        term.wait("> Install")
+        for _step in range(8):
+            if "> Choose systems" in term.settle():
+                break
+            term.send("\x1b[B")
+        term.send("\r")
+        term.wait("RetroBIOS: Choose systems")
+        term.send("n")
+        for _step in range(8):
+            if "> [ ] nintendo-gba" in term.settle():
+                break
+            term.send("\x1b[B")
+        term.send(" ")
+        term.settle()
+        term.send("\x1b")
+        term.wait("> Install")
+        for _step in range(8):
+            if "> Game data: kept" in term.settle():
+                break
+            term.send("\x1b[B")
+        term.send("\r")
+        term.wait("Game data: left out")
+        for _step in range(8):
+            if "> Install" in term.settle():
+                break
+            term.send("\x1b[A")
+        term.send("\r")
+        screen = term.wait("RetroBIOS:")
+        if "Confirm" in term.settle():
+            term.send("\r")
+        term.wait("files installed")
+        self.assertEqual(repo.installed(), ["gba_bios.bin", "mgba/extra.bin"])
+        del screen
+        term.send("q")
+        term.close()
+
+    def test_two_taps_on_a_region_untick_it_where_it_was(self):
+        self.repo()
+        term = self.start()
+        term.wait("Where do you play?")
+        term.send("\r")
+        term.wait("> Install")
+        term.send("o")
+        term.wait("Preferred regions")
+        term.send("\r")
+        term.wait("RetroBIOS: Preferred regions")
+        row = self.line_of(term, "North America")
+        self.click(term, 20, row)
+        screen = term.settle()
+        self.assertIn("[1] North America", screen.splitlines()[row])
+        self.click(term, 20, row)
+        screen = term.settle()
+        self.assertIn("[ ] North America", screen.splitlines()[row])
+        self.assertNotIn("[1]", screen)
+        term.send("q")
+        term.close()
 
 
 if __name__ == "__main__":

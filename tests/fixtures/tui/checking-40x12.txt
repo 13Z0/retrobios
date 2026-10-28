@@ -9,4 +9,4 @@
 
 
 
- Ctrl-C Quit  B Quit
+ B Quit  Ctrl-C Quit

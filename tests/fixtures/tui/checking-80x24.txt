@@ -21,4 +21,4 @@
 
 
 
- Ctrl-C Quit  B/Esc Quit
+ B/Esc Quit  Ctrl-C Quit

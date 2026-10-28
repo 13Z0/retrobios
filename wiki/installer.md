@@ -121,9 +121,12 @@ they do online, and a file of the list the pack does not hold fails as
 `not in the pack`. The list's platform has to be the one installed for.
 
 `--offline` forbids every request, for a device with no Wi-Fi: `--check`
-still names the platform and its folder, then stops at the file list unless
-`--manifest` or `--from-pack` gives it, and counts the files that need the
-internet instead of offering to fetch them. The run installs the copies found
+still names the platform and its folder where it finds them, then stops at the
+file list unless `--manifest` or `--from-pack` gives it, and counts the files
+that need the internet instead of offering to fetch them. A file list or a pack
+names its platform, not where that platform is: when it is found nowhere here,
+every run without questions stops before reading it, `--check`, `--dry-run`
+and `--no-input` included, and names the `--dest` to give. The run installs the copies found
 on this machine and downloads nothing. The files left out are missing, not
 failed: it ends `Finished with files missing` (code 1), or `Nothing installed`
 (code 2) when nothing was installed, at a terminal, without questions and on
@@ -245,11 +248,16 @@ does. On any other row it moves the cursor there, and a second one on that
 row does what Enter does: one row of a terminal is far smaller than a finger,
 and the row a screen opens on (**Install** on Confirm) is never chosen by one
 tap. The entries of the bottom line press their key, **Exit** on the result
-too, the line that says which rows are in view shows the next page, and the
-wheel scrolls a list or a text without moving the cursor unless it would leave
-the screen. Nothing happens until the button or the finger comes up, and only
-where it went down. The right and middle buttons do nothing. The help and the
-bottom line of a list of boxes say how a tap acts.
+too. One that installs, quits or goes on to Confirm takes two taps as a row
+does: the first adds `tap again` to it, the second presses it. A row of
+Preferred regions stays where it is when it is ticked, its number giving the
+order, which the list shows sorted the next time it opens. The line that says
+which rows are in view shows the next page, and the wheel scrolls a list or a
+text without moving the cursor unless it would leave the screen. Nothing
+happens until the button or the finger comes up, and only where it went down,
+on the screen drawn when it went down: the second tap of a double tap that
+changes the screen does nothing on the new one. The right and middle buttons
+do nothing. The help and the bottom line of a list of boxes say how a tap acts.
 
 Clicks are off in the Windows console the PowerShell command runs in, which
 reports no click as a key, with `TERM` unset or set to `dumb`, `unknown`,
@@ -259,9 +267,10 @@ them back on every way out, a stop with Ctrl+Z included. On the command line
 screen, any screen showing a command and the screen where a path is typed,
 the terminal keeps the mouse, so text is selected, copied and pasted as usual.
 The result takes taps, so a touch screen can leave it: it is printed again in
-the terminal once the screen closes, its commands with it. Elsewhere, hold
-Shift while selecting. `--plain` never asks for clicks. Clicks and taps were checked on
-2026-10-27 in xterm, tmux, GNU screen 4.09, Windows Terminal (WSL) and Termux
+the terminal once the screen closes, its commands with it, and its last line
+says so. Elsewhere, and on the result, hold Shift while selecting. `--plain`
+never asks for clicks. Clicks and taps were checked on 2026-10-27 in xterm,
+tmux, GNU screen 4.09, Windows Terminal (WSL) and Termux
 on Android 17. macOS Terminal and iTerm2 are not checked yet, nor the key
 they use to select over the installer.
 
@@ -845,7 +854,7 @@ what the options name, everything by default.
 | <span id="option-list-cores"></span>`--list-cores` | Print the cores whose extra files a platform installs |
 | <span id="option-list-emulators"></span>`--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
 | <span id="option-romm-firmware"></span>`--romm-firmware TEMPLATE` | RomM: where each platform's firmware goes in the library, as `filesystem.structure.firmware` in RomM's `config.yml` says (`{platform}/bios` for a library laid out as `{platform}/roms`). Read from `config.yml` beside the library when it is there. See [RomM firmware layout](#romm-firmware-layout) |
-| <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal. A run whose output goes to a file or a pipe asks nothing either, and says so on stderr. It finds the setups and the mounted cards the screen finds: one is taken, as Enter takes it, and two stop the run with an `error` event (`stage` `detect`, `reason` `conflict`) naming each with its `--platform` and `--dest` |
+| <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal. A run whose output goes to a file or a pipe asks nothing either, and says so on stderr. It finds the setups and the mounted cards the screen finds: one is taken, as Enter takes it, two stop the run with an `error` event (`stage` `detect`, `reason` `conflict`) naming each with its `--platform` and `--dest`, and none stops it too, with `reason` `not_found` when a file list or a pack names the platform |
 | <span id="option-check"></span>`--check` | Report and exit without writing |
 | <span id="option-dry-run"></span>`--dry-run` | Show what would be downloaded, the totals first, then by system and with sizes, without writing anything. A plan taller than the screen names the ten largest systems, and `--verbose` lists every system and file |
 | <span id="option-yes"></span>`--yes`, `-y` | Do not ask before a download of 1 GB or more, nor anything else. Implies `--no-input`, so a run that needs an answer (nothing found here, a file list or a pack naming its platform included, or two setups found) stops on what to name instead. `--platform` names a setup, whose usual folder is then taken |
@@ -1606,7 +1615,7 @@ other schemas under `api/v1/schemas/`.
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `unsearched` | `folder`, `reason`, `message` | Before `detect`, once for each folder the search for setups could not look in, this user being refused it. What it would hold counts as absent, and the other places are still searched: `detect` then lists what they hold, and an empty `platforms` after an `unsearched` line means nothing was found where the installer could look. `reason` says why in words (`Permission denied`), `message` says it in a sentence |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. The BIOS folder cannot be created (`stage` is `dest`, `reason` `not_writable`): a `summary` follows with what the run installed before it. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). The platform named with `--platform` is found nowhere and no folder can be assumed for it: a card system with no card named, a portable emulator, Batocera or Recalbox named on a computer (their folder is the `bios` folder of their SHARE drive), or no usual folder on this system or one set aside behind a folder this user cannot open (`stage` is `detect`, `reason` `not_found`). A `--dest` refused as the card of the system named carries the same `stage` and `reason`: another system's card, a folder inside a card, a drive with none of the files its card always has, or a folder that does not exist. `message` says it in words, and is the only thing that tells these cases apart |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. The BIOS folder cannot be created (`stage` is `dest`, `reason` `not_writable`): a `summary` follows with what the run installed before it. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). The platform named with `--platform` is found nowhere and no folder can be assumed for it: a card system with no card named, a portable emulator, Batocera or Recalbox named on a computer (their folder is the `bios` folder of their SHARE drive), or no usual folder on this system or one set aside behind a folder this user cannot open (`stage` is `detect`, `reason` `not_found`). So is a platform named by a file list or a pack, in a run without questions where it is found nowhere here. A `--dest` refused as the card of the system named carries the same `stage` and `reason`: another system's card, a folder inside a card, a drive with none of the files its card always has, or a folder that does not exist. `message` says it in words, and is the only thing that tells these cases apart |
 | `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
 | `version` | `platform`, `list_version`, `installed_version`, `message` | Before `choices`, when the system here runs another version than the one the list was built for: `list_version` is the list's, `installed_version` the one the system's version file states, and `message` says it and what it means. Not written when either version is unknown. The run goes on |
 | `choices` | `platform`, `systems` | Before `checking`: the systems the run's list lets one choose among, sorted by id, `other` last for the files no system names. The run's other options apply (`--core`, `--region`, `--no-game-data`, the files left out for an unknown save directory), `--system` does not: these are the systems a screen lists to choose from, and the count a `--system` is out of |
