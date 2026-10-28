@@ -451,8 +451,20 @@ class SitePages(unittest.TestCase):
         self.assertEqual(sm.tested_counts(items), {"tests": 3, "confirmed": 1, "open": 2, "benchmarks": 1,
                                                    "last": "2026-10-28"})
         text = "\n".join(sm.tested_section("beetle_saturn", items))
-        self.assertIn("3 tests · 1 confirmed · 2 open · last run 2026-10-28 on Test CPU, Linux.", text)
+        self.assertIn("3 tests · 1 confirmed in the profile · 2 open findings · last run 2026-10-28 "
+                      "on Test CPU, Linux.", text)
         self.assertIn("<td>1.500</td><td>660.0</td>", text)
+
+    def test_wrong_files_that_all_boot_fail_the_claim(self) -> None:
+        negative = self.item(subject="negative-scph5501-bin-x", status="boots")
+        self.assertIn(">accepts wrong files</span>", sm._chip(negative))
+        self.assertIn('rb-badge-info', sm._chip(negative))
+        self.assertIn(">works</span>", sm._chip(self.item(subject="alone-scph5501-bin-x", status="boots")))
+
+    def test_the_file_label_links_its_card(self) -> None:
+        text = "\n".join(sm.tested_section("beetle_saturn", [self.ITEM],
+                                            {"mpeg_card.bin": "#file-mpeg-card-bin"}))
+        self.assertIn('<a href="#file-mpeg-card-bin"><code>mpeg_card.bin</code></a>', text)
 
     def test_short_titles(self) -> None:
         cases = [

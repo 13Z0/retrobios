@@ -9335,6 +9335,19 @@ def _summary_table(files: list[dict], indexes: list[int], cell: Callable[[int, s
     ]
 
 
+def _tested_file_hrefs(name: str, files: list[dict]) -> dict[str, str]:
+    """The card each file name a test varies leads to: its name, aliases
+    and path, folded to lower case, the first card of a name winning."""
+    hrefs: dict[str, str] = {}
+    for f, anchor in zip(files, emulator_file_anchors(files)):
+        page = emulator_card_page(name, anchor)
+        href = f"#{anchor}" if page == name else markup.site_href(f"emulators/{page}/") + f"#{anchor}"
+        for label in (f.get("name"), *(f.get("aliases") or ()), f.get("path")):
+            if label:
+                hrefs.setdefault(Path(str(label)).name.casefold(), href)
+    return hrefs
+
+
 def plan_emulator_pages(profiles: dict) -> None:
     """Record which page holds each emulator card, before any page links one."""
     stems = set()
@@ -9726,7 +9739,8 @@ def emulator_pages(
                     [files[i] for i in entries],
                     [rows[i] for i in entries] if table_form else None)
 
-    lines.extend(sitemeasurements.tested_section(name, _MEASUREMENT_ITEMS.get(name, [])))
+    lines.extend(sitemeasurements.tested_section(
+        name, _MEASUREMENT_ITEMS.get(name, []), _tested_file_hrefs(name, files)))
 
     blocks = _render_structured_blocks(profile)
     if blocks:

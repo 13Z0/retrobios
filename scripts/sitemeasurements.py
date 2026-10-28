@@ -967,6 +967,11 @@ def _dots(item: dict) -> str:
 
 def _chip(item: dict) -> str:
     words, kind = RESULT_WORDS.get(item["status"], (item["status"], "muted"))
+    # A wrong-files test claims the core refuses zeros, half the file and
+    # other regions' dumps: when every one boots the claim fails, and
+    # "works" in green read as a pass.
+    if item["status"] == "boots" and str(item.get("subject") or "").startswith("negative-"):
+        words, kind = "accepts wrong files", "info"
     return f'<span class="rb-badge rb-badge-{kind}">{_cell(words)}</span>'
 
 
@@ -1051,18 +1056,23 @@ def summary_line(items: list[dict], page_host: str) -> str:
     run and its computer."""
     counts = tested_counts(items)
     parts = [f"{counts['tests']} test{'s' if counts['tests'] != 1 else ''}"]
-    parts += [f"{counts[key]} {key}" for key in ("confirmed", "open") if counts[key]]
+    if counts["confirmed"]:
+        parts.append(f"{counts['confirmed']} confirmed in the profile")
+    if counts["open"]:
+        parts.append(f"{counts['open']} open finding{'s' if counts['open'] != 1 else ''}")
     parts.append(f"last run {counts['last']} on {page_host}")
     return " · ".join(parts) + "."
 
 
-def tested_section(name: str, items: list[dict]) -> list[str]:
+def tested_section(name: str, items: list[dict],
+                   file_hrefs: dict[str, str] | None = None) -> list[str]:
     """The Tested block of an emulator page, empty when nothing was recorded.
 
     The answer first: one summary line, then the tests under the file each
     one varies, a row per test with its result chip, a dot per variant and
     its date. What proves it (method, claim, computer, core build, record)
-    waits in each row's details. Tests recorded before the boot oracle fold
+    waits in each row's details. ``file_hrefs`` links a file, by its name
+    folded to lower case, to its card on the page. Tests recorded before the boot oracle fold
     under one line, and benchmarks get their own table at the end.
     """
     if not items:
@@ -1090,6 +1100,9 @@ def tested_section(name: str, items: list[dict]) -> list[str]:
                      "<span>Result</span><span>Variants</span><span>Date</span></div>")
     for file, group in by_file(current):
         label = f"<code>{_cell(file)}</code>" if file else "No file varied"
+        href = (file_hrefs or {}).get(file.casefold()) if file else None
+        if href:
+            label = f'<a href="{_attr(href)}">{label}</a>'
         lines.append(f'<p class="rb-tested-file">{label}</p>')
         for item in group:
             lines += _row(item, titles[item["id"]], page_host, main_core)
