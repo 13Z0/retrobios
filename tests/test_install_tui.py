@@ -527,18 +527,20 @@ class Flow(unittest.TestCase):
         state.focus["options"] = 3
         press(state, "enter")
         self.assertEqual(state.screen, "cores")
-        self.assertEqual([row.value for row in install.tui_rows(state)][1:],
+        self.assertEqual([row.value for row in install.tui_rows(state)][3:],
                          ["mesen", "pcsx_rearmed"])
         self.assertEqual(install.tui_rows(state)[state.focus["cores"]].value, "mesen")
+        # Every core ticked while none narrows the run: one untick keeps
+        # the others, ticked back it is every core again.
         press(state, " ")
-        self.assertEqual(state.cores, ["mesen"])
-        press(state, "left")
+        self.assertEqual(state.cores, ["pcsx_rearmed"])
+        press(state, "right")
         self.assertEqual(state.cores, [])
         press(state, "/", "p", "c")
-        self.assertEqual([row.value for row in install.tui_rows(state)][1:], ["pcsx_rearmed"])
-        press(state, "enter", "right", "enter")
+        self.assertEqual([row.value for row in install.tui_rows(state)][3:], ["pcsx_rearmed"])
+        press(state, "enter", "left", "enter")
         self.assertEqual(state.screen, "options")
-        self.assertEqual(install.tui_flags(state), [("--core", "pcsx_rearmed")])
+        self.assertEqual(install.tui_flags(state), [("--core", "mesen")])
 
     def test_preview_is_a_dry_run(self):
         state = checked_state()
@@ -13854,6 +13856,81 @@ class AuditTwentyThreeAndSixteen(unittest.TestCase):
                 folder = str(state.folder_default)
                 self.assertIn("reads its BIOS files", small)
                 self.assertIn(folder[-12:], small)
+
+    # The owner's note: Cores drew every box empty when no core narrows the
+    # run, read as "nothing is ticked, tick them all".
+
+    def cores_screen(self, **given) -> install.TuiState:
+        state = checked_state()
+        state.cores = list(given.get("cores", []))
+        state.cli_cores = list(state.cores)
+        press(state, "o")
+        state.focus["options"] = next(index for index, row in enumerate(
+            install.tui_rows(state)) if row.action == "cores")
+        press(state, "enter")
+        self.assertEqual(state.screen, "cores")
+        return state
+
+    @staticmethod
+    def boxes(state: install.TuiState) -> dict:
+        return {row.value: row.label[:3] for row in install.tui_rows(state)
+                if row.action == "core"}
+
+    def test_cores_open_every_one_ticked(self):
+        state = self.cores_screen()
+        self.assertEqual(self.boxes(state), {"mesen": "[x]", "pcsx_rearmed": "[x]"})
+        self.assertEqual(install.tui_rows(state)[state.focus["cores"]].value, "mesen")
+        self.assertEqual(install.tui_flags(state), [])
+
+    def test_one_untick_narrows_to_the_others(self):
+        state = self.cores_screen()
+        press(state, " ")
+        self.assertEqual(self.boxes(state), {"mesen": "[ ]", "pcsx_rearmed": "[x]"})
+        self.assertEqual(install.tui_flags(state), [("--core", "pcsx_rearmed")])
+        press(state, " ")
+        self.assertEqual(self.boxes(state), {"mesen": "[x]", "pcsx_rearmed": "[x]"})
+        self.assertEqual(state.cores, [])
+        press(state, " ", "enter")
+        self.assertEqual(state.screen, "options")
+        row = next(row for row in install.tui_rows(state) if row.action == "cores")
+        self.assertEqual(row.label, "Cores: 1 of 2")
+        state.stack = ["setup", "plan"]
+        self.assertIn("1 of 2 cores", " ".join(install.tui_view(state, 100, 30)))
+
+    def test_none_then_all_as_the_systems_list(self):
+        state = self.cores_screen()
+        rows = install.tui_rows(state)
+        state.focus["cores"] = next(i for i, row in enumerate(rows) if row.action == "none")
+        press(state, "enter")
+        self.assertEqual(self.boxes(state), {"mesen": "[ ]", "pcsx_rearmed": "[ ]"})
+        press(state, "enter")
+        self.assertEqual(state.screen, "cores")
+        self.assertIn("No core is ticked", str(state.status))
+        state.focus["cores"] = next(i for i, row in enumerate(rows) if row.action == "all")
+        press(state, "enter")
+        self.assertEqual(self.boxes(state), {"mesen": "[x]", "pcsx_rearmed": "[x]"})
+        self.assertEqual(install.tui_flags(state), [])
+
+    def test_core_ticks_only_the_cores_it_names(self):
+        state = self.cores_screen(cores=["pcsx_rearmed"])
+        self.assertEqual(self.boxes(state), {"mesen": "[ ]", "pcsx_rearmed": "[x]"})
+        state.stack = ["setup", "plan"]
+        self.assertIn("--core", " ".join(install.tui_view(state, 100, 30)))
+
+    def test_both_modes_count_the_cores_kept_alike(self):
+        listing = self.listing("retroarch", [
+            self.entry("a.bin", b"A" * 8, ["nintendo-gba"]),
+            self.entry("m.bin", b"M" * 8, ["nintendo-gba"], cores=["mgba"]),
+            self.entry("v.bin", b"V" * 8, ["nintendo-gba"], cores=["vba_next"]),
+            self.entry("p.bin", b"P" * 8, ["sony-playstation"])])
+        text, _asked = self.line_run(_args(manifest=listing, dest=self.here,
+                                           declared_only=False, dry_run=True),
+                                     ["c", "", "2"])
+        self.assertIn("Every core's extra files are kept: Enter keeps them all", text)
+        head = text.rsplit("Counted again for your choices", 1)[1]
+        self.assertIn("1 of 2 cores", head)
+        self.assertEqual(install.cores_words(0, 2), "all cores")
+        self.assertEqual(install.cores_words(2, 2), "all cores")
 
     # Root cause 6: the pages say what the installer shows.
 

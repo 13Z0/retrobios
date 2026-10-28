@@ -770,7 +770,11 @@ answer is not asked.
   chosen too, as `generate_pack.py --system` does.
 - **Cores.** The platform's own BIOS list for the chosen systems is always
   kept. This narrows only the extra files each emulator core loads beyond it.
-  Asked only when the chosen systems have such files.
+  Asked only when the chosen systems have such files. Every core is kept
+  until numbers name some, and the head then says how many of how many
+  (`1 of 2 cores`). The full screen's **Cores** opens with every core
+  ticked, as Choose systems does: untick the ones you do not use, **All**
+  and **None** tick or untick them all.
 - **Regions.** Asked only when a chosen system has one BIOS per region. The
   numbers give an order of preference: `2,1` keeps the second region where a
   file for it exists, and the first one elsewhere.

@@ -8481,7 +8481,10 @@ def _print_menu_head(
         named = ", " + ", ".join(filter(None, [
             f"for {held} of {total} systems" + (" (--system)" if flag else "")
             if systems else "",
-            ("--core" if flag else f"{_plural(len(cores), 'core')} chosen") if cores else "",
+            # Out of the cores the systems chosen offered, as Cores counts
+            # them: "1 core chosen" read as one of one.
+            ("--core" if flag else cores_words(len(cores), len(available_choices(
+                *narrow(files, omitted, systems, [], []))["cores"]))) if cores else "",
             ("--region" if flag else "regions ranked") if regions else ""]))
         named = "" if named == ", " else named
     if current is not given:
@@ -8665,7 +8668,10 @@ def _choose_narrowing(files: list[dict], omitted: list[dict], manifest: dict | N
     core_names = available_choices(kept, kept_omitted)["cores"]
     if len(core_names) > 1:
         print("\nThe platform's own files for these systems are always kept.")
-        print("The extra files each core loads can be narrowed.")
+        # Every core is kept, as Cores draws them all ticked: a list of
+        # numbers read as nothing chosen yet.
+        print("Every core's extra files are kept: Enter keeps them all, numbers keep "
+              "only those cores.")
         cores = _pick("Cores:", [
             (core, _filter_by_target(
                 [f for f in kept if f.get("cores") is not None], [core]))
@@ -14620,6 +14626,11 @@ class TuiState:
         self.region_order: list[str] = []
         # The cores of every system listed, after "Cores of the other systems".
         self.cores_all: bool = False
+        # None pressed on Cores: no core ticked, which no option says
+        # (state.cores empty is every core). Done is refused until one is.
+        self.no_cores: bool = False
+        # The cores --core named, as line mode names them on its head.
+        self.cli_cores: list = []
         # The names of the systems ticked before a check counted again, and
         # those of them that hold nothing under its options.
         self.ticked_names: dict[str, str] = {}
@@ -15364,6 +15375,26 @@ def tui_choices(state: TuiState) -> dict[str, list[str]]:
     return available_choices(manifest.get("files", []), manifest.get("omitted_files", []))
 
 
+def core_ticked(state: TuiState, name: str) -> bool:
+    """Whether Cores draws name ticked: every core while none narrows the
+    run (state.cores empty), else those chosen."""
+    return name in state.cores or (not state.cores and not state.no_cores)
+
+
+def _core_base(state: TuiState) -> list[str]:
+    """The cores a choice on Cores is made among: those of the systems
+    chosen, every core of the list else."""
+    every = tui_choices(state)["cores"]
+    theirs = _chosen_cores(state)
+    return every if theirs is None else [name for name in every if name in theirs]
+
+
+def cores_words(chosen: int, total: int) -> str:
+    """The cores a run keeps, as the plan, Options and line mode say it:
+    all cores, or 3 of 12 cores."""
+    return "all cores" if not chosen or chosen >= total else f"{chosen} of {total} cores"
+
+
 def _chosen_cores(state: TuiState) -> set[str] | None:
     """The cores the files of the systems chosen name, None when every
     system is chosen."""
@@ -15492,8 +15523,11 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
         # stays in view.
         shown = every if theirs is None or state.cores_all else [
             name for name in every if name in theirs or name in state.cores]
-        rows = [_filter_row(state)] + [
-            TuiRow("core", f"[{'x' if name in state.cores else ' '}] {name}", value=name)
+        # Every core ticked when no core narrows the run, as Choose systems
+        # ticks every system: all boxes empty read as nothing chosen, and
+        # the owner ticked each one by hand.
+        rows = [TuiRow("all", "All"), TuiRow("none", "None"), _filter_row(state)] + [
+            TuiRow("core", f"[{'x' if core_ticked(state, name) else ' '}] {name}", value=name)
             for name in shown if _matches(name, needle)]
         hidden = len(every) - len(shown)
         if hidden:
@@ -15818,8 +15852,9 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
                            f"{_yes(state.installed_only)} ({found} found)",
                            "--installed-cores"))
     if choices["cores"]:
-        chosen = f"{len(state.cores)} chosen" if state.cores else "all"
-        rows.append(TuiRow("cores", f"Cores: {chosen}", "--core"))
+        # The plan's words, the noun left to the row's own label.
+        rows.append(TuiRow("cores", "Cores: " + cores_words(
+            len(state.cores), len(_core_base(state))).replace(" cores", ""), "--core"))
     copied = ", ".join(str(folder) for folder in state.from_folders) or "none"
     if manifest.get("save_directory"):
         # The interface said "Name it with --save-dir" and had no row for it.
@@ -15908,6 +15943,9 @@ def _back(state: TuiState) -> list[tuple]:
             chose = False
     if state.screen == "regions":
         state.region_order = []
+    if state.screen == "cores" and state.no_cores:
+        # None, then Esc: no core ticked is no choice, and every core is kept.
+        state.no_cores = False
     state.stack.pop()
     if chose and state.screen == "plan":
         # The systems chosen, the next press is Install: Back left the focus
@@ -16665,6 +16703,18 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         if action == "morecores":
             state.cores_all = True
             return []
+        if action == "all":
+            state.cores, state.no_cores = [], False
+            return []
+        if action == "none":
+            state.cores, state.no_cores = [], True
+            state.focus["cores"] = next(
+                (i for i, item in enumerate(tui_rows(state)) if item.action == "core"),
+                state.focus.get("cores", 0))
+            return []
+        if state.no_cores:
+            state.status = "No core is ticked: tick one, or choose All."
+            return []
         return _back(state)
     if screen == "confirm":
         if action == "install":
@@ -17148,7 +17198,7 @@ def _option(state: TuiState, action: str, step: int) -> list[tuple]:
     elif action == "cores":
         # On the first core: the filter row under A opened a field a
         # controller cannot type into.
-        return _push(state, action, 1 if tui_choices(state)["cores"] else 0)
+        return _push(state, action, 3 if tui_choices(state)["cores"] else 2)
     elif action == "regions":
         state.region_order = []
         _push(state, action)
@@ -17252,7 +17302,7 @@ def _tick(state: TuiState, row: TuiRow, on: bool | None) -> None:
     if state.screen == "systems" and row.action == "system":
         chosen = state.ticked
     elif state.screen == "cores" and row.action == "core":
-        chosen = set(state.cores)
+        chosen = {name for name in tui_choices(state)["cores"] if core_ticked(state, name)}
     else:
         return
     value = row.value
@@ -17262,10 +17312,20 @@ def _tick(state: TuiState, row: TuiRow, on: bool | None) -> None:
             state.ticked.add(value)
         else:
             state.ticked.discard(value)
-    elif want and value not in state.cores:
-        state.cores.append(value)
-    elif not want and value in state.cores:
+    elif want:
+        if value not in state.cores:
+            state.cores.append(value)
+        state.no_cores = False
+        if set(_core_base(state)) <= set(state.cores):
+            # Every core ticked again: no narrowing, as before.
+            state.cores = []
+    elif not state.cores and not state.no_cores:
+        # Every core was ticked: one untick keeps the others.
+        state.cores = [name for name in _core_base(state) if name != value]
+        state.no_cores = not state.cores
+    elif value in state.cores:
         state.cores.remove(value)
+        state.no_cores = not state.cores
 
 
 def _edit_text(text: str, key: TuiKey, selected: bool = False) -> str | None:
@@ -18965,7 +19025,12 @@ def _view_plan(state: TuiState, width: int, height: int) -> tuple:
         at += 1
     named = [*([f"for {len(state.systems)} of {len(tui_systems(state))} systems (--system)"]
                 if state.cli_systems and state.systems else []),
-             *(["--core"] if state.cores else []), *(["--region"] if state.regions else [])]
+             # Named on the command line as line mode names it, chosen on
+             # Cores out of how many: "--core" said nothing of the count.
+             *([("--core" if state.cores == state.cli_cores else
+                 cores_words(len(state.cores), len(_core_base(state))))]
+               if state.cores else []),
+             *(["--region"] if state.regions else [])]
     said = ", ".join(named)
     # A system --system named that --no-game-data left empty, in line mode's
     # words (tui_audit_16 P3-7).
@@ -19241,16 +19306,21 @@ def _middle_label(row: TuiRow, room: int) -> TuiRow:
 
 
 def _view_regions(state: TuiState, width: int, height: int) -> tuple:
+    # An order, not a set: ticked all, it would rank regions nobody ranked.
+    # None ticked keeps every region, said so.
     before = ["Tick the regions to keep, best first. Where a system has one BIOS "
-              "per region, the best one found is installed."]
+              "per region, the best one found is installed. With none ticked, every "
+              "region's BIOS is kept."]
     return ("Preferred regions",
             _compose(state, width, height, before, tui_rows(state)),
             ("A/Enter Tick", "B/Esc Done", "Left/Right Order", "? Help"))
 
 
 def _view_cores(state: TuiState, width: int, height: int) -> tuple:
-    before = ["Tick the cores you use. With none ticked, every core's files are kept."]
-    return ("Cores", _compose(state, width, height, before, tui_rows(state)),
+    before = ["Every core ticked keeps every core's files. Untick the cores you do not "
+              "use: the platform's own files are always kept."]
+    status = [state.status] if state.status else []
+    return ("Cores", _compose(state, width, height, before, tui_rows(state), status),
             ("A/Enter Done", "B/Esc Back", "X/Space Tick", "? Help"))
 
 
@@ -20233,6 +20303,7 @@ def tui_start(
     state.cores = list(dict.fromkeys(
         token.strip() for value in args.core or [] for token in value.split(",")
         if token.strip()))
+    state.cli_cores = list(state.cores)
     state.no_game_data = state.cli_no_game_data = bool(args.no_game_data)
     state.installed_only = bool(args.installed_cores)
     state.jobs = args.jobs

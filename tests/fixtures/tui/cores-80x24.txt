@@ -1,8 +1,11 @@
  RetroBIOS: Cores
 
- Tick the cores you use. With none ticked, every core's files are kept.
+ Every core ticked keeps every core's files. Untick the cores you do not use:
+   the platform's own files are always kept.
 
- > Filter (/ to type)
+ > All
+   None
+   Filter (/ to type)
    [ ] mesen
    [x] pcsx_rearmed
 
@@ -18,7 +21,4 @@
 
 
 
-
-
-
- A/Enter Filter  B/Esc Back  X/Space Tick  ? Help
+ A/Enter Tick all  B/Esc Back  X/Space Tick  ? Help
