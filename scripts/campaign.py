@@ -1927,7 +1927,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     findings_p.add_argument("--json", action="store_true", help="the findings as JSON")
     review_p = sub.add_parser("review", help="close an open finding after reading the code")
     review_p.add_argument("key", help="emulator/system/file/field, as `findings` prints it")
-    review_p.add_argument("--status", required=True, choices=REVIEWED)
+    review_p.add_argument("--status", required=True, choices=REVIEWED,
+                          help="applied: the profile now says what the code does, rejected: it already did")
     review_p.add_argument("--reason", required=True,
                           help="what the code does, with its file:line at the profile's pin")
     review_p.add_argument("--set", action="append", default=[], metavar="FIELD=YAML",

@@ -1012,6 +1012,8 @@ python scripts/campaign.py references --only beetle_psx --system sony-playstatio
 python scripts/campaign.py references --only beetle_saturn --content-file other.yml   # another content list
 python scripts/campaign.py status            # done, failed, pending, and why
 python scripts/campaign.py findings          # what waits for review
+python scripts/campaign.py review beetle_psx/sony-playstation/scph5501.bin/validation \
+  --status applied --set on_mismatch=warn --reason "logs the SHA1 and loads (libretro.c:853-860)"
 python scripts/campaign.py gate              # the checks behind a commit
 python scripts/campaign.py install-timer     # opt-in: writes the autorun units, enables nothing
 ```
@@ -1028,8 +1030,8 @@ python scripts/campaign.py install-timer     # opt-in: writes the autorun units,
 |----------|-------|---------|
 | `none` boots, and the file changes the run: alone or as a wrong file, another verdict or other stages than with no BIOS | `hle_fallback` | `true`. A file the game never uses settles nothing: a core can open every file of the folder to hash it |
 | `none` fails (`bios_error`, `crash`, `hang`) and the file alone boots | `required`, `hle_fallback` | `true`, `false` |
-| Zeros of the file's size refused while the file boots | `validation` | a content check is proven. Agreeing adds evidence, a profile with no md5, sha1, sha256, crc32 or adler32 is an open finding |
-| Zeros used while the file boots | `validation` | no content check. A profile that declares one is an open finding |
+| Zeros of the file's size refused while the file boots | `validation` | a content check is proven. Agreeing adds evidence, a profile with no md5, sha1, sha256, crc32, adler32 or signature is an open finding |
+| Zeros used while the file boots | `validation` | no content check. A profile that declares one is an open finding, unless it declares the check with `on_mismatch: warn` |
 | Its first half refused while zeros are used | `validation` | `size`, added when missing |
 | Its first half used | `validation` | no size check. A profile that declares one is an open finding |
 | The core opened the file staged at another place it looked for | `path` | that path |
@@ -1096,6 +1098,15 @@ install-timer`, which writes the autorun units and enables nothing unless
 `--enable` is passed. The `campaign` autorun job then runs a 150-minute pass
 in the automation worktree, gates it with `campaign.py gate` and commits with
 its own rules, pushing only with `--push`.
+
+`review` closes an open finding once someone has read the core's code at the
+profile's pin. `--status applied` writes each `--set FIELD=YAML` into the
+entry the finding names, through the same profile editor, with the finding's
+record ids added to `evidence:` under its field. With no `--set` it records a
+profile already changed by hand. `--status rejected` keeps the profile as it
+is. `--reason` is required and goes on the finding's line, with the file:line
+it rests on. `--index` picks the entry when several share the file's name. A
+rejected finding stays closed while later runs show the same thing.
 
 Schemas: `campaign-finding.schema.json` and `campaign-run.schema.json`.
 
