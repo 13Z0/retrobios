@@ -113,7 +113,7 @@ class ServedCopies(unittest.TestCase):
         page = (REPO_ROOT / "wiki" / "first-install.md").read_text(encoding="utf-8")
         answer = page.split("does not match its expected fingerprint.", 1)[1].split("###", 1)[0]
         self.assertNotIn("cut short", answer)
-        self.assertIn("proxy or an antivirus", " ".join(answer.split()))
+        self.assertIn("something changed the file", answer)
 
     def test_a_stale_pin_stops_the_build(self):
         """code_audit_21 P3-2: a pin that is not the installer's was served,

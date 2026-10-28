@@ -4777,7 +4777,7 @@ class EndToEnd(unittest.TestCase):
                     # The second folder the run writes to, named before
                     # anything is written, and again on the result.
                     self.assertIn("1 file read from RetroArch's save directory goes to a "
-                                  "folder per core under:\n ~/MySaves", screen)
+                                  "folder per core under:\n   ~/MySaves", screen)
                     term.send("\r")
                     screen = term.wait("6 files installed.")
                     # Spelled in full on the result, as its other folders.
@@ -12374,7 +12374,7 @@ class AuditTwentyOneAndFourteen(unittest.TestCase):
         self.assertTrue(all(line.endswith(" \\") for line in lines[:-1]), lines)
         for line in lines:
             # An option never ends a line without its value.
-            self.assertFalse(line.removesuffix(" \\").rstrip().endswith(
+            self.assertFalse((line[:-2] if line.endswith(" \\") else line).rstrip().endswith(
                 ("--platform", "--dest", "--manifest", "--system")), lines)
         # The shell reads the lines as the command: the same words.
         proc = subprocess.run(["sh", "-c", "\n".join(lines)], capture_output=True, text=True,
