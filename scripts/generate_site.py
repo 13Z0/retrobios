@@ -3941,12 +3941,10 @@ def first_screen_words() -> list[str]:
     since."""
     installer = _installer()
     # The screen it opens first: the setup found, or the list when none
-    # is. Install and Choose systems come on the next one (tui_audit_16
-    # P3-10).
-    return [f"The command asks **{installer.TUI_FOUND_TITLE}** with the setup it found, "
-            f"or **{installer.TUI_CHOOSE_TITLE}** with a list when it finds none. Then "
-            f"**{installer.TUI_INSTALL_ROW}** gets every file, "
-            f"**{installer.TUI_SYSTEMS_ROW}** only the consoles you pick."]
+    # is. Install comes on the next one, Choose systems beside it and named
+    # above on the page (tui_audit_16 P3-10).
+    return [f"It asks **{installer.TUI_FOUND_TITLE}** (or **{installer.TUI_CHOOSE_TITLE}**), "
+            f"then offers **{installer.TUI_INSTALL_ROW}**."]
 
 
 def check_pass_line() -> str:

@@ -9880,6 +9880,7 @@ class AuditEighteenAndEleven(_CardFixtures, unittest.TestCase):
         """P3-11."""
         state = checked_state()
         state.cli_systems, state.cores, state.regions = ["sony-playstation"], ["x"], ["us"]
+        state.cli_cores = ["x"]
         text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
         self.assertIn("(--system), --core, --region.", text)
 
@@ -13934,6 +13935,8 @@ class AuditTwentyThreeAndSixteen(unittest.TestCase):
 
     # Root cause 6: the pages say what the installer shows.
 
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     "the site generator needs Python 3.9")
     def test_which_pack_names_the_first_screen(self):
         """tui_audit_16 P3-10: which-pack said the command opens a screen
         where Install and Choose systems are, the second screen."""
