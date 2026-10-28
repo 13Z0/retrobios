@@ -218,43 +218,14 @@ class Line(unittest.TestCase):
 
 
 class SitePages(unittest.TestCase):
-    """The Measurements page and the platform pages show the latest probe."""
+    """A pack probe runs before a release: its records stay in measurements/
+    and reach no page."""
 
-    def test_latest_line_per_probe_with_its_link(self) -> None:
+    def test_the_pack_blocks_are_gone(self) -> None:
         import sitemeasurements as sm
 
-        root = TMP / "site"
-        shutil.rmtree(root, ignore_errors=True)
-        root.mkdir(parents=True)
-        first = Line.line(None)
-        later = {**first, "probed_at": "2026-10-28T12:00:00+00:00", "verdict": "boots"}
-        other = {**first, "platform": "batocera", "install": "installer"}
-        for line in (first, later, other):
-            pp.append_line(line, root)
-        items = sm.pack_summary(root, {"repo": "https://example.org/r", "commit": "c" * 40})
-        self.assertEqual([(i["platform"], i["install"], i["verdict"]) for i in items],
-                         [("batocera", "installer", "unknown"), ("retroarch", "pack", "boots")])
-        self.assertEqual(items[1]["record_url"],
-                         f"https://example.org/r/blob/{'c' * 40}/measurements/pack-probes.jsonl#L2")
-        self.assertEqual(items[1]["core"], "mednafen_saturn")
-        explorer = "\n".join(sm.packs_section(items))
-        self.assertIn("| Platform | System |", explorer)
-        self.assertIn("| retroarch | sega-saturn | pack | <code>mednafen&#95;saturn</code> | Game (Japan) "
-                      "| `boots` | 1 | [line](", explorer)
-        page = sm.pack_tested_section(sm.by_platform({"packs": items})["retroarch"])
-        text = "\n".join(page)
-        self.assertEqual(page[0], "## Tested")
-        self.assertIn("1 game start with this BIOS folder as you install it · 1 work · last run 2026-10-28.",
-                      text)
-        self.assertIn("wiki/measurements/#packs", text)
-        # The emulator pages' row markup and chip, the install path in the third column.
-        self.assertIn('<span class="rb-tested-result"><span class="rb-badge rb-badge-success">works</span>',
-                      text)
-        self.assertIn('<span class="rb-tested-variants">pack</span>', text)
-        self.assertIn("sega-saturn, Game <small>mednafen&#95;saturn</small>", text)
-        self.assertIn("<strong>Files the core opened:</strong> sega&#95;101.bin (sega&#95;101.bin).", text)
-        self.assertIn("<strong>Findings:</strong> missing&#95;declared x.bin.", text)
-        self.assertNotIn("| retroarch |", text)
+        for name in ("pack_summary", "packs_section", "pack_tested_section", "by_platform"):
+            self.assertFalse(hasattr(sm, name), name)
 
     def test_pack_runs_stay_off_the_emulator_page(self) -> None:
         import sitemeasurements as sm
@@ -266,30 +237,14 @@ class SitePages(unittest.TestCase):
         self.assertEqual([i["subject"] for i in sm.by_emulator(index)["beetle_saturn"]],
                          ["boot-sega-101-bin"])
 
-    def test_run_output_is_inert(self) -> None:
-        """A file name or log line from a third-party core reaches the page
-        as text: no tag, link, code span or MDX expression comes out of it."""
+    def test_a_markdown_link_keeps_only_safe_targets(self) -> None:
+        """A Markdown link in site text keeps only http(s) and relative targets."""
         import sitemarkup
-        import sitemeasurements as sm
 
-        hostile = "`x` {alert(1)} <script>alert(1)</script> [x](javascript:alert(1)) \"q\" 'q' **b**"
-        item = {"platform": "retroarch", "platform_version": "1", "install": "pack",
-                "system": hostile, "emulator": hostile, "core": hostile, "content": hostile,
-                "verdict": "boots", "date": "2026-10-28T00:00:00+00:00", "opened": 1, "findings": 1,
-                "id": "2026-10-28-0123456789ab", "record_url": "https://example.org/r#L1",
-                "files": [hostile], "finding_list": [hostile], "detail": hostile}
-        text = "\n".join(sm.pack_tested_section([item]))
-        for raw in ("<script", "{alert", "`x`", "[x](", "<code>", "<strong>b", "**b",
-                    "href=\"javascript", '"q"', "'q'"):
-            self.assertNotIn(raw, text)
-        self.assertIn("&lt;script&gt;", text)
-        self.assertIn("&#123;alert(1)&#125;", text)
-        # A Markdown link in other site text keeps only http(s) and relative targets.
         self.assertEqual(sitemarkup.inline_html("[x](javascript:alert(1))"), "[x](javascript:alert(1))")
         self.assertEqual(sitemarkup.inline_html('[x](https://a.org/"onmouseover=1)'),
                          '<a href="https://a.org/&quot;onmouseover=1">x</a>')
         self.assertEqual(sitemarkup.inline_html("[x](../a.md)"), '<a href="../a.md">x</a>')
-        self.assertEqual(sm.pack_tested_section([]), [])
 
 
 class Lock(unittest.TestCase):

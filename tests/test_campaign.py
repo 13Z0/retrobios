@@ -34,7 +34,6 @@ import campaign
 import campaign_profiles
 import campaign_rules as rules
 import measurement_records as mr
-import sitemeasurements
 
 TMP = REPO_ROOT / "tmp" / "tests"
 
@@ -191,6 +190,20 @@ class RuleTable(unittest.TestCase):
         self.assertIsNone(rules.file_use(run(rules.BIOS_ERROR), NONE_BOOTS, run(rules.HANG)))
         no_logo = run(rules.BOOTS, stages=("game",))
         self.assertIsNone(rules.file_use(run(rules.BOOTS, stages=("game",)), NONE_BOOTS, no_logo))
+
+    def test_the_bios_the_log_names_settles_the_file_use(self) -> None:
+        present = run(rules.BOOTS, stages=("game",))  # no BIOS screen to compare with
+        fallback = rules.Run(rules.BOOTS, "r", "zeros", ("game",), "builtin")
+        loaded = rules.Run(rules.BOOTS, "r", "other", ("game",), "staged:bios.bin")
+        self.assertEqual(rules.file_use(fallback, NONE_BOOTS, present), rules.REFUSED)
+        self.assertEqual(rules.file_use(loaded, NONE_BOOTS, present), rules.USED)
+        self.assertIsNone(rules.file_use(run(rules.BOOTS, stages=("game",)), NONE_BOOTS, present))
+        record = {"id": "x", "variants": [{"label": "a", "verdict": "boots", "bios_used": "builtin",
+                                           "verdict_evidence": {"rule": "r", "detail": "d"}}]}
+        self.assertEqual(rules.run_of(record, "a").bios_used, "builtin")
+        builtin_none = rules.Run(rules.BOOTS, "n", "none", ("game",), "builtin")
+        (hle,) = rules.rule_need(builtin_none, PRESENT, {"name": "a"})
+        self.assertIn("on its built-in BIOS", hle.statement)
 
     def test_validation_agrees_or_adds_size(self) -> None:
         refused = run(rules.BOOTS, stages=("game",))
@@ -410,6 +423,15 @@ class StateAndResume(Workspace):
         self.assertTrue(campaign.should_run(done, "a", "e"))
         self.assertTrue(campaign.should_run({**done, "status": "pending"}, "a", "d"))
         self.assertFalse(campaign.should_run({**done, "status": "failed"}, "a", "d"))
+
+    def test_a_record_judged_again_is_read_in_its_place(self) -> None:
+        lines = self.root / mr.records_path("fake")
+        lines.parent.mkdir(parents=True, exist_ok=True)
+        old = {"id": "2026-10-27-aaaaaaaaaaaa", "supersedes": None, "verdict": "old"}
+        new = {"id": "2026-10-28-bbbbbbbbbbbb", "supersedes": old["id"], "verdict": "new"}
+        lines.write_text("\n".join(json.dumps(r) for r in (old, new)) + "\n", encoding="utf-8")
+        self.assertEqual(self.make().read_record("fake", old["id"])["verdict"], "new")
+        self.assertIsNone(self.make().read_record("fake", "2026-10-27-cccccccccccc"))
 
     def test_only_its_own_oracle_entries_make_a_check_run_again(self) -> None:
         key = [hashlib.sha1(b"GAME").hexdigest(), "Fake"]
@@ -978,50 +1000,6 @@ class Registry(unittest.TestCase):
     def test_autorun_tells_its_steps_the_lock_is_held(self) -> None:
         job = campaign.autorun.load_jobs()["campaign"]
         self.assertEqual(campaign.autorun.job_env(job)[campaign.LOCK_HELD_ENV], "1")
-
-
-class SitePage(unittest.TestCase):
-    def test_last_pass_and_open_findings(self) -> None:
-        summary = {
-            "last_run": {"ended_at": "2026-10-27T10:00:00+00:00", "result": "complete", "detail": "",
-                         "counts": {"done": 12, "failed": 1, "pending": 3},
-                         "pending_reasons": {"standalone": 3},
-                         "failed": [{"emulator": "fake", "check": "fake/x/y/bench", "reason": "timeout"}]},
-            "passes": 1, "applied": 2,
-            "open": [{"emulator": "fake", "file": "bios.bin", "field": "required", "status": "open",
-                      "profile_says": True, "run_shows": False, "statement": "the core boots without it",
-                      "evidence": ["2026-10-27-aaaaaaaaaaaa"], "links": ["https://x/l#L1"]}],
-        }
-        page = "\n".join(sitemeasurements.campaign_section(summary))
-        self.assertIn("12 tests done, 1 failed, 3 waiting", page)
-        self.assertIn("| standalone | 3 |", page)
-        self.assertIn("the profile says <code>true</code>, the run shows <code>false</code>", page)
-        self.assertIn("[2026-10-27-aaaaaaaaaaaa](https://x/l#L1)", page)
-        self.assertIn("<code>false</code>. The core boots without it. Records:", page)
-        self.assertEqual(sitemeasurements.campaign_section({"last_run": None}), [])
-
-    def test_observed_values_cannot_leave_their_place(self) -> None:
-        # A value comes from a core's output or a romfetch error: it may hold
-        # backticks, MDX braces and HTML.
-        hostile = "``}{import x}<script>alert(1)</script>`` | [a](javascript:x) *b*"
-        summary = {
-            "last_run": {"ended_at": "2026-10-27T10:00:00+00:00", "result": "paused", "detail": hostile,
-                         "counts": {"done": 0, "failed": 1, "pending": 1},
-                         "pending_reasons": {hostile: 1},
-                         "failed": [{"emulator": hostile, "check": hostile, "reason": hostile}]},
-            "passes": 1, "applied": 0,
-            "open": [{"emulator": "fake", "file": hostile, "field": hostile, "status": "open",
-                      "profile_says": {"k": hostile}, "run_shows": [hostile], "statement": hostile,
-                      "evidence": ["2026-10-27-aaaaaaaaaaaa"], "links": [None]}],
-        }
-        page = "\n".join(sitemeasurements.campaign_section(summary))
-        for raw in ("<script", "{import", "}{", "``", "](javascript", "*b*", "| [a]"):
-            self.assertNotIn(raw, page)
-        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", page)
-        self.assertIn("&#123;import x&#125;", page)
-        # The JSON dumps are escaped too: no brace reaches the page as syntax.
-        self.assertNotIn("{", page)
-        self.assertNotIn("}", page)
 
 
 @unittest.skipUnless(shutil.which("cc") and shutil.which("strace"), "no C compiler or no strace")

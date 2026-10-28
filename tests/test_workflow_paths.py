@@ -155,7 +155,7 @@ class ThePullRequestBuildsTheSite(unittest.TestCase):
         }
         self.assertIn("wiki/**", inputs)
         # A path the deploy names inside a folder validate.yml watches
-        # whole (tests/campaign/content.yml under tests/**) is watched.
+        # whole (tests/campaign/observations.yml under tests/**) is watched.
         unwatched = [path for path in inputs - watched
                      if not any(fnmatch.fnmatch(path, pattern) for pattern in watched)]
         self.assertEqual(sorted(unwatched), [])

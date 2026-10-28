@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://abdess.github.io/retrobios/api/v1/schemas/core-probe-record.schema.json",
   "title": "RetroBIOS core probe record",
-  "description": "One line of measurements/<emulator>.jsonl: one run of scripts/core_probe.py, a libretro core executed headless, in full, with what is needed to judge and reproduce it. Every repetition, its core logs and per-frame hashes, and the raw timing values are in the line. From record_version 4 every repetition and every variant carries the boot oracle's verdict (boots, bios_error, crash, hang, unknown) with the evidence that decided it.",
+  "description": "One line of measurements/<emulator>.jsonl: one run of scripts/core_probe.py, a libretro core executed headless, in full, with what is needed to judge and reproduce it. Every repetition, its core logs and per-frame hashes, and the raw timing values are in the line. From record_version 4 every repetition and every variant carries the boot oracle's verdict (boots, bios_error, crash, hang, unknown) with the evidence that decided it. From record_version 5 each also names the BIOS the core ran (`bios_used`), and a record judged again from an earlier one's runs carries `judged_at` and `judged_by`.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -24,9 +24,10 @@
     "record_version": {
       "enum": [
         3,
-        4
+        4,
+        5
       ],
-      "description": "3: records before the boot oracle. 4: every repetition and variant carries `verdict` and `verdict_evidence`, and `inputs.oracle` names what the verdicts were judged against."
+      "description": "3: records before the boot oracle. 4: every repetition and variant carries `verdict` and `verdict_evidence`, and `inputs.oracle` names what the verdicts were judged against. 5: they also carry `bios_used`."
     },
     "id": {
       "type": "string",
@@ -416,6 +417,9 @@
           },
           "verdict_evidence": {
             "$ref": "#/$defs/verdict_evidence"
+          },
+          "bios_used": {
+            "$ref": "#/$defs/bios_used"
           }
         }
       }
@@ -521,6 +525,36 @@
           }
         }
       }
+    },
+    "judged_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the runs of the record it supersedes were judged again, offline, against the current oracle. recorded_at stays the time the runs were made."
+    },
+    "judged_by": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "script",
+        "commit",
+        "script_sha256"
+      ],
+      "properties": {
+        "script": {
+          "const": "scripts/core_probe.py"
+        },
+        "commit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "script_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "description": "The core_probe that judged the runs again: frontend names the one that ran them."
     }
   },
   "allOf": [
@@ -565,7 +599,10 @@
       "if": {
         "properties": {
           "record_version": {
-            "const": 4
+            "enum": [
+              4,
+              5
+            ]
           }
         }
       },
@@ -600,6 +637,35 @@
                 "required": [
                   "verdicts"
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_version": {
+            "const": 5
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "variants": {
+            "items": {
+              "required": [
+                "bios_used"
+              ],
+              "properties": {
+                "repetitions": {
+                  "items": {
+                    "required": [
+                      "bios_used"
+                    ]
+                  }
+                }
               }
             }
           }
@@ -850,6 +916,9 @@
             }
           },
           "description": "How a worker that did not finish ended: its exit status or the signal that killed it, or the timeout after which the probe killed it."
+        },
+        "bios_used": {
+          "$ref": "#/$defs/bios_used"
         }
       }
     },
@@ -925,6 +994,10 @@
           "items": {
             "$ref": "#/$defs/verdict"
           }
+        },
+        "bios_log": {
+          "type": "string",
+          "description": "The log line that names the BIOS the core ran."
         }
       }
     },
@@ -1011,11 +1084,30 @@
                 "type": "string"
               },
               "description": "Log lines by which the core says it loaded the console's own BIOS: they add the bios stage when its screens are hidden."
+            },
+            "fallback_patterns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Log lines after which the core runs its built-in BIOS."
+            },
+            "load_patterns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Log lines naming the BIOS file the core loaded, in a group named path."
             }
           }
         }
       ],
       "description": "What the verdicts were judged against: the reference frames of this content and core, the core's error patterns, error screens and BIOS load patterns, from the oracle file at its sha256. Null when the run had no oracle entry."
+    },
+    "bios_used": {
+      "type": "string",
+      "pattern": "^(staged:.+|builtin|unknown)$",
+      "description": "The BIOS the core ran, from its log: staged:<dest> for the staged file a load line names, builtin when a fallback line says the core ran its own BIOS (OpenBIOS, HLE), unknown when the log says neither. An opened file is no proof."
     }
   }
 }
