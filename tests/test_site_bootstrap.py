@@ -154,11 +154,14 @@ class DocumentedCommands(unittest.TestCase):
         }
         self.assertEqual(found, {"wiki/installer.md": 2})
 
-    def test_typed_by_hand_without_the_scheme(self):
-        page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+    def test_no_command_drops_the_scheme(self):
+        """A first request in clear text lets anyone on the way serve another
+        script, which the installer's pin cannot catch: the pin is in it."""
         bare = INSTALL_BASE.removeprefix("https://")
-        self.assertIn(f"curl -fL {bare}/{sitebootstrap.SH_NAME} | sh", page)
-        self.assertIn(f"irm {bare}/{sitebootstrap.PS1_NAME} | iex", page)
+        for page in sorted((REPO_ROOT / "wiki").glob("*.md")):
+            text = page.read_text(encoding="utf-8")
+            with self.subTest(page=page.name):
+                self.assertNotRegex(text, rf"(?<![/\w]){re.escape(bare)}/")
 
 
 class NothingElseAtTheseAddresses(unittest.TestCase):
@@ -189,6 +192,10 @@ class NothingElseAtTheseAddresses(unittest.TestCase):
 
     @unittest.skipUnless((WEBSITE / "dist" / "index.html").is_file(), "site not built")
     def test_the_built_site_serves_files_at_the_addresses(self):
+        built = (WEBSITE / "dist" / "index.html").stat().st_mtime
+        written = [WEBSITE / "public" / name for name in self.NAMES]
+        if any(path.is_file() and path.stat().st_mtime > built for path in written):
+            self.skipTest("website/dist was built before these copies were written")
         for name in self.NAMES:
             path = WEBSITE / "dist" / name
             with self.subTest(name=name):

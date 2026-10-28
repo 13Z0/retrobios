@@ -37,18 +37,8 @@ curl -fsSL https://abdess.github.io/retrobios/i | sh
 irm https://abdess.github.io/retrobios/i.ps1 | iex
 ```
 
-Typed by hand, the address works without `https://`:
-
-```bash
-curl -fL abdess.github.io/retrobios/i | sh
-```
-
-```powershell
-irm abdess.github.io/retrobios/i.ps1 | iex
-```
-
-The `https://` form is safer, because without it the first request goes out
-in clear text and the redirect it gets back could be replaced on the way.
+Always type the `https://`: without it the first request goes out in clear
+text, and anyone on the way could answer with another script.
 
 `i` and `i.ps1` are `install.sh` and `install.ps1` as of the commit the site
 was built from, set to download `install.py` from that same commit. The
