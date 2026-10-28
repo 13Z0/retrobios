@@ -30,7 +30,7 @@ from common import list_registered_platforms, load_platform_config  # noqa: E402
 from sitediagrams import OG_SECTIONS, og_card_svg, wrap  # noqa: E402
 
 OUT = ROOT / "docs_assets" / "og"
-LOGO = ROOT / ".github" / "assets" / "logo.png"
+LOGO = ROOT / "docs_assets" / "brand" / "logo.svg"
 PLATFORM_TAGLINE = "Which BIOS files it needs, and where each one goes"
 # The tagline's box on the card: og_card_svg wraps it at this width and
 # size, and three lines fit above the address.
@@ -87,7 +87,7 @@ def system_cards() -> dict[str, tuple[str, str]]:
     }
 
 
-def card_svg(key: str, logo: bytes, titles: dict[str, tuple[str, str]]) -> str:
+def card_svg(key: str, logo: str, titles: dict[str, tuple[str, str]]) -> str:
     if key in OG_SECTIONS:
         return og_card_svg(key, logo)
     # A page card is a section card with the page's own title and tagline.
@@ -116,7 +116,7 @@ def main() -> None:
     if args.only in (None, "systems"):
         titles.update(system_cards())
     keys = [*(OG_SECTIONS if args.only in (None, "sections") else []), *titles]
-    logo = LOGO.read_bytes()
+    logo = LOGO.read_text(encoding="utf-8")
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         page = browser.new_page(viewport={"width": 1200, "height": 630})

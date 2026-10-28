@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write the site's own mark: header logo, favicon and touch icon.
+"""Write the project's mark: the site's icons and the repository's logos.
 
 The mark is the chip of the project logo drawn as vector shapes: a body,
 four pins per side and the pixel glyph on a 4 by 4 grid. Three variants:
@@ -14,6 +14,15 @@ four pins per side and the pixel glyph on a 4 by 4 grid. Three variants:
 The files land in ``docs_assets/brand/``, which generate_site.py copies into
 the site. The site build never runs this script.
 
+The repository's own images come from the same shapes, in ``.github/assets/``:
+
+- ``logo.svg`` and ``logo.png`` (256 px): the chip in colour, as the favicon.
+- ``favicon.png`` (32 px).
+- ``banner-light.svg`` and ``banner-dark.svg``: the mark and the name as the
+  site header shows them, for the README in each scheme.
+- ``social-preview.png`` (1280 by 640): the mark and the name in white on the
+  sharing cards' indigo, uploaded by hand in the repository settings.
+
     python scripts/make_site_icons.py
 """
 
@@ -23,10 +32,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs_assets" / "brand"
+PROJECT = ROOT / ".github" / "assets"
 
 HEADER = "#3b3f7a"
 GLYPH = "#8be0f7"
 GLYPH_DIM = "#4fa3c4"
+# The site title: the light scheme's accent, the dark scheme's accent.
+TITLE = {"light": "#273c8f", "dark": "#aebcff"}
+# The mark beside it: the header logo in each scheme (website/src/assets).
+MARK = {"light": HEADER, "dark": "#fff"}
+# The sharing cards' background (sitediagrams.og_card_svg).
+CARD = "#2b2e5c"
+FONT = "system-ui, -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif"
 
 # (column, row, dim) on the 4 by 4 grid, read from the project logo.
 PIXELS = [
@@ -76,13 +93,42 @@ def _body(fill: str, extra: str = "") -> str:
     return f'<rect x="{x}" y="{y}" width="{size}" height="{size}" rx="{radius}" fill="{fill}"{extra}/>'
 
 
+def _mark(fill: str) -> str:
+    """The chip in one colour, glyph cut out so what is behind shows through."""
+    return ('<mask id="glyph">' + _body("#fff") + _glyph("#000", "#5a5a5a") + "</mask>"
+            + _pins(fill) + _body(fill, ' mask="url(#glyph)"'))
+
+
 def logo_svg() -> str:
     """White chip, glyph cut out: the header colour shows through it."""
-    return (
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="RetroBIOS">'
-        '<mask id="glyph">' + _body("#fff") + _glyph("#000", "#5a5a5a") + "</mask>"
-        + _pins("#fff") + _body("#fff", ' mask="url(#glyph)"') + "</svg>"
-    )
+    return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" '
+            'aria-label="RetroBIOS">' + _mark("#fff") + "</svg>")
+
+
+def project_logo_svg() -> str:
+    """The chip in colour, on any background."""
+    return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" '
+            'aria-label="RetroBIOS">' + _pins(HEADER) + _body(HEADER) + _glyph(GLYPH, GLYPH_DIM)
+            + "</svg>")
+
+
+def banner_svg(scheme: str) -> str:
+    """The mark and the name as the site header sets them: system-ui at 600,
+    the mark about twice the height of the capitals."""
+    return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 64" role="img" '
+            'aria-label="RetroBIOS"><g transform="scale(1.3333)">' + _mark(MARK[scheme]) + "</g>"
+            f'<text x="76" y="44" fill="{TITLE[scheme]}" font-family="{FONT}" font-size="36" '
+            'font-weight="600">RetroBIOS</text></svg>')
+
+
+def social_preview_html() -> str:
+    """The white mark and the name on the sharing cards' indigo, centred."""
+    return (f'<html><body style="margin:0;width:1280px;height:640px;background:{CARD};'
+            'display:flex;align-items:center;justify-content:center;gap:40px">'
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="208" height="208">'
+            + _mark("#fff") + "</svg>"
+            f'<span style="font-family:{FONT};font-size:128px;font-weight:600;color:#fff">'
+            "RetroBIOS</span></body></html>")
 
 
 def favicon_svg() -> str:
@@ -111,22 +157,36 @@ def main() -> None:
     except ImportError as exc:
         raise SystemExit("Playwright with Chromium is needed: pip install playwright") from exc
     OUT.mkdir(parents=True, exist_ok=True)
-    for name, text in (("logo.svg", logo_svg()), ("favicon.svg", favicon_svg())):
-        (OUT / name).write_text(text + "\n", encoding="utf-8")
-        print((OUT / name).relative_to(ROOT))
+    vectors = (
+        (OUT / "logo.svg", logo_svg()), (OUT / "favicon.svg", favicon_svg()),
+        (PROJECT / "logo.svg", project_logo_svg()),
+        (PROJECT / "banner-light.svg", banner_svg("light")),
+        (PROJECT / "banner-dark.svg", banner_svg("dark")),
+    )
+    for path, text in vectors:
+        path.write_text(text + "\n", encoding="utf-8")
+        print(path.relative_to(ROOT))
+    favicon = favicon_svg().replace("@media (prefers-color-scheme: dark)", "@media not all")
     rasters = (
-        ("favicon-32.png", 32, favicon_svg().replace("@media (prefers-color-scheme: dark)", "@media not all")),
-        ("apple-touch-icon.png", 180, touch_icon_svg()),
+        (OUT / "favicon-32.png", 32, favicon),
+        (OUT / "apple-touch-icon.png", 180, touch_icon_svg()),
+        (PROJECT / "favicon.png", 32, favicon),
+        (PROJECT / "logo.png", 256, project_logo_svg()),
     )
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
-        for name, size, text in rasters:
+        for path, size, text in rasters:
             page = browser.new_page(viewport={"width": size, "height": size})
             sized = text.replace("<svg ", f'<svg width="{size}" height="{size}" ', 1)
             page.set_content(f'<html><body style="margin:0;background:transparent">{sized}</body></html>')
-            page.screenshot(path=str(OUT / name), omit_background=True, clip={"x": 0, "y": 0, "width": size, "height": size})
+            page.screenshot(path=str(path), omit_background=True, clip={"x": 0, "y": 0, "width": size, "height": size})
             page.close()
-            print((OUT / name).relative_to(ROOT))
+            print(path.relative_to(ROOT))
+        page = browser.new_page(viewport={"width": 1280, "height": 640})
+        page.set_content(social_preview_html())
+        page.screenshot(path=str(PROJECT / "social-preview.png"),
+                        clip={"x": 0, "y": 0, "width": 1280, "height": 640})
+        print((PROJECT / "social-preview.png").relative_to(ROOT))
         browser.close()
 
 

@@ -196,7 +196,8 @@ class SharingCards(unittest.TestCase):
                 data = (ROOT / "docs_assets" / "og" / f"{section}.png").read_bytes()
                 self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
                 self.assertEqual(struct.unpack(">II", data[16:24]), (1200, 630))
-                ET.fromstring(sitediagrams.og_card_svg(section, b"png"))
+                mark = (ROOT / "docs_assets" / "brand" / "logo.svg").read_text(encoding="utf-8")
+                ET.fromstring(sitediagrams.og_card_svg(section, mark))
 
     def test_the_template_names_every_section(self):
         import sitestarlight  # noqa: PLC0415

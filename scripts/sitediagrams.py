@@ -988,16 +988,16 @@ OG_SECTIONS: dict[str, tuple[str, str]] = {
 }
 
 
-def og_card_svg(section: str, logo_png: bytes) -> str:
-    import base64
-
+def og_card_svg(section: str, mark_svg: str) -> str:
+    """A sharing card. ``mark_svg`` is the site's white mark
+    (docs_assets/brand/logo.svg), drawn as the header draws it."""
     title, tagline = OG_SECTIONS[section]
     tagline = tagline.format(frontends=setups_named(["RetroArch", "Batocera", "EmuDeck"]))
-    logo = base64.b64encode(logo_png).decode("ascii")
+    mark = mark_svg.strip().replace("<svg ", '<svg x="96" y="88" width="112" height="112" ', 1)
     body = [
         '<rect width="1200" height="630" fill="#2b2e5c"/>',
         '<rect x="0" y="606" width="1200" height="24" fill="#3b3f7a"/>',
-        f'<image x="96" y="88" width="112" height="112" href="data:image/png;base64,{logo}"/>',
+        mark,
         '<text x="236" y="164" font-size="48" font-weight="700" fill="#ffffff">RetroBIOS</text>',
         f'<text x="96" y="330" font-size="72" font-weight="700" fill="#ffffff">{escape(title)}</text>',
     ]

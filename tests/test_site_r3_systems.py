@@ -243,6 +243,11 @@ class EachManufacturerHasItsCard(unittest.TestCase):
         missing = [key for key in cards
                    if not (REPO_ROOT / "docs_assets" / "og" / f"{key}.png").is_file()]
         self.assertEqual(missing, [], "run python scripts/make_og_cards.py --only systems")
+        # A card left behind by a page that went: oric.png outlived its page.
+        committed = (REPO_ROOT / "docs_assets" / "og" / "systems").glob("*.png")
+        stale = sorted(f"systems/{path.stem}" for path in committed
+                       if f"systems/{path.stem}" not in cards)
+        self.assertEqual(stale, [])
 
 
 @unittest.skipUnless((DIST / "systems" / "nintendo" / "index.html").is_file(), "site not built")

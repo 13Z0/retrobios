@@ -234,7 +234,7 @@ class SetupCount(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             found.update(int(n) for n in re.findall(r"(?:RetroArch|EmuDeck|Batocera) and (\d+) more", text))
         found.update(int(n) for n in re.findall(
-            r"and (\d+) more", sitediagrams.og_card_svg("home", b"png")))
+            r"and (\d+) more", sitediagrams.og_card_svg("home", "<svg></svg>")))
         self.assertTrue(found)
         self.assertEqual(found, {len(sitediagrams.setups()) - 3})
 
