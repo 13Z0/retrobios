@@ -41,7 +41,7 @@ Every option, and what the installer detects and writes, is on the [installer pa
 
 ## Download BIOS packs
 
-A pack holds everything its platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. Each Download link is a page that keeps its address from one release to the next. The installer above does the same file by file. At a terminal it offers to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.
+A pack holds everything its platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. Each Download link is a page that keeps its address from one release to the next. The installer above does the same file by file: its screen installs everything, or fewer under **Choose systems**, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.
 
 A pack over 2 GB comes in several parts (`Pack.part1of2.zip`, `Pack.part2of2.zip`), and every part is needed. Each part is an ordinary ZIP: extract them all into the same folder.
 

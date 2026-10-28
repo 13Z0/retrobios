@@ -3737,7 +3737,7 @@ class TheInstallerSaysWhatItFound(unittest.TestCase):
         (dest / "lynxboot.img").write_bytes(b"corrupt")
         proc = self._run("--dest", str(dest), "--system", "atari-lynx", "--check")
         self.assertEqual(proc.returncode, 1)
-        self.assertIn("wrong hash: lynxboot.img", proc.stdout)
+        self.assertIn("wrong copy: lynxboot.img", proc.stdout)
         self.assertIn("without --check", proc.stdout)
 
     def test_a_read_only_folder_is_said_once(self):
@@ -4202,7 +4202,7 @@ class RunsAgainstTheRealLists(unittest.TestCase, _LoopbackRun):
                             "--check", "--no-input")
         self.assertEqual(proc.returncode, 1, proc.stderr)
         listing = proc.stdout.split("to download:\n", 1)[1].splitlines()
-        self.assertEqual(listing[0].strip(), "wrong hash: scph5501.bin")
+        self.assertEqual(listing[0].strip(), "wrong copy: scph5501.bin")
 
     def test_a_dry_run_counts_the_data_trees_and_ends_on_its_last_line(self):
         proc = _install_run(self.env, "--platform", "retroarch", "--dest",
@@ -4441,7 +4441,7 @@ class StandaloneEmulatorsWithoutAPlatformAreServed(unittest.TestCase, _LoopbackR
         self.assertTrue(all(name.startswith("scph") for name in names), names)
         proc = _install_run(self.env, "--no-input", "--check")
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-        self.assertIn("All files up to date.", proc.stdout)
+        self.assertIn("Everything is in place.", proc.stdout)
 
     def test_no_emulator_folder_keeps_the_hint(self):
         self.duckstation.rmdir()

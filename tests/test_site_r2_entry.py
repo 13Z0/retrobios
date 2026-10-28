@@ -167,7 +167,7 @@ class GetYourFilesOrder(unittest.TestCase):
         text = _page("which-pack.md")
         order = [text.index(mark) for mark in (
             "## Pick your setup", "| Setup | Runs on | BIOS folder | ZIP |", "<FilePicker",
-            "## Not in the list? One command finds it", "Press **Enter** for everything",
+            "## Not in the list? One command finds it", "The command opens a screen",
             "<summary>Is it safe?</summary>",
         )]
         self.assertEqual(order, sorted(order))

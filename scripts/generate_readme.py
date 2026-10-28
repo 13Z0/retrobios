@@ -39,6 +39,18 @@ from siteguides import install_command
 from verify import verify_platform
 
 
+def _installer_words() -> object:
+    """install.py read as a module, for the words its screen shows: the
+    README named a line menu the one-liner never opens."""
+    import importlib.util  # noqa: PLC0415
+
+    spec = importlib.util.spec_from_file_location(
+        "install", Path(__file__).resolve().parent.parent / "install.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 # The repository's profiles wherever the script is run from: a bare
 # "emulators" read the working directory, and a run elsewhere counted 0 cores.
 _EMULATORS_DIR = str(Path(__file__).resolve().parent.parent / "emulators")
@@ -582,7 +594,7 @@ def generate_readme(db: dict, platforms_dir: str, db_path: str = "database.json"
         "",
         "## Download BIOS packs",
         "",
-        "A pack holds everything its platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. Each Download link is a page that keeps its address from one release to the next. The installer above does the same file by file. At a terminal it offers to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.",
+        "A pack holds everything its platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. Each Download link is a page that keeps its address from one release to the next. The installer above does the same file by file: its screen installs everything, or fewer under **" + _installer_words().TUI_SYSTEMS_ROW + "**, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.",
         "",
         "A pack over 2 GB comes in several parts (`Pack.part1of2.zip`,"
         " `Pack.part2of2.zip`), and every part is needed. Each part is an"

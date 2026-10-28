@@ -132,7 +132,7 @@ class CheckNamesWhyAFileIsRefused(Scratch):
         self.complete("scph5501.bin")
         self.place("scph5501.bin", JP)
         out = self.check()
-        self.assertIn("wrong hash: scph5501.bin", out)
+        self.assertIn("wrong copy: scph5501.bin", out)
         self.assertIn("another region: the contents of scph5500.bin (japan)", out)
 
     def test_another_revision_names_the_core_that_reads_it(self):
@@ -663,7 +663,7 @@ class OfflineMakesNoRequest(Scratch):
         self.assertEqual((self.dest / "scph5501.bin").read_bytes(), US)
         self.assertFalse((self.dest / "gba_bios.bin").exists())
         # Missing, never failed (code_audit_15 P3-1): no FAILED line per file.
-        self.assertIn("3 not fetched (--offline)", proc.stdout + proc.stderr)
+        self.assertIn("3 still missing", proc.stdout + proc.stderr)
         self.assertNotIn("FAILED", proc.stdout + proc.stderr)
         self.assertIn("without --offline", proc.stdout + proc.stderr)
         self.assertNotIn("trying again", proc.stderr)
@@ -801,9 +801,11 @@ class OfflineLeavesFilesMissing(Scratch):
                                   sources="4 files copied from old, 14696 still missing.")
         self.assertEqual(code, 1)
         self.assertNotIn("Done", text)
-        self.assertIn("Finished with files missing. 4 files installed, 14696 not fetched "
-                      "(--offline).", text)
-        self.assertIn("14696 still missing", text)
+        # One count, the sources line as the head, as the screen's result
+        # (tui_audit_15 P3-8).
+        self.assertIn("Finished with files missing. 4 files copied from old, 14696 still "
+                      "missing.", text)
+        self.assertEqual(text.count("14696"), 1)
 
     def test_nothing_installed_is_code_2(self):
         code, text = self.outcome(offline=14700)
@@ -843,7 +845,7 @@ class OfflineLeavesFilesMissing(Scratch):
         proc = self.run_installer("--offline", "--manifest", str(self.list), "--no-input")
         # Its files are missing, as the BIOS files --offline leaves out are,
         # with or without questions.
-        self.assertIn("bluemsx: 0 already up to date, 1 need the internet (--offline)",
+        self.assertIn("bluemsx: 0 already in place, 1 need the internet (--offline)",
                       proc.stdout)
         self.assertNotIn("could not read", proc.stderr)
         self.assertNotIn("no longer in the source", proc.stdout)
@@ -867,8 +869,8 @@ class OneOfflineVocabulary(Scratch):
                                   "--from", str(self.old()), "--no-input")
         out = proc.stdout + proc.stderr
         self.assertEqual(proc.returncode, 1, out)
-        self.assertIn("Finished with files missing. 1 file installed, 3 not fetched "
-                      "(--offline).", out)
+        self.assertIn(f"Finished with files missing. 1 file copied from {self.root / 'old'}, "
+                      "3 still missing.", out)
         self.assertIn(f"They are not in {self.root / 'old'}", out)
         for said in ("Finished with errors", "files failed", "retry",
                      "copy them from your old card"):
@@ -961,7 +963,7 @@ class AuditFifteenOffline(Scratch):
                          (1, 3, []))
         self.assertNotIn("FAILED", proc.stderr)
         self.assertNotIn("downloading", proc.stderr)
-        self.assertIn("1 file installed, 3 not fetched (--offline)", proc.stderr)
+        self.assertIn(f"1 file copied from {old}, 3 still missing", proc.stderr)
         download = next(event for event in events if event["event"] == "download")
         self.assertEqual(download["files"], 1)
         # The screen reads that summary as missing files, not failures.

@@ -391,7 +391,7 @@ class ReviewCases(unittest.TestCase):
         out = buf.getvalue()
         self.assertNotIn("Done.", out)
         self.assertIn("12 files not downloaded", out)
-        self.assertIn("3 files already up to date", out)
+        self.assertIn("3 files already in place", out)
 
     def test_quiet_refuses_modes_it_would_silence(self):
         for mode in ("--check", "--dry-run", "--list-platforms", "--list-systems"):
@@ -547,7 +547,7 @@ class AFolderThisUserCannotEnter(unittest.TestCase):
                 os.chmod(locked, 0o755)
         self.assertNotIn("Traceback", proc.stderr)
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertIn("wrong hash: pcsx/extra.bin", proc.stdout)
+        self.assertIn("wrong copy: pcsx/extra.bin", proc.stdout)
         self.assertIn("could not be read (Permission denied)", proc.stdout)
         self.assertIn("missing: scph5501.bin", proc.stdout)
 
@@ -937,7 +937,7 @@ class TheEndOfARunPaintsItsStatusWords(unittest.TestCase):
                   ("failure", "1 file failed"), ("failure", "failed:"))),
                 ((2, 1, 0, 0, False), {},
                  (("success", "Done"), ("success", "2 files installed"),
-                  ("success", "1 file already up to date"))),
+                  ("success", "1 file already in place"))),
                 ((1, 0, 0, 0, False), {"offline": 2},
                  (("warning", "Finished with files missing"), ("warning", "2 not fetched")))):
             with self.subTest(counts=counts):
@@ -1159,10 +1159,14 @@ class NotFoundWithAClosedFolder(unittest.TestCase):
         asked = []
         install._DETECTION_REFUSED[:] = [(home / ".config" / "EmuDeck", "Permission denied")]
         self.addCleanup(install._DETECTION_REFUSED.clear)
+        # The drives of the machine running the tests are not read, and the
+        # question is not printed into the test output.
         with mock.patch.dict(os.environ, {"HOME": str(home)}), \
+                mock.patch.object(install, "_mounted_cards", return_value=[]), \
                 mock.patch.object(install, "_choose_platform", return_value="retroarch"), \
                 mock.patch.object(install, "_ask",
-                                  lambda prompt: asked.append(prompt) or str(home / "b")):
+                                  lambda prompt: asked.append(prompt) or str(home / "b")), \
+                contextlib.redirect_stdout(io.StringIO()):
             install._prompt_manual_platform("linux")
         self.assertEqual(len(asked), 1)
         self.assertNotIn("no default on this system", asked[0])
