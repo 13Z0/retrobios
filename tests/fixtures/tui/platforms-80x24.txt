@@ -12,13 +12,13 @@
    BizHawk
    MiSTer FPGA
    RetroPie
-   Allium, SD card                 Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip
-   AmberELEC, SD card                                              RG351, RG552
-   Anbernic stock firmware, SD card    RG35XX Plus, RG35XX H, RG35XX SP, RG28XX
-   ArchR, SD card              R36S, R33S, R36S Soysauce, Odroid Go Advance, +8
-   ArkOS, SD card     RG353M, RG353V, RG503, RGB30, RK2023, RG351MP, RG351V, +2
-   CrossMix-OS, SD card                                        TrimUI Smart Pro
-   dArkOS, SD card                      Odroid Go Advance, RGB10, RG351MP, G350
-   EmuELEC, SD card                                                   Odroid Go
+   Allium, SD card                   Miyoo Mini, Miyoo Mini Plus, +1
+   AmberELEC, SD card                RG351, RG552
+   Anbernic stock firmware, SD card  RG35XX Plus, RG35XX H, RG35XX SP, RG28XX
+   ArchR, SD card                    R36S, R33S, R36S Soysauce, +9
+   ArkOS, SD card                    RG353M, RG353V, RG503, RGB30, RK2023, +4
+   CrossMix-OS, SD card              TrimUI Smart Pro
+   dArkOS, SD card                   Odroid Go Advance, RGB10, RG351MP, G350
+   EmuELEC, SD card                  Odroid Go
  1-19 of 34
  A/Enter Choose  B/Esc Back  / Filter  ? Help

@@ -510,6 +510,9 @@ if os.environ.get("FAKE_IDLE_ERROR"):
     # RETROBIOS_IDLE_EXIT on an error screen: the idle line, then the error.
     print("RetroBIOS: No button pressed, closing.", file=sys.stderr)
     print("Error: " + os.environ["FAKE_IDLE_ERROR"], file=sys.stderr)
+if os.environ.get("FAKE_QUIT"):
+    # q or Quit on the screen: the farewell on stderr, code 2.
+    print("RetroBIOS: quit. Nothing was installed.", file=sys.stderr)
 if os.environ.get("FAKE_ERROR"):
     print("Error: " + os.environ["FAKE_ERROR"], file=sys.stderr)
 sys.exit(int(os.environ.get("FAKE_CODE", "0")))
@@ -958,6 +961,27 @@ class ThePortMasterPort(unittest.TestCase):
         self.assertEqual(proc.returncode, 3)
         self.assertIn("Error: the folder is read-only", device.screen)
         self.assertIn("log.txt", device.screen)
+
+    def test_a_quit_chosen_shows_no_message(self):
+        """code_audit_19 P3-1: a quit chosen exits 2, below 128, and the
+        first line of tui.err went into a message box waiting for A."""
+        device = self.device()
+        proc = device.run(["bash", self.script], FAKE_QUIT="1", FAKE_CODE="2",
+                          RB_MESSAGE_WAIT="300")
+        self.assertEqual(proc.returncode, 2)
+        self.assertLess(device.elapsed, 15)
+        self.assertNotIn("Nothing was installed", device.screen)
+        self.assertNotIn("Press A", device.screen)
+        device.assert_console_restored()
+
+    def test_the_quit_line_is_the_one_install_py_writes(self):
+        state = install.TuiState(os_type="linux", home=Path.home())
+        state.quit_asked, state.exit_code = True, install.QUIT_CODE
+        self.assertTrue(install.tui_quit_chosen(state))
+        line = install.tui_farewell(state)[0]
+        tui = (REPO_ROOT / "ports" / "shared" / "tui.txt").read_text(encoding="utf-8")
+        self.assertIn(f'= "{line}" ]', tui)
+        self.assertIn(f'print("{line}", file=sys.stderr)', FAKE_INSTALL)
 
     def test_offline_installs_from_a_pack_on_the_card(self):
         device = self.device(FAKE_CURL="7")

@@ -881,6 +881,10 @@ rb_here() {
     # Ended by Start + Select or a signal: the player asked to leave, and no
     # button may be left to close a message.
     :
+  elif [ "$status" = "2" ] && [ "$(head -n 1 "$RB_STATE/tui.err" 2>/dev/null)" = "RetroBIOS: quit. Nothing was installed." ]; then
+    # Quit chosen (B on the first screen, Quit): the player asked to leave,
+    # as with Start + Select.
+    :
   elif [ "$status" != "0" ] && [ "$(head -n 1 "$RB_STATE/tui.err" 2>/dev/null)" = "RetroBIOS: No button pressed, closing." ]; then
     # Closed for want of a button: the mapper never opened the pad, so no A
     # is coming. The error it closed is the next line, shown for

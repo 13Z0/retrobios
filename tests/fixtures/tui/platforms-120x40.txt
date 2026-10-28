@@ -14,27 +14,27 @@
    BizHawk
    MiSTer FPGA
    RetroPie
-   Allium, SD card                 Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip
-   AmberELEC, SD card                                              RG351, RG552
-   Anbernic stock firmware, SD card    RG35XX Plus, RG35XX H, RG35XX SP, RG28XX
-   ArchR, SD card         R36S, R33S, R36S Soysauce, Odroid Go Advance, Odroid Go Super, RG351V, +6
-   ArkOS, SD card  RG353M, RG353V, RG503, RGB30, RK2023, RG351MP, RG351V, R35S, RGB10
-   CrossMix-OS, SD card                                        TrimUI Smart Pro
-   dArkOS, SD card                      Odroid Go Advance, RGB10, RG351MP, G350
-   EmuELEC, SD card                                                   Odroid Go
-   JELOS, SD card    RG351M, RG351V, RG353M, RG353P, RG353V, RG353VS, RG503, RG552, R33S, R36S, +24
-   KNULLI, SD card        RG ARC-S, RG28XX, RG34XX, RG35XX, RG35XX Plus, RG35XX H, RG35XX 2024, +15
-   KOLOS, SD card  RG353P, RG353M, RG353V, RG353VS, RG503, RK2023, RGB30, RGB10 Max 3
-   Koriki, SD card                                                   Miyoo Mini
-   MinUI, SD card          RG28XX, RG34XX, RG34XX SP, RG35XX, RG35XX Plus, RG35XX H, RG35XX SP, +16
-   MiyooCFW, SD card  BittBoy, Pocket Go, PowKiddy Q90, PowKiddy V90, PowKiddy Q20 Mini, Sup M3, +1
-   muOS, SD card      RG35XX H, RG35XX Plus, RG35XX SP, RG35XX 2024, RG34XX, RG40XX H, RG40XX V, +4
-   MyMinUI, SD card            RG35XX, Miyoo Mini, Miyoo Mini Flip, Miyoo Mini Plus, Miyoo A30, +16
-   NextUI, SD card                               TrimUI Brick, TrimUI Smart Pro
-   Onion, SD card                                   Miyoo Mini, Miyoo Mini Plus
-   plumOS, SD card                                              MagicX XU20 V32
-   RetroOZ, SD card  Odroid Go Super, Odroid Go Advance, RGB10 Max, RGB10 Max 2
-   ROCKNIX, SD card      RG351, RG353, RG503, RG552, RG 55G1, RG ARC, RG35XX 2024, RG35XX Plus, +37
-   spruceOS, SD card        Miyoo A30, Miyoo Flip, Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip, +5
-   UnofficialOS, SD card      R35S, R36S, RG351M, RG351P, RG351V, RG353M, RG353P, RG353V, RG503, +5
+   Allium, SD card                   Miyoo Mini, Miyoo Mini Plus, +1
+   AmberELEC, SD card                RG351, RG552
+   Anbernic stock firmware, SD card  RG35XX Plus, RG35XX H, RG35XX SP, RG28XX
+   ArchR, SD card                    R36S, R33S, R36S Soysauce, +9
+   ArkOS, SD card                    RG353M, RG353V, RG503, RGB30, RK2023, +4
+   CrossMix-OS, SD card              TrimUI Smart Pro
+   dArkOS, SD card                   Odroid Go Advance, RGB10, RG351MP, G350
+   EmuELEC, SD card                  Odroid Go
+   JELOS, SD card                    RG351M, RG351V, RG353M, RG353P, +30
+   KNULLI, SD card                   RG ARC-S, RG28XX, RG34XX, RG35XX, +18
+   KOLOS, SD card                    RG353P, RG353M, RG353V, RG353VS, RG503, +3
+   Koriki, SD card                   Miyoo Mini
+   MinUI, SD card                    RG28XX, RG34XX, RG34XX SP, RG35XX, +19
+   MiyooCFW, SD card                 BittBoy, Pocket Go, PowKiddy Q90, +4
+   muOS, SD card                     RG35XX H, RG35XX Plus, RG35XX SP, +8
+   MyMinUI, SD card                  RG35XX, Miyoo Mini, Miyoo Mini Flip, +18
+   NextUI, SD card                   TrimUI Brick, TrimUI Smart Pro
+   Onion, SD card                    Miyoo Mini, Miyoo Mini Plus
+   plumOS, SD card                   MagicX XU20 V32
+   RetroOZ, SD card                  Odroid Go Super, Odroid Go Advance, +2
+   ROCKNIX, SD card                  RG351, RG353, RG503, RG552, RG 55G1, +40
+   spruceOS, SD card                 Miyoo A30, Miyoo Flip, Miyoo Mini, +7
+   UnofficialOS, SD card             R35S, R36S, RG351M, RG351P, RG351V, +9
  A/Enter Choose  B/Esc Back  / Filter  ? Help

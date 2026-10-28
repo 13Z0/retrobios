@@ -102,18 +102,19 @@ class InstallerOutputExample(unittest.TestCase):
         menu = re.search(r"RetroArch: (\d+) files, ([\d.]+ [KMG]B)[.,]([^`]*)", text)
         self.assertEqual(menu.groups()[:2], (count, size))
         self.assertSplitAddsUp(menu.group(3), count, size)
-        games = re.search(r"g\) leave out the (\d+) game data files \(([\d.]+ [KMG]B)\)",
+        games = re.search(r"g\) Game data: kept \((\d+) files, ([\d.]+ [KMG]B)\)",
                           menu.group(3))
         self.assertIsNotNone(games, "the menu offers to leave the game data out")
-        split = re.search(r"(\d+) BIOS files \(([\d.]+ [KMG]B)\) and (\d+) game data files "
-                          r"\(([\d.]+ [KMG]B)\)", menu.group(3))
+        split = re.search(r"(\d+) BIOS files \(([\d.]+ [KMG]B)\)(?:,| and) (\d+) game data "
+                          r"files \(([\d.]+ [KMG]B)\)", menu.group(3))
         self.assertEqual(games.groups(), split.groups()[2:])
 
     def assertSplitAddsUp(self, text: str, count: str, size: str) -> None:
         """The run counted 8069 files where its menu counted 3259 BIOS files
         and 5089 game data files: the parts add up to the total they divide,
         the sizes within the rounding of their three figures."""
-        split = re.search(r"(\d+) BIOS files \(([\d.]+) ([KMG]B)\) and (\d+) game data "
+        # Data files are a third kind, counted beside the two (tui_audit_12 P2-3).
+        split = re.search(r"(\d+) BIOS files \(([\d.]+) ([KMG]B)\)(?:,| and) (\d+) game data "
                           r"files \(([\d.]+) ([KMG]B)\)", text)
         self.assertIsNotNone(split, "a categorized list says its BIOS files and game data")
         bios, bios_size, bios_unit, games, game_size, game_unit = split.groups()

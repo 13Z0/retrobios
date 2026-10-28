@@ -22,11 +22,11 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Continue^[[0;2m  B/Esc Quit  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Continue  ^[[0;2mB/Esc^[[0m Quit  ^[[0;2m?^[[0m Help
 === platforms
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Which setup?^[[0m
 
-^[[0;2m   Filter: setup or device (/)^[[0m
+   Filter: setup or device (/)
 ^[[0;7;35m > RetroArch^[[0m
    Batocera
    Recalbox
@@ -38,16 +38,16 @@
    BizHawk
    MiSTer FPGA
    RetroPie
-   Allium, SD card                 Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip
-   AmberELEC, SD card                                              RG351, RG552
-   Anbernic stock firmware, SD card    RG35XX Plus, RG35XX H, RG35XX SP, RG28XX
-   ArchR, SD card              R36S, R33S, R36S Soysauce, Odroid Go Advance, +8
-   ArkOS, SD card     RG353M, RG353V, RG503, RGB30, RK2023, RG351MP, RG351V, +2
-   CrossMix-OS, SD card                                        TrimUI Smart Pro
-   dArkOS, SD card                      Odroid Go Advance, RGB10, RG351MP, G350
-   EmuELEC, SD card                                                   Odroid Go
+   Allium, SD card                   Miyoo Mini, Miyoo Mini Plus, +1
+   AmberELEC, SD card                RG351, RG552
+   Anbernic stock firmware, SD card  RG35XX Plus, RG35XX H, RG35XX SP, RG28XX
+   ArchR, SD card                    R36S, R33S, R36S Soysauce, +9
+   ArkOS, SD card                    RG353M, RG353V, RG503, RGB30, RK2023, +4
+   CrossMix-OS, SD card              TrimUI Smart Pro
+   dArkOS, SD card                   Odroid Go Advance, RGB10, RG351MP, G350
+   EmuELEC, SD card                  Odroid Go
 ^[[0;2m 1-19 of 34^[[0m
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Choose^[[0;2m  B/Esc Back  / Filter  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Choose  ^[[0;2mB/Esc^[[0m Back  ^[[0;2m/^[[0m Filter  ^[[0;2m?^[[0m Help
 === folder
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Which folder?^[[0m
 
@@ -72,7 +72,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Use this folder^[[0;2m  B/Esc Back  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Use this folder  ^[[0;2mB/Esc^[[0m Back  ^[[0;2m?^[[0m Help
 === folder-card
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Where is the SD card?^[[0m
 
@@ -97,7 +97,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Browse^[[0;2m  B/Esc Back  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Browse  ^[[0;2mB/Esc^[[0m Back  ^[[0;2m?^[[0m Help
 === browse
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Browse for a folder^[[0m
 
@@ -122,7 +122,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Use this folder^[[0;2m  B/Esc Back  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Use this folder  ^[[0;2mB/Esc^[[0m Back  ^[[0;2m?^[[0m Help
 === path
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Type a path^[[0m
 
@@ -147,7 +147,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mEnter^[[0m Use this folder^[[0;2m  Esc Back  Ctrl-U Clear^[[0m
+ ^[[0;1;35mEnter^[[0m Use this folder  ^[[0;2mEsc^[[0m Back  ^[[0;2mCtrl-U^[[0m Clear
 === create
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Create the folder?^[[0m
 
@@ -172,7 +172,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Create^[[0;2m  B/Esc Quit^[[0m
+ ^[[0;1;35mA/Enter^[[0m Create  ^[[0;2mB/Esc^[[0m Quit
 === checking
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Checking^[[0m
 
@@ -197,7 +197,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mCtrl-C^[[0m Quit^[[0;2m  B/Esc Quit^[[0m
+ ^[[0;1;35mCtrl-C^[[0m Quit  ^[[0;2mB/Esc^[[0m Quit
 === plan
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: RetroArch^[[0m
 
@@ -222,7 +222,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Install^[[0;2m  B/Esc Back  Y/o Options  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Install  ^[[0;2mB/Esc^[[0m Back  ^[[0;2mY/o^[[0m Options  ^[[0;2m?^[[0m Help
 === plan-in-place
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: RetroArch^[[0m
 
@@ -247,13 +247,13 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Close^[[0;2m  B/Esc Back  Y/o Options  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Close  ^[[0;2mB/Esc^[[0m Back  ^[[0;2mY/o^[[0m Options  ^[[0;2m?^[[0m Help
 === systems
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Choose systems^[[0m
 
    All
    None
-^[[0;2m   Filter (/ to type)^[[0m
+   Filter (/ to type)
 ^[[0;7;35m > [x] nintendo-gba (gba)                                       1 file, 16.0 KB^[[0m
    [x] sony-playstation                                         3 files, 1.0 MB
 ^[[0;2m   [ ] nintendo-famicom-disk (ファミコン)                              in place^[[0m
@@ -272,7 +272,7 @@
  
  
 ^[[0;1m ^[[0;1;35m2^[[0;1m of ^[[0;1;35m3^[[0;1m systems: ^[[0;1;35m4^[[0;1m files, ^[[0;1;35m1.0 MB^[[0m
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Continue^[[0;2m  B/Esc Back  X/Space Tick  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Continue  ^[[0;2mB/Esc^[[0m Back  ^[[0;2mX/Space^[[0m Tick  ^[[0;2m?^[[0m Help
 === options
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Options^[[0m
 
@@ -283,7 +283,7 @@
    Installed cores only: no (1 found)                         --installed-cores
    Cores: all                                                            --core
    Parallel downloads: 8                                                 --jobs
-   BIOS folder: ^[[0;1m~/.config/retroarch/system                               --dest^[[0m
+   BIOS folder: ^[[0;1m~/.config/retroarch/system^[[0m                               --dest
    Copy from: none                                                       --from
    Preview the file list                                              --dry-run
    Show the command line
@@ -297,7 +297,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Open^[[0;2m  B/Esc Back  Left/Right Set  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Open  ^[[0;2mB/Esc^[[0m Back  ^[[0;2mLeft/Right^[[0m Set  ^[[0;2m?^[[0m Help
 === regions
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Preferred regions^[[0m
 
@@ -322,7 +322,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Tick^[[0;2m  B/Esc Done  Left/Right Order  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Tick  ^[[0;2mB/Esc^[[0m Done  ^[[0;2mLeft/Right^[[0m Order  ^[[0;2m?^[[0m Help
 === cores
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Cores^[[0m
 
@@ -347,7 +347,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Filter^[[0;2m  B/Esc Back  X/Space Tick  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Filter  ^[[0;2mB/Esc^[[0m Back  ^[[0;2mX/Space^[[0m Tick  ^[[0;2m?^[[0m Help
 === preview
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Preview^[[0m
 
@@ -372,7 +372,7 @@
 
 
 
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Back
+ ^[[0;1;35mA/Enter^[[0m Back
 === command
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Command line^[[0m
 
@@ -397,14 +397,14 @@
 
 
 
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Back
+ ^[[0;1;35mA/Enter^[[0m Back
 === confirm
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Confirm^[[0m
 
  Counted again for your choices. Nothing is written before Install.
 ^[[0;1m ^[[0;1;35m1^[[0;1m file to download, ^[[0;1;35m16.0 KB^[[0m
  BIOS folder: ^[[0;1m~/.config/retroarch/system^[[0m
- 0 in place, ^[[0;33m1 missing^[[0m, 0 wrong copies
+ 0 in place, 1 missing, 0 wrong copies
  Free space: 50.0 GB
  
 ^[[0;7;35m > Install^[[0m
@@ -422,7 +422,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Install^[[0;2m  B/Esc Back  ? Help^[[0m
+ ^[[0;1;35mA/Enter^[[0m Install  ^[[0;2mB/Esc^[[0m Back  ^[[0;2m?^[[0m Help
 === installing
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Installing^[[0m
 
@@ -430,7 +430,7 @@
  528.0 KB of 1.0 MB
  128.9 KB/s, 0:04 left
  2 of 4 files
-^[[0;2m B, Ctrl-C or Select+Start stops. What is done stays done.^[[0m
+ B, Ctrl-C or Select+Start stops. What is done stays done.
  
  ^[[0;1;31mFAILED^[[0m scph5500.bin (HTTP 404)
 ^[[0;32m ok^[[0m     gba_bios.bin
@@ -447,7 +447,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mB/Esc^[[0m Stop^[[0;2m  ? Help^[[0m
+ ^[[0;1;35mB/Esc^[[0m Stop  ^[[0;2m?^[[0m Help
 === result
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: ^[[0;1;31mFinished with errors^[[0m
 
@@ -472,7 +472,7 @@
 
 
 
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Exit
+ ^[[0;1;35mA/Enter^[[0m Exit
 === error
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: ^[[0;1;31mSomething went wrong^[[0m
 
@@ -497,7 +497,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Choose^[[0;2m  B/Esc Back^[[0m
+ ^[[0;1;35mA/Enter^[[0m Choose  ^[[0;2mB/Esc^[[0m Back
 === quit
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Quit?^[[0m
 
@@ -522,7 +522,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA/Enter^[[0m Quit^[[0;2m  B/Esc Stay^[[0m
+ ^[[0;1;35mA/Enter^[[0m Quit  ^[[0;2mB/Esc^[[0m Stay
 === help
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Keys^[[0m
 
@@ -547,4 +547,4 @@
  
  
  
-^[[0;2m Any key closes this help^[[0m
+ Any key closes this help

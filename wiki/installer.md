@@ -238,21 +238,29 @@ started it, the one thing that can resume it: started from a terminal app's
 `-e`, a desktop entry or a launcher's `sh -c`, the key is ignored and the bar
 says why.
 
-A mouse or a touch screen works too, beside the keys and buttons. A click or
-a tap on a row moves the cursor there, and a second one on the row under the
-cursor does what Enter does: one row of a terminal is far smaller than a
-finger. The entries of the bottom line press their key, the line that says
-which rows are in view shows the next page, and the wheel scrolls a list or a
-text without moving the cursor unless it would leave the screen. Nothing
-happens until the button or the finger comes up, and only where it went down.
-The right and middle buttons do nothing. The installer asks the terminal for
-clicks only on a terminal that reports them (`TERM` not `linux`, `dumb` or
-unset), never on a handheld route (`RETROBIOS_PAD`) or with
-`RETROBIOS_NO_MOUSE=1`, and gives them back on every way out, a stop with
-Ctrl+Z included. On the result, the command line screen, any screen showing
-a command and the screen where a path is typed, the terminal keeps the mouse,
-so text is selected, copied and pasted as usual. Elsewhere, hold Shift while
-selecting. `--plain` never asks for clicks. Clicks and taps were checked on
+A mouse or a touch screen works too, beside the keys and buttons, in a
+terminal that reports clicks: those of Linux, macOS, WSL and Termux. A click
+or a tap on a box (a system, a core, a region) ticks or unticks it, as Space
+does. On any other row it moves the cursor there, and a second one on that
+row does what Enter does: one row of a terminal is far smaller than a finger,
+and the row a screen opens on (**Install** on Confirm) is never chosen by one
+tap. The entries of the bottom line press their key, **Exit** on the result
+too, the line that says which rows are in view shows the next page, and the
+wheel scrolls a list or a text without moving the cursor unless it would leave
+the screen. Nothing happens until the button or the finger comes up, and only
+where it went down. The right and middle buttons do nothing. The help and the
+bottom line of a list of boxes say how a tap acts.
+
+Clicks are off in the Windows console the PowerShell command runs in, which
+reports no click as a key, with `TERM` unset or set to `dumb`, `unknown`,
+`linux` or a name starting with `vt`, `cons` or `ansi`, on a handheld route
+(`RETROBIOS_PAD`), and with `RETROBIOS_NO_MOUSE` set. The installer gives
+them back on every way out, a stop with Ctrl+Z included. On the command line
+screen, any screen showing a command and the screen where a path is typed,
+the terminal keeps the mouse, so text is selected, copied and pasted as usual.
+The result takes taps, so a touch screen can leave it: it is printed again in
+the terminal once the screen closes, its commands with it. Elsewhere, hold
+Shift while selecting. `--plain` never asks for clicks. Clicks and taps were checked on
 2026-10-27 in xterm, tmux, GNU screen 4.09, Windows Terminal (WSL) and Termux
 on Android 17. macOS Terminal and iTerm2 are not checked yet, nor the key
 they use to select over the installer.
@@ -654,32 +662,42 @@ the plan screen of the [full-screen interface](#the-full-screen-interface)
 offers **Install**, **Choose systems** and **Options**. With `--plain`, or where
 the full screen cannot open (a terminal smaller than 40x12, `TERM=dumb`), the
 same choice comes as questions after detection. A RetroArch run with `--plain`
-printed this on 2026-10-27:
+printed this on 2026-10-28, `g` then pressed:
 
 ```
 RetroArch: 8358 files, 6.6 GB, and 2636 data files (38.5 MB).
-  3269 BIOS files (4.1 GB) and 5089 game data files (2.5 GB).
+  3269 BIOS files (4.1 GB), 5089 game data files (2.5 GB) and 2636 data files (38.5 MB).
+  Game data: files a game or a game engine reads, of no use to the other cores. Data files: the files an emulator reads from a data folder of its own, such as Dolphin's Sys and PPSSPP's assets.
   BIOS folder: /home/me/.config/retroarch/system
   106 files read from RetroArch's save directory go to a folder per core under /home/me/.config/retroarch/saves
   Enter) install everything
-  i) only what the installed cores read: 87 files, 43.8 MB
   c) choose systems, cores and regions
   f) copy from a folder or an old card
-  g) leave out the 5089 game data files (2.5 GB), game data: files a game or a game engine reads, of no use to the other cores
+  g) Game data: kept (5089 files, 2.5 GB): leave it out
   q) quit
+>
+  Counted again for your choices. Nothing is written before Enter.
+
+RetroArch: 3269 files, 4.1 GB, and 2636 data files (38.5 MB).
+  3269 BIOS files (4.1 GB) and 2636 data files (38.5 MB). 5089 game data files left out.
 ```
 
-A list that marks its game data counts it apart from the BIOS files, on the
-plan, in this menu and on the result (`Installed: 3269 BIOS files, 5089 game
-data files and 2636 data files.`), the parts adding up to the total. `g` leaves
-the game data of the choice out, as `--no-game-data` does, and counts again
-(`g` then keeps it). The plan screen has the same choice as a row of its own,
-**Game data (5089 files, 2.5 GB): kept, leave out**, one press toggling it,
-and Options keeps its **Game data** row too.
+A list that marks its game data counts three kinds of file apart, on the plan,
+in this menu and on the result (`Installed: 3269 BIOS files, 5089 game data
+files and 2636 data files.`), the parts adding up to the total: BIOS files,
+game data, and the data files of an emulator's own data folder (Dolphin's
+`Sys`, PPSSPP's assets). What the last two are is said once, under the counts.
+`g` leaves the game data of the choice out, as `--no-game-data` does, and
+counts again (`g` then keeps it). The plan screen has the same choice as a row
+of its own, **Game data: kept** with its count, one press toggling it to
+**Game data: left out**, and Options keeps its **Game data** row too. Its
+count follows the systems chosen, as `g` counts them, and a choice that holds
+no game data has no row. Given `--no-game-data`, neither the menu nor the plan
+offers the game data back.
 
-`i` appears for RetroArch, Lakka and RetroPie when cores are found installed,
-and the line above is a RetroArch with Beetle PSX HW, Snes9x, mGBA, Genesis Plus GX
-and FCEUmm.
+`i) only what the installed cores read: 87 files, 43.8 MB` appears for
+RetroArch, Lakka and RetroPie when cores are found installed, here a RetroArch
+with Beetle PSX HW, Snes9x, mGBA, Genesis Plus GX and FCEUmm.
 It keeps what those cores read and drops the systems none of them emulates,
 the rule `--installed-cores` applies.
 
@@ -740,7 +758,7 @@ lists, a game engine's own data. The manifest marks each of these files
 and names what it left out with its category (ten names, `--verbose` for all):
 
 ```text
-  Left out as game data (--no-game-data): 2436 files: ports/doom/doom1.wad, ports/doom2/doom2.wad, ...
+  2436 game data files left out (--no-game-data): ports/doom/doom1.wad, ports/doom2/doom2.wad, ...
 ```
 
 It is the cut `generate_pack.py --no-game-data` makes, and a test holds the
@@ -830,7 +848,7 @@ what the options name, everything by default.
 | <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal. A run whose output goes to a file or a pipe asks nothing either, and says so on stderr. It finds the setups and the mounted cards the screen finds: one is taken, as Enter takes it, and two stop the run with an `error` event (`stage` `detect`, `reason` `conflict`) naming each with its `--platform` and `--dest` |
 | <span id="option-check"></span>`--check` | Report and exit without writing |
 | <span id="option-dry-run"></span>`--dry-run` | Show what would be downloaded, the totals first, then by system and with sizes, without writing anything. A plan taller than the screen names the ten largest systems, and `--verbose` lists every system and file |
-| <span id="option-yes"></span>`--yes`, `-y` | Do not ask before a download of 1 GB or more, nor anything else. Implies `--no-input`, so a run that needs an answer (nothing found here, two setups found) stops on what to name instead |
+| <span id="option-yes"></span>`--yes`, `-y` | Do not ask before a download of 1 GB or more, nor anything else. Implies `--no-input`, so a run that needs an answer (nothing found here, a file list or a pack naming its platform included, or two setups found) stops on what to name instead. `--platform` names a setup, whose usual folder is then taken |
 | <span id="option-quiet"></span>`--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
 | <span id="option-events"></span>`--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
 | <span id="option-from"></span>`--from FOLDER` | Copy the BIOS files a folder holds (an old SD card, a backup, a ZIP) instead of downloading them, each one recognised by its hash and copied, never moved. Repeat for several folders. See [Copy from an old card](#copy-from-an-old-card) |
@@ -971,7 +989,10 @@ with its root password, and a card whose password was changed is named by
 nothing, never by another system. A drive whose files fit two systems is named
 by neither: the first screen and `--plain` say which systems it could be and
 the two commands that name it, and a `--dest` named with one of them takes it
-as that system's, with a note.
+as that system's, with a note. The full screen lists it under each system it
+could be ("KNULLI2: if it is a KNULLI card"), and with a file list for one of
+them it is that system's card, offered first, never "no card is mounted".
+`--plain` numbers it the same way ("Type 1 if it is the KNULLI card").
 
 The full screen lists such a card on its first screen ("muOS SD card (E:\)"),
 and a SHARE drive the same way ("Batocera SHARE drive (SHARE)"): its root, typed
@@ -995,7 +1016,10 @@ Under WSL both sides are searched. The Windows one is reached through its
 `/mnt/c/...`, and the Windows variables the rules use (`USERPROFILE`,
 `APPDATA`, `LOCALAPPDATA`, `ProgramFiles`) are read through `cmd.exe` when
 WSL does not pass them. A forced `--platform retrobat` falls back to
-`/mnt/c/RetroBat/bios`.
+`/mnt/c/RetroBat/bios`. With nothing found, the folder question offers both
+usual folders of a setup that has one on each side: RetroArch's in this Linux
+(`~/.config/retroarch/system`, under Enter) and the Windows one
+(`C:\RetroArch-Win64\system`), each named by its side.
 
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
@@ -1289,7 +1313,7 @@ Each launcher also sets `RETROBIOS_IDLE_EXIT` to 300: with no button pressed
 for 5 minutes since it opened, and no check or install running, the interface
 closes by itself. A pad the system has no mapping for sends nothing, and would
 otherwise leave the console stuck on the interface with no way out. It closes
-with `RetroBIOS: No button pressed, closing.` and exit status 130, as a quit
+with `RetroBIOS: No button pressed, closing.` and exit status 2, as a quit
 before the install. Closed on an error or a result screen, it prints that
 screen's words after the line and exits with its code (1 for `No internet:
 offline mode`), so the launcher can tell an error from a close with nothing to
@@ -1536,8 +1560,8 @@ fields, the installer refuses to narrow rather than install everything.
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed or were left out by `--offline` while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, a `--dest` that is not the card of the system named (another system's card, a folder inside one, a drive with none of its files where its card always has them, or a folder that does not exist), `--restore` could not put a file back, or `--add-app` could not put every file of the app on the card |
-| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), or `--offline` left every file out, the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
-| `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question, or the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`) before an install. A quit chosen (`q`, **Quit**) is code `130` too, and the terminal keeps `RetroBIOS: quit. Nothing was installed.` where a stop keeps `stopped`. Run the same command again to carry on |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), or `--offline` left every file out, the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network, `--add-app` with `--check`, `--dry-run`, a listing, `--from-pack` or `--offline`. The message then starts with `install.py: error:`. Also `--add-app` for a folder on no card that takes the app, said in an `Error:` line and an `app` event before anything is written. With `--restore`, a folder that is not a dated folder inside `retrobios-backup`. Also a quit chosen before the install, as `gh` ends a cancelled prompt: `q` at a question, `q` or **Quit** on the full screen, which then keeps `RetroBIOS: quit. Nothing was installed.`, and the full screen closed with no button pressed (`RETROBIOS_IDLE_EXIT`). No code but `0` closes a Windows Terminal tab started on the installer itself, so such a tab stays open on a quit |
+| `130` | stopped with Ctrl+C, or with Ctrl+C or Ctrl+D at a question, the terminal keeping `RetroBIOS: stopped. Nothing was installed.` before an install. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
 <!-- /generated: exit-codes -->
@@ -1641,8 +1665,8 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
 | `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `gptokeyb_muxterm`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
-| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 130, or with the code of the error or result screen it closed on |
-| `RETROBIOS_NO_MOUSE` | Set to anything but `0`: the full screen never asks the terminal for clicks, and the mouse selects text everywhere as it does outside the installer |
+| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 2, as a quit, or with the code of the error or result screen it closed on |
+| `RETROBIOS_NO_MOUSE` | Set to any value but `0` or an empty one: the full screen never asks the terminal for clicks, and the mouse selects text everywhere as it does outside the installer |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong

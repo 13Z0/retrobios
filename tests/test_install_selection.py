@@ -721,9 +721,10 @@ class TheOneLinerNarrows(unittest.TestCase):
                     self.assertFalse((repo.root / '"').exists())
             self.assertEqual(len([p for p in card.rglob("*") if p.is_file()]), 5)
 
-    def test_q_at_every_menu_stops_on_130(self):
+    def test_q_at_every_menu_stops_on_the_quit_code(self):
         """`install.sh && retroarch` started RetroArch after a q, which left
-        with 0 where Ctrl+C and Ctrl+D leave with 130."""
+        with 0. A quit chosen ends on 2, nothing installed, where Ctrl+C and
+        Ctrl+D leave with 130 (code_audit_19 P3-1)."""
         files = [{"dest": "a.bin", "size": 1, "systems": ["nintendo-gba"]}]
         menus = (
             lambda: install._choose_platform("Platform:"),
@@ -736,7 +737,7 @@ class TheOneLinerNarrows(unittest.TestCase):
                     mock.patch("sys.stdout", new_callable=lambda: open(os.devnull, "w")), \
                     self.assertRaises(SystemExit) as stop:
                 menu()
-            self.assertEqual(stop.exception.code, 130)
+            self.assertEqual(stop.exception.code, install.QUIT_CODE)
 
     @unittest.skipIf(os.name == "nt", "a pseudo-terminal is a POSIX one")
     def test_ctrl_d_at_the_first_question_has_nothing_to_carry_on(self):
