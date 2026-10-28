@@ -334,7 +334,7 @@
 
 
 
- Ctrl-C Quit  Esc Quit
+ Esc Quit  Ctrl-C Quit
 === checking 40x15
  RetroBIOS: Checking
 
@@ -350,7 +350,7 @@
 
 
 
- Ctrl-C Quit  Esc Quit
+ Esc Quit  Ctrl-C Quit
 === checking 80x24
  RetroBIOS: Checking
 
@@ -375,13 +375,13 @@
 
 
 
- Ctrl-C Quit  Esc Quit
+ Esc Quit  Ctrl-C Quit
 === plan 40x12
  RetroBIOS: RetroArch
 
  4 files to download, 1.0 MB
- BIOS folder: ~/.co.../retroarch/system
- 1 in place, 3 missing, 1 wrong copy
+ BIOS folder:
+   ~/.config/retroarch/system
  1 wrong copy: backed up, replaced.
  > Install
    Choose systems
@@ -393,9 +393,10 @@
  RetroBIOS: RetroArch
 
  4 files to download, 1.0 MB
- BIOS folder: ~/.co.../retroarch/system
- 1 in place, 3 missing, 1 wrong copy
+ BIOS folder:
+   ~/.config/retroarch/system
  1 wrong copy: backed up, replaced.
+ 1 in place, 3 missing, 1 wrong copy
  Free space: 50.0 GB
 
  > Install
@@ -403,7 +404,6 @@
    Copy from your old card or a folder
    Options
    Quit
-
  Enter Install  Esc Back  o Options
 === plan 80x24
  RetroBIOS: RetroArch
@@ -434,26 +434,26 @@
  RetroBIOS: RetroArch
 
  Everything is in place
- BIOS folder: ~/.co.../retroarch/system
+ BIOS folder:
+   ~/.config/retroarch/system
  5 in place, 0 missing, 0 wrong copies
  Free space: 50.0 GB
 
  > Close
    Options
-
 
  Enter Close  Esc Back  o Options
 === plan-in-place 40x15
  RetroBIOS: RetroArch
 
  Everything is in place
- BIOS folder: ~/.co.../retroarch/system
+ BIOS folder:
+   ~/.config/retroarch/system
  5 in place, 0 missing, 0 wrong copies
  Free space: 50.0 GB
 
  > Close
    Options
-
 
 
 
@@ -924,8 +924,8 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
-
+   /home/user/.config/retroarch/
+   retrobios-backup/2026-10-23_1200
  To put them back: python3 install.py
  1-8 of 16
  Enter Exit  ^v Scroll
@@ -937,8 +937,8 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
-
+   /home/user/.config/retroarch/
+   retrobios-backup/2026-10-23_1200
  To put them back: python3 install.py
    --restore
    /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200

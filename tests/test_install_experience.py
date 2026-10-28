@@ -1241,7 +1241,7 @@ class OfflineWithNothingFound(unittest.TestCase):
         said = proc.stdout + proc.stderr
         self.assertEqual(proc.returncode, 1, said)
         self.assertNotIn("emudeck", said.lower())
-        self.assertIn("Use --platform and --dest", said)
+        self.assertIn("Name the setup with --platform and its folder with --dest", said)
 
 
 class TheDryRunWords(unittest.TestCase):

@@ -125,14 +125,15 @@
  
  
  
- ^[[0;1;35mCtrl-C^[[0m Quit  ^[[0;2mB^[[0m Quit
+ ^[[0;1;35mB^[[0m Quit  ^[[0;2mCtrl-C^[[0m Quit
 === plan
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: RetroArch^[[0m
 
 ^[[0;1m ^[[0;1;35m4^[[0;1m files to download, ^[[0;1;35m1.0 MB^[[0m
- BIOS folder: ^[[0;1m~/.co.../retroarch/system^[[0m
- ^[[0;32m1 in place^[[0m, ^[[0;33m3 missing^[[0m, ^[[0;33m1 wrong copy^[[0m
+ BIOS folder:
+   ^[[0;1m~/.config/retroarch/system^[[0m
  ^[[0;33m1 wrong copy^[[0m: backed up, replaced.
+ ^[[0;32m1 in place^[[0m, ^[[0;33m3 missing^[[0m, ^[[0;33m1 wrong copy^[[0m
  Free space: 50.0 GB
  
 ^[[0;7;35m > Install^[[0m
@@ -140,19 +141,18 @@
    Copy from your old card or a folder
    Options
    Quit
- 
  ^[[0;1;35mA^[[0m Install  ^[[0;2mB^[[0m Back  ^[[0;2mY^[[0m Options  ^[[0;2m?^[[0m Help
 === plan-in-place
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: RetroArch^[[0m
 
 ^[[0;1m ^[[0;1;32mEverything is in place^[[0m
- BIOS folder: ^[[0;1m~/.co.../retroarch/system^[[0m
+ BIOS folder:
+   ^[[0;1m~/.config/retroarch/system^[[0m
  ^[[0;32m5 in place^[[0m, 0 missing, 0 wrong copies
  Free space: 50.0 GB
  
 ^[[0;7;35m > Close^[[0m
    Options
- 
  
  
  
@@ -294,8 +294,8 @@
    ^[[0;1m/home/user/.config/retroarch/system^[[0m
    ^[[0;1;31mfailed:^[[0m scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
- 
+   /home/user/.config/retroarch/
+   retrobios-backup/2026-10-23_1200
  To put them back: python3 install.py
    --restore
    /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200

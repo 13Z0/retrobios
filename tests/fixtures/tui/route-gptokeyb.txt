@@ -359,7 +359,7 @@
 
 
 
- Select+Start Quit  B Quit
+ B Quit  Select+Start Quit
 === checking 40x15
  RetroBIOS: Checking
 
@@ -375,7 +375,7 @@
 
 
 
- Select+Start Quit  B Quit
+ B Quit  Select+Start Quit
 === checking 80x24
  RetroBIOS: Checking
 
@@ -400,13 +400,13 @@
 
 
 
- Select+Start Quit  B Quit
+ B Quit  Select+Start Quit
 === plan 40x12
  RetroBIOS: RetroArch
 
  4 files to download, 1.0 MB
- BIOS folder: ~/.co.../retroarch/system
- 1 in place, 3 missing, 1 wrong copy
+ BIOS folder:
+   ~/.config/retroarch/system
  1 wrong copy: backed up, replaced.
  > Install
    Choose systems
@@ -418,9 +418,10 @@
  RetroBIOS: RetroArch
 
  4 files to download, 1.0 MB
- BIOS folder: ~/.co.../retroarch/system
- 1 in place, 3 missing, 1 wrong copy
+ BIOS folder:
+   ~/.config/retroarch/system
  1 wrong copy: backed up, replaced.
+ 1 in place, 3 missing, 1 wrong copy
  Free space: 50.0 GB
 
  > Install
@@ -428,7 +429,6 @@
    Copy from your old card or a folder
    Options
    Quit
-
  A Install  B Back  Y Options
 === plan 80x24
  RetroBIOS: RetroArch
@@ -459,26 +459,26 @@
  RetroBIOS: RetroArch
 
  Everything is in place
- BIOS folder: ~/.co.../retroarch/system
+ BIOS folder:
+   ~/.config/retroarch/system
  5 in place, 0 missing, 0 wrong copies
  Free space: 50.0 GB
 
  > Close
    Options
-
 
  A Close  B Back  Y Options
 === plan-in-place 40x15
  RetroBIOS: RetroArch
 
  Everything is in place
- BIOS folder: ~/.co.../retroarch/system
+ BIOS folder:
+   ~/.config/retroarch/system
  5 in place, 0 missing, 0 wrong copies
  Free space: 50.0 GB
 
  > Close
    Options
-
 
 
 
@@ -891,8 +891,8 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
-
+   /home/user/.config/retroarch/
+   retrobios-backup/2026-10-23_1200
  Details: /tmp/retrobios-x/install.log
 
  A Exit
@@ -904,8 +904,8 @@
    /home/user/.config/retroarch/system
    failed: scph5500.bin (HTTP 404)
  The files it replaced are kept in
-   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
-
+   /home/user/.config/retroarch/
+   retrobios-backup/2026-10-23_1200
  Details: /tmp/retrobios-x/install.log
 
 
