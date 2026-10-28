@@ -330,6 +330,29 @@ class OracleTests(unittest.TestCase):
                     checked += 1
         self.assertGreaterEqual(checked, 2 * 14)
 
+    def test_the_repository_names_the_bios_each_core_ran(self) -> None:
+        data, _ = core_probe.load_oracle(core_probe.DEFAULT_ORACLE)
+        cases = {
+            "Beetle PSX": [("Firmware is missing: scph5501.bin", "builtin"),
+                           ("Firmware found: <system>/scph5501.bin", "staged:scph5501.bin"),
+                           ("Firmware found but has invalid SHA1: <system>/scph5501.bin", "staged:scph5501.bin")],
+            "Beetle PSX HW": [("Firmware is missing: scph5500.bin", "builtin")],
+            "SwanStation": [("[HostInterface] No BIOS image found for NTSC-U/C (US, Canada) region", "builtin"),
+                            ("[HostInterface] Using BIOS 'scph5501.bin': SCPH-5501", "staged:scph5501.bin"),
+                            ("[HostInterface] Falling back to possibly-incompatible image "
+                             "'<system>/scph5500.bin': SCPH-5500", "staged:scph5500.bin")],
+            "PCSX-ReARMed": [('Loaded BIOS "<system>/scph5500.bin".', "staged:scph5500.bin"),
+                             ("No BIOS files found.", "builtin"), ("Using HLE BIOS.", "builtin")],
+            "Flycast": [("[BOOT]: Did not load BIOS, using reios", "builtin"),
+                        ("Loaded <system>/dc/dc_boot.bin as bootrom", "staged:dc/dc_boot.bin")],
+            "PCSX1": [("anything", "unknown")],
+        }
+        for library, lines in cases.items():
+            oracle = core_probe.oracle_for(data, None, library)
+            for text, expected in lines:
+                rep = {"logs": [{"frame": 0, "level": "info", "text": text}]}
+                self.assertEqual(core_probe.bios_used(rep, oracle)[0], expected, (library, text))
+
     def test_the_repository_error_patterns_and_screens(self) -> None:
         data, _ = core_probe.load_oracle(core_probe.DEFAULT_ORACLE)
         saturn = core_probe.oracle_for(data, None, "Beetle Saturn")
@@ -356,7 +379,8 @@ class OracleTests(unittest.TestCase):
         data = yaml.safe_load(core_probe.DEFAULT_ORACLE.read_text(encoding="utf-8"))
         patterns = list(data.get("error_patterns") or ())
         for core in (data.get("cores") or {}).values():
-            patterns += (core.get("error_patterns") or []) + (core.get("bios_patterns") or [])
+            patterns += [p for key in ("error_patterns", "bios_patterns", "fallback_patterns", "load_patterns")
+                         for p in core.get(key) or []]
             for screen in core.get("error_screens") or ():
                 self.assertRegex(screen["sha1"], r"^[0-9a-f]{40}$")
         for pattern in patterns:
