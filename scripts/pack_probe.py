@@ -53,7 +53,7 @@ import sys
 import time
 import urllib.request
 import zipfile
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -67,7 +67,10 @@ from common import (
     load_emulator_profiles,
     load_platform_config,
     load_target_config,
+    platform_arg,
+    require_platform,
     resolve_platform_cores,
+    run_cli,
     runs_standalone,
 )
 from validation import filter_files_by_mode
@@ -463,7 +466,7 @@ def wait_idle(limit: float = IDLE_WAIT, poll: float = 30.0) -> None:
 
 
 @contextlib.contextmanager
-def probe_lock(path: Path | None = None):
+def probe_lock(path: Path | None = None) -> Iterator[None]:
     """The host's probe lock, for one run: one probe at a time on the host,
     released between runs so a pass never holds it for its whole length."""
     path = path or PROBE_LOCK
@@ -668,8 +671,11 @@ def run(args: argparse.Namespace) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("mode", choices=("run", "plan"))
-    parser.add_argument("--platform", required=True, choices=sorted(TARGETS))
+    parser.add_argument("mode", choices=("run", "plan"),
+                        help="run: lay the folder out and start the games. plan: print the "
+                             "systems, games and cores, run nothing")
+    parser.add_argument("--platform", "-p", required=True, type=platform_arg,
+                        help=f"the platform whose pack is tested: {', '.join(sorted(TARGETS))}")
     parser.add_argument("--system", dest="systems", action="append", default=[],
                         help="only this system (repeat)")
     parser.add_argument("--core", dest="cores", action="append", default=[],
@@ -680,12 +686,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--fetch", action="store_true", help="fetch a missing game through romfetch")
     parser.add_argument("--refresh-cores", action="store_true", help="download the nightlies again")
     parser.add_argument("--keep", action="store_true", help="keep the extracted layouts")
-    parser.add_argument("--work-dir", default=str(WORK_DIR))
+    parser.add_argument("--work-dir", default=str(WORK_DIR),
+                        help="where the pack is built and laid out (default tmp/pack_probe)")
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    require_platform(args.platform, str(ROOT / "platforms"))
+    if args.platform not in TARGETS:
+        print(f"ERROR: pack_probe tests {', '.join(sorted(TARGETS))}, not {args.platform}",
+              file=sys.stderr)
+        return 2
     args.systems = set(args.systems) or None
     args.cores = set(args.cores) or None
     args.install = args.install or list(INSTALLS)
@@ -697,4 +709,4 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    run_cli(main)

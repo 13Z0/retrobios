@@ -17,13 +17,10 @@ the emulator's page shows a **Tested** block. Every result is on the
 - It starts a game and runs it for a set time, at least twice.
 - It compares the screens with ones we checked by eye.
 
-## Packs
+## Your BIOS folder { #packs }
 
-Packs are tested the way you install them, one platform at a time. A
-maintainer starts the run. The script puts a pack in an empty BIOS folder,
-from the archive and with the installer, then starts a game with that
-folder. Each platform's page shows the result under **Tested**, with any file
-the emulator looked for and did not find.
+We also test the files as you install them, for RetroArch, Batocera and
+RetroBat, then start a game. The setup's page shows the result under **Tested**.
 
 ## What a result says
 

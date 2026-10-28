@@ -1115,6 +1115,11 @@ python scripts/pack_probe.py run --platform batocera --system sega-saturn --inst
 python scripts/pack_probe.py plan --platform retrobat   # systems, games and cores, nothing run
 ```
 
+`--system`, `--core` and `--install` narrow a run, `--pack` reuses a built
+pack, `--fetch` gets a missing game through romfetch, `--refresh-cores`
+downloads the nightlies again, and `--keep` leaves the laid-out folders in
+`--work-dir` (default `tmp/pack_probe`) after the run.
+
 | Step | What happens |
 |------|--------------|
 | Layout | `generate_pack.py --platform X --offline` builds the pack into `tmp/pack_probe/<platform>/dist` (`--pack` reuses one). `pack`: the archive extracted at the root of the BIOS folder, each file mapped to its member. `installer`: `install.py --platform X --dest <root>/system --save-dir <root>/saves --from-pack <pack> --manifest install/X.json --offline`, each file mapped to the manifest entry that names it (`files:`, `case_variants:`, `data_directories:`). Both by default, `--install` picks one |

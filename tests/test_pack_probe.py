@@ -212,7 +212,9 @@ class Line(unittest.TestCase):
 
     def test_the_cli_refuses_an_unknown_platform(self) -> None:
         with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
-            pp.build_parser().parse_args(["run", "--platform", "nowhere"])
+            pp.main(["run", "--platform", "nowhere"])
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(pp.main(["plan", "-p", "Lakka"]), 2)
 
 
 class SitePages(unittest.TestCase):

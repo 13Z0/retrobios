@@ -294,8 +294,8 @@ def _pack_details(item: dict) -> list[str]:
     lines = [
         line("Result", item["detail"]),
         line("Core", f"{item['core']} ({item['emulator']})"),
-        line("Files the core opened", "; ".join(item["files"]) or "none"),
-        line("Findings", "; ".join(item["finding_list"]) or "none"),
+        line("Files the core opened", ", ".join(item["files"]) or "none"),
+        line("Findings", ", ".join(item["finding_list"]) or "none"),
         f'<p><a href="{_attr(item["record_url"])}">Full record</a>.</p>' if item["record_url"] else "",
     ]
     return [line for line in lines if line]
@@ -303,7 +303,8 @@ def _pack_details(item: dict) -> list[str]:
 
 def pack_tested_section(items: list[dict]) -> list[str]:
     """The Tested block of a platform page, in the emulator pages' Tested
-    markup: one summary line, then a row per game, core and install path,
+    markup: one summary line, then, folded under one line as the emulator
+    pages fold their earlier tests, a row per game, core and install path
     with its verdict chip and date, the files and findings in its details."""
     if not items:
         return []
@@ -315,6 +316,8 @@ def pack_tested_section(items: list[dict]) -> list[str]:
              f'<a href="{markup.site_href(EXPLORER_PAGE.removesuffix(".md") + "/")}">All tests</a>')
     lines = ["## Tested", "", '<div class="rb-tested">',
              f'<p class="rb-tested-summary">{html.escape(summary)} {links}</p>',
+             '<details class="rb-tested-earlier">',
+             "<summary>Each start, by system</summary>",
              '<div class="rb-tested-head" aria-hidden="true"><span>Test</span>'
              "<span>Result</span><span>Installed by</span><span>Date</span></div>"]
     for item in sorted(items, key=lambda i: (i["system"], i["content"], i["core"], i["install"])):
@@ -332,7 +335,7 @@ def pack_tested_section(items: list[dict]) -> list[str]:
             "</div>",
             "</details>",
         ]
-    return [*lines, "</div>", ""]
+    return [*lines, "</details>", "</div>", ""]
 
 
 # Characters a campaign value could use to leave its place on the page: HTML
