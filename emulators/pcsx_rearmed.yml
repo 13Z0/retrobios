@@ -19,7 +19,8 @@ notes: >
   Default is "auto" which searches system dir for listed filenames, then scans all files.
   Region detection reads bytes at offset 0x7ff51: " E" = EU, " J" = JP, else US.
   Three CRC32 hardcoded as JP override: 0x18D0F7D8, 0x3B601FC8, 0x3539DEF6 (psxonpsp, scph1000).
-  BIOS validity check: byte pattern at offset 1 (\x00\x08\x3c\x3f) or string "PS compatible" at 0x12c.
+  BIOS validity check: byte pattern at offset 1 (\x00\x08\x3c\x3f) or string "PS compatible" at 0x12c
+  (frontend/libretro.c:3632, 3646-3651): a file failing it is skipped, hence validation [size, signature].
   Files named "unirom" (case-insensitive) are explicitly skipped.
   Region fallback: if the matching-region BIOS is missing, any available region BIOS is used over HLE.
   Three region slots: US (index 0), JP (index 1), EU (index 2) stored in Config.Bios[].
@@ -34,7 +35,7 @@ files:
     required: false
     hle_fallback: true
     validation: ["size", "signature"]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[0]), source frontend/libretro.c:3604-3680 (try_use_bios)"
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[0])"
     note: "Preferred JP BIOS, searched first by exact filename."
 
   # -- Region: North America (PSX_REGION_US = 0) --
@@ -46,7 +47,7 @@ files:
     required: false
     hle_fallback: true
     validation: ["size", "signature"]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[1]), source frontend/libretro.c:3604-3680 (try_use_bios)"
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[1])"
     note: "Preferred US BIOS, searched first by exact filename. The US slot is the detector's default: a disc takes it for both America licence strings and for any licence that is neither \"Inc.\" (JP) nor \"Euro pe\" (EU), and content without a disc boots it too (libpcsxcore/misc.c:422-453, frontend/libretro.c:2167-2171)."
     evidence:
       hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
@@ -61,7 +62,7 @@ files:
     required: false
     hle_fallback: true
     validation: ["size", "signature"]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[2]), source frontend/libretro.c:3604-3680 (try_use_bios)"
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[2])"
     note: "Preferred EU BIOS, searched first by exact filename."
 
   # -- Fallback BIOS filenames (searched in order after scph550x) --
@@ -73,7 +74,7 @@ files:
     required: false
     hle_fallback: true
     validation: ["size", "signature"]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[3]), source frontend/libretro.c:3604-3680 (try_use_bios, region guess at 3654-3669)"
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[3]), source frontend/libretro.c:3654-3669 (try_use_bios region guess)"
     note: "The core reads the region out of the image: bytes 0x7ff51 are ' J' in this dump, so it takes the JP slot (' E' takes EU, anything else US), one image per slot, first found kept. The disc licence picks the slot at boot (Config.Bios[Config.PsxRegion]), and a US or EU disc only reaches this file when its own slot is empty. Must be 512 KB."
 
   - name: "scph101.bin"
@@ -83,7 +84,7 @@ files:
     required: false
     hle_fallback: true
     validation: ["size", "signature"]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[4]), source frontend/libretro.c:3604-3680 (try_use_bios)"
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[4])"
     note: "PSone slim model."
     evidence:
       hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
@@ -96,7 +97,7 @@ files:
     required: false
     hle_fallback: true
     validation: ["size", "signature"]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[5]), source frontend/libretro.c:3604-3680 (try_use_bios)"
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[5])"
     evidence:
       hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
       validation: ["2026-10-27-1d4eb1daebe5", "2026-10-27-1a14651aeda0"]
@@ -108,7 +109,7 @@ files:
     required: false
     hle_fallback: true
     validation: ["size", "signature"]
-    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[6]), source frontend/libretro.c:3604-3680 (try_use_bios)"
+    source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[6])"
     note: "Original US model. Last in the explicit filename search list."
     evidence:
       hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]

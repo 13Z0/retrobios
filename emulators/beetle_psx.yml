@@ -15,7 +15,7 @@ cores: [beetle_psx, mednafen_psx, mednafen_psx_hw, "beetle-psx"]
 systems: [sony-playstation]
 notes: >
   Region-based BIOS selection: the core picks JP/NA/EU firmware based on disc region.
-  SHA1 validated with warning on mismatch (does not block loading).
+  SHA1 validated with warning on mismatch (does not block loading): libretro.c:744-756, 853-860.
   SHA1 and alternate filenames sourced from MAME (mame src/mame/sony/psx.cpp).
   The lists and the checksum search live in libretro.c:622-676,684-776.
   Override option allows using PSP, PS3, or OpenBIOS as region-free alternative.
@@ -45,7 +45,7 @@ files:
     validation: [sha1]
     on_mismatch: "warn"
     mode: both
-    source_ref: "libretro.c:768-776, 853-860, 3425-3511"
+    source_ref: "libretro.c:768-776, 3425-3511"
     aliases: ["SCPH5500.bin", "SCPH-5500.bin"]
     note: "Without it the core logs 'Firmware is missing' and maps its built-in OpenBIOS (libretro.c:846-851, 3425-3511): the runs cited for required booted on OpenBIOS, the other regions' files refused."
     evidence:
@@ -77,7 +77,7 @@ files:
     on_mismatch: "warn"
     mode: both
     note: "Picked for REGION_NA: a SYSTEM.CNF serial whose third letter is U (SCUS, SLUS), a licence string naming America, and content whose region cannot be read while the region option stays on auto (libretro.c:2436-2438, 2279, 2330-2335, 3252-3266, 4517). Without it the core logs 'Firmware is missing' and maps its built-in OpenBIOS (libretro.c:846-851, 3425-3511): the runs cited for required booted on OpenBIOS, the other regions' files refused."
-    source_ref: "libretro.c:787-805, 853-860, 3425-3511"
+    source_ref: "libretro.c:787-805, 3425-3511"
     aliases:
       - "SCPH5501.bin"
       - "SCPH-5501.bin"
@@ -112,7 +112,7 @@ files:
     validation: [sha1]
     on_mismatch: "warn"
     mode: both
-    source_ref: "libretro.c:807-821, 853-860, 3425-3511"
+    source_ref: "libretro.c:807-821, 3425-3511"
     aliases:
       - "SCPH5502.bin"
       - "SCPH-5502.bin"
@@ -134,7 +134,7 @@ files:
     validation: [sha1]
     on_mismatch: "warn"
     mode: libretro
-    source_ref: "libretro.c:697-703, 744-756"
+    source_ref: "libretro.c:697-703"
     aliases: ["PSXONPSP660.bin"]
     note: "override_bios=1. Tried as psxonpsp660.bin, PSXONPSP660.bin, then PSXONPSP660.BIN. Falls back to region BIOS if not found."
 
@@ -146,7 +146,7 @@ files:
     validation: [sha1]
     on_mismatch: "warn"
     mode: libretro
-    source_ref: "libretro.c:705-711, 744-756"
+    source_ref: "libretro.c:705-711"
     aliases: ["PS1_ROM.bin"]
     note: "override_bios=2. Tried as ps1_rom.bin, PS1_ROM.bin, then PS1_ROM.BIN. Falls back to region BIOS if not found."
 
