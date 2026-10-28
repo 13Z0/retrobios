@@ -11,5 +11,5 @@
    --restore
    /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
 
- 1-11 of 17
+ 1-11 of 16
  A Exit  ^v Scroll

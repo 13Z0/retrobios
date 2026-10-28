@@ -1790,7 +1790,7 @@ class TestDetectedPlatformPrompt(unittest.TestCase):
     def test_q_quits_and_the_menu_says_so(self):
         result, out = self._answer("q")
         self.assertIsInstance(result, SystemExit)
-        self.assertEqual(result.code, 130)
+        self.assertEqual(result.code, install.QUIT_CODE)
         self.assertIn("q) quit", out)
 
     def test_a_wrong_answer_names_the_choices(self):
@@ -1859,7 +1859,7 @@ class TestManualPlatformPrompt(unittest.TestCase):
         with unittest.mock.patch("builtins.input", lambda _prompt="": "q"):
             with self.assertRaises(SystemExit) as raised:
                 install._prompt_manual_platform("linux")
-        self.assertEqual(raised.exception.code, 130)
+        self.assertEqual(raised.exception.code, install.QUIT_CODE)
 
     def test_quotes_around_a_typed_folder_are_dropped(self):
         """Explorer's "Copy as path" quotes the folder: the files went into a

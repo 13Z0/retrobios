@@ -26,7 +26,7 @@ irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
 </TabItem>
 <TabItem label="macOS">
 
-Open **Terminal**. It is in Applications, then Utilities.
+Open **Terminal**, in Applications, then Utilities.
 
 ```sh title="Terminal"
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
@@ -53,7 +53,7 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 </TabItem>
 <TabItem label="Android (Termux)">
 
-Install **Termux**, a terminal app. Run these three lines in it.
+Install **Termux**, a terminal app, and run these lines.
 
 ```sh title="Terminal"
 pkg install python
@@ -84,11 +84,11 @@ It opens a menu:
   **Another setup or folder**. Press / and type the device (Miyoo Mini),
   or browse.
 
-Arrows move, Enter chooses, Esc goes back, as A and B on a handheld.
+Arrows move, Enter chooses, Esc goes back (A and B on a handheld). On a
+touch screen, tap a row twice to open it, once to tick a box.
 
 ## 3. Install
 
-It counts missing files and free space.
 Press Enter on **Install**. **Choose systems** keeps the consoles you
 play.
 
@@ -138,13 +138,12 @@ says how to restore them.
 
 ### Nothing was found here.
 
-Choose your setup in the list, then its folder. Where the screen offers
+Choose your setup, then its folder. Where the screen offers
 **Another setup or folder**, choose it first.
 
 ### Error: Python 3.8 or newer is required.
 
-The message shows the command that installs Python. Run it, then run the
-installer again.
+Run the command the message shows, then the installer again.
 
 RetroPie 4.8 has Python 3.7.3, and its update finds nothing newer. Run it on
 a computer, with RetroPie's `bios` share open, `\\RETROPIE\bios` from Windows:

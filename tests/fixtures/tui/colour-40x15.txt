@@ -8,16 +8,16 @@
    Another setup or folder
  
  BIOS folder:
-   /home/user/.config/retroarch/system
+   ^[[0;1m/home/user/.config/retroarch/system^[[0m
  ES-DE found: its BIOS files go to each
    emulator, not to ES-DE itself.
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Continue^[[0;2m  B Quit  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Continue  ^[[0;2mB^[[0m Quit  ^[[0;2m?^[[0m Help
 === platforms
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Which setup?^[[0m
 
-^[[0;2m   Filter: setup or device (/)^[[0m
+   Filter: setup or device (/)
 ^[[0;7;35m > RetroArch^[[0m
    Batocera
    Recalbox
@@ -29,7 +29,7 @@
    BizHawk
    MiSTer FPGA
 ^[[0;2m 1-10 of 34^[[0m
-^[[0;2m ^[[0;1;35mA^[[0m Choose^[[0;2m  B Back  / Filter  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Choose  ^[[0;2mB^[[0m Back  ^[[0;2m/^[[0m Filter  ^[[0;2m?^[[0m Help
 === folder
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Which folder?^[[0m
 
@@ -45,7 +45,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Use this folder^[[0;2m  B Back  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Use this folder  ^[[0;2mB^[[0m Back  ^[[0;2m?^[[0m Help
 === folder-card
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Where is the SD card?^[[0m
 
@@ -61,7 +61,7 @@
    Look again
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Browse^[[0;2m  B Back  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Browse  ^[[0;2mB^[[0m Back  ^[[0;2m?^[[0m Help
 === browse
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Browse for a folder^[[0m
 
@@ -77,7 +77,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Use this folder^[[0;2m  B Back  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Use this folder  ^[[0;2mB^[[0m Back  ^[[0;2m?^[[0m Help
 === path
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Type a path^[[0m
 
@@ -93,7 +93,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mEnter^[[0m Use this folder^[[0;2m  Esc Back^[[0m
+ ^[[0;1;35mEnter^[[0m Use this folder  ^[[0;2mEsc^[[0m Back
 === create
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Create the folder?^[[0m
 
@@ -109,7 +109,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Create^[[0;2m  B Quit^[[0m
+ ^[[0;1;35mA^[[0m Create  ^[[0;2mB^[[0m Quit
 === checking
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Checking^[[0m
 
@@ -125,7 +125,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mCtrl-C^[[0m Quit^[[0;2m  B Quit^[[0m
+ ^[[0;1;35mCtrl-C^[[0m Quit  ^[[0;2mB^[[0m Quit
 === plan
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: RetroArch^[[0m
 
@@ -141,7 +141,7 @@
    Options
    Quit
  
-^[[0;2m ^[[0;1;35mA^[[0m Install^[[0;2m  B Back  Y Options  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Install  ^[[0;2mB^[[0m Back  ^[[0;2mY^[[0m Options  ^[[0;2m?^[[0m Help
 === plan-in-place
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: RetroArch^[[0m
 
@@ -157,13 +157,13 @@
  
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Close^[[0;2m  B Back  Y Options  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Close  ^[[0;2mB^[[0m Back  ^[[0;2mY^[[0m Options  ^[[0;2m?^[[0m Help
 === systems
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Choose systems^[[0m
 
    All
    None
-^[[0;2m   Filter (/ to type)^[[0m
+   Filter (/ to type)
 ^[[0;7;35m > [x] nintendo-gba (gba)       16.0 KB^[[0m
    [x] sony-playstation          1.0 MB
 ^[[0;2m   [ ] nintendo-famicom-disk   in place^[[0m
@@ -173,7 +173,7 @@
  
  
 ^[[0;1m ^[[0;1;35m2^[[0;1m of ^[[0;1;35m3^[[0;1m systems: ^[[0;1;35m4^[[0;1m files, ^[[0;1;35m1.0 MB^[[0m
-^[[0;2m ^[[0;1;35mA^[[0m Continue^[[0;2m  B Back  X Tick  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Continue  ^[[0;2mB^[[0m Back  ^[[0;2mX^[[0m Tick  ^[[0;2m?^[[0m Help
 === options
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Options^[[0m
 
@@ -189,7 +189,7 @@
  
  Sets --region
  
-^[[0;2m ^[[0;1;35mA^[[0m Open^[[0;2m  B Back  <> Set  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Open  ^[[0;2mB^[[0m Back  ^[[0;2m<>^[[0m Set  ^[[0;2m?^[[0m Help
 === regions
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Preferred regions^[[0m
 
@@ -205,7 +205,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Tick^[[0;2m  B Done  <> Order  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Tick  ^[[0;2mB^[[0m Done  ^[[0;2m<>^[[0m Order  ^[[0;2m?^[[0m Help
 === cores
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Cores^[[0m
 
@@ -221,7 +221,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Filter^[[0;2m  B Back  X Tick  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Filter  ^[[0;2mB^[[0m Back  ^[[0;2mX^[[0m Tick  ^[[0;2m?^[[0m Help
 === preview
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Preview^[[0m
 
@@ -237,7 +237,7 @@
 
 
 
-^[[0;2m ^[[0;1;35mA^[[0m Back
+ ^[[0;1;35mA^[[0m Back
 === command
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Command line^[[0m
 
@@ -253,7 +253,7 @@
 
 
 
-^[[0;2m ^[[0;1;35mA^[[0m Back
+ ^[[0;1;35mA^[[0m Back
 === confirm
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Confirm^[[0m
 
@@ -261,7 +261,7 @@
    Nothing is written before Install.
 ^[[0;1m ^[[0;1;35m1^[[0;1m file to download, ^[[0;1;35m16.0 KB^[[0m
  BIOS folder: ^[[0;1m~/.co.../retroarch/system^[[0m
- 0 in place, ^[[0;33m1 missing^[[0m, 0 wrong copies
+ 0 in place, 1 missing, 0 wrong copies
  Free space: 50.0 GB
  
 ^[[0;7;35m > Install^[[0m
@@ -269,7 +269,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Install^[[0;2m  B Back  ? Help^[[0m
+ ^[[0;1;35mA^[[0m Install  ^[[0;2mB^[[0m Back  ^[[0;2m?^[[0m Help
 === installing
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Installing^[[0m
 
@@ -277,21 +277,21 @@
  528.0 KB of 1.0 MB
  128.9 KB/s, 0:04 left
  2 of 4 files
-^[[0;2m B, Ctrl-C or Select+Start stops. What^[[0m
-^[[0;2m   is done stays done.^[[0m
+ B, Ctrl-C or Select+Start stops. What
+   is done stays done.
  
  ^[[0;1;31mFAILED^[[0m scph5500.bin (HTTP 404)
 ^[[0;32m ok^[[0m     gba_bios.bin
  
  
  
-^[[0;2m ^[[0;1;35mB^[[0m Stop^[[0;2m  ? Help^[[0m
+ ^[[0;1;35mB^[[0m Stop  ^[[0;2m?^[[0m Help
 === result
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: ^[[0;1;31mFinished with errors^[[0m
 
 ^[[0;1m ^[[0;1;32m3 installed^[[0;1m, ^[[0;1;31m1 failed^[[0;1m.^[[0m
  BIOS folder:
-   /home/user/.config/retroarch/system
+   ^[[0;1m/home/user/.config/retroarch/system^[[0m
    ^[[0;1;31mfailed:^[[0m scph5500.bin (HTTP 404)
  The files it replaced are kept in
    /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
@@ -300,8 +300,8 @@
    --restore
    /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
  
-^[[0;2m 1-11 of 17^[[0m
-^[[0;2m ^[[0;1;35mA^[[0m Exit^[[0;2m  ^v Scroll^[[0m
+^[[0;2m 1-11 of 16^[[0m
+ ^[[0;1;35mA^[[0m Exit  ^[[0;2m^v^[[0m Scroll
 === error
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: ^[[0;1;31mSomething went wrong^[[0m
 
@@ -317,7 +317,7 @@
    Quit
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Choose^[[0;2m  B Back^[[0m
+ ^[[0;1;35mA^[[0m Choose  ^[[0;2mB^[[0m Back
 === quit
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Quit?^[[0m
 
@@ -333,7 +333,7 @@
  
  
  
-^[[0;2m ^[[0;1;35mA^[[0m Quit^[[0;2m  B Stay^[[0m
+ ^[[0;1;35mA^[[0m Quit  ^[[0;2mB^[[0m Stay
 === help
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Keys^[[0m
 
@@ -345,8 +345,8 @@
  ?, F1             This help
  
  BIOS folder:
-   /home/user/.config/retroarch/system
+   ^[[0;1m/home/user/.config/retroarch/system^[[0m
  
  
  
-^[[0;2m Any key closes this help^[[0m
+ Any key closes this help
