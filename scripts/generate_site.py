@@ -7180,6 +7180,11 @@ def system_pages(
             _section_label(manufacturer, console),
             _install_pairs(installs.get(console, []), lead, consumers))
 
+    def region_block(console: str, level: int = 3) -> list[str]:
+        # Under the console's heading on a maker's page, a section of its
+        # own on the console's page.
+        return sitemeasurements.region_section(_REGION_RESULTS.get((slug, console), []), level)
+
     def all_sections() -> dict[str, list[Card]]:
         anchors: set[str] = set()
         return {console: cards_of(console, anchors) for console in ordered}
@@ -7221,6 +7226,7 @@ def system_pages(
             lines.append("")
             lines.extend(start_of(console))
             lines.extend(install_block(console))
+            lines.extend(region_block(console))
             lines.extend(_cards_markdown(cards))
             lines.append("")
         lines.extend(_next_block([*_NEXT_FROM_SYSTEMS, json_next]))
@@ -7283,6 +7289,7 @@ def system_pages(
         if console not in moved:
             summary.extend(start_of(console))
             summary.extend(install_block(console))
+            summary.extend(region_block(console))
             summary.extend(_cards_markdown(cards_of(console, summary_anchors)))
             summary.append("")
             continue
@@ -7367,6 +7374,8 @@ def system_pages(
             lines.extend(legend)
             lines.extend(_romset_note({console: consoles[console]}))
             lines.extend(install_block(console))
+            if index == 0:
+                lines.extend(region_block(console, 2))
             lines.extend(["## Files", ""])
             lines.extend(_cards_markdown(part))
             lines.append("")
@@ -9097,6 +9106,9 @@ _DATA_MEMBERS: dict[str, dict[str, dict]] = {}
 _DATA_REVISIONS: dict[str, dict] = {}
 # The measurement index items of each emulator, for its Tested block.
 _MEASUREMENT_ITEMS: dict[str, list[dict]] = {}
+# (manufacturer slug, console) -> the region outcomes of its systems
+# (region_check.py), shown under the console on its system page.
+_REGION_RESULTS: dict[tuple[str, str], list[dict]] = {}
 # The emulator pages that list each data directory, by ref.
 _DATA_READERS: dict[str, list[tuple[str, str]]] = {}
 
@@ -11833,6 +11845,13 @@ def _generate(args: argparse.Namespace) -> None:
         _system_pages_from_data(manufacturers, coverages, db, profiles)
     )
     print(f"  {len(_system_page_map)} system IDs mapped to pages")
+    from siterender import _page_by_norm  # noqa: PLC0415
+
+    _REGION_RESULTS.clear()
+    for result in sitemeasurements.site_region_results(repo=REPO_URL):
+        place = _system_page_map.get(result["system"]) or _page_by_norm(result["system"])
+        if place:
+            _REGION_RESULTS.setdefault(place, []).append(result)
     set_console_sections(manufacturers, program_names(profiles))
     from siterender import link_coverage, system_ids  # noqa: PLC0415
 
@@ -11887,7 +11906,9 @@ def _generate(args: argparse.Namespace) -> None:
     _MEASUREMENT_ITEMS.update(sitemeasurements.by_emulator(measured.index))
     print(f"  {measured.index['records']} records, {measured.index['count']} tests")
     write_if_changed(str(docs / sitemeasurements.EXPLORER_PAGE),
-                     sitemeasurements.generate_explorer_page(measured.index) + reference_next())
+                     sitemeasurements.generate_explorer_page(
+                         measured.index, {sys_id: system_name(sys_id) for sys_id in sorted(set(_system_page_map))})
+                     + reference_next())
 
     print("Generating static API and bulk data exports...")
     exports = generate_data_exports(

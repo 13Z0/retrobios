@@ -49,7 +49,7 @@ files:
     source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[1])"
     note: "Preferred US BIOS, searched first by exact filename. The US slot is the detector's default: a disc takes it for both America licence strings and for any licence that is neither \"Inc.\" (JP) nor \"Euro pe\" (EU), and content without a disc boots it too (libpcsxcore/misc.c:422-453, frontend/libretro.c:2167-2171)."
     evidence:
-      hle_fallback: ["2026-10-27-e9eeba54945e"]
+      hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
 
   # -- Region: Europe (PSX_REGION_EU = 2) --
 
@@ -84,6 +84,8 @@ files:
     validation: [size]
     source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[4])"
     note: "PSone slim model."
+    evidence:
+      hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
 
   - name: "scph7001.bin"
     description: "SCPH-7001 (v4.1 12-16-97 A)"
@@ -93,6 +95,8 @@ files:
     hle_fallback: true
     validation: [size]
     source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[5])"
+    evidence:
+      hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
 
   - name: "scph1001.bin"
     description: "SCPH-1001 (v2.2 12-04-95 A)"
@@ -103,6 +107,8 @@ files:
     validation: [size]
     source_ref: "source frontend/libretro.c:3864-3867 (listed_bios[6])"
     note: "Original US model. Last in the explicit filename search list."
+    evidence:
+      hle_fallback: ["2026-10-27-82bf6de00b8a", "2026-10-27-1d4eb1daebe5"]
 
   # -- Dynamic scan fallback --
   # After exhausting listed_bios[], the core calls find_any_bios() which scans

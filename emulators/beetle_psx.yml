@@ -37,15 +37,17 @@ files:
   - name: "scph5500.bin"
     description: "SCPH-5500 (v3.0 09-09-96 J)"
     region: [japan]
-    required: true
+    required: false
     hle_fallback: true
     size: 524288
     sha1: "b05def971d8ec59f346f2d9ac21fb742e3eb6917"
     md5: "8dd7d5296a650fac7319bce665a6a53c"
     validation: [sha1]
     mode: both
-    source_ref: "libretro.c:768-776"
+    source_ref: "libretro.c:768-776, 3425-3511"
     aliases: ["SCPH5500.bin", "SCPH-5500.bin"]
+    evidence:
+      required: ["2026-10-27-55dd1e4943c4"]
 
   - name: "scph5903.bin"
     description: "SCPH-5903 (System ROM Version 2.2 12/04/95 J), Video CD daughterboard"
@@ -63,7 +65,7 @@ files:
   - name: "scph5501.bin"
     description: "SCPH-5501, 5503, 7003 (v3.0 11-18-96 A)"
     region: [north-america, latin-america]
-    required: true
+    required: false
     hle_fallback: true
     size: 524288
     sha1: "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
@@ -71,7 +73,7 @@ files:
     validation: [sha1]
     mode: both
     note: "Picked for REGION_NA: a SYSTEM.CNF serial whose third letter is U (SCUS, SLUS), a licence string naming America, and content whose region cannot be read while the region option stays on auto (libretro.c:2436-2438, 2279, 2330-2335, 3252-3266, 4517)."
-    source_ref: "libretro.c:787-805"
+    source_ref: "libretro.c:787-805, 3425-3511"
     aliases:
       - "SCPH5501.bin"
       - "SCPH-5501.bin"
@@ -89,27 +91,30 @@ files:
       - "SCPH-7003.BIN"
     evidence:
       aliases: ["2026-10-27-48269ae11777", "2026-10-27-ba941702c6c2", "2026-10-27-fc95254312c0", "2026-10-27-5a191f2b540b", "2026-10-27-12ba45024f8c", "2026-10-27-a7c1a301bdb0"]
-      hle_fallback: ["2026-10-27-f2ecd7ed71b5", "2026-10-27-ca1f49599ca1"]
+      hle_fallback: ["2026-10-27-6e97b657aca7", "2026-10-27-699ca140a270", "2026-10-27-ec1ab64f96d3", "2026-10-27-47c3dcceed98", "2026-10-27-607274136f7b", "2026-10-27-ae6d4db96e73"]
+      required: ["2026-10-27-13be0e68b799"]
 
   # -- Region: Europe (REGION_EU) --
 
   - name: "scph5502.bin"
     description: "SCPH-5502, 5552 (v3.0 01-06-97 E)"
     region: [europe, oceania]
-    required: true
+    required: false
     hle_fallback: true
     size: 524288
     sha1: "f6bc2d1f5eb6593de7d089c425ac681d6fffd3f0"
     md5: "32736f17079d0b2b7024407c39bd3050"
     validation: [sha1]
     mode: both
-    source_ref: "libretro.c:807-821"
+    source_ref: "libretro.c:807-821, 3425-3511"
     aliases:
       - "SCPH5502.bin"
       - "SCPH-5502.bin"
       - "scph5552.bin"
       - "SCPH5552.bin"
       - "SCPH-5552.bin"
+    evidence:
+      required: ["2026-10-27-33780d47efdf"]
 
   # -- Override BIOS (region-free alternatives) --
 

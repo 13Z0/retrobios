@@ -862,7 +862,22 @@ python scripts/core_probe.py bench --core core.so --content game.cue \
 python scripts/core_probe.py check --core core.so --content disc.cue \
   --vary mpeg_card.bin=a.bin --vary mpeg_card.bin=b.bin --vary mpeg_card.bin= \
   --observable video_sha1 --claim "..." --method "..." --record
+
+# negative variants: the file, zeros of its size, its first half
+python scripts/core_probe.py check --core core.so --content disc.cue \
+  --frame-hash-every 10 --vary scph5501.bin=bios/scph5501.bin \
+  --vary scph5501.bin=@zeros:524288 --vary scph5501.bin=@head:262144:bios/scph5501.bin \
+  --observable frame_hashes --claim "..." --method "..." --repeat 2 --record
 ```
+
+One measurement runs at a time on the host. core_probe takes the host lock
+itself, per run: `~/.local/state/retrobios/probe.lock` (`RETROBIOS_PROBE_LOCK`
+names another file), from its load check to its record, released when the run
+ends. A run that finds it held waits and says so. Never wrap a whole pass in
+`flock`: a pass of many runs then holds the host for hours, while called
+directly its runs interleave with everyone else's. A caller that holds the
+lock around one core_probe call sets `RETROBIOS_PROBE_LOCK_HELD=1`. The tests
+use their own lock file.
 
 Each repetition runs in a fresh process under `strace -f -e trace=openat,open`
 when strace is installed. The worker starts with an empty environment and
@@ -876,15 +891,43 @@ writable. Every namespace is unshared, the network included, so nothing of
 the user (`~/.config`, `~/.ssh`, `~/.git-credentials`) or of the checkout is
 there to read. Each repetition names what it ran under in `isolation`
 (`bwrap`, or `environment only` with the reason), and `--require-sandbox`
-refuses to run without it. A timeout kills the worker's whole process group. The files the core opened under the system
+refuses to run without it. The files the core opened under the system
 directory come from the kernel, each hashed again after the run. Without
 strace the record says that tracing was unavailable.
+
+**Boot oracle.** Every repetition and every variant carries a `verdict` and
+the `verdict_evidence` that decided it (record version 4), judged against
+`tests/campaign/oracle.yml` (`--oracle`), in this order:
+
+| Verdict | Evidence |
+|---------|----------|
+| `hang` | the worker was killed after `--timeout` (`timeout`) |
+| `crash` | the worker died, by exit status or signal (`exit_status`). Its logs and sampled frames are rebuilt from the events it streamed |
+| `boots` | a sampled frame or the last frame is a `game` reference frame of this content on this core (`reference_frame`), with the `stages` reached: `bios` for a screen only the console's BIOS draws, `game` for one of the content. The BIOS screens alone are never a boot: the stages go into the evidence of the verdict below |
+| `bios_error` | a log line matches an error pattern of the core (`error_pattern`), or a frame is one of its error screens (`error_screen`) |
+| `hang` | every sampled frame of the second half is one colour (`uniform_tail`) |
+| `unknown` | none of these (`no_evidence`) |
+
+A variant's verdict is the one all its repetitions agree on, else `unknown`
+(`repetitions_disagree`). A check lists them in `check.result.verdicts`, and
+`inputs.oracle` keeps what they were judged against. The oracle finds a
+content by the sha1 of the file handed to the core and a core by its library
+name. A reference frame is recorded once with the full BIOS set and reviewed
+by looking at its PNG. An error pattern is a log line after which the core
+stops, read from its source: a line a core logs before it falls back to a
+built-in BIOS is not one. A BIOS load pattern is the line a core logs once
+it keeps the console's BIOS: it adds the `bios` stage for a core that hides
+the BIOS screens by default (PCSX-ReARMed). Frames that differ from another run never make a
+boot.
 
 | Option | Effect |
 |--------|--------|
 | `--system-file DEST=SRC` | copy SRC into a staged system directory as DEST |
 | `--content-label` | identity of the content, such as its Redump name, copied into the record |
-| `--work-dir`, `--timeout` | scratch directory for the staged runs, and seconds allowed per repetition (default 1800) |
+| `--work-dir`, `--timeout` | scratch directory for the staged runs, and seconds allowed per repetition (default 1800), after which the run is killed and judged a hang |
+| `--oracle FILE` | reference frames, error patterns and error screens the verdicts are judged against (default `tests/campaign/oracle.yml`) |
+| `--repeat N` | runs of each variant, each in a fresh process (`run` defaults to 1, `check` to 2, `bench` to 5) |
+| `--vary DEST=SRC` | (`check`) one variant per occurrence. An empty SRC leaves DEST absent, `@zeros:SIZE` stages SIZE zero bytes and `@head:SIZE:PATH` the first SIZE bytes of PATH |
 | `--option KEY=VALUE` | core option. Unset options take the first value the core declares |
 | `--frames`, `--warmup` | frames timed, and frames run before timing starts |
 | `--press FRAME:BUTTON[:LEN]` | hold a libretro joypad button on port 0 (`a`, `b`, `start`, `up`...). A menu may need 15 frames or more to see it |
@@ -964,51 +1007,77 @@ files a core opens nor writes a record.
 python scripts/campaign.py run --system sony-playstation --budget 6h
 python scripts/campaign.py run --only beetle_psx,swanstation --dry-run
 python scripts/campaign.py run --commit --commit-every 10
+python scripts/campaign.py run --only pcsx_rearmed --bench   # with benchmarks
+python scripts/campaign.py references --only beetle_psx --system sony-playstation
+python scripts/campaign.py references --only beetle_saturn --content-file other.yml   # another content list
 python scripts/campaign.py status            # done, failed, pending, and why
 python scripts/campaign.py findings          # what waits for review
 python scripts/campaign.py gate              # the checks behind a commit
-python scripts/campaign.py install-timer     # the autorun units, the campaign's among them
+python scripts/campaign.py install-timer     # opt-in: writes the autorun units, enables nothing
 ```
 
 | Step | What happens |
 |------|--------------|
 | Core | The x86_64 Linux nightly from `buildbot.libretro.com`, for each name of the profile's `cores:` the buildbot publishes, downloaded again only when its `ETag` or `Last-Modified` changes. The record keeps the artifact URL, the `.so` sha256 and the `retro_get_system_info` version. With no nightly, the profile's `source_commit` is cloned and built once with `make` (`Makefile.libretro` first), the failure kept so it is not tried again for that commit. Host git only fetches into bare mirrors (`.cache/campaign/mirrors/`), one per repository, submodules included, that it alone touches: no working tree, never bound into a sandbox, and earlier working-tree clones are deleted. It runs with no user or system config, https as the only transport, and `-c` overrides emptying hooks, `core.fsmonitor`, `core.sshCommand`, `core.gitProxy`, credential helpers and every filter driver the mirror's config defines. The commit and each submodule at the commit its tree records are exported with `git archive` into a fresh folder, and `make` runs there in the same bubblewrap sandbox as a core, that folder the one writable path. The core copied out is the newest `*_libretro.so` that is a regular file inside that folder, opened without following links. The record's `build_command` says which isolation was used. A standalone emulator is `pending: standalone` |
 | Content | Each system's games come from `tests/campaign/content.yml`, by catalog name and with the reason each was chosen. They are read from `.cache/test-content/<romfetch system>/<name>/`, each file checked against its `identity.json`. Missing content is fetched with `romfetch get <system> <name> --json` when romfetch is on `PATH`, in `RETROBIOS_ROMFETCH` or given with `--romfetch`. Otherwise the checks are `pending: content`, with romfetch's exit code and error code when it failed. Content never enters git, and a record keeps only its identity |
-| Checks | `files` stages every declared file the collection holds and reads which ones the core opens (strace). `boot` runs the game with no file and with the declared one (`boot_file:`, else the entry of the game's region). An entry the `files` run left unread is staged `alone`, then where the core looked for it (`path`) and under the names it looked for (`alias`). `variants` runs each `.variants/` copy of a file the core opened. `bench` times the game, warm-up excluded, 5 repetitions |
+| Checks | `files` stages every declared file the collection holds (the full set) and reads which ones the core opens (strace). `none` runs the game with no BIOS at all. `negative` runs, for each declared file of the game's region the collection holds, the file alone, then zeros of its size, its first half and up to two other regions' dumps staged under its name. An entry neither the full set nor its own run opened is staged where the core looked for it (`path`), else flagged. The `boot_file:` entry is also staged under the names the core looked for with no BIOS (`alias`). `variants` runs each `.variants/` copy of a file the core opened. Each runs twice from a fresh process and is judged by the boot oracle. `bench` (only with `--bench`) times the game once the full set boots, warm-up excluded, 5 repetitions |
 | Rules | `campaign_rules.py`, a fixed table of pure functions (below). A field the table settles is written into the profile, with `evidence:` naming the record ids. Anything else is a line of `measurements/findings.jsonl` |
 | Content reuse | A game stays on disk until the last emulator that needs it in the pass is done, then the campaign deletes it if it fetched it. Past `--cache-cap-gb` (default 20) the least recently used goes first. An entry marked `pinned:`, or one the campaign did not fetch, is never deleted |
 
-| Observable | Field | Written |
-|------------|-------|---------|
-| Without the file, at least 2 screens the run with the file also shows (single-colour frames left out), in every repetition | `hle_fallback` | `true` |
-| Without the file, no repetition loads the game or shows more than one colour, while the run with it reaches the game | `required`, `hle_fallback` | `true`, `false` |
+| Verdicts | Field | Written |
+|----------|-------|---------|
+| `none` boots, and the file changes the run: alone or as a wrong file, another verdict or other stages than with no BIOS | `hle_fallback` | `true`. A file the game never uses settles nothing: a core can open every file of the folder to hash it |
+| `none` fails (`bios_error`, `crash`, `hang`) and the file alone boots | `required`, `hle_fallback` | `true`, `false` |
+| Zeros of the file's size refused while the file boots | `validation` | a content check is proven. Agreeing adds evidence, a profile with no md5, sha1, sha256, crc32 or adler32 is an open finding |
+| Zeros used while the file boots | `validation` | no content check. A profile that declares one is an open finding |
+| Its first half refused while zeros are used | `validation` | `size`, added when missing |
+| Its first half used | `validation` | no size check. A profile that declares one is an open finding |
 | The core opened the file staged at another place it looked for | `path` | that path |
 | The core opened the file staged under a name no entry declares | `aliases` | the name added |
 | A staged file the game's region uses, never opened, staged alone either | nothing | flagged |
-| Anything else (runs that disagree, a profile that says `required: true` for a file the core boots without) | nothing | open finding |
+| Copies of one file whose verdicts differ | nothing | open finding |
+| Anything else (an `unknown`, a profile that says `required: true` for a file the core boots without) | nothing | open finding |
 
-A run that agrees with the profile adds its record id to `evidence:` and
+A wrong file is refused when the run reports `bios_error`, or boots without
+the `bios` screens the right file shows: the core fell back to a built-in
+BIOS. It is used when it turns the run into a `hang` or a `crash` that the
+run with no BIOS does not show. Another region's dump is recorded with its
+verdict, and the region claims are settled by their own test. Evidence that a
+record from before the oracle wrote no longer counts: when a verdict settles a
+field again, those ids leave its `evidence:`.
+
+`references` runs the full set once per core and content with every sampled
+frame written as PNG under `tmp/campaign/references/<core>/<content>/`, and
+prints the record id with the screens that stay on for 3 samples or more in
+every repetition. A reviewer opens those PNGs and writes the chosen frames
+into `tests/campaign/oracle.yml` with their stage and what they show.
+
+The rules run on every pass, from the kept records when no check needs to run
+again, so a change of the table applies without a run. A run that agrees with
+the profile adds its record id to `evidence:` and
 resolves an open finding of the same field. The profile is edited as text and
 the edit is refused unless the result parses to the same profile with only
 those fields changed.
 
 State lives in `.cache/campaign/state.json` of the main checkout: each check
 is `done`, `failed` (with the reason and its log) or `pending` (with the
-reason), with the core sha256 and the profile digest it ran against. A pass
-skips a check that is done or failed against the same core and profile, so it
+reason), with the core sha256, the profile digest, the oracle entries of its
+content and core (by sha1) and the record version it ran against. A pass
+skips a check that is done or failed against the same four, so it
 takes new nightlies, changed profiles, newly fetched content and pending
 checks. The campaign's own `evidence:` writes do not count as a profile change.
 
 | Guard | Rule |
 |-------|------|
 | Lock | The host-wide autorun lock. Under the `campaign` job, autorun holds it and says so with `RETROBIOS_AUTO_LOCK_HELD` |
+| Probe lock | Not held by the pass: each core_probe it starts takes the host probe lock for its own run, so the pass and other measurements (pack_probe, a core_probe loop) interleave. Two campaign passes still exclude each other through the automation lock, since they share `.cache/campaign/state.json`. Do not wrap `campaign.py run` in `flock` |
 | Environment | `core_probe.py`, git and `make` get autorun's allowlist, romfetch the same plus its `ROMFETCH_*` settings. None sees a token or a password |
 | Sandbox | Fails closed: without a working bubblewrap the pass is `refused` (exit 3) and nothing third-party runs, every probe is started with `--require-sandbox`, and a build is refused. `--allow-unsandboxed` overrides. Under autorun the refusal raises the `job:campaign` alert |
 | Load | Before each run, waits while the 1-minute load is above a quarter of the CPUs, up to `--max-load-wait` seconds, then the pass stops as `paused` |
 | Disk | Below `--min-free-gb` (default 30) the pass stops as `paused` |
 | Budget | No check starts after `--budget` |
-| Timeout | A run is killed after 900 seconds per repetition and variant, recorded `failed: timeout`, and the pass moves on |
-| Crash | A run that dies is tried 3 times, then `failed` with its log |
+| Timeout | A repetition is killed after 900 seconds and judged `hang`. A core_probe call that outlives all its repetitions is `failed: timeout` |
+| Crash | A core that dies is a `crash` verdict in its record. A core_probe call that fails for another reason is tried 3 times, then `failed` with its log |
 | Network | Buildbot and romfetch source errors are retried after 10, 60 and 300 seconds |
 
 Each pass appends one line to `measurements/campaign-runs.jsonl`: when it ran,
@@ -1019,12 +1088,103 @@ the findings it added. Logs are `.cache/campaign/logs/`, kept 30 days.
 each changed profile in its own, behind `campaign.py gate`: the measurement
 and campaign tests, `validate_schemas.py --source-only`, then `verify.py
 --emulator` and `generate_pack.py --emulator` for each changed profile. A file
-that had uncommitted changes before the pass is left alone. The nightly
-`campaign` autorun job (06:00, after `nightly`) runs a 150-minute pass in the
-automation worktree, gates it with `campaign.py gate` and commits with its
-own rules, pushing only with `--push`.
+that had uncommitted changes before the pass is left alone.
+
+A maintainer starts each pass. Scheduling is opt-in: a contributor who wants a
+schedule on their own machine installs the timer with `campaign.py
+install-timer`, which writes the autorun units and enables nothing unless
+`--enable` is passed. The `campaign` autorun job then runs a 150-minute pass
+in the automation worktree, gates it with `campaign.py gate` and commits with
+its own rules, pushing only with `--push`.
 
 Schemas: `campaign-finding.schema.json` and `campaign-run.schema.json`.
+
+### region_check.py
+
+Proves the `region:` fields of a profile on a real run. For each test game
+of a region in `tests/campaign/content.yml`, it runs `core_probe.py` four
+times, each a record whose subject is `region-<core>-<game>-<variant>`.
+
+| Variant | BIOS staged |
+|---------|-------------|
+| `full` | every regional BIOS of the system the collection holds |
+| `own` | only the entries whose `region:` holds the game's region |
+| `others` | only the entries of the other regions |
+| `pack` | the files of `generate_pack.py --emulator E --region R`, where the pack puts them |
+
+```bash
+python scripts/region_check.py run \
+  --emulator beetle_psx --system sony-playstation --core-name mednafen_psx
+python scripts/region_check.py report        # the outcome of every region record, as JSON
+```
+
+| Option | Effect |
+|--------|--------|
+| `--core-name` | the buildbot name of the core, whose x86_64 nightly is downloaded once into `.cache/region/cores/` and named in the record |
+| `--core`, `--core-artifact` | a core `.so` to use instead, and where it was downloaded from |
+| `--content-dir` | where romfetch keeps the test games (default `.cache/test-content`) |
+| `--variants` | a subset of `full`, `own`, `others` and `pack` |
+| `--timeout` | seconds per run (default 900) |
+| `--max-load-wait` | seconds a run refused on a busy host is tried again, every 15 seconds, before it is given up (default 1800). The load threshold stays core_probe's |
+
+The file the core opened in the `full` run, read from strace, settles the
+claim: `confirmed` when its `region:` holds the game's region, `contradicted`
+when it does not, `ambiguous` when the core opened its own region's file and the others too (PCSX-ReARMed opens all three), `unread` when it opened none of them. Each variant's
+result is the oracle verdict of its record. While the oracle has no reference
+frame for a game, a variant counts as booting when it samples the same frames
+as the `full` run, and the outcome says it was judged that way. Other frames give no verdict: the US disc reaches its game on the Japanese and European BIOS through another licence screen. The system
+pages show each outcome as a sentence ("the Japanese BIOS boots the Japanese
+game, the other regions' BIOS do not") with links to the four records. A
+maintainer starts each run. Each core_probe run takes the host probe lock for itself and frees it before the next, so do not wrap the command in `flock`. Nothing runs by itself.
+
+### standalone_probe.py
+
+Runs a platform's standalone emulator on a game and records it like
+`core_probe.py`, in the same `measurements/<emulator>.jsonl` and the same
+record schema (`frontend.script` names this script). No existing harness
+traces the files a standalone emulator opens or writes a record, so this is
+a thin layer over the emulator's own batch mode, Xvfb and core_probe's
+sandbox, oracle and record functions, imported and not copied.
+
+```bash
+python scripts/standalone_probe.py resolve duckstation   # the asset EmuDeck's installer picks
+python scripts/standalone_probe.py fetch duckstation     # download and unpack it, by sha256
+python scripts/standalone_probe.py run duckstation \
+  --content game.cue --content-label "Bust-A-Move 2 - Arcade Edition (USA)" \
+  --bios-file scph5501.bin=bios/Sony/PlayStation/scph5501.bin \
+  --samples 60 --interval 1.5 --require-sandbox --record
+python scripts/standalone_probe.py check pcsx2 \
+  --content game.bin --vary ps2-0230a-20080220.bin= \
+  --vary "ps2-0230a-20080220.bin=bios/Sony/PlayStation 2/ps2-0230a-20080220.bin" \
+  --claim "..." --method "..." --require-sandbox --record
+```
+
+| Step | What happens |
+|------|--------------|
+| Binary | The release asset the platform installs, chosen by its installer's own rule. EmuDeck's `getReleaseURLGH` takes the first asset, over GitHub's release list in its order, pre-releases included, whose name matches: `DuckStation-x64.AppImage` and `pcsx2-*-Qt.AppImage`. It is downloaded into `.cache/standalone/<emulator>/<sha256>/` and unpacked with `unsquashfs` at the offset the AppImage runtime computes, so the runtime is never run. The record names the asset, its release tag, its URL and its sha256 |
+| Settings | Written before each repetition in a scratch data folder, `$XDG_CONFIG_HOME/duckstation/settings.ini` and `$XDG_CONFIG_HOME/PCSX2/inis/PCSX2.ini`, the places the emulators read on Linux. The BIOS folder setting names the staged BIOS folder, as EmuDeck points it at `Emulation/bios`. Software rendering, no update check, no setup wizard. `--setting SECTION.KEY=VALUE` adds one. The record lists every setting |
+| Sandbox | The allowlist bubblewrap sandbox of `core_probe.py`: the unpacked emulator, the content folder and the staged BIOS folder read-only, the repetition's scratch folder the one writable path, no network. Xvfb runs inside it, on the sandbox's own `/tmp`, so the display is private to the run. `--require-sandbox` refuses to run without bubblewrap |
+| Screen | Xvfb keeps its screen as a file (`-fbdir`). The probe reads it every `--interval` seconds, `--samples` times, and hashes each sample's pixels. `--png-dir` writes each distinct sample as PNG for review |
+| Files | `strace -f` inside the sandbox: the files the emulator opened in the staged BIOS folder, and the ones it looked for there and did not find |
+| Verdict | `core_probe.judge` on each repetition, with the oracle of `tests/campaign/oracle.yml` looked up by the content's sha1 and the emulator's name, plus the emulator's own error strings this script lists (DuckStation's "No BIOS image found for", PCSX2's "Unable to auto locate a BIOS image"). An emulator that exits before the last sample is a crash |
+
+| Option | Effect |
+|--------|--------|
+| `--bios-file DEST=SRC` | copy SRC into the staged BIOS folder as DEST |
+| `--setting SECTION.KEY=VALUE` | an emulator setting written before the run |
+| `--sha256` | the fetched asset to run (default: the newest fetched) |
+| `--samples`, `--interval` | screen samples per repetition (default 60), and seconds between two (default 1) |
+| `--oracle` | the boot oracle file (default `tests/campaign/oracle.yml`, as `core_probe.py`) |
+| `--png-dir` | each distinct sampled screen of the first repetition as PNG |
+| `--record`, `--subject`, `--supersedes`, `--max-load`, `--work-dir`, `--no-trace`, `--require-sandbox` | as in `core_probe.py` |
+| `check`: `--vary`, `--observable`, `--claim`, `--method`, `--repeat` | as in `core_probe.py`, compared on `verdict` by default |
+
+Supported: DuckStation and PCSX2. Dolphin, Flycast, PPSSPP, melonDS, xemu and
+MAME are installed by EmuDeck from Flathub, Ryujinx from a Codeberg tarball and
+RPCS3 from its own update server: each needs its installer's rule before it
+can be added. Cemu is an AppImage like the two supported ones, and waits for
+Wii U content, which no catalog romfetch reads holds. Each run takes the host probe lock (`RETROBIOS_PROBE_LOCK`) for itself, its load check included, and frees it when it ends, as `core_probe.py` does. A maintainer starts each run. Nothing runs
+by itself.
 
 ### Other tools
 

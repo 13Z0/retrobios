@@ -14,25 +14,35 @@ the emulator's page shows a **Tested** block. Every result is on the
 ## What a test does
 
 - A script runs the emulator with no window and no sound.
-- It starts a game or a disc and presses buttons at set frames.
-- It runs again for each version of one file, such as a BIOS. Nothing else changes.
-- It compares what the emulator showed, played or saved, by fingerprint (a hash).
-- Each version runs at least twice, each time from a fresh start.
-
-## When tests run
-
-A maintainer starts a test run. It then works alone on an idle computer. A clear
-result updates the emulator's page and names the test as proof.
-
-Anything else waits on the [Measurements](../measurements.md) page for someone
-to read the code.
+- It starts a game and runs it for a set time, at least twice.
+- It compares the screens with ones we checked by eye.
 
 ## What a result says
 
-- **same**: the file changed nothing that was compared.
-- **differs**: some versions of the file changed it.
-- **inconclusive**: two runs of one version did not match, so no answer is given.
-- **measured**: a speed test, given as time per frame.
+| Result | Meaning |
+|--------|---------|
+| works | the game reached a screen it shows when it works |
+| BIOS error | the emulator said a BIOS is missing or wrong |
+| crash | the emulator stopped |
+| hang | the screen stayed blank, or the run never ended |
+| unknown | none of these could be shown |
+| no verdict | an older test that only compared screens |
+| ms per frame | a speed test |
+
+## How a file is proven
+
+The game runs with no BIOS and with the BIOS alone. Then it runs with a wrong
+file under the BIOS name: zeros, half the file, or another region's BIOS.
+
+- **Required**: no BIOS fails, the BIOS alone works.
+- **Built-in stand-in**: no BIOS still works.
+- **Checked**: a wrong file is refused.
+
+## When tests run
+
+A maintainer starts a test run. A clear result updates the emulator's page.
+Anything else waits on the [Measurements](../measurements.md) page for someone
+to read the code.
 
 ## What a result keeps
 

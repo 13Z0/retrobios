@@ -9,6 +9,8 @@
 #   region            the territory of the disc or cartridge: the BIOS entry the
 #                     boot test varies is the one whose `region:` holds it, or one
 #                     without `region:`
+#   also_regions      the other territories one release was sold in, when the
+#                     catalog names one entry for several (`(USA, Europe)`)
 #   load              the file handed to the core: `cue` (the .cue sheet) or a
 #                     file name inside the folder, by default the single file
 #   frames            frames run per repetition, the same with and without the file
@@ -19,7 +21,18 @@
 #
 # The checks a game is used for are the boot test (no file against the
 # declared file), the files test (every declared file staged, which ones the
-# core opens) and the benchmark.
+# core opens), the benchmark, and for a system whose BIOS a profile ties to a
+# territory, the region check (scripts/region_check.py): one game per region,
+# run with only its own region's BIOS, then with only the others.
+#
+# Systems come in the order of the users a missing BIOS stops: BIOS-required
+# consoles first, then the arcade BIOS sets, then everything else with a BIOS
+# entry. A system no catalog or romfetch source covers is listed under
+# `uncovered`, with the reason and romfetch's error code, so the gap is named
+# rather than silent.
+#
+# A system named twice in the profiles (`sega-megacd` and ares' `mega-cd`)
+# repeats its list with a YAML alias: the same games, one download.
 
 systems:
   sony-playstation:
@@ -40,3 +53,541 @@ systems:
         frames: 3600
         frame_hash_every: 10
         pinned: true
+      - name: "Puzzle Bobble 2 (Japan)"
+        catalog: redump
+        reason: >-
+          The Japanese release of the same game as the US and European discs, so
+          the three region runs show the same title screens and only the BIOS
+          licence screen differs. Beetle PSX picks scph5500.bin for a Japanese
+          disc, the region check proves it.
+        region: japan
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Bust-A-Move 2 - Arcade Edition (Europe)"
+        catalog: redump
+        reason: >-
+          The PAL release of the same game: a European disc runs at 50 Hz and
+          Beetle PSX reads scph5502.bin for it. Third leg of the region check,
+          beside the Japanese and US discs of the same title.
+        region: europe
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+
+  sony-playstation-2:
+    romfetch: ps2
+    content:
+      - name: "Rez (USA) (En,Fr,De,Es,It)"
+        catalog: redump
+        reason: >-
+          A 230 MB CD-ROM release, the smallest well-known PS2 disc, that boots
+          through the PS2 BIOS logo straight to its title screen without input.
+          The profiles do not tie PS2 BIOS images to a region, so one game is
+          enough for PCSX2 and LRPS2.
+        region: north-america
+        frames: 3600
+        frame_hash_every: 10
+
+  sega-saturn:
+    romfetch: saturn
+    content: &saturn
+      - name: "Puzzle Bobble 2X (Japan) (2M1, 2MB1)"
+        catalog: redump
+        reason: >-
+          The Japanese release of the game the US and European discs carry, so
+          the three region runs compare the same screens. Beetle Saturn loads
+          sega_101.bin for a Japanese disc and refuses a disc of another area
+          code, which the region check shows.
+        region: japan
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Bust-A-Move 2 - Arcade Edition (USA)"
+        catalog: redump
+        reason: >-
+          The US release of the same game: Beetle Saturn loads mpr-17933.bin
+          for a North American disc. Reaches its title within a minute with no
+          input.
+        region: north-america
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Bust-A-Move 2 - Arcade Edition (Europe)"
+        catalog: redump
+        reason: >-
+          The European release of the same game, area code E. mpr-17933.bin
+          also serves PAL consoles in Beetle Saturn, so this disc tells whether
+          one file covers two territories as the profile says.
+        region: europe
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+
+  sega-megacd:
+    romfetch: segacd
+    content: &megacd
+      - name: "Sonic the Hedgehog CD (Japan)"
+        catalog: redump
+        reason: >-
+          Sega's own title in all three regions, so the region runs compare one
+          game. Genesis Plus GX, PicoDrive and the other Mega CD cores choose
+          bios_CD_J.bin or its aliases for a Japanese console.
+        region: japan
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Sonic CD (USA)"
+        catalog: redump
+        reason: >-
+          The US release of the same game, booted through the Sega CD BIOS
+          (bios_CD_U.bin, us_scd2_9306.bin in PicoDrive). The BIOS shows its
+          own animated screen before the disc starts.
+        region: north-america
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Sonic CD (Europe)"
+        catalog: redump
+        reason: >-
+          The PAL release of the same game, for the European Mega CD BIOS
+          (bios_CD_E.bin, eu_mcd2_9306.bin). Third leg of the region check.
+        region: europe
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+
+  # ares names the same console mega-cd.
+  mega-cd:
+    romfetch: segacd
+    content: *megacd
+
+  sega-32x:
+    romfetch: 32x
+    content:
+      - name: "Knuckles' Chaotix (Japan, USA) (En)"
+        catalog: no-intro
+        reason: >-
+          A 32X-only cartridge: the cores that do not emulate the 32X boot ROMs
+          in HLE need 32X_G_BIOS.BIN, 32X_M_BIOS.BIN and 32X_S_BIOS.BIN to run
+          any of it. One release for both territories.
+        region: north-america
+        also_regions: [japan]
+        frames: 3600
+        frame_hash_every: 10
+
+  nec-pc-engine-cd:
+    romfetch: pcecd
+    content:
+      - name: "Gate of Thunder (Japan) (FACT, FADT)"
+        catalog: redump
+        reason: >-
+          A Super CD-ROM2 disc: it needs a System Card 3.0 image (syscard3.pce)
+          and stops on the card's error screen with an older card or none. The
+          profiles do not tie the card to a region.
+        region: japan
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+
+  snk-neogeo-cd:
+    romfetch: neogeocd
+    content:
+      - name: "Metal Slug (Japan) (En,Ja)"
+        catalog: redump
+        reason: >-
+          A Neo Geo CD disc that cannot start without the console's BIOS
+          (neocd.bin and its CDZ variants). Metal Slug is the title the MVS
+          entry of the arcade list uses too.
+        region: japan
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+
+  sega-dreamcast:
+    romfetch: dreamcast
+    content:
+      - name: "ChuChu Rocket! (USA) (En,Ja,Fr,De,Es)"
+        catalog: redump
+        reason: >-
+          A GD-ROM that boots through the Dreamcast BIOS logo (dc_boot.bin) to
+          its title without input. Flycast runs it with its HLE BIOS too, so the
+          boot test shows the difference the file makes.
+        region: north-america
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+
+  nintendo-ds:
+    romfetch: nds
+    content:
+      - name: "Mario Kart DS (Japan)"
+        catalog: no-intro
+        reason: >-
+          One game in the three regions, each held by a romfetch source (the
+          Japanese Tetris DS is not). melonDS and DeSmuME boot with the
+          ARM7/ARM9 BIOS and firmware or with their free replacements, and
+          BizHawk ties firmware dumps to regions.
+        region: japan
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Mario Kart DS (USA, Australia) (En,Fr,De,Es,It)"
+        catalog: no-intro
+        reason: >-
+          The US release of the same game, for the US firmware dump BizHawk
+          declares and for the boot test of bios7.bin, bios9.bin and
+          firmware.bin in melonDS.
+        region: north-america
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Mario Kart DS (Europe) (En,Fr,De,Es,It)"
+        catalog: no-intro
+        reason: >-
+          The European release of the same game, third leg of the region check
+          for the firmware dumps BizHawk ties to a region.
+        region: europe
+        frames: 3600
+        frame_hash_every: 10
+
+  nintendo-gba:
+    romfetch: gba
+    content:
+      - name: "Advance Wars (USA)"
+        catalog: no-intro
+        reason: >-
+          A 4 MB cartridge that shows the Game Boy Advance boot logo when
+          gba_bios.bin is given and skips it on the cores' HLE BIOS, so the
+          boot test sees the optional BIOS at work.
+        region: north-america
+        frames: 3600
+        frame_hash_every: 10
+
+  panasonic-3do:
+    romfetch: 3do
+    content:
+      - name: "Gex (USA, Europe)"
+        catalog: redump
+        reason: >-
+          A 3DO disc: Opera needs a 3DO BIOS (panafz10.bin and the others the
+          profile lists) for any game, and Gex shows the 3DO logo the BIOS
+          draws before the game.
+        region: north-america
+        also_regions: [europe]
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+
+  philips-cdi:
+    romfetch: cdi
+    content:
+      - name: "Hotel Mario (Europe)"
+        catalog: redump
+        reason: >-
+          A CD-i disc: the CD-i cores run nothing without the player's system
+          ROM (cdimono1.zip in MAME, the BIOS SAME CDi declares). A 366 MB disc
+          that starts its intro without input.
+        region: europe
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+
+  commodore-amiga-cd32:
+    romfetch: cd32
+    content:
+      - name: "Pinball Fantasies (Europe)"
+        catalog: redump
+        reason: >-
+          A 97 MB CD32 disc: PUAE needs the CD32 Kickstart and extended ROM to
+          boot any CD32 title, and the disc shows the CD32 boot animation the
+          ROM draws.
+        region: europe
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+
+  atari-lynx:
+    romfetch: lynx
+    content:
+      - name: "Super Skweek (World) (Atari Lynx Collection 1) (Unl)"
+        catalog: no-intro
+        reason: >-
+          Handy and Beetle Lynx refuse to start a cartridge without
+          lynxboot.img. The headered Lynx catalog romfetch reads holds only the
+          Atari Lynx Collection releases and betas, and this is a full game
+          from that collection.
+        region: north-america
+        also_regions: [europe, japan]
+        frames: 3600
+        frame_hash_every: 10
+
+  # Everything else with a BIOS entry.
+
+  sega-mastersystem:
+    romfetch: mastersystem
+    content: &mastersystem
+      - name: "Alex Kidd no Miracle World (Japan)"
+        catalog: no-intro
+        reason: >-
+          The Japanese Mark III cartridge. Genesis Plus GX ties bios_J.sms to
+          Japan and bios_U.sms to the other regions, so the region check runs
+          the same game on each.
+        region: japan
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Alex Kidd in Miracle World (USA, Europe)"
+        catalog: no-intro
+        reason: >-
+          The western cartridge of the same game, one release for the US and
+          Europe, as bios_U.sms serves both in the Genesis Plus GX profile.
+        region: north-america
+        also_regions: [europe]
+        frames: 3600
+        frame_hash_every: 10
+
+  # ares names the same console master-system.
+  master-system:
+    romfetch: mastersystem
+    content: *mastersystem
+
+  nintendo-64:
+    romfetch: n64
+    content:
+      - name: "Super Mario 64 (Japan)"
+        catalog: no-intro
+        reason: >-
+          One game in the three regions. simple64 loads the NTSC or the PAL PIF
+          ROM by the cartridge's region, which the region check proves on the
+          Japanese, US and European releases.
+        region: japan
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Super Mario 64 (USA)"
+        catalog: no-intro
+        reason: >-
+          The US release of the same game, NTSC like the Japanese one, so it
+          should read the same PIF ROM as the Japanese cartridge.
+        region: north-america
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Super Mario 64 (Europe) (En,Fr,De)"
+        catalog: no-intro
+        reason: >-
+          The PAL release of the same game: the one cartridge the PAL PIF ROM
+          (pif.pal) is for in simple64.
+        region: europe
+        frames: 3600
+        frame_hash_every: 10
+
+  nintendo-gamecube:
+    romfetch: gamecube
+    content:
+      - name: "Pikmin (Japan) (Rev 1)"
+        catalog: redump
+        reason: >-
+          One game in the three regions. Dolphin reads the IPL of the disc's
+          region (GC/JAP/IPL.bin) to show the GameCube boot animation, and
+          skips it on its HLE boot. 1.4 GB, fetched only when a check needs it.
+        region: japan
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Pikmin (USA)"
+        catalog: redump
+        reason: >-
+          The US release of the same game, for GC/USA/IPL.bin in Dolphin and
+          its forks.
+        region: north-america
+        frames: 3600
+        frame_hash_every: 10
+      - name: "Pikmin (Europe, Australia) (En,Fr,De,Es,It)"
+        catalog: redump
+        reason: >-
+          The PAL release of the same game, for GC/EUR/IPL.bin. Third leg of
+          the region check.
+        region: europe
+        frames: 3600
+        frame_hash_every: 10
+
+  sega-megadrive:
+    romfetch: megadrive
+    content:
+      - name: "Sonic The Hedgehog (USA, Europe)"
+        catalog: no-intro
+        reason: >-
+          A cartridge that passes the TMSS check of a later Mega Drive: with
+          bios_MD.bin the core shows the TMSS licence screen first, without it
+          the game starts at once.
+        region: north-america
+        also_regions: [europe]
+        frames: 3600
+        frame_hash_every: 10
+
+  sega-gamegear:
+    romfetch: gamegear
+    content:
+      - name: "Sonic The Hedgehog (World) (Rev A)"
+        catalog: no-intro
+        reason: >-
+          A cartridge for the optional Game Gear boot ROM (bios.gg): with it the
+          core shows the Sega licence screen before the game.
+        region: north-america
+        frames: 3600
+        frame_hash_every: 10
+
+  nintendo-gb:
+    romfetch: gb
+    content:
+      - name: "Tetris (World) (Rev 1)"
+        catalog: no-intro
+        reason: >-
+          The cartridge every Game Boy core runs: with the optional boot ROM
+          (gb_bios.bin, dmg_boot.bin) the Nintendo logo scrolls down first,
+          without it the game starts at once.
+        region: north-america
+        frames: 3600
+        frame_hash_every: 10
+
+  nintendo-gbc:
+    romfetch: gbc
+    content:
+      - name: "Tetris DX (World) (SGB Enhanced) (GB Compatible)"
+        catalog: no-intro
+        reason: >-
+          A Game Boy Color cartridge for the optional CGB boot ROM
+          (gbc_bios.bin, cgb_boot.bin): the boot animation and the palette it
+          picks show whether the core read it.
+        region: north-america
+        frames: 3600
+        frame_hash_every: 10
+
+  snk-neogeo-pocket:
+    romfetch: ngp
+    content:
+      - name: "King of Fighters R-1 - Pocket Fighting Series (Japan, Europe) (En,Ja)"
+        catalog: no-intro
+        reason: >-
+          A Neo Geo Pocket cartridge for the optional BIOS some cores read (the
+          SNK boot screen and the clock setting it asks for). Mednafen's HLE
+          starts the game without it.
+        region: japan
+        also_regions: [europe]
+        frames: 3600
+        frame_hash_every: 10
+
+  nec-pc-fx:
+    romfetch: pcfx
+    content:
+      - name: "Battle Heat (Japan)"
+        catalog: redump
+        reason: >-
+          A PC-FX disc: Beetle PC-FX needs pcfx.rom for any game. Every PC-FX
+          release is Japanese.
+        region: japan
+        load: cue
+        frames: 3600
+        frame_hash_every: 10
+
+  sony-psp:
+    romfetch: psp
+    content:
+      - name: "Lumines - Puzzle Fusion (Europe) (En,Fr,De,Es,It)"
+        catalog: redump
+        reason: >-
+          A UMD image for PPSSPP, which needs no BIOS but reads its font and
+          asset files (the ppsspp data directory) to draw the system dialogs.
+        region: europe
+        frames: 3600
+        frame_hash_every: 10
+
+# Systems with a BIOS entry that no catalog romfetch reads covers, or whose
+# content romfetch cannot fetch. `romfetch` is what the request returned:
+# its exit code and error code.
+uncovered:
+  snk-neogeo-mvs:
+    want: "mslug (neogeo.zip with Metal Slug), through MAME and FBNeo"
+    reason: >-
+      Arcade sets are not in the Redump or No-Intro catalogs and romfetch has
+      no arcade system.
+    romfetch: {exit: 1, code: unknown_system, request: "arcade"}
+  sega-naomi:
+    want: "mvsc2 (naomi.zip with Marvel vs. Capcom 2), through MAME and Flycast"
+    reason: Arcade set, no catalog romfetch reads.
+    romfetch: {exit: 1, code: unknown_system, request: "arcade"}
+  sammy-atomiswave:
+    want: "kofnw (awbios.zip with The King of Fighters Neowave), through MAME and Flycast"
+    reason: Arcade set, no catalog romfetch reads.
+    romfetch: {exit: 1, code: unknown_system, request: "arcade"}
+  igs-pgm:
+    want: "kov (pgm.zip with Knights of Valour), through MAME and FBNeo"
+    reason: Arcade set, no catalog romfetch reads.
+    romfetch: {exit: 1, code: unknown_system, request: "arcade"}
+  cps3:
+    want: "sfiii3 (Street Fighter III 3rd Strike), through MAME and FBNeo"
+    reason: Arcade set, no catalog romfetch reads.
+    romfetch: {exit: 1, code: unknown_system, request: "arcade"}
+  sega-stv:
+    want: "shienryu (stvbios.zip with Shienryu), through MAME, FBNeo and Kronos"
+    reason: Arcade set, no catalog romfetch reads.
+    romfetch: {exit: 1, code: unknown_system, request: "arcade"}
+  sega-triforce:
+    want: "a Triforce GD-ROM set, through Dolphin Triforce"
+    reason: Arcade set, no catalog romfetch reads.
+    romfetch: {exit: 1, code: unknown_system, request: "arcade"}
+  nintendo-dsi:
+    want: "a DSi-enhanced cartridge or DSiWare title, for melonDS in DSi mode"
+    reason: romfetch reads the decrypted DS catalog only, no DSi set.
+    romfetch: {exit: 1, code: unknown_system, request: "dsi"}
+  nintendo-3ds:
+    want: "one game per region, for Citra's regional system archives"
+    reason: No 3DS catalog in romfetch.
+    romfetch: {exit: 1, code: unknown_system, request: "3ds"}
+  nintendo-64dd:
+    want: "F-Zero X - Expansion Kit (Japan), for the 64DD IPL"
+    reason: No 64DD catalog in romfetch.
+    romfetch: {exit: 1, code: unknown_system, request: "n64dd"}
+  atari-jaguarcd:
+    want: "Myst (USA), for the Jaguar CD BIOS"
+    reason: No Jaguar CD catalog in romfetch.
+    romfetch: {exit: 1, code: unknown_system, request: "jaguarcd"}
+  intellivision:
+    want: "Astrosmash (USA, Europe), for exec.bin and grom.bin"
+    reason: No Intellivision catalog in romfetch.
+    romfetch: {exit: 1, code: unknown_system, request: "intellivision"}
+  colecovision:
+    want: "Donkey Kong (USA), for colecovision.rom"
+    reason: No ColecoVision catalog in romfetch.
+    romfetch: {exit: 1, code: unknown_system, request: "colecovision"}
+  msx:
+    want: "Gradius (Japan), for the MSX system ROMs"
+    reason: No MSX catalog in romfetch.
+    romfetch: {exit: 1, code: unknown_system, request: "msx"}
+  commodore-amiga:
+    want: "Lemmings (Europe), for the Kickstart ROMs"
+    reason: >-
+      romfetch reads the Amiga CD32 catalog only, no Amiga floppy catalog.
+    romfetch: {exit: 1, code: unknown_system, request: "amiga"}
+  atari-5200:
+    want: "Pac-Man (USA), for 5200.rom"
+    reason: No Atari 5200 catalog in romfetch.
+    romfetch: {exit: 1, code: unknown_system, request: "atari5200"}
+  atari-7800:
+    want: "Asteroids (USA), for the 7800 BIOS"
+    reason: No Atari 7800 catalog in romfetch.
+    romfetch: {exit: 1, code: unknown_system, request: "atari7800"}
+  nintendo-fds:
+    want: "Super Mario Brothers 2 (Japan), for disksys.rom"
+    reason: No Famicom Disk System catalog in romfetch.
+    romfetch: {exit: 1, code: unknown_system, request: "fds"}
+  nintendo-pokemon-mini:
+    want: "Pokemon Pinball Mini (USA, Europe), for bios.min"
+    reason: No Pokemon Mini catalog in romfetch.
+    romfetch: {exit: 1, code: unknown_system, request: "pokemini"}
+  microsoft-xbox:
+    want: "Halo - Combat Evolved (USA), for xemu's MCPX ROM, BIOS and hard disk image"
+    reason: >-
+      romfetch plans the 7.8 GB entry but no source holds it (exit 1, no
+      candidate), and it is above romfetch's 4 GiB limit that needs --yes.
+    romfetch: {exit: 1, code: null, request: "xbox"}
+  sony-playstation-3:
+    want: "Ridge Racer 7 (USA), for RPCS3's PS3UPDAT.PUP firmware"
+    reason: romfetch plans the entry but no source holds it (exit 1, no candidate).
+    romfetch: {exit: 1, code: null, request: "ps3"}

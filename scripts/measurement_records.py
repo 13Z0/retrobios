@@ -27,7 +27,9 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 
-RECORD_VERSION = 3
+RECORD_VERSION = 4
+# 3: before the boot oracle. 4: every repetition and variant carries a verdict.
+RECORD_VERSIONS = (3, 4)
 RECORDS_DIR = "measurements"
 ID_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}-[0-9a-f]{12}$")
 SLUG_PATTERN = re.compile(r"^[a-z0-9]+(?:[-_][a-z0-9]+)*$")
@@ -137,8 +139,8 @@ def check_line(record: dict) -> list[str]:
     """The structural rules a line holds, without a JSON Schema validator."""
     rid = record.get("id", "")
     problems = []
-    if record.get("record_version") != RECORD_VERSION:
-        problems.append(f"{rid}: record_version {record.get('record_version')} != {RECORD_VERSION}")
+    if record.get("record_version") not in RECORD_VERSIONS:
+        problems.append(f"{rid}: record_version {record.get('record_version')} not in {RECORD_VERSIONS}")
     if not ID_PATTERN.match(str(rid)):
         problems.append(f"{rid!r}: not an id of the form YYYY-MM-DD-<12 hex>")
     elif str(record.get("recorded_at", ""))[:10] != rid[:10]:

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://abdess.github.io/retrobios/api/v1/schemas/core-probe-record.schema.json",
   "title": "RetroBIOS core probe record",
-  "description": "One line of measurements/<emulator>.jsonl: one run of scripts/core_probe.py, a libretro core executed headless, in full, with what is needed to judge and reproduce it. Every repetition, its core logs and per-frame hashes, and the raw timing values are in the line.",
+  "description": "One line of measurements/<emulator>.jsonl: one run of scripts/core_probe.py, a libretro core executed headless, in full, with what is needed to judge and reproduce it. Every repetition, its core logs and per-frame hashes, and the raw timing values are in the line. From record_version 4 every repetition and every variant carries the boot oracle's verdict (boots, bios_error, crash, hang, unknown) with the evidence that decided it.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -22,7 +22,11 @@
   ],
   "properties": {
     "record_version": {
-      "const": 3
+      "enum": [
+        3,
+        4
+      ],
+      "description": "3: records before the boot oracle. 4: every repetition and variant carries `verdict` and `verdict_evidence`, and `inputs.oracle` names what the verdicts were judged against."
     },
     "id": {
       "type": "string",
@@ -144,7 +148,11 @@
       ],
       "properties": {
         "script": {
-          "const": "scripts/core_probe.py"
+          "enum": [
+            "scripts/core_probe.py",
+            "scripts/pack_probe.py",
+            "scripts/standalone_probe.py"
+          ]
         },
         "commit": {
           "type": [
@@ -353,6 +361,9 @@
         "frame_hash_every": {
           "type": "integer",
           "minimum": 0
+        },
+        "oracle": {
+          "$ref": "#/$defs/oracle"
         }
       }
     },
@@ -398,6 +409,13 @@
             "items": {
               "type": "string"
             }
+          },
+          "verdict": {
+            "$ref": "#/$defs/verdict",
+            "description": "The verdict every repetition of the variant agrees on, else unknown."
+          },
+          "verdict_evidence": {
+            "$ref": "#/$defs/verdict_evidence"
           }
         }
       }
@@ -492,6 +510,13 @@
                   }
                 }
               }
+            },
+            "verdicts": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/verdict"
+              },
+              "description": "Variant label -> the variant's verdict."
             }
           }
         }
@@ -534,6 +559,51 @@
         "required": [
           "check"
         ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_version": {
+            "const": 4
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "inputs": {
+            "required": [
+              "oracle"
+            ]
+          },
+          "variants": {
+            "items": {
+              "required": [
+                "verdict",
+                "verdict_evidence"
+              ],
+              "properties": {
+                "repetitions": {
+                  "items": {
+                    "required": [
+                      "verdict",
+                      "verdict_evidence"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "check": {
+            "properties": {
+              "result": {
+                "required": [
+                  "verdicts"
+                ]
+              }
+            }
+          }
+        }
       }
     }
   ],
@@ -747,8 +817,205 @@
               }
             }
           ]
+        },
+        "verdict": {
+          "$ref": "#/$defs/verdict"
+        },
+        "verdict_evidence": {
+          "$ref": "#/$defs/verdict_evidence"
+        },
+        "exit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "signal"
+          ],
+          "properties": {
+            "status": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "signal": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "timeout_s": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "description": "How a worker that did not finish ended: its exit status or the signal that killed it, or the timeout after which the probe killed it."
         }
       }
+    },
+    "verdict": {
+      "enum": [
+        "boots",
+        "bios_error",
+        "crash",
+        "hang",
+        "unknown"
+      ],
+      "description": "boots: a reference frame of the content was reached. bios_error: an error pattern of the core log or a known error screen, and no reference frame. crash: the worker died. hang: killed after the timeout, or every sampled frame of the second half is one colour. unknown: none of these."
+    },
+    "verdict_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule",
+        "detail"
+      ],
+      "properties": {
+        "rule": {
+          "enum": [
+            "reference_frame",
+            "error_pattern",
+            "error_screen",
+            "exit_status",
+            "timeout",
+            "uniform_tail",
+            "no_evidence",
+            "repetitions_agree",
+            "repetitions_disagree"
+          ]
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "frame": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha1": {
+          "$ref": "#/$defs/sha1"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stage"
+          },
+          "description": "Stages of the reference frames the run reached, in the order first reached."
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "log": {
+          "type": "string"
+        },
+        "exit_status": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "signal": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "repetitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/verdict"
+          }
+        }
+      }
+    },
+    "stage": {
+      "enum": [
+        "bios",
+        "game"
+      ],
+      "description": "bios: a screen only the console's own BIOS draws (its logo). game: a screen of the content itself."
+    },
+    "oracle": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "file",
+            "sha256",
+            "references",
+            "error_patterns",
+            "error_screens"
+          ],
+          "properties": {
+            "file": {
+              "type": "string"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "references": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "sha1",
+                  "stage",
+                  "shows"
+                ],
+                "properties": {
+                  "sha1": {
+                    "$ref": "#/$defs/sha1"
+                  },
+                  "stage": {
+                    "$ref": "#/$defs/stage"
+                  },
+                  "shows": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "error_patterns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "error_screens": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "sha1",
+                  "shows"
+                ],
+                "properties": {
+                  "sha1": {
+                    "$ref": "#/$defs/sha1"
+                  },
+                  "shows": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "bios_patterns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Log lines by which the core says it loaded the console's own BIOS: they add the bios stage when its screens are hidden."
+            }
+          }
+        }
+      ],
+      "description": "What the verdicts were judged against: the reference frames of this content and core, the core's error patterns, error screens and BIOS load patterns, from the oracle file at its sha256. Null when the run had no oracle entry."
     }
   }
 }

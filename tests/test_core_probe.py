@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
 import io
 import json
 import os
@@ -20,6 +21,7 @@ import tempfile
 import unittest
 import unittest.mock
 from pathlib import Path
+from typing import ClassVar
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
@@ -42,6 +44,7 @@ FAKE_CORE = r"""
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 struct retro_system_info { const char *n, *v, *e; bool full, block; };
 struct retro_game_geometry { unsigned bw, bh, mw, mh; float a; };
 struct retro_system_timing { double fps, rate; };
@@ -78,11 +81,15 @@ bool retro_load_game(const void *g) {
   if (env(27, &cb)) {
     logger = cb;
     cb.log(1, "card %s byte %d\n", f ? "present" : "absent", (int)card);
-    cb.log(1, "tag %s\n", tag ? tag : "unset"); }
+    cb.log(1, "tag %s\n", tag ? tag : "unset");
+    if (card == 0xEE) cb.log(3, "BIOS not found: card.bin\n"); }
   return true; }
 void retro_unload_game(void) {}
 void retro_run(void) {
   int16_t s[4] = {1, 2, 3, 4};
+  const char *end = getenv("CORE_PROBE_TEST_END");
+  if (end && frames == 1 && !strcmp(end, "crash")) { if (logger.log) logger.log(3, "about to fall\n"); raise(SIGSEGV); }
+  if (end && frames == 1 && !strcmp(end, "hang")) for (;;) {}
   if (frames++ == 0 && logger.log) logger.log(1, "ports %u\n", ports);
   input(0, 1, 0, 8);
   for (int i = 0; i < 8; i++) pixels[i] = card;
@@ -175,6 +182,187 @@ class ParsingTests(unittest.TestCase):
             cue.write_text('FILE "a b.bin" BINARY\n  TRACK 01 MODE2/2352\nFILE c.bin BINARY\n',
                            encoding="utf-8")
             self.assertEqual([p.name for p in core_probe.cue_tracks(cue)], ["a b.bin", "c.bin"])
+
+
+def frames(*pairs: tuple[int, str]) -> list[list]:
+    return [[frame, digest] for frame, digest in pairs]
+
+
+class OracleTests(unittest.TestCase):
+    """judge() turns a repetition into a verdict from positive evidence only."""
+
+    TITLE, LOGO, ERROR, BLACK, OTHER = ("1" * 40, "2" * 40, "3" * 40, "4" * 40, "5" * 40)
+    ORACLE: ClassVar[dict] = {"references": [{"sha1": "2" * 40, "stage": "bios", "shows": "the console logo"},
+                             {"sha1": "1" * 40, "stage": "game", "shows": "the title"}],
+              "error_patterns": [r"BIOS not found"],
+              "error_screens": [{"sha1": "3" * 40, "shows": "the core's missing-BIOS message"}]}
+
+    def rep(self, hashes: list, logs: list[str] = (), uniform: list[str] = (), loaded: bool = True,
+            **extra: object) -> dict:
+        return {"loaded": loaded, "library_name": "Fake", "frames": 100, "warmup": 0,
+                "logs": [{"frame": 0, "level": "error", "text": text} for text in logs],
+                "observables": {"frame_hashes": hashes, "uniform_frames": list(uniform)}, **extra}
+
+    def test_a_reference_frame_is_a_boot_with_its_stages(self) -> None:
+        verdict, evidence = core_probe.judge(
+            self.rep(frames((0, self.BLACK), (10, self.LOGO), (20, self.TITLE)),
+                     logs=["BIOS not found"]), self.ORACLE)
+        self.assertEqual(verdict, "boots")
+        self.assertEqual((evidence["rule"], evidence["frame"], evidence["stages"]),
+                         ("reference_frame", 20, ["bios", "game"]))
+
+    def test_a_bios_load_line_stands_for_hidden_bios_screens(self) -> None:
+        oracle = {**self.ORACLE, "bios_patterns": [r"^found US BIOS file"]}
+        verdict, evidence = core_probe.judge(
+            self.rep(frames((0, self.TITLE)), logs=["found US BIOS file, crc32 1: x"]), oracle)
+        self.assertEqual((verdict, evidence["stages"]), ("boots", ["bios", "game"]))
+        self.assertEqual(core_probe.judge(self.rep(frames((0, self.TITLE))), oracle)[1]["stages"], ["game"])
+
+    def test_the_bios_screens_alone_are_not_a_boot(self) -> None:
+        # A console that shows its logo and then refuses the disc never reached the game.
+        verdict, evidence = core_probe.judge(
+            self.rep(frames((0, self.LOGO), (10, self.BLACK), (20, self.BLACK)), uniform=[self.BLACK]),
+            self.ORACLE)
+        self.assertEqual((verdict, evidence["rule"], evidence["stages"]), ("hang", "uniform_tail", ["bios"]))
+        self.assertIn("no screen of the game", evidence["detail"])
+
+    def test_an_error_pattern_or_screen_without_a_reference_is_a_bios_error(self) -> None:
+        verdict, evidence = core_probe.judge(
+            self.rep(frames((0, self.OTHER)), logs=["x", "BIOS not found: scph5501.bin"]), self.ORACLE)
+        self.assertEqual((verdict, evidence["rule"], evidence["log"]),
+                         ("bios_error", "error_pattern", "BIOS not found: scph5501.bin"))
+        verdict, evidence = core_probe.judge(self.rep(frames((0, self.ERROR))), self.ORACLE)
+        self.assertEqual((verdict, evidence["rule"], evidence["frame"]), ("bios_error", "error_screen", 0))
+        self.assertEqual(core_probe.judge(self.rep([], logs=["BIOS not found"], loaded=False),
+                                          self.ORACLE)[0], "bios_error")
+
+    def test_process_status_decides_crash_and_hang_first(self) -> None:
+        crashed = self.rep(frames((0, self.TITLE)), exit={"status": -11, "signal": "SIGSEGV"})
+        self.assertEqual(core_probe.judge(crashed, self.ORACLE)[0], "crash")
+        killed = self.rep([], exit={"status": None, "signal": "SIGKILL", "timeout_s": 5})
+        self.assertEqual(core_probe.judge(killed, self.ORACLE), (
+            "hang", {"rule": "timeout", "detail": "killed after 5 s", "exit_status": None,
+                     "signal": "SIGKILL"}))
+
+    def test_a_one_colour_second_half_is_a_hang(self) -> None:
+        run = self.rep(frames((0, self.OTHER), (10, self.OTHER), (20, self.BLACK), (30, self.BLACK)),
+                       uniform=[self.BLACK])
+        self.assertEqual(core_probe.judge(run, self.ORACLE)[1]["rule"], "uniform_tail")
+        lit = self.rep(frames((0, self.BLACK), (10, self.BLACK), (20, self.OTHER), (30, self.BLACK)),
+                       uniform=[self.BLACK])
+        self.assertEqual(core_probe.judge(lit, self.ORACLE)[0], "unknown")
+
+    def test_frames_that_differ_are_never_a_boot(self) -> None:
+        verdict, evidence = core_probe.judge(self.rep(frames((0, self.OTHER), (10, "6" * 40))),
+                                             self.ORACLE)
+        self.assertEqual((verdict, evidence["rule"]), ("unknown", "no_evidence"))
+        verdict, evidence = core_probe.judge(self.rep(frames((0, self.TITLE))),
+                                             {**self.ORACLE, "references": []})
+        self.assertEqual(verdict, "unknown")
+        self.assertIn("no reference frame is known", evidence["detail"])
+        self.assertEqual(core_probe.judge(self.rep([], loaded=False), self.ORACLE)[0], "unknown")
+
+    def test_a_variant_needs_every_repetition_to_agree(self) -> None:
+        boot = {"verdict": "boots", "verdict_evidence": {"rule": "reference_frame", "detail": "d",
+                                                         "frame": 3, "stages": ["game"]}}
+        verdict, evidence = core_probe.variant_verdict([boot, boot])
+        self.assertEqual((verdict, evidence["rule"], evidence["stages"]),
+                         ("boots", "repetitions_agree", ["game"]))
+        hang = {"verdict": "hang", "verdict_evidence": {"rule": "uniform_tail", "detail": "d"}}
+        verdict, evidence = core_probe.variant_verdict([boot, hang])
+        self.assertEqual((verdict, evidence["repetitions"]), ("unknown", ["boots", "hang"]))
+
+    def test_oracle_entries_are_picked_by_content_and_core(self) -> None:
+        data = {"error_patterns": [{"pattern": "shared"}],
+                "cores": {"Fake": {"error_patterns": [{"pattern": "own"}],
+                                   "error_screens": [{"sha1": self.ERROR, "shows": "s"}]}},
+                "content": [{"name": "disc", "sha1": "a" * 40, "references": {
+                    "Fake": {"frames": [{"sha1": self.TITLE, "stage": "game", "shows": "t"}]},
+                    "Other": {"frames": [{"sha1": self.LOGO, "stage": "bios", "shows": "l"}]}}}]}
+        picked = core_probe.oracle_for(data, "a" * 40, "Fake")
+        self.assertEqual(picked["references"], [{"sha1": self.TITLE, "stage": "game", "shows": "t"}])
+        self.assertEqual(picked["error_patterns"], ["shared", "own"])
+        self.assertEqual(picked["bios_patterns"], [])
+        self.assertEqual(core_probe.oracle_for(data, "b" * 40, "Fake")["references"], [])
+        self.assertEqual(core_probe.oracle_for(data, "a" * 40, "Nobody")["error_patterns"], ["shared"])
+
+    def test_every_reference_judges_its_own_record_a_boot(self) -> None:
+        """Each reference block names the run it was taken from: judged
+        again with the oracle as it stands, every repetition of that run
+        boots, so a frame copied wrong or a stage mislabelled fails here."""
+        data, _ = core_probe.load_oracle(core_probe.DEFAULT_ORACLE)
+        records = {s.record["id"]: s.record for s in measurement_records.read_records(REPO_ROOT)}
+        checked = 0
+        for item in data.get("content") or ():
+            for library, block in item["references"].items():
+                record = records.get(block["recorded_from"])
+                self.assertIsNotNone(record, f"{item['name']} on {library}: {block['recorded_from']}")
+                self.assertEqual(record["inputs"]["content"]["sha1"], item["sha1"], item["name"])
+                # A check names the variant that ran the full set, a run has one.
+                label = block.get("variant")
+                chosen = next(v for v in record["variants"] if v["label"] == label) if label \
+                    else record["variants"][0]
+                for rep in chosen["repetitions"]:
+                    oracle = core_probe.oracle_for(data, item["sha1"], rep["library_name"])
+                    verdict, evidence = core_probe.judge(rep, oracle)
+                    self.assertEqual(verdict, "boots", f"{item['name']} on {library}: {evidence}")
+                    checked += 1
+        self.assertGreaterEqual(checked, 2 * 14)
+
+    def test_the_repository_error_patterns_and_screens(self) -> None:
+        data, _ = core_probe.load_oracle(core_probe.DEFAULT_ORACLE)
+        saturn = core_probe.oracle_for(data, None, "Beetle Saturn")
+        for line in ('Cannot open BIOS file "/system/sega_101.bin".',
+                     'BIOS file "/system/sega_101.bin" is of an incorrect size.',
+                     'BIOS file "/system/sega_101.bin" could not be fully read (short or failed read).'):
+            rep = {"loaded": False, "logs": [{"frame": 0, "level": "error", "text": line}]}
+            self.assertEqual(core_probe.judge(rep, saturn)[0], "bios_error", line)
+        menu = {"Beetle PSX": "dfbfc299250c0983f86bbf951efd187441306d92",
+                "Beetle PSX HW": "dfbfc299250c0983f86bbf951efd187441306d92",
+                "SwanStation": "167fb7b6527e295b12dca5806a29856f5f31d401",
+                "pcsx2": "46329c633ea7d0b63349261e4aab169e4f44d3f6"}
+        for library, sha1 in menu.items():
+            rep = {"loaded": True, "logs": [], "frames": 100, "warmup": 0,
+                   "observables": {"frame_hashes": [[90, sha1]], "uniform_frames": []}}
+            verdict, evidence = core_probe.judge(rep, core_probe.oracle_for(data, None, library))
+            self.assertEqual((verdict, evidence["rule"]), ("bios_error", "error_screen"), library)
+        # The PlayStation cores fall back to a built-in BIOS: nothing they log is an error.
+        for library in ("Beetle PSX", "SwanStation", "PCSX-ReARMed", "PCSX1"):
+            self.assertEqual(core_probe.oracle_for(data, None, library)["error_patterns"], [])
+
+    def test_the_repository_oracle_is_well_formed(self) -> None:
+        import yaml
+        data = yaml.safe_load(core_probe.DEFAULT_ORACLE.read_text(encoding="utf-8"))
+        patterns = list(data.get("error_patterns") or ())
+        for core in (data.get("cores") or {}).values():
+            patterns += (core.get("error_patterns") or []) + (core.get("bios_patterns") or [])
+            for screen in core.get("error_screens") or ():
+                self.assertRegex(screen["sha1"], r"^[0-9a-f]{40}$")
+        for pattern in patterns:
+            self.assertTrue(pattern.get("source_ref") or pattern.get("reason"), pattern)
+            core_probe.re.compile(pattern["pattern"])
+        for item in data.get("content") or ():
+            self.assertRegex(item["sha1"], r"^[0-9a-f]{40}$")
+            for block in item["references"].values():
+                self.assertRegex(block["recorded_from"], r"^\d{4}-\d{2}-\d{2}-[0-9a-f]{12}$")
+                stages = {frame["stage"] for frame in block["frames"]}
+                self.assertIn("game", stages, item["name"])
+                for frame in block["frames"]:
+                    self.assertRegex(frame["sha1"], r"^[0-9a-f]{40}$")
+                    self.assertIn(frame["stage"], ("bios", "game"))
+                    self.assertTrue(frame["shows"])
+
+    def test_made_files(self) -> None:
+        zeros = core_probe.Synthetic.parse("@zeros:16")
+        self.assertEqual((zeros.label("bios.bin"), zeros.source), ("bios.bin-zeros-16", None))
+        head = core_probe.Synthetic.parse("@head:8:/x/scph5501.bin")
+        self.assertEqual(head.label("bios.bin"), "bios.bin-head-8-of-scph5501.bin")
+        for bad in ("@zeros:", "@zeros:8:/x", "@head:8", "@ones:8", "@head:x:/y"):
+            with self.assertRaises(argparse.ArgumentTypeError):
+                core_probe.Synthetic.parse(bad)
+        self.assertEqual(core_probe.exit_description(-11), {"status": -11, "signal": "SIGSEGV"})
+        self.assertEqual(core_probe.exit_description(139), {"status": 139, "signal": "SIGSEGV"})
+        self.assertEqual(core_probe.exit_description(1), {"status": 1, "signal": None})
 
 
 class ResultTests(unittest.TestCase):
@@ -289,6 +477,102 @@ class FakeCoreTests(unittest.TestCase):
             return
         schema = json.loads((REPO_ROOT / "schemas" / "core-probe-record.schema.json").read_text())
         self.assertEqual(list(Draft202012Validator(schema).iter_errors(line)), [])
+
+    def oracle_file(self) -> Path:
+        title = hashlib.sha1(struct.pack("<8H", *[1] * 8)).hexdigest()
+        content = self.tmp / "game.bin"
+        content.write_bytes(b"game")
+        path = self.tmp / "oracle.yml"
+        path.write_text(
+            "error_patterns:\n  - pattern: 'BIOS not found'\n    reason: test\n"
+            "cores:\n  Fake:\n    error_patterns: []\n    error_screens: []\n"
+            f"content:\n  - name: game\n    sha1: {core_probe.file_digest(content)}\n"
+            "    references:\n      Fake:\n        recorded_from: 2026-10-27-000000000000\n"
+            f"        frames:\n          - sha1: {title}\n            stage: game\n"
+            "            shows: card one\n", encoding="utf-8")
+        return path
+
+    def test_verdicts_of_a_negative_check(self) -> None:
+        oracle = self.oracle_file()
+        error = self.tmp / "error.bin"
+        error.write_bytes(b"\xee")
+        code, record = self.probe(["check", "--core", str(self.core), "--frames", "4",
+                                   "--frame-hash-every", "1", "--content", str(self.tmp / "game.bin"),
+                                   "--oracle", str(oracle), "--vary", "card.bin=",
+                                   "--vary", f"card.bin={self.cards[0]}", "--vary", f"card.bin={error}",
+                                   "--vary", "card.bin=@zeros:1",
+                                   "--vary", f"card.bin=@head:0:{self.cards[0]}",
+                                   "--observable", "frame_hashes", "--claim", "c", "--method", "m",
+                                   "--no-trace", "--repeat", "2"])
+        self.assertEqual(code, 0)
+        verdicts = record["check"]["result"]["verdicts"]
+        self.assertEqual(verdicts, {"card.bin-absent": "hang", "card0.bin": "boots",
+                                    "error.bin": "bios_error", "card.bin-zeros-1": "hang",
+                                    "card.bin-head-0-of-card0.bin": "hang"})
+        boot = record["variants"][1]
+        self.assertEqual((boot["verdict_evidence"]["rule"], boot["verdict_evidence"]["stages"]),
+                         ("repetitions_agree", ["game"]))
+        self.assertEqual(boot["repetitions"][0]["verdict_evidence"]["rule"], "reference_frame")
+        self.assertEqual(record["variants"][3]["system_files"],
+                         {"card.bin": hashlib.sha1(b"\x00").hexdigest()})
+        self.assertEqual(record["inputs"]["oracle"]["error_patterns"], ["BIOS not found"])
+        self.assertEqual(record["record_version"], 4)
+        self.assert_schema(record)
+
+    def test_a_crash_and_a_hang_are_verdicts(self) -> None:
+        oracle = self.oracle_file()
+        code, record = self.probe(["run", "--core", str(self.core), "--frames", "4",
+                                   "--frame-hash-every", "1", "--oracle", str(oracle),
+                                   "--env", "CORE_PROBE_TEST_END=crash"])
+        self.assertEqual(code, 0)
+        crashed = record["variants"][0]
+        self.assertEqual((crashed["verdict"], crashed["repetitions"][0]["exit"]["signal"]),
+                         ("crash", "SIGSEGV"))
+        self.assertEqual(crashed["repetitions"][0]["logs"][-1]["text"], "about to fall")
+        self.assertEqual(crashed["repetitions"][0]["observables"]["frame_hashes"][0][0], 0)
+        self.assert_schema(record)
+        code, record = self.probe(["run", "--core", str(self.core), "--frames", "4",
+                                   "--frame-hash-every", "1", "--oracle", str(oracle), "--timeout", "3",
+                                   "--env", "CORE_PROBE_TEST_END=hang", "--no-trace"])
+        self.assertEqual(code, 0)
+        self.assertEqual((record["variants"][0]["verdict"],
+                          record["variants"][0]["repetitions"][0]["verdict_evidence"]["rule"]),
+                         ("hang", "timeout"))
+
+    def assert_schema(self, record: dict) -> None:
+        try:
+            from jsonschema import Draft202012Validator
+        except ImportError:
+            return
+        schema = json.loads((REPO_ROOT / "schemas" / "core-probe-record.schema.json").read_text())
+        sealed = measurement_records.seal({**record, "emulator": "fake", "subject": "s"})
+        self.assertEqual([e.message for e in Draft202012Validator(schema).iter_errors(sealed)], [])
+
+    def test_a_run_waits_for_the_host_lock_and_frees_it(self) -> None:
+        import fcntl
+        import time
+
+        lock = self.tmp / "host.lock"
+        argv = [sys.executable, str(REPO_ROOT / "scripts" / "core_probe.py"), "run", "--core",
+                str(self.core), "--frames", "1", "--no-trace", "--work-dir", str(self.tmp / "work")]
+        env = {**os.environ, "RETROBIOS_PROBE_LOCK": str(lock)}
+        with lock.open("a") as held:
+            fcntl.flock(held, fcntl.LOCK_EX)
+            waiting = subprocess.Popen(argv, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
+                                       text=True)
+            time.sleep(1.5)
+            self.assertIsNone(waiting.poll(), "the run went ahead while another held the lock")
+            # A caller that holds the lock for this run says so.
+            held_run = subprocess.run(argv, env={**env, "RETROBIOS_PROBE_LOCK_HELD": "1"},
+                                      capture_output=True, text=True, timeout=60, check=False)
+            self.assertEqual(held_run.returncode, 0, held_run.stderr)
+            fcntl.flock(held, fcntl.LOCK_UN)
+        _, err = waiting.communicate(timeout=60)
+        self.assertEqual(waiting.returncode, 0, err)
+        self.assertIn("another measurement is running", err)
+        # Released at the end of the run: the lock is free again.
+        with lock.open("a") as again:
+            fcntl.flock(again, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
     def test_second_run_is_appended_beside_the_first(self) -> None:
         record_dir = checkout(self.tmp / "appended")
