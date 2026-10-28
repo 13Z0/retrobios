@@ -11,7 +11,12 @@
 
     $ErrorActionPreference = "Stop"
     $defaultInstallUrl = "https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"
-    $defaultInstallSha256 = "d6d3483bdaf5c54fae595a6469525015323defb7a4f9f22adbda80029fa3ee54"
+    # What a refused installer most likely means for this copy. The copy the
+    # site serves reads a commit's installer, which no cache serves stale,
+    # and Invoke-WebRequest throws on a cut transfer before the hash is read:
+    # the site's build rewrites this line there (scripts/sitebootstrap.py).
+    $mismatchAdvice = "The download was most likely cut short: try again. Within minutes of an update of this project the two files can come from caches of different ages. Waiting five minutes settles that."
+    $defaultInstallSha256 = "67cbe64d1de7b2f38edd25cab1b34384c55cac77e13f22f4c302fa2b04a809d7"
     $maximumInstallerBytes = 2MB
     $installerExit = 0
     $installer = if ($PSScriptRoot) { Join-Path $PSScriptRoot "install.py" } else { $null }
@@ -58,8 +63,7 @@
                     throw ($mismatch + "{0} is set in this session and decides which installer is accepted: " +
                         "remove it to use the installer this script names, or set it to match.") -f ($overrides -join " and ")
                 }
-                throw ($mismatch + "The download was most likely cut short: try again. Within minutes of an update " +
-                    "of this project the two files can come from caches of different ages. Waiting five minutes settles that.")
+                throw ($mismatch + $mismatchAdvice)
             }
             $installer = $temporary
         }

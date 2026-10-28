@@ -57,8 +57,12 @@ class ServedCopies(unittest.TestCase):
                 served = sitebootstrap.served_text(name, REPO_ROOT, self.commit).splitlines()
                 self.assertEqual(len(original), len(served))
                 changed = [(a, b) for a, b in zip(original, served) if a != b]
-                self.assertEqual(len(changed), 1, changed)
-                before, after = changed[0]
+                # The address, and the advice a refusal gives (code_audit_21
+                # P3-1).
+                self.assertEqual(len(changed), 2, changed)
+                advice = [pair for pair in changed if sitebootstrap.SERVED_ADVICE in pair[1]]
+                self.assertEqual(len(advice), 1, changed)
+                before, after = next(pair for pair in changed if pair not in advice)
                 self.assertIn("https://raw.githubusercontent.com/Abdess/retrobios/main/install.py",
                               before)
                 self.assertEqual(after, before.replace(
@@ -93,6 +97,51 @@ class ServedCopies(unittest.TestCase):
             for path in written:
                 self.assertEqual(path.read_text(encoding="utf-8"),
                                  sitebootstrap.served_text(path.name, REPO_ROOT, self.commit))
+
+    def test_the_served_copy_never_blames_a_cut_download_or_caches(self):
+        """code_audit_21 P3-1: the commit-pinned copy said "cut short, try
+        again" and "waiting five minutes settles that", neither of which can
+        happen to it."""
+        for name in sitebootstrap.SOURCES:
+            with self.subTest(name=name):
+                text = sitebootstrap.served_text(name, REPO_ROOT, self.commit)
+                self.assertNotIn("cut short", text)
+                self.assertNotIn("five minutes", text)
+                self.assertIn(sitebootstrap.SERVED_ADVICE, text)
+        # The raw form keeps its advice: a branch's copy can be stale.
+        self.assertIn("cut short", (REPO_ROOT / "install.sh").read_text(encoding="utf-8"))
+        page = (REPO_ROOT / "wiki" / "first-install.md").read_text(encoding="utf-8")
+        answer = page.split("does not match its expected fingerprint.", 1)[1].split("###", 1)[0]
+        self.assertNotIn("cut short", answer)
+        self.assertIn("something changed the file", answer)
+
+    def test_a_stale_pin_stops_the_build(self):
+        """code_audit_21 P3-2: a pin that is not the installer's was served,
+        and refused every install until the next good deploy."""
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp" if (REPO_ROOT / "tmp").is_dir()
+                                         else None) as scratch:
+            root = Path(scratch)
+            for source in ("install.sh", "install.ps1"):
+                (root / source).write_text((REPO_ROOT / source).read_text(encoding="utf-8"),
+                                           encoding="utf-8")
+            (root / "install.py").write_text('print("not the pinned installer")\n',
+                                             encoding="utf-8")
+            for name in sitebootstrap.SOURCES:
+                with self.subTest(name=name), self.assertRaises(ValueError):
+                    sitebootstrap.served_text(name, root, self.commit)
+
+    def test_deploy_site_checks_the_copies_before_it_publishes(self):
+        import yaml  # noqa: PLC0415
+
+        steps = yaml.safe_load((REPO_ROOT / ".github/workflows/deploy-site.yml").read_text(
+            encoding="utf-8"))["jobs"]["build"]["steps"]
+        runs = [str(step.get("run", "")) for step in steps]
+        uses = [str(step.get("uses", "")) for step in steps]
+        check = next(i for i, run in enumerate(runs) if "tests.test_site_bootstrap" in run)
+        build = next(i for i, run in enumerate(runs) if "scripts/generate_site.py" in run)
+        upload = next(i for i, use in enumerate(uses) if "upload-pages-artifact" in use)
+        self.assertLess(build, check)
+        self.assertLess(check, upload)
 
     def test_a_bootstrap_without_its_address_line_stops_the_build(self):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp" if (REPO_ROOT / "tmp").is_dir()

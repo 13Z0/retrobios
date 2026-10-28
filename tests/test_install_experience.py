@@ -678,7 +678,7 @@ class AHomeThisUserCannotOpen(unittest.TestCase):
             with self.subTest(run=name):
                 self.assertNotIn("Traceback", proc.stderr)
         # A named folder needs no detection and is checked.
-        self.assertIn("0/5 present", runs["named"].stdout)
+        self.assertIn("0 in place, 5 missing", runs["named"].stdout)
         self.assertIn(f"Could not look for setups: this user cannot open {home}",
                       runs["detected"].stderr)
 
@@ -811,7 +811,7 @@ class APartlyClosedHome(unittest.TestCase):
                 self.assertNotIn(str(home / ".config" / "retroarch" / "system"),
                                  proc.stdout + proc.stderr)
         self.assertIn(f"Found RetroArch at {system}", runs["detected"].stdout)
-        self.assertIn("0/5 present", runs["named"].stdout)
+        self.assertIn("0 in place, 5 missing", runs["named"].stdout)
         self.assertNotIn("not detected", runs["named"].stdout)
         events = [json.loads(line) for line in runs["events"].stdout.splitlines()]
         kinds = [event["event"] for event in events]

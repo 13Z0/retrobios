@@ -18,7 +18,12 @@ esac
 TEMP_INSTALLER=""
 TEMP_DIRECTORY=""
 DEFAULT_INSTALL_URL="https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"
-DEFAULT_INSTALL_SHA256="d6d3483bdaf5c54fae595a6469525015323defb7a4f9f22adbda80029fa3ee54"
+# What a refused installer most likely means for this copy. The copy the
+# site serves reads a commit's installer, which no cache serves stale, and
+# curl or wget stop on a cut transfer before the hash is read: the site's
+# build rewrites this line there (scripts/sitebootstrap.py).
+MISMATCH_ADVICE="The download was most likely cut short: try again. Within minutes of an update of this project the two files can come from caches of different ages. Waiting five minutes settles that."
+DEFAULT_INSTALL_SHA256="67cbe64d1de7b2f38edd25cab1b34384c55cac77e13f22f4c302fa2b04a809d7"
 MAX_INSTALLER_BYTES=2097152
 
 cleanup() {
@@ -110,9 +115,7 @@ if [ -z "$INSTALLER" ] || [ ! -f "$INSTALLER" ]; then
       echo "  accepted: unset it to use the installer this script names, or set it to match." >&2
       exit 1
     fi
-    echo "  The download was most likely cut short: try again. Within minutes of an update" >&2
-    echo "  of this project the two files can come from caches of different ages." >&2
-    echo "  Waiting five minutes settles that." >&2
+    echo "  $MISMATCH_ADVICE" >&2
     exit 1
   fi
   INSTALLER="$TEMP_INSTALLER"

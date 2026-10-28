@@ -15,6 +15,7 @@ Invoke-RestMethod reads any type that is neither JSON nor XML as text.
 
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 import subprocess
@@ -32,6 +33,22 @@ SOURCES: dict[str, tuple[str, re.Pattern[str]]] = {
     SH_NAME: ("install.sh", re.compile(r'^(DEFAULT_INSTALL_URL=")[^"]*(")', re.M)),
     PS1_NAME: ("install.ps1", re.compile(r'^(\s*\$defaultInstallUrl = ")[^"]*(")', re.M)),
 }
+# The line each bootstrap says a refused installer with, and the pin.
+ADVICE: dict[str, re.Pattern[str]] = {
+    SH_NAME: re.compile(r'^(MISMATCH_ADVICE=")[^"]*(")', re.M),
+    PS1_NAME: re.compile(r'^(\s*\$mismatchAdvice = ")[^"]*(")', re.M),
+}
+PIN: dict[str, re.Pattern[str]] = {
+    SH_NAME: re.compile(r'^DEFAULT_INSTALL_SHA256="([0-9a-f]{64})"', re.M),
+    PS1_NAME: re.compile(r'^\s*\$defaultInstallSha256 = "([0-9a-f]{64})"', re.M),
+}
+# What the served copy says of a refused installer. It names a commit's
+# install.py, which never changes, and both downloaders fail on a short
+# transfer before the hash is read: neither a cut download nor caches of
+# two ages explain a mismatch there (code_audit_21 P3-1).
+SERVED_ADVICE = ("The file was changed on its way here, most often by a proxy or an "
+                 "antivirus that rewrites downloads. Run the command again from another "
+                 "network, or with that web protection paused.")
 
 
 def build_commit(root: Path) -> str:
@@ -52,14 +69,30 @@ def installer_url(commit: str) -> str:
 
 
 def served_text(name: str, root: Path, commit: str) -> str:
-    """The bootstrap served as name, its installer read from commit."""
+    """The bootstrap served as name, its installer read from commit and its
+    advice fitted to that. A pin that is not the SHA-256 of root's
+    install.py stops the build: published, that copy refused every install
+    until the next good deploy, where a failed build keeps the last good
+    pair served (code_audit_21 P3-2)."""
     source, line = SOURCES[name]
     text = (root / source).read_text(encoding="utf-8")
+    pinned = PIN[name].findall(text)
+    if len(pinned) != 1:
+        raise ValueError(f"{source}: {len(pinned)} installer pins, expected one")
+    actual = hashlib.sha256((root / "install.py").read_bytes()).hexdigest()
+    if pinned[0] != actual:
+        raise ValueError(f"{source} pins {pinned[0][:12]}, install.py is {actual[:12]}: "
+                         "re-pin the bootstrap before the site serves it")
     served, count = line.subn(
         lambda m: f"{m.group(1)}{installer_url(commit)}{m.group(2)}", text
     )
     if count != 1:
         raise ValueError(f"{source}: {count} installer address lines, expected one")
+    served, count = ADVICE[name].subn(
+        lambda m: f"{m.group(1)}{SERVED_ADVICE}{m.group(2)}", served
+    )
+    if count != 1:
+        raise ValueError(f"{source}: {count} mismatch advice lines, expected one")
     return served
 
 

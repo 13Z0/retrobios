@@ -126,7 +126,7 @@ curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --check
 All good:
 
 ```
-  109/109 present (109 verified, 0 wrong hash)
+  109 in place, 0 missing, 0 wrong copies
 ```
 
 ## Undo
@@ -159,7 +159,7 @@ curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --platform retropie -
 
 ### Error: the downloaded installer does not match its expected fingerprint.
 
-The download was cut short. Run the command again.
+Nothing ran: something changed the file. Try another network.
 
 ### Cannot create ...
 

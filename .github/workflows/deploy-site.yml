@@ -150,6 +150,13 @@ jobs:
           npm run build --prefix website
           python scripts/validate_site.py --site-dir website/dist
 
+      # The one-liner the site serves: each copy pins its own installer and
+      # says what a refusal means for it. Validation runs these too, but in
+      # another workflow this one never waits for: a copy that refuses every
+      # install must stop the deploy, the last good pair staying served.
+      - name: Check the served bootstraps
+        run: python -m unittest tests.test_site_bootstrap
+
       # The queries a visitor types must reach the page that answers them,
       # read through the site's own search box, and the home page must stay
       # under its weight budget. A miss blocks the deploy. The browser driver

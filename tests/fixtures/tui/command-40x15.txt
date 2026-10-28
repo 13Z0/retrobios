@@ -2,11 +2,11 @@
 
  The same choice without questions:
 
- python3 install.py --platform
-   retroarch --dest
-   /home/user/.config/retroarch/system
+ python3 install.py \
+   --platform retroarch \
+   --dest .../retroarch/system \
    --system nintendo-gba
-
+ Shortened to fit this window.
 
 
 

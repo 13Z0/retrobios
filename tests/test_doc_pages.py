@@ -97,7 +97,7 @@ class InstallerOutputExample(unittest.TestCase):
             for part in omitted.group(1).split(", "):
                 self.assertIn(part.rsplit(":", 1)[0], install.OMISSION_REASONS.values())
         count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", run).groups()
-        self.assertIn(f"0/{count} present", run)
+        self.assertIn(f"0 in place, {count} missing", run)
         self.assertSplitAddsUp(run, count, size)
         menu = re.search(r"RetroArch: (\d+) files, ([\d.]+ [KMG]B)[.,]([^`]*)", text)
         self.assertEqual(menu.groups()[:2], (count, size))
@@ -118,10 +118,14 @@ class InstallerOutputExample(unittest.TestCase):
                           r"files \(([\d.]+) ([KMG]B)\)", text)
         self.assertIsNotNone(split, "a categorized list says its BIOS files and game data")
         bios, bios_size, bios_unit, games, game_size, game_unit = split.groups()
-        self.assertEqual(int(bios) + int(games), int(count))
+        # The data files in the one total, the third kind (code_audit_21 P3-8).
+        data = re.search(r"and (\d+) data files \(([\d.]+) ([KMG]B)\)", text)
+        data_count, data_size, data_unit = data.groups() if data else ("0", "0", "KB")
+        self.assertEqual(int(bios) + int(games) + int(data_count), int(count))
         units = {"KB": 1, "MB": 1024, "GB": 1024 ** 2}
         total, unit = size.split()
-        added = (float(bios_size) * units[bios_unit] + float(game_size) * units[game_unit])
+        added = (float(bios_size) * units[bios_unit] + float(game_size) * units[game_unit]
+                 + float(data_size) * units[data_unit])
         self.assertLessEqual(abs(added - float(total) * units[unit]), 0.15 * units[unit])
 
 
@@ -744,10 +748,10 @@ class FirstInstallWalkthrough(unittest.TestCase):
                 self.assertIn(f'title = "{ending}"', source)
         self.assertNotRegex(self.text, r"Done\. \d+ files")
         count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", step3).groups()
-        self.assertIn(f"0/{count} present", step3)
+        self.assertIn(f"0 in place, {count} missing", step3)
         self.assertIn(f"Downloading {count} files ({size})", step3)
         self.assertIn(f"Done. {count} files installed", step4)
-        self.assertIn(f"{count}/{count} present ({count} verified", step5)
+        self.assertIn(f"{count} in place, 0 missing", step5)
         manifest = json.loads((ROOT / "install" / "batocera.json").read_text(encoding="utf-8"))
         omitted = re.search(r"Not installable: (\d+) files \((\d+) required", step3)
         if manifest.get("omitted_files"):

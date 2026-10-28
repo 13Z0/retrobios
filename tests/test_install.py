@@ -3550,7 +3550,7 @@ class ARefusedStandaloneCopyIsNamed(unittest.TestCase):
             install._report_outcome([bios], 0, 1, failed, 0, False, failures=failures)
         text = out.getvalue()
         self.assertIn(str(target / "scph5501.bin"), text)
-        self.assertIn(str(target), text.split("Location")[1])
+        self.assertIn(str(target), text.split("BIOS folder")[-1])
         self.assertIn("cannot write there", text)
 
 
@@ -4210,8 +4210,11 @@ class RunsAgainstTheRealLists(unittest.TestCase, _LoopbackRun):
         self.assertEqual(proc.returncode, 0, proc.stderr)
         lines = [line for line in proc.stdout.splitlines() if line.strip()]
         self.assertIn("Nothing was written", lines[-1])
-        header = next(line for line in lines if line.startswith("Would download"))
-        self.assertIn("data files", header)
+        at = next(index for index, line in enumerate(lines) if line.startswith("Would download"))
+        # One total on the header, the data files among the kinds under it
+        # (code_audit_21 P3-8).
+        self.assertNotIn("data files", lines[at])
+        self.assertIn("data files", lines[at + 1])
 
     def test_dest_alone_says_whose_list_it_is(self):
         proc = _install_run(self.env, "--dest", str(self.home / "card"), "--dry-run",
@@ -4531,7 +4534,7 @@ class ANetworkFailureNamesTheNetwork(unittest.TestCase):
         self.assertEqual(raised.exception.code, 2)
         text = out.getvalue()
         self.assertIn("HTTPS_PROXY", text)
-        self.assertIn("Destination: /bios", text)
+        self.assertIn("BIOS folder: /bios", text)
         self.assertNotIn("being written to", text)
 
 
@@ -5222,7 +5225,7 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
              "interrupted": False},
             {"event": "end", "code": 1},
         ])
-        self.assertIn("2/4 present (1 verified, 1 wrong hash)", proc.stderr)
+        self.assertIn("1 in place, 2 missing, 1 wrong copy", proc.stderr)
         self.assertFalse((self.bios / "c.bin").exists())
 
     def test_an_install_run(self):

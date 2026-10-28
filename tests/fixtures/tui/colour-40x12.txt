@@ -9,7 +9,7 @@
  
  BIOS folder:
    ^[[0;1m/home/user/.config/retroarch/system^[[0m
- ES-DE found: its BIOS files go to each
+ ES-DE: files go to each emulator.
  ^[[0;1;35mA^[[0m Continue  ^[[0;2mB^[[0m Quit  ^[[0;2m?^[[0m Help
 === platforms
 ^[[0;1m ^[[0;1;35mRetroBIOS^[[0;1m: Which setup?^[[0m
@@ -198,11 +198,11 @@
 
  The same choice without questions:
  
- python3 install.py --platform
-   retroarch --dest
-   /home/user/.config/retroarch/system
+ python3 install.py \
+   --platform retroarch \
+   --dest .../retroarch/system \
    --system nintendo-gba
-
+^[[0;2m Shortened to fit this window.^[[0m
 
 
  ^[[0;1;35mA^[[0m Back
@@ -242,7 +242,7 @@
  The files it replaced are kept in
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
- To put them back: python3 install.py
+ To put them back: python3 install.py \
 ^[[0;2m 1-8 of 16^[[0m
  ^[[0;1;35mA^[[0m Exit  ^[[0;2m^v^[[0m Scroll
 === error

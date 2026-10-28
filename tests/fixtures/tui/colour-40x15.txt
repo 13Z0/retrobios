@@ -243,11 +243,11 @@
 
  The same choice without questions:
  
- python3 install.py --platform
-   retroarch --dest
-   /home/user/.config/retroarch/system
+ python3 install.py \
+   --platform retroarch \
+   --dest .../retroarch/system \
    --system nintendo-gba
-
+^[[0;2m Shortened to fit this window.^[[0m
 
 
 
@@ -296,10 +296,10 @@
  The files it replaced are kept in
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
- To put them back: python3 install.py
-   --restore
-   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
- 
+ To put them back: python3 install.py \
+   --restore .../2026-10-23_1200
+^[[0;2m Shortened to fit this window.^[[0m
+ Same choice without questions:
 ^[[0;2m 1-11 of 16^[[0m
  ^[[0;1;35mA^[[0m Exit  ^[[0;2m^v^[[0m Scroll
 === error
