@@ -207,10 +207,10 @@ class AnInstallBoxShowsOneCommand(unittest.TestCase):
         listed = self.text[self.text.index('<details class="rb-install-all" open>'):]
         for platform, _system in PAIRS:
             self.assertEqual(listed.count(f"--platform {platform} --system"), 2, platform)
-        self.assertIn("install.sh | sh -s -- --platform retrobat --system 'Neo Geo'</code>", listed)
-        self.assertIn("install.ps1))) --platform retrobat --system 'Neo Geo'</code>", listed)
+        self.assertIn("/i | sh -s -- --platform retrobat --system 'Neo Geo'</code>", listed)
+        self.assertIn("/i.ps1))) --platform retrobat --system 'Neo Geo'</code>", listed)
         # The URL is no link inside the command, and the break adds nothing.
-        self.assertIn("https://<wbr>raw.githubusercontent.com", listed)
+        self.assertIn("https://<wbr>abdess.github.io", listed)
 
     def test_one_setup_keeps_its_two_blocks(self) -> None:
         text = "\n".join(gs._console_install_block("PlayStation Portable", PAIRS[:1]))
@@ -225,7 +225,7 @@ class AnInstallBoxShowsOneCommand(unittest.TestCase):
             text = "\n".join(gs._console_install_block("PlayStation Portable", PAIRS))
         self.assertNotIn("<select", text)
         self.assertEqual(text.count("# RetroBat"), 2)
-        self.assertEqual(text.count("install.sh | sh"), 3)
+        self.assertEqual(text.count("/i | sh"), 3)
 
 
 class TheSetupListLooksLikeAList(unittest.TestCase):

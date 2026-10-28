@@ -116,7 +116,7 @@ EOF
         echo "Available platforms:"
         platform_names "$release_json"
         echo "A setup without a pack is served by the installer:"
-        echo "  curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform <name>"
+        echo "  curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --platform <name>"
         exit 1
     fi
 

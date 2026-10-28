@@ -99,6 +99,8 @@ from siteguides import (
     HandheldSystem,
     FENCE_TITLES,
     INSTALL_BASE,
+    INSTALL_PS1,
+    INSTALL_SH,
     TERMINALS,
     TRUST_ITEMS,
     detected_systems as _detected_systems,
@@ -111,6 +113,7 @@ from siteguides import (
     trust_box,
 )
 import release_record
+import sitebootstrap
 import sitemeasurements
 
 # The Starlight project, and where its pages go inside it.
@@ -6101,6 +6104,23 @@ SYSTEM_PAGE_BUDGET = 300_000
 CARD_HTML_RATIO = 1.7
 INSTALL_HTML_RATIO = 11
 SYSTEM_SUMMARY_HTML = 500_000
+# The ratio was fitted while each command named the raw.githubusercontent.com
+# bootstrap, 66 characters (67 for PowerShell). A box is weighed with its
+# address at that length, so the shorter site address moves no console off
+# or onto a summary and no card changes address.
+FITTED_ADDRESS_CHARS = {INSTALL_PS1: 67, INSTALL_SH: 66}
+
+
+def _install_box_weight(lines: list[str]) -> int:
+    weight = 0
+    for line in lines:
+        weight += len(line) + 1
+        for address, fitted in FITTED_ADDRESS_CHARS.items():
+            found = line.count(address)
+            line = line.replace(address, "")
+            weight += found * (fitted - len(address))
+    return weight
+
 
 # A system card: whether it is a variant, its lines, its sha1.
 Card = tuple[bool, list[str], str]
@@ -7252,8 +7272,7 @@ def system_pages(
     # page, which the card weights never counted. A page is also cut when
     # its estimate as it renders passes the summary's.
     with markup.using("mkdocs"):
-        boxes = {console: sum(len(line) + 1 for line in install_block(console))
-                 for console in consoles}
+        boxes = {console: _install_box_weight(install_block(console)) for console in consoles}
     rendered = {console: CARD_HTML_RATIO * weights[console] + INSTALL_HTML_RATIO * boxes[console]
                 for console in weights}
     if (not boards and len(measured_text) <= budget
@@ -11763,6 +11782,8 @@ def _generate(args: argparse.Namespace) -> None:
     # this project site lives under /retrobios/. Every page's head points at
     # the sitemap instead (Starlight's head links it).
     (public / "robots.txt").unlink(missing_ok=True)
+    # The one-line commands' bootstraps, at the site's root.
+    sitebootstrap.write_bootstraps(public, _REPO_ROOT)
 
     images_dest = public / "assets" / "images"
     images_dest.mkdir(parents=True, exist_ok=True)

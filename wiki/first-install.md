@@ -20,7 +20,7 @@ line, then press Enter.
 Open the Start menu. Type **PowerShell** and open it.
 
 ```powershell title="PowerShell"
-irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
+irm https://abdess.github.io/retrobios/i.ps1 | iex
 ```
 
 </TabItem>
@@ -29,7 +29,7 @@ irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
 Open **Terminal**, in Applications, then Utilities.
 
 ```sh title="Terminal"
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+curl -fsSL https://abdess.github.io/retrobios/i | sh
 ```
 
 </TabItem>
@@ -38,7 +38,7 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 Open a terminal.
 
 ```sh title="Terminal"
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+curl -fsSL https://abdess.github.io/retrobios/i | sh
 ```
 
 </TabItem>
@@ -47,7 +47,7 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 Switch to Desktop Mode and open **Konsole**.
 
 ```sh title="Terminal"
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+curl -fsSL https://abdess.github.io/retrobios/i | sh
 ```
 
 </TabItem>
@@ -58,7 +58,7 @@ Install **Termux**, a terminal app, and run these lines.
 ```sh title="Terminal"
 pkg install python
 termux-setup-storage
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+curl -fsSL https://abdess.github.io/retrobios/i | sh
 ```
 
 </TabItem>
@@ -120,7 +120,7 @@ Add `--check` to the same command. It changes nothing.
 
 <!-- os-tabs -->
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
+curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --check
 ```
 
 All good:
@@ -154,7 +154,7 @@ $home/RetroPie/BIOS as "bios", and RetroPie docs/Transferring-Roms.md:29 names
 
 <!-- os-tabs windows: --platform retropie --dest \\RETROPIE\bios\ -->
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retropie --dest <the bios share>
+curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --platform retropie --dest <the bios share>
 ```
 
 ### Error: the downloaded installer does not match its expected fingerprint.

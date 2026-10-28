@@ -663,12 +663,14 @@ class ReadmeInstallerOptions(unittest.TestCase):
         import generate_readme
 
         source = inspect.getsource(generate_readme.generate_readme)
-        self.assertIn("&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1)))", source)
+        self.assertIn('install_command("powershell", "--check")', source)
         self.assertIn("wiki/installer/#passing-options", source)
         self.assertIn("## Passing options", _page("installer.md"))
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         quick = _section(readme, "Quick install")
-        self.assertIn("[scriptblock]::Create", quick)
+        from siteguides import INSTALL_PS1
+
+        self.assertIn(f"&([scriptblock]::Create((irm {INSTALL_PS1}))) --check", quick)
         self.assertIn("wiki/installer/#passing-options", quick)
         self.assertNotRegex(readme, r"(?m)^irm \S+ \| iex \S")
 

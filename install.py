@@ -243,7 +243,9 @@ CARD_PLATFORMS = frozenset(name for name, _file, _prefix in _CARD_RULES)
 SITE_URL = "https://abdess.github.io/retrobios/"
 INSTALLER_PAGE = f"{SITE_URL}wiki/installer/"
 TROUBLESHOOTING_PAGE = f"{SITE_URL}wiki/troubleshooting/"
-BOOTSTRAP_URL = "https://raw.githubusercontent.com/Abdess/retrobios/main/install"
+# The one-line bootstraps the site serves: BOOTSTRAP_URL for sh, .ps1 after it
+# for PowerShell (scripts/sitebootstrap.py).
+BOOTSTRAP_URL = f"{SITE_URL}i"
 
 # Fallback BIOS destination per platform when --platform is forced
 # but auto-detection finds nothing on the machine.
@@ -5747,7 +5749,7 @@ class Invocation:
         if bootstrap == "ps1":
             return f"&([scriptblock]::Create((irm {BOOTSTRAP_URL}.ps1)))"
         if bootstrap == "sh":
-            return f"curl -fsSL {BOOTSTRAP_URL}.sh | {'sudo ' if elevated else ''}sh -s --"
+            return f"curl -fsSL {BOOTSTRAP_URL} | {'sudo ' if elevated else ''}sh -s --"
         python = "python" if self.os_type == "windows" else "python3"
         return f"{'sudo ' if elevated else ''}{python} install.py"
 

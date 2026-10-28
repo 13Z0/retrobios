@@ -9930,14 +9930,12 @@ class TheAndroidResultReadsWhole(unittest.TestCase):
                 self.assertIn("--restore", words)
                 self.assertTrue(all(not word.endswith("/") for word in words), words)
         state = _installed_state(Path("/sdcard/RetroArch/system"))
-        command = install._styled("curl -fsSL https://raw.githubusercontent.com/Abdess/"
-                                  "retrobios/main/install.sh | sh -s -- --restore "
+        command = install._styled(f"curl -fsSL {install.BOOTSTRAP_URL} | sh -s -- --restore "
                                   "'/storage/emulated/0/a b/20261027-223524'", "command")
         state.stack.append("result")
         pieces = install._text_lines([command], 38, whole=True)
         joined = [str(piece).strip() for piece in pieces if piece.style != "cont"]
-        self.assertIn("https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh",
-                      joined)
+        self.assertIn(install.BOOTSTRAP_URL, joined)
         self.assertIn("'/storage/emulated/0/a b/20261027-223524'", joined)
 
     def test_a_long_line_folds_in_the_terminal(self):
@@ -10770,7 +10768,7 @@ class AuditNineteenAndTwelve(_CardFixtures, unittest.TestCase):
                     lines = drawn(state, cols, 30)
                     self.assertFalse(install.tui_wants_mouse(state, lines))
                     if bootstrap:
-                        url = "https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh"
+                        url = install.BOOTSTRAP_URL
                         words = [word for line in lines for word in str(line).split()]
                         self.assertIn(url, words)
 

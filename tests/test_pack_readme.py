@@ -75,8 +75,8 @@ class TheOneLinerFollowsTheRegistry(unittest.TestCase):
                 continue
             text = _guide(name)
             with self.subTest(platform=name):
-                self.assertEqual("install.sh | sh" in text, bool(systems - {"windows"}))
-                self.assertEqual("install.ps1 | iex" in text, "windows" in systems)
+                self.assertEqual("/i | sh" in text, bool(systems - {"windows"}))
+                self.assertEqual("/i.ps1 | iex" in text, "windows" in systems)
 
     def test_rocknix_and_mister_run_it_on_the_device(self):
         for name in ("rocknix", "misterfpga"):
@@ -87,7 +87,7 @@ class TheOneLinerFollowsTheRegistry(unittest.TestCase):
         text = _guide("emudeck")
         self.assertNotIn("Steam Deck / Linux", text)
         self.assertNotIn("Konsole", text)
-        self.assertIn("install.ps1 | iex", text)
+        self.assertIn("/i.ps1 | iex", text)
         self.assertIn("C:\\Emulation\\bios", text)
         self.assertIn("--standalone-copies", text)
 
@@ -101,12 +101,14 @@ class TheOneLinerFollowsTheRegistry(unittest.TestCase):
         """The address comes from install_base in platforms/_guides.yml, the
         one the site's commands use."""
         import packreadme
+        import sitebootstrap
         from siteguides import INSTALL_BASE
 
         source = (REPO_ROOT / "scripts" / "packreadme.py").read_text(encoding="utf-8")
         self.assertNotIn("raw.githubusercontent.com", source)
-        self.assertEqual(packreadme.INSTALL_SH, f"{INSTALL_BASE}/install.sh")
-        self.assertEqual(packreadme.INSTALL_PS1, f"{INSTALL_BASE}/install.ps1")
+        self.assertNotIn("abdess.github.io", source)
+        self.assertEqual(packreadme.INSTALL_SH, f"{INSTALL_BASE}/{sitebootstrap.SH_NAME}")
+        self.assertEqual(packreadme.INSTALL_PS1, f"{INSTALL_BASE}/{sitebootstrap.PS1_NAME}")
 
 
 if __name__ == "__main__":

@@ -59,14 +59,22 @@ class ReadmeRegressions(unittest.TestCase):
         )[0]
 
     def test_advertised_bootstrap_urls_are_the_shipped_ones(self):
+        import sitebootstrap
+        from siteguides import INSTALL_BASE
+
         quick_install = self._quick_install()
-        for script in ("install.sh", "install.ps1"):
-            url = f"https://raw.githubusercontent.com/Abdess/retrobios/main/{script}"
-            self.assertIn(url, quick_install, f"{script} bootstrap URL missing")
+        for name in sitebootstrap.SOURCES:
+            url = f"{INSTALL_BASE}/{name}"
+            self.assertIn(f"{url} |", quick_install, f"{name} bootstrap URL missing")
+        # The site serves each bootstrap with install.py read from the
+        # commit it was built from, the raw form from main.
+        commit = "0" * 40
+        for name in sitebootstrap.SOURCES:
+            self.assertIn(sitebootstrap.installer_url(commit),
+                          sitebootstrap.served_text(name, ROOT, commit))
         self.assertIn(
             "https://raw.githubusercontent.com/Abdess/retrobios/main/install.py",
             (ROOT / "install.sh").read_text(encoding="utf-8"),
-            "install.sh must fetch install.py from the ref the README advertises",
         )
 
     def test_advertised_installer_flags_exist(self):
@@ -690,9 +698,11 @@ class PackReadmesSayWhatTheInstallerDoes(unittest.TestCase):
         return text[text.index("INSTALLATION"):text.index("TROUBLESHOOTING")]
 
     def test_retroarch_offers_the_windows_installer(self):
+        from siteguides import INSTALL_PS1, INSTALL_SH
+
         guide = self._guide("retroarch")
-        self.assertIn("install.sh | sh", guide)
-        self.assertIn("install.ps1 | iex", guide)
+        self.assertIn(f"{INSTALL_SH} | sh", guide)
+        self.assertIn(f"{INSTALL_PS1} | iex", guide)
 
     def test_emudeck_keys_match_the_registry_and_the_flag(self):
         import re
@@ -715,8 +725,10 @@ class PackReadmesSayWhatTheInstallerDoes(unittest.TestCase):
 
     def test_retropie_never_sends_a_pc_to_the_linux_partition(self):
         guide = self._guide("retropie")
+        from siteguides import INSTALL_SH
+
         self.assertNotIn("Put the SD card in your PC", guide)
-        self.assertIn("install.sh | sh", guide)
+        self.assertIn(f"{INSTALL_SH} | sh", guide)
 
 
 class AutoFetchReadsListsAndPlacesWithoutClobbering(unittest.TestCase):

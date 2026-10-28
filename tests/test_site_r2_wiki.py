@@ -22,7 +22,7 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.path.insert(0, str(REPO_ROOT))
 
 import sitediagrams  # noqa: E402
-from siteguides import INSTALL_BASE  # noqa: E402
+from siteguides import INSTALL_SH  # noqa: E402
 
 from tests import sitepages  # noqa: E402
 
@@ -108,7 +108,7 @@ class InstallCommandsHaveEveryForm(unittest.TestCase):
     def test_a_windows_path_replaces_the_unix_one(self):
         page = (
             "<!-- os-tabs windows: --platform retroarch --dest E:\\x -->\n```sh\n"
-            f"curl -fsSL {INSTALL_BASE}/install.sh \\\n  | sh -s -- --platform retroarch --dest /a/b\n```\n"
+            f"curl -fsSL {INSTALL_SH} \\\n  | sh -s -- --platform retroarch --dest /a/b\n```\n"
         )
         text = sitediagrams.expand_commands(page)
         windows, rest = text.split('<TabItem label="macOS">', 1)

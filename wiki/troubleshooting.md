@@ -22,7 +22,7 @@ missing**? Run the command with `--check`. It changes nothing.
 
 <!-- os-tabs -->
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
+curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --check
 ```
 
 Read the count line:
@@ -85,7 +85,7 @@ cites them. Steam Deck: the Flatpak build. -->
 
 <!-- os-tabs windows: --platform retroarch --dest C:\RetroArch-Win64\system macos: --platform retroarch --dest ~/Documents/RetroArch/system steamdeck: --platform retroarch --dest ~/.var/app/org.libretro.RetroArch/config/retroarch/system -->
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest ~/.config/retroarch/system
+curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --platform retroarch --dest ~/.config/retroarch/system
 ```
 
 Other messages: [When something goes wrong](installer.md#when-something-goes-wrong).

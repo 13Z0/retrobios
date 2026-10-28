@@ -750,10 +750,10 @@ FENCE_TITLES = {"sh": "Terminal", "powershell": "PowerShell"}
 
 def _installer_args(body: str) -> str:
     """The options of a one-line install command, continuation lines joined."""
-    from siteguides import INSTALL_BASE
+    from siteguides import INSTALL_SH
 
     line = " ".join(part.strip().rstrip("\\").strip() for part in body.splitlines())
-    match = re.fullmatch(rf"curl -fsSL {re.escape(INSTALL_BASE)}/install\.sh \| sh(?: -s -- (.+))?", line)
+    match = re.fullmatch(rf"curl -fsSL {re.escape(INSTALL_SH)} \| sh(?: -s -- (.+))?", line)
     if not match:
         raise ValueError(f"an os-tabs block holds no install command: {line!r}")
     return match.group(1) or ""

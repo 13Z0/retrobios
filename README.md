@@ -19,21 +19,21 @@ Copy one command into your terminal:
 
 ```bash
 # Linux / macOS / Steam Deck
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+curl -fsSL https://abdess.github.io/retrobios/i | sh
 
 # Windows (PowerShell)
-irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
+irm https://abdess.github.io/retrobios/i.ps1 | iex
 
 # Android (Termux, after pkg install python and termux-setup-storage)
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+curl -fsSL https://abdess.github.io/retrobios/i | sh
 
 # SD card mounted on a PC: a muOS, KNULLI, ROCKNIX, Onion, spruceOS or MinUI card
 # is found by itself. For another card, --dest is its BIOS folder
 # (RetroArch on Switch: retroarch/cores/system, on Android: RetroArch/system)
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system
+curl -fsSL https://abdess.github.io/retrobios/i | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system
 
 # Options in PowerShell: anything after | iex goes to iex, so the script runs as a block
-&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) --check
+&([scriptblock]::Create((irm https://abdess.github.io/retrobios/i.ps1))) --check
 ```
 
 The script opens a full-screen installer, driven with the arrow keys and Enter, or with a controller on a handheld. It finds your setup and its BIOS folder, downloads only the missing files and checks each one. It can also copy the BIOS files from your old SD card.
